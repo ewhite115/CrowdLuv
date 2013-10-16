@@ -7,32 +7,48 @@
 
 require_once("cl_facebookinit.php");
 
-function add_new_cl_follower($follower_fb_uid){
-    
-    if(!$follower_fb_uid) return 0;
+function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup) {
+    //pass in the JSON object returned by FB API
+    if(!$follower_fbup) return 0;
 
     require(ROOT_PATH . "inc/database.php");
 
     try {
-        $sql = "INSERT INTO follower (fb_uid) VALUES (" . $follower_fb_uid . ")";
-        //echo $sql;
+        //Update this line to insert any/all values from the user profile into db
+        $f = $follower_fbup;
+        //var_dump($f);exit;       
+        $fblocid=""; if(isset($f['location'])) {$fblocid=$f['location']['id']; $fblocname=$f['location']['name'];}
+        $fbemail=""; if(isset($f['email'])) $fbemail=$f['email'];
+        $fbrltsp=""; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
+        date_default_timezone_set('America/New_York');
+        $fbbdate=""; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
+        $sql = "INSERT INTO follower (fb_uid,        location_fb_id,     location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
+                              VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
+        echo $sql;// exit;
         $results = $db->query($sql);
+        //var_dump($results); exit;
     } catch (Exception $e) {
         echo "Data could not be inserted to the database. " . $e;
         return -1;
     }
+
 }
 
-function add_new_cl_talent($follower_fb_pid){
-    
-    if(!$follower_fb_pid) return 0;
-
+function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
+    //pass in json object of the page
+    if(!$talent_fbpp) return 0;
+    //var_dump($talent_fbpp);
     require(ROOT_PATH . "inc/database.php");
 
     try {
-        $sql = "INSERT INTO talent (fb_pid) VALUES (" . $follower_fb_pid . ")";
-        //echo $sql;
-        $results = $db->query($sql);
+        $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
+                            VALUES ('" . $talent_fbpp['id'] . "', ?)";
+        //echo $sql; //exit;
+        $results = $db->prepare($sql);
+        $results->bindParam(1,$talent_fbpp['name'] );
+        $results->execute();
+        var_dump($results);
+        //$results = $db->query($sql);
     } catch (Exception $e) {
         echo "Data could not be inserted to the database. " . $e;
         return -1;
@@ -85,18 +101,20 @@ function add_follower_to_talent($cl_uidt, $cl_tidt){
     
     require(ROOT_PATH . "inc/database.php");
 
+    //Update the "following" table acorindgly
     try{
+        //Check to see if this follower had previously been following the talent
         $sql = "select count(*) from follower_luvs_talent where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
 
         $results = $db->query($sql);
         $i = intval($results->fetchColumn(0));
-        if($i >0){ //exists, so just update the "still following"
+        if($i >0){ //If yes, just update the "still_following" column
 
             $sql = "update follower_luvs_talent set still_following=1 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
             //echo $sql; 
             $results = $db->query($sql);
 
-        } else {  //never previously following, so add a row to the luvvvv table
+        } else {  //never previously following, so add a row to the luvs table
             $sql = "INSERT INTO `crowdluv`.`follower_luvs_talent` (`crowdluv_uid`, `crowdluv_tid`, `still_following`) VALUES (" . $cl_uidt . ", " . $cl_tidt . ", 1)";
             echo $sql; 
             $results = $db->query($sql);           

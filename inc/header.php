@@ -11,16 +11,13 @@
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css" type="text/css">
 	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:400,700" type="text/css">
 	<link rel="shortcut icon" href="<?php echo BASE_URL; ?>favicon.ico">
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> 
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
   <script src="scripts/main.js"></script> 
 
-
-
-
-
 </head>
+
 <body>
-<!-- Facebook Javascript  SDK -->
+
 <div id="fb-root"></div>
 
 <div class="fullpagewrapper">

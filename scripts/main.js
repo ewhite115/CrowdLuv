@@ -36,20 +36,21 @@
 
   }//crowluvFBDataLocader
 
+
   //This is the Facebook/JQuery code to initialize the FB object 
   $(document).ready(function() {
     $.ajaxSetup({ cache: true });
-    $.getScript('//connect.facebook.net/en_UK/all.js', function(){
+    $.getScript('//connect.facebook.net/en_US/all.js', function(){
 
       FB.init({
         appId      : '740484335978197',                        // App ID from the app dashboard
-        channelUrl : '//67.82.130.92:7999/crowdluv/channel.html', // Channel file for x-domain comms
-        status     : false,                                 // Check Facebook Login status
+        channelUrl : '//67.82.130.92:7999/crowdluv/channel.php', // Channel file for x-domain comms
+        status     : true,                                 // Check Facebook Login status
         cookie     : true,
         xfbml      : true                                  // Look for social plugins on the page
       });
       //Add any FB initialization code that is generic across the site
-       FB.getLoginStatus(crowdluvFBDataLoader); //end of the call to FB.getLoginStatus()
+       FB.getLoginStatus(crowdluvFBDataLoader,true); //end of the call to FB.getLoginStatus()
 
        // ** any FB SDK initialization goes above here (?)  **
     }); //end of $.getscript callback

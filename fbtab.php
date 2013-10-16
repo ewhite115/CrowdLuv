@@ -66,7 +66,7 @@
 	          else {// The person cancelled the login dialog 
 	          }//end else
 	      }, 
-	      {scope: 'email,user_location'} 
+	      {scope: "<?php echo CL_FB_PERMISSION_SCOPE_STRING; ?>"} 
 	    ); //end of fb.login() call
 	}); //end of .click() handler
 </script>

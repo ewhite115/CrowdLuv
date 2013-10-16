@@ -39,7 +39,7 @@
             foreach($ret_tals as $ret_tal){
                 
                 echo '<img src="https://graph.facebook.com/'. $ret_tal["fb_pid"] . '/picture?access_token=' . $facebook->getAccessToken() . '">&nbsp;&nbsp;';
-                echo $ret_tal['talentname'];
+                echo $ret_tal['fb_page_name'];
                 //echo '&nbsp;&nbsp; <a href="stopfollowing.php?cltid=' . $ret_tal["crowdluv_tid"] . '">Stop Following</a><br>';
                 echo '&nbsp;&nbsp; <a href="followerdashboard.php?stopfollowing=' . $ret_tal["crowdluv_tid"] . '">Stop Following</a><br>';
 

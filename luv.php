@@ -17,7 +17,7 @@
                                    'method' => 'fql.query',
                                    'query' => $fql,
                                  ));
-        var_dump($ret_obj);
+        //var_dump($ret_obj);
         $talentname = $ret_obj[0]["name"];
     } catch(FacebookApiException $e) {
         echo  "FacebookAPIException in luv.php getting talentname: " . $e; 
@@ -25,6 +25,9 @@
         error_log($e->getMessage());
     }   
     
+    add_follower_to_talent(get_crowdluv_uid_by_fb_uid($fb_user), get_crowdluv_tid_by_fb_pid($talentpageid));
+
+
 ?>
 
         <div class="section shirts latest">
@@ -49,7 +52,7 @@
 
                 </div>
 
-                <form method="post" action="<?php echo BASE_URL; ?>startfollowing.php?talentpageid=<?php echo $talentpageid; ?>">
+                <form method="post" action="<?php echo BASE_URL; ?>updateuserinfo.php">
                 <table>
                     <tr>
                         <th>

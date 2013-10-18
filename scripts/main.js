@@ -6,6 +6,8 @@
   fb_accesstoken="";
   fb_me_response="";
 
+
+//This is the function that will get called when 
   crowdluvFBDataLoader = function(lsresponse) {
       console.log("entered fb.getloginstatus handler: " + lsresponse.status);
       fb_loginstatus_response = lsresponse;

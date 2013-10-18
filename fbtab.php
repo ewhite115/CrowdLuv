@@ -2,8 +2,7 @@
 
 	require_once("inc/config.php");
 	require_once("facebook-sdk/facebook.php");
-	
-
+	require_once("inc/cl_datafunctions.php");
 
 	$pageTitle = "CrowdLuv";
 	$section = "home";
@@ -15,35 +14,23 @@
     $data = json_decode(base64_decode(strtr($payload, '-_', '+/')), true);
      
     $talentpageid = $data["page"]["id"]; 
-    // $app_data is any information that was passed in the query string for the app_data param
+    $cl_tobj = get_talent_object_by_tid( get_crowdluv_tid_by_fb_pid($talentpageid)  );
+
+    //$app_data is any information that was passed in the query string for the app_data param
     $app_data="Empty";
     if(array_key_exists("app_data", $data)) $app_data = $data["app_data"];
     
-    // run fql query to get talent info based on the page_id
-    try {
-        $ret_obj = $facebook->api(array(
-                                   'method' => 'fql.query',
-                                   'query' => 'SELECT name from page where page_id = ' . $talentpageid,
-                                 ));
-        $talentname = $ret_obj[0]["name"];
-    } catch(FacebookApiException $e) {
-        echo  "FacebookAPIException in fbtab.php getting talentname: " . $e; 
-        error_log($e->getType());
-        error_log($e->getMessage());
-    }   
-
-    
-
+  
 ?>
 
 	<div class="fbtab_hero"> </div>
 	<div class="fbtab_section_inyourtown">
-		<h1>Want <?php echo $talentname; ?> in your town?</h1>
+		<h1>Want <?php echo $cl_tobj['fb_page_name']; ?> in your town?</h1>
 		<a href="#" id="fbtab_cometomytown"><div class="fbtab_cometomytownbtn">YES! COME TO MY TOWN<br>.</div></a>
-		The more people near you who click, the sooner <?php echo $talentname; ?> will come. So, Share this button now on your timeline, in a group, via email, or in a private message<br>
+		The more people near you who click, the sooner <?php echo $cl_tobj['fb_page_name']; ?> will come. So, Share this button now on your timeline, in a group, via email, or in a private message<br>
 	</div>
 	<div class="fbtab_talentmessage">
-		<h1>New Message from <?php echo $talentname; ?>:</h1>
+		<h1>New Message from <?php echo $cl_tobj['fb_page_name']; ?>:</h1>
 		This is where the latest message from the talent will appear
 	</div>
 
@@ -60,7 +47,7 @@
 	    FB.login(function(response) {
 	        if (response.authResponse) {
 	            console.log("User authorized - redirecting to luv.php");
-	            window.open('luv.php?talentpageid=<?php echo $talentpageid;?>', "_top").focus();
+	            window.open('luv.php?crowdluv_tid=<?php echo $cl_tobj['crowdluv_tid'];?>', "_top").focus();
 	            return false;
 	          } //end if
 	          else {// The person cancelled the login dialog 

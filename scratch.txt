@@ -60,3 +60,6 @@ select *  from follower join follower_luvs_talent join talent where follower.cro
 select * from (select * from (select * from follower_luvs_talent where crowdluv_uid =(select crowdluv_uid from follower where fb_uid=8822184)) as t join talent where t.crowdluv_tid = talent.crowdluv_tid) as v where fb_pid=661469737211316
 
 INSERT INTO follower (fb_uid) VALUES (29) 
+
+
+

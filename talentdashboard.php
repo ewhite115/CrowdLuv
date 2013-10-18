@@ -1,60 +1,57 @@
 <?php 
 
-    require_once("inc/config.php");
-    require_once("facebook-sdk/facebook.php");
-    require_once("inc/cl_datafunctions.php");
-
     $pageTitle = "CrowdLuv";
     $section = "home";
+    require_once("inc/config.php"); 
     include(ROOT_PATH . 'inc/header.php');
 
 
-    if(! $fb_user) {
-        echo "user is null"; exit;
-        //echo "<h1>Follower Login</h1>Already Signed up with CrowdLuv? Use your facebook account to sign in<br><br>";
-        //echo "<fb:login-button show-faces=\"false\" width=\"300\" max-rows=\"1\"></fb:login-button>";
-    } 
+    if(! $fb_user) { echo "user is null"; exit;  } 
+    if(! $fb_user_pages) { echo "fb_user_pages is null";   }
+    if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;  }
 
-    if(! $fb_user_pages) {
-        echo "user_pages is null"; exit;
-    } 
-    parse_str($_SERVER['QUERY_STRING']);
-    $cltid = get_crowdluv_tid_by_fb_pid($talentpageid);
- 
+
 ?>
 
     <div class="crowdluvsection">
-        <h1>Welcome back to CrowdLuv,  <?php //echo $activefbpg['name']; ?>!</h1>
+        <h1><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s CrowdLuv dashboard </h1>
 
-        <img src='https://graph.facebook.com/<?php echo $talentpageid; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'><br>
+        <img src='https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'><br>
         <br>
         
+    </div>
+    <div class="crowdluvsection">
 
-         <h1>Follower Count: <?php $folst=get_followers_for_talent($cltid); echo count($folst) . "<br>";  ?></h1>
-         <?php
-    
+         <h1><?php $folst=get_followers_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']); echo count($folst) . " people luv you<br>";  ?></h1>
+         <?php 
             foreach ($folst as $folt) {
                 echo '<img src="https://graph.facebook.com/'. $folt['fb_uid'] . '/picture?access_token=' . $facebook->getAccessToken() . '"> &nbsp;&nbsp';
-    
             }
-            //var_dump($folst);
-
+            //var_dump($folst);    
          ?> 
- 
-        <br><br>
+    </div>
+    <div class="crowdluvsection">
+        <h1>Top Cities</h1>
+        <?php print_top_cities($CL_CUR_TGT_TALENT['crowdluv_tid']); ?>
+    </div>
+
+    <div class="crowdluvsection">
+
+        <br>
         <h1>Your Crowdluv link:</h1>
          send this to your fans to let them Luv you: <br>
-        <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=email,user_location&redirect_uri=http://67.82.130.92:7999/crowdluv/luv.php?talentpageid=<?php echo $talentpageid; ?>">https://www.facebook.com/dialog/oauth?client_id=740484335978197&scope=email,user_location&redirect_uri=http://67.82.130.92:7999/crowdluv/luv.php?talentpageid=<?php echo $talentpageid; ?></a>
+        <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=http://67.82.130.92:7999/crowdluv/luv.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid']; ?>">https://www.facebook.com/dialog/oauth?client_id=740484335978197&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=http://67.82.130.92:7999/crowdluv/luv.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid']; ?></a>
 
         <br><br>
         <h1>Crowdluv Facebook tab:</h1>
-         <a href="https://www.facebook.com/dialog/pagetab?app_id=<?php echo FB_APP_ID; ?>&next=http://67.82.130.92:7999/crowdluv/talentdashboard.php?talentpageid=<?php echo $talentpageid;?>">
+         <a href="https://www.facebook.com/dialog/pagetab?app_id=<?php echo FB_APP_ID; ?>&next=http://67.82.130.92:7999/crowdluv/talentdashboard.php?crowdluv_tid=<?php echo $crowdluv_tid;?>">
             Click here</a> to add our tab to your facebook page <br>
-
+    
+    </div>
         
 
 
-    </div>
+    
 
 
 

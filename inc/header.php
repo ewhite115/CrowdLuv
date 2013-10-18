@@ -1,7 +1,9 @@
-<?php   //facebook php sdk
-
+<?php   
+  
+  require_once("inc/config.php");
   require_once("inc/cl_datafunctions.php");
   require_once("inc/cl_facebookinit.php");
+  
 ?>
 
 

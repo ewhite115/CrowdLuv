@@ -31,7 +31,6 @@ function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup
         echo "Data could not be inserted to the database. " . $e;
         return -1;
     }
-
 }
 
 function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
@@ -55,6 +54,68 @@ function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
     }
 }
 
+function update_crowdluv_follower_record($cl_fobj){
+
+    require(ROOT_PATH . "inc/database.php");
+
+    try {
+        $sql = "update follower set mobile='" . $cl_fobj['mobile'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+        echo $sql;
+        $results = $db->query($sql);
+        //var_dump($results);
+        //exit;
+        //$firstline = $results->fetch(PDO::FETCH_ASSOC);
+        //if(!$firstline) return 0;
+        //$tid = $firstline['crowdluv_tid'];
+        //echo "uid= (" . $uid . ")";
+        //return $tid;
+    } catch (Exception $e) {
+        echo "Data could not be retrieved from the database. " . $e;
+        return -1;//exit;
+    }
+    
+    //exit;
+}
+
+function get_talent_object_by_tid($cl_tidt){
+
+   require(ROOT_PATH . "inc/database.php");
+
+    try {
+        $sql = "select * from talent where crowdluv_tid=" . $cl_tidt . " LIMIT 0, 30 ";
+        $results = $db->query($sql);
+        $firstline = $results->fetch(PDO::FETCH_ASSOC);
+        if(!$firstline) return 0;
+        //$tid = $firstline['crowdluv_tid'];
+        //echo "uid= (" . $uid . ")";
+        return $firstline;
+    } catch (Exception $e) {
+        echo "Data could not be retrieved from the database. " . $e;
+        return -1;//exit;
+    }
+
+}
+function get_talents_array_by_uid($cl_uidt){
+//tbd......   db doesnt store or associate uid with talents
+}
+
+function get_follower_object_by_uid($cl_uidt){
+
+   require(ROOT_PATH . "inc/database.php");
+
+    try {
+        $sql = "select * from follower where crowdluv_uid=" . $cl_uidt . " LIMIT 0, 30 ";
+        $results = $db->query($sql);
+        $firstline = $results->fetch(PDO::FETCH_ASSOC);
+        if(!$firstline) return 0;
+        //$tid = $firstline['crowdluv_tid'];
+        //echo "uid= (" . $uid . ")";
+        return $firstline;
+    } catch (Exception $e) {
+        echo "Data could not be retrieved from the database. " . $e;
+        return -1;//exit;
+    }
+}
 
 function get_crowdluv_uid_by_fb_uid($follower_fb_uid){
 
@@ -76,7 +137,6 @@ function get_crowdluv_uid_by_fb_uid($follower_fb_uid){
         echo "Data could not be retrieved from the database. " . $e;
         return -1;
     }
-
 }
 function get_crowdluv_tid_by_fb_pid($follower_fb_pid){
 
@@ -94,7 +154,6 @@ function get_crowdluv_tid_by_fb_pid($follower_fb_pid){
         echo "Data could not be retrieved from the database. " . $e;
         return -1;//exit;
     }
-
 }
 
 function add_follower_to_talent($cl_uidt, $cl_tidt){
@@ -188,12 +247,29 @@ function get_followers_for_talent($cl_tidt) {
 }
 
 
+function print_top_cities($cl_tidt){
 
+    //next step.. print out top city dashboard
 
+    require(ROOT_PATH . "inc/database.php");
 
+    try {
+        $sql = "select location_fbname, count(location_fbname) from (SELECT follower.location_fbname FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
+            where talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc";
+        //echo $sql;
+        $results = $db->query($sql);
 
+    } catch (Exception $e) {
+        echo "Data could not be retrieved from the database. " . $e;
+        return -1;
+    }
 
-
+    echo "<table class='cldefaulttable'>";
+    while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
+        echo "<tr><td><img src='res/top-heart1.png' width='42px'></td><td>" . $row["location_fbname"] ."</td><td>" . $row['count(location_fbname)'] . " followers</td></tr>";
+    }
+    echo "</table>";
+}
 
 
 function get_products_recent() {
@@ -326,7 +402,6 @@ function get_products_all() {
  * @return   mixed    array    list of product information for the one matching product
  *                    bool     false if no product matches
  */
-
 
 function get_product_single($sku) {
 

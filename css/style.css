@@ -566,6 +566,8 @@ body {
     font-weight: normal;    
 }*/
 
+
+
 form {width: 375px; margin: 34px auto;}
 form tr {
     border: 1px solid #CCC;
@@ -696,6 +698,7 @@ form input[type="submit"] {
 
 }
 
+
 .crowdluv_landingpage_memberlogin_box {
     
     width: 500px;
@@ -742,6 +745,20 @@ This selector overrides that to limit the height */
     padding: 0 0 3px 0;
     margin: 0px 0px 0px 1px;
 }
+
+.cldefaulttable {
+    width: 375px; margin-bottom: 16px;
+    display:inline-block;
+}
+.cldefaulttable tr {
+    border: 1px solid #E7E5E6;
+    background: #fff;
+}
+.cldefaulttable td {
+    padding: 5px 5px;
+    border: 1px solid #E7E5E6;
+}
+
 
 
 

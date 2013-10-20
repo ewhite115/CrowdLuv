@@ -253,7 +253,7 @@ function print_top_cities($cl_tidt){
 
     try {
         $sql = "select location_fbname, count(location_fbname) from (SELECT follower.location_fbname FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
-            where talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc";
+            where talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 10";
         //echo $sql;
         $results = $db->query($sql);
 
@@ -262,11 +262,16 @@ function print_top_cities($cl_tidt){
         return -1;
     }
 
+    $cnt=1;
     echo "<table class='cldefaulttable'>";
+//    echo "<ul class='cl_topcities_ul'>";
     while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
-        echo "<tr><td><img src='res/top-heart1.png' width='42px'></td><td>" . $row["location_fbname"] ."</td><td>" . $row['count(location_fbname)'] . " followers</td></tr>";
+       //echo "<tr><td style='background: url(res/top-heart.png) center no-repeat;'>#1</td><td>" . $row["location_fbname"] ."</td><td>" . $row['count(location_fbname)'] . " followers</td></tr>";
+        echo "<tr><td style='position:relative;'><img src='res/top-heart.png'><div style='position:absolute;top:12;left:18;color:white;font-size:14px;'># " . $cnt++ . "</div></td><td>" . $row["location_fbname"] ."</td><td>" . $row['count(location_fbname)'] . " followers</td></tr>";
+//          echo "<li><p style='background: url(res/top-heart.png) center no-repeat;'>#1</p><p>" . $row["location_fbname"] ."</p><p>" . $row['count(location_fbname)'] . " followers</p></li>";
     }
     echo "</table>";
+    //echo "</ul>";
 }
 
 

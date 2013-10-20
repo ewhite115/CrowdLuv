@@ -192,16 +192,14 @@ function remove_follower_from_talent($cl_uidt, $cl_tidt){
 
     try {
 
-        //$cltmp = get_crowdluv_uid_by_fb_uid($follower_fb_uid);
-        //echo "cltmp=" . $cltmp;
         $sql = "update follower_luvs_talent set still_following=0 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
         //echo $sql; exit;
         $db->query($sql);
-        
+        return 1;   
 
     } catch (Exception $e) {
         echo "Data could not be retrieved from the database. " . $e;
-        exit;
+        return 0;
     }
 }
 

@@ -589,6 +589,37 @@ form td textarea {
     width: 100%;
 }
 form input[type="submit"] {
+/*    width: 375px;
+    text-align: center;
+    border: 1px solid #717171;
+    background: radial-gradient(ellipse farthest-corner, rgb(255, 255, 255), rgb(243, 240, 240) 80%, #DEDFE0 90%, white);
+    color: gray;
+    -webkit-border-radius: 2px;
+    border-radius: 20px;    
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 14px;*/
+}
+button {
+    text-align: center;
+    border: 1px solid #717171;
+    background: radial-gradient(ellipse farthest-corner, rgb(255, 255, 255), rgb(243, 240, 240) 80%, #DEDFE0 90%, white);
+    color: #464646;
+    -webkit-border-radius: 2px;
+    border-radius: 20px;    
+    font-size: 9px;
+   
+    padding: 6px;
+}
+
+
+
+.cluserinfoform {
+
+    font-size: 12px;
+}
+
+.cluserinfoform input[type="submit"] {
     width: 375px;
     text-align: center;
     border: 1px solid #717171;
@@ -600,6 +631,12 @@ form input[type="submit"] {
     text-transform: uppercase;
     padding: 14px;
 }
+
+
+
+
+
+
 .search form {
     width: auto;
     text-align: center;

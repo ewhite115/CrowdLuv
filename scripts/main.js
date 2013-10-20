@@ -7,9 +7,9 @@
   fb_me_response="";
 
 
-//This is the function that will get called when 
+//This is the function that will get called when fb.getloginstatus returns
   crowdluvFBDataLoader = function(lsresponse) {
-      console.log("entered fb.getloginstatus handler: " + lsresponse.status);
+      console.log("entered fb.getloginstatus handler: " + lsresponse.status + ":" + lsresponse);
       fb_loginstatus_response = lsresponse;
       if (lsresponse.status === 'connected') {
           console.log("FB response.status=connected");            

@@ -520,20 +520,6 @@ body {
 
 }
 
-.header:after {content:"";height:0;display:block;visibility:hidden;clear:both;}
-.header {background: #f0eeed; border-bottom: 5px solid #f0eeed; height:75px;}
-
-.branding-title {
-    /*float: left;*/    
-    height:65px;
-    background: white url(../res/cl_icon_trans_128.jpg) center no-repeat;
-    background-size: 122px 77px;
-    margin: 0px 0px 0px 0px;
-    font: 0/0 serif; 
-    text-shadow: none; color: white; 
-
-}
-
 
 #content {min-height: 400px; background: #f0eeed;}
 
@@ -721,17 +707,34 @@ button {
     background:#f0eeed;
     color: black;
     padding: 5px 5px 5px 5px;
-    text-align:center; 
-    width:60%; 
+    
     margin-left:auto;
     margin-right:auto;
+    vertical-align: top;
+}
+.crowdluvsection h1 {
+    font-style: bold;
+    font-size: 16px;
+    margin: 2px;
+}
+.crowdluvsection h2 {
+    font-style: bold;
+    font-size: 13px;
+    margin: 2px;
+}
+.crowdluvsection h3 {
+    font-style: bold;
+    font-size: 10px;
+    margin: 2px;
+}
+.crowdluvsection p {
+    font-size: 12px;
+    margin: 2px;
 
 }
-
-.crowdluvsection h1 {
-
-    font-style: bold;
-    font-size: 16px
+.crowdluvsection p2 {
+    font-size: 10px;
+    margin: 2px;
 
 }
 
@@ -763,18 +766,6 @@ This selector overrides that to limit the height */
     height: 60 !important;
 
 }
-/*
-.crowdluv_landingpage_memberlogin_box .fb_iframe_widget:after {
-    content:"You are currently using facebook as a page. Switch to your facebok user profile to use facebook login";
-    background-color:yellow;
-    color:red;
-    font-weight:bold;
-    
-    top:5;left: 5;
-    width:25;
-
-
-}*/
 
 .crowdluv_landingpage_memberlogin_box h1 {
     font-style: bold;
@@ -783,13 +774,17 @@ This selector overrides that to limit the height */
     margin: 0px 0px 0px 1px;
 }
 
+
+
 .cldefaulttable {
-    width: 375px; margin-bottom: 16px;
+    
+    margin-bottom: 3px;
     display:inline-block;
 }
 .cldefaulttable tr {
     border: 1px solid #E7E5E6;
     background: #fff;
+    
 }
 .cldefaulttable td {
     padding: 5px 5px;
@@ -797,6 +792,14 @@ This selector overrides that to limit the height */
 }
 
 
+.cl_cell {
+    display:inline-block;
+    margin-bottom:5px;
+    padding: 5px 5px;
+    border: 1px solid #E7E5E6;
+    background: #fff;
+
+}
 
 
 .fbtab_hero{
@@ -875,3 +878,56 @@ This selector overrides that to limit the height */
 
 }
 
+
+.cl_site_section_header {
+    background: white;
+    
+    height:auto;
+    padding-top:1px;
+    padding-bottom:5px;
+    padding-left:25px;
+    margin-bottom: 5px;
+}
+
+.cl_site_section_header img {
+    vertical-align: middle;
+    margin-right:35px;
+}
+
+.cl_sitesection_header_navigation{
+   
+    display:inline-block;
+    position:relative;
+    margin: auto;
+    padding:0px;
+    
+}
+.cl_sitesection_header_navigation ul {
+    padding: 0px;
+
+}
+
+.cl_sitesection_header_navigation li {
+    list-style: none;
+    display: inline-block;
+    margin: 2px 35px 2px 2px;
+    color: #373737;
+}
+.cl_sitesection_header_navigation li a {
+    display: inline-block;
+    text-decoration: none;
+    color: #373737;
+    font-size: 16px;
+    
+}
+
+
+.branding-title {
+    height:65px;
+    background: url(../res/crowdluv_logo_dark.jpg) center no-repeat;
+    background-size: 147px 35px;
+    margin: 0px 0px 0px 0px;
+    font: 0/0 serif; 
+    text-shadow: none; color: white; 
+
+}

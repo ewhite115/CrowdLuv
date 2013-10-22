@@ -1,12 +1,14 @@
 <?php 
     $pageTitle = "CrowdLuv";
-    $section = "home";
+    $CL_SITE_SECTION = "follower";
+
     require_once("inc/config.php");
     include(ROOT_PATH . 'inc/header.php'); 
 
     if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}
     if(! $fb_user) { echo "user is null"; exit; }
-    add_follower_to_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']);
+    add_follower_to_talent($CL_LOGGEDIN_USER_UID, $_GET['crowdluv_tid']);
+    
 
 ?>
 

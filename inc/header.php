@@ -21,10 +21,18 @@
 <body>
 
 <div id="fb-root"></div>
-
+  
 <div class="fullpagewrapper">
-	<div class="header">
-			<a href="<?php echo BASE_URL ?>"><div class="branding-title">	</div> </a>
-	</div>
+
+<?php  // add the correct section header here
+  if($CL_SITE_SECTION == "landing") {include(ROOT_PATH . "inc/cl_sitesection_header_landing.php");}
+  else if($CL_SITE_SECTION == "talent") {include(ROOT_PATH . "inc/cl_sitesection_header_talent.php");}
+  else if($CL_SITE_SECTION == "follower") {include(ROOT_PATH . "inc/cl_sitesection_header_follower.php");}
+
+
+?>
+
+
 
 	<div id="content">
+ 

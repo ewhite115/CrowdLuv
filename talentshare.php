@@ -14,29 +14,10 @@
 ?>
 
     <div class="crowdluvsection">
-        <h1><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s CrowdLuv dashboard </h1>
-
-        <img src='https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'><br>
-        <br>
-        
+        <h1><img src='https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'>
+        <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
     </div>
-    <div class="crowdluvsection">
 
-         <h1><?php $folst=get_followers_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']); echo count($folst) . " people luv you<br>";  ?></h1>
-         <?php 
-            foreach ($folst as $folt) {
-                echo '<img src="https://graph.facebook.com/'. $folt['fb_uid'] . '/picture?access_token=' . $facebook->getAccessToken() . '"> &nbsp;&nbsp';
-            }
-            //var_dump($folst);    
-         ?> 
-    </div>
-    <!-- 
-    <div class="crowdluvsection">
-        <h1>Top Cities</h1>
-        <?php include(ROOT_PATH . "inc/print_top_cities.php");?>
-
-    </div>
-    
 
     <div class="crowdluvsection">
 
@@ -51,7 +32,7 @@
             Click here</a> to add our tab to your facebook page <br>
     
     </div>
-     -->    
+        
 
 
     

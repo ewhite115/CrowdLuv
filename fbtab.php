@@ -5,7 +5,7 @@
 	require_once("inc/cl_datafunctions.php");
 
 	$pageTitle = "CrowdLuv";
-	$section = "home";
+	$CL_SITE_SECTION = "landing";
 	include(ROOT_PATH . 'inc/header.php'); 
 
 	//Get the object that fb passes in to tabs and decode it

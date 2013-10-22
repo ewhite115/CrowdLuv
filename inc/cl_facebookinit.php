@@ -41,7 +41,7 @@ require_once("inc/config.php");
       $CL_LOGGEDIN_USER_OBJ = get_follower_object_by_uid($CL_LOGGEDIN_USER_UID);
 
       //Now check for facebook pages the user is an administrator of,
-      //store them in 'global' var and add them to CL db if new
+      //add them to CL db if new, and store them in 'global' var 
       try{
         $fb_user_pages = $facebook->api('/me/accounts');
         if(sizeof($fb_user_pages['data'])==0){$fb_user_pages=null;}
@@ -50,8 +50,11 @@ require_once("inc/config.php");
           //Check to see if this talent exists in the cl db. If not, create a stub entry
           $cltid = get_crowdluv_tid_by_fb_pid($fbupg['id']);
           if(! $cltid) create_new_cl_talent_record_from_facebook_page_profile($fbupg);
+
           $CL_LOGGEDIN_TALENTS_ARR[$cnt] = get_talent_object_by_tid($cltid);
-          if(isset($_GET['crowdluv_tid'])) { if($CL_LOGGEDIN_TALENTS_ARR[$cnt]['crowdluv_tid'] == $_GET['crowdluv_tid']) { $CL_CUR_TGT_TALENT = $CL_LOGGEDIN_TALENTS_ARR[$cnt];}}
+          /*if(isset($_GET['crowdluv_tid'])) 
+            { if($CL_LOGGEDIN_TALENTS_ARR[$cnt]['crowdluv_tid'] == $_GET['crowdluv_tid'])
+             { $CL_CUR_TGT_TALENT = $CL_LOGGEDIN_TALENTS_ARR[$cnt];}}*/
           $cnt = $cnt + 1;
         }}    
       }catch (FacebookApiException $e) {
@@ -61,7 +64,9 @@ require_once("inc/config.php");
       }
 
   }//if fbUser
-  
-  
+
+
+  if(isset($_GET['crowdluv_tid'])) $CL_CUR_TGT_TALENT = get_talent_object_by_tid($_GET['crowdluv_tid']);
+
 
 ?>

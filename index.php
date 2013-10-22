@@ -1,10 +1,14 @@
 <?php 
 $pageTitle = "CrowdLuv";
-//$section = "home";
+$CL_SITE_SECTION = "landing";
 require_once("inc/config.php");
-include(ROOT_PATH . 'inc/header.php'); ?>
+include(ROOT_PATH . 'inc/header.php'); 
+//include(ROOT_PATH . "inc/cl_sitesection_header_landing.php");
+
+ ?>
 
 
+  
 
     <div class="section banner">
         <img src="res/crowdluv_landing_hero.jpg" />

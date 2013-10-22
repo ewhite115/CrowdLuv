@@ -1,7 +1,7 @@
 <?php 
 
     $pageTitle = "CrowdLuv";
-    $section = "home";
+    $CL_SITE_SECTION = "follower";
     require_once("inc/config.php");
     include(ROOT_PATH . 'inc/header.php');
 

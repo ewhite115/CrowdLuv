@@ -17,11 +17,11 @@ function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup
         //Update this line to insert any/all values from the user profile into db
         $f = $follower_fbup;
         //var_dump($f);exit;       
-        $fblocid=""; if(isset($f['location'])) {$fblocid=$f['location']['id']; $fblocname=$f['location']['name'];}
-        $fbemail=""; if(isset($f['email'])) $fbemail=$f['email'];
-        $fbrltsp=""; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
+        $fblocid="0"; $fblocname="Unspecified"; if(isset($f['location'])) {$fblocid=$f['location']['id']; $fblocname=$f['location']['name'];}
+        $fbemail="Unspecified"; if(isset($f['email'])) $fbemail=$f['email'];
+        $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
         date_default_timezone_set('America/New_York');
-        $fbbdate=""; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
+        $fbbdate="1900-01-01"; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
         $sql = "INSERT INTO follower (fb_uid,        location_fb_id,     location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
                               VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
         echo $sql;// exit;
@@ -224,6 +224,7 @@ function get_talents_for_follower($cl_uidt) {
     return $tals;
 }
 
+
 function get_followers_for_talent($cl_tidt) {
     
     require(ROOT_PATH . "inc/database.php");
@@ -244,10 +245,58 @@ function get_followers_for_talent($cl_tidt) {
     return $fols;
 }
 
+function get_followers_by_city_for_talent($cl_tidt, $city, $mileradius){
 
-function print_top_cities($cl_tidt){
+    require(ROOT_PATH . "inc/database.php");
 
-    //next step.. print out top city dashboard
+    try {
+
+        $sql = "SELECT follower.*  
+                FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid 
+                where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 and follower.location_fbname=? 
+                LIMIT 0, 30 ";
+        $results = $db->prepare($sql);
+        $results->bindParam(1,$cl_tidt);
+        $results->bindParam(2,$city);
+        $results->execute();
+    } catch (Exception $e) {
+        echo "Data could not be retrieved from the database." . $e;
+        return -1;
+    }
+    
+    $fols = $results->fetchAll(PDO::FETCH_ASSOC);    
+    return $fols;
+}
+
+
+
+function get_message_audience($cl_tidt, $city, $mileradius, $opts){
+
+    $msgaudience=array();
+    $fols = get_followers_by_city_for_talent($cl_tidt, $city, $mileradius);
+    //Now loop through the fols 
+
+    //$whereclause = "talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1 and follower.location_fbname=" . $city . " and(" ;
+
+    $whereopts= array();
+    foreach($opts as $opt){
+        if($opt=="female") $whereopts[]="follower.gender=female";
+        if($opt=="male") $whereopts[]="follower.gender=male";
+        if($opt=="relationship") $whereopts[]="follower.fb_relationship_status='In a relationship' or follower.fb_relationship_status='Married' or follower.fb_relationship_status='Engaged'";
+        if($opt=="single") $whereopts[]="follower.fb_relationship_status='Single' or follower.fb_relationship_status='Divorced'";
+        //TODO add whereopts for age
+
+    }
+    
+    //foreach ($whereopts as $whereopt) $whereclause = $whereclause . 
+    
+    return $msgaudience;
+
+
+}
+
+
+function get_top_cities_for_talent($cl_tidt){
 
     require(ROOT_PATH . "inc/database.php");
 
@@ -261,18 +310,92 @@ function print_top_cities($cl_tidt){
         echo "Data could not be retrieved from the database. " . $e;
         return -1;
     }
-
-    $cnt=1;
-    echo "<table class='cldefaulttable'>";
-//    echo "<ul class='cl_topcities_ul'>";
-    while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
-       //echo "<tr><td style='background: url(res/top-heart.png) center no-repeat;'>#1</td><td>" . $row["location_fbname"] ."</td><td>" . $row['count(location_fbname)'] . " followers</td></tr>";
-        echo "<tr><td style='position:relative;'><img src='res/top-heart.png'><div style='position:absolute;top:12;left:18;color:white;font-size:14px;'># " . $cnt++ . "</div></td><td>" . $row["location_fbname"] ."</td><td>" . $row['count(location_fbname)'] . " followers</td></tr>";
-//          echo "<li><p style='background: url(res/top-heart.png) center no-repeat;'>#1</p><p>" . $row["location_fbname"] ."</p><p>" . $row['count(location_fbname)'] . " followers</p></li>";
-    }
-    echo "</table>";
-    //echo "</ul>";
+    
+    $topcities= array();
+    while ($row = $results->fetch(PDO::FETCH_ASSOC)) { $topcities[] = $row; }
+    return $topcities;
 }
+
+function get_city_stats_for_talent($cl_tidt, $city, $mileradius){
+
+    require(ROOT_PATH . "inc/database.php");
+    $citystats = array();
+    $citystats['followercount']=0;
+    $citystats['female']=0;
+    $citystats['male']=0;
+    $citystats['relationship']=0;
+    $citystats['single']=0;
+    $citystats['12to17']=0;
+    $citystats['18up']=0;
+    $citystats['21up']=0;
+    $citystats['24to49']=0;
+    $citystats['signedup30']=0;
+    $citystats['signedup90']=0;
+    $citystats['signedup365']=0;
+
+    
+    $fols = get_followers_by_city_for_talent($cl_tidt, $city, $mileradius);
+    $citystats['followercount'] = sizeof($fols);
+
+    foreach($fols as $fol) {
+        
+        if($fol['gender'] == 'female')  $citystats["female"]++; 
+        if($fol['gender'] == 'male')  $citystats["male"]++; 
+        if($fol['fb_relationship_status'] == 'Single')  $citystats["single"]++; 
+        if($fol['fb_relationship_status'] == 'Divorced')  $citystats["single"]++;
+        if($fol['fb_relationship_status'] == 'In a relationship')  $citystats["relationship"]++;
+        if($fol['fb_relationship_status'] == 'Engaged')  $citystats["relationship"]++;
+        if($fol['fb_relationship_status'] == 'Married')  $citystats["relationship"]++;
+        //$bdate= strtotime($fol['birthdate']);
+        //$age= floor((time() - strtotime($bdate))/31556926;
+        $now = new DateTime();
+        $bdate=new DateTime($fol['birthdate']);
+        $age = $now->diff($bdate)->y;
+        if($age > 11 & $age < 18)  $citystats["12to17"]++; 
+        if($age > 17)  $citystats["18up"]++; 
+        if($age > 20)  $citystats["21up"]++; 
+        if($age > 23 & $age <50)  $citystats["24to49"]++; 
+        //TODO:  add 'new since last login'
+        $now = new DateTime();
+        $signupdate=new DateTime($fol['signupdate']);
+        $dayssincesignup = $now->diff($signupdate)->d;
+        if($dayssincesignup < 31)  $citystats["signedup30"]++; 
+        if($dayssincesignup < 91)  $citystats["signedup90"]++; 
+        if($dayssincesignup < 366)  $citystats["signedup365"]++; 
+
+    }
+
+    return $citystats; 
+}
+
+
+
+
+//might use this for calc distance
+function vincentyGreatCircleDistance(
+  $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)
+{
+      // convert from degrees to radians
+      $latFrom = deg2rad($latitudeFrom);
+      $lonFrom = deg2rad($longitudeFrom);
+      $latTo = deg2rad($latitudeTo);
+      $lonTo = deg2rad($longitudeTo);
+
+      $lonDelta = $lonTo - $lonFrom;
+      $a = pow(cos($latTo) * sin($lonDelta), 2) +
+        pow(cos($latFrom) * sin($latTo) - sin($latFrom) * cos($latTo) * cos($lonDelta), 2);
+      $b = sin($latFrom) * sin($latTo) + cos($latFrom) * cos($latTo) * cos($lonDelta);
+
+      $angle = atan2(sqrt($a), $b);
+      return $angle * $earthRadius;
+}
+
+
+
+
+
+
+
 
 
 function get_products_recent() {

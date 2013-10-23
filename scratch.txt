@@ -63,3 +63,12 @@ INSERT INTO follower (fb_uid) VALUES (29)
 
 
 
+
+
+    <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><?php echo $citystats['12to17'];?></td><td style="width:70%;"> Age Group 12-17</td><td><input type='checkbox' /></td></tr></table><br>
+            <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><?php echo $citystats['18up'];?></td><td style="width:70%;"> Age Group 18+</td><td><input type='checkbox' /></td></tr></table><br>
+            <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><?php echo $citystats['21up'];?></td><td style="width:70%;"> Age Group 21+</td><td><input type='checkbox' /></td></tr></table><br>
+            <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><?php echo $citystats['24to49'];?></td><td style="width:70%;"> Age Group 24-49</td><td><input type='checkbox' /></td></tr></table><br>
+        
+
+        

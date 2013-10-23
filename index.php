@@ -8,7 +8,8 @@ include(ROOT_PATH . 'inc/header.php');
  ?>
 
 
-  
+
+ 
 
     <div class="section banner">
         <img src="res/crowdluv_landing_hero.jpg" />

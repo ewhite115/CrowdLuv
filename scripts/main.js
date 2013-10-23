@@ -20,6 +20,8 @@
           // the user is logged in to Facebook, but has not authenticated your app
       } else {
           // the user isn't logged in to Facebook.
+          console.log("setting logged_out flag to 1")
+          
       }
       //Other pages might want to run code after we've checked FB login status and
       //populated global variables. 
@@ -37,6 +39,7 @@
       }); //end of call to fb.api /me
 
   }//crowluvFBDataLocader
+
 
 
   //This is the Facebook/JQuery code to initialize the FB object 
@@ -57,3 +60,4 @@
        // ** any FB SDK initialization goes above here (?)  **
     }); //end of $.getscript callback
 });//end of $document.ready handler 
+

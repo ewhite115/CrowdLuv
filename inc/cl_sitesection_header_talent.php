@@ -13,8 +13,10 @@
 	      <li><a href="#">Edit App</a></li>
 	      <li><a href="talentshare.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">Share</a></li>
 	      <li><a href="#">Feedback</a></li>
-	      <li><a href="talentdashboard.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">Account</a></li>
+	      <li><a href="talentdashboard.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">Account <img style="display:inline-block;width:20%;" src='https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></a></li>
+			
    		</ul>
+
 		</div>
 
 	</div>

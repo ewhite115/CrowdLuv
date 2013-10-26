@@ -1,6 +1,6 @@
 <?php
 
-require_once("inc/config.php");
+  require_once("inc/config.php");
   require_once("inc/cl_datafunctions.php");
   require_once("facebook-sdk/facebook.php");
 
@@ -19,8 +19,7 @@ require_once("inc/config.php");
   //If the user is logged-in to facebook, try to get their profile and 
   //page info from api and store in a 'global' variables
   if ($fb_user) {  // Proceed thinking you have a logged in user who's authenticated.
-
-      
+   
       //Check to se if this fb user exists in CL db.... Set a global variable containing the crowdluv_uid
       $CL_LOGGEDIN_USER_UID = get_crowdluv_uid_by_fb_uid($fb_user);
       //if new.. request profile info from facebook and create a stub entry based on available info

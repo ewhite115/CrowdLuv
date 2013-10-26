@@ -1,5 +1,5 @@
-    <form class="cluserinfoform" method="post" action="<?php echo BASE_URL; ?>updateuserinfo.php">
-       <table class="cldefaulttable cluserinfoform">
+    <form method="post" action="<?php echo BASE_URL; ?>updateuserinfo.php">
+       <table class="cldefaulttable">
             <tr><th><label for="name">Name</label></th>
                 <td>
                     <input type="text" name="name" id="name" value="<?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . ' ' , $CL_LOGGEDIN_USER_OBJ['lastname'];  ?>">

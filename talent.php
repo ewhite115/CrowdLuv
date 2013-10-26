@@ -31,7 +31,8 @@
 	<div class="fbtab_hero"> </div>
 	<div class="fbtab_section_inyourtown">
 		<h1>Want <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> in your town?</h1>
-		<a href="#" id="fbtab_cometomytown"><div class="fbtab_cometomytownbtn">YES! COME TO MY TOWN<br>.</div></a>
+		<a href="#" id="fbtab_cometomytown"><div class="fbtab_cometomytownbtn" id="fbtab_cometomytown">YES! COME TO MY TOWN<br>.</div></a>
+		
 		The more people near you who click, the sooner <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> will come. So, Share this button now on your timeline, in a group, via email, or in a private message<br>
 	</div>
 	<div class="fbtab_talentmessage">
@@ -47,20 +48,24 @@
 
 <script>             
  	//click-handler for the "come to my town" button
-    $("#fbtab_cometomytown").click(function () {
-	    FB.login(function(response) {
-	        if (response.authResponse) {
-	            console.log("User authorized - redirecting to luv.php");
-	            window.open('luv.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>', "_top").focus();
-	            return false;
-	          } //end if
-	          else {// The person cancelled the login dialog 
-	          	//TODO:  do something if the user declined the permissions?
-	          }//end else
-	      }, 
-	      {scope: "<?php echo CL_FB_PERMISSION_SCOPE_STRING; ?>"} 
-	    ); //end of fb.login() call
-	}); //end of .click() handler
+   	$(document).ready(function(){
+   		console.log("tal docready");
+	    $("#fbtab_cometomytown").click(function () {
+	    	console.log("clickhandl fired");
+		    FB.login(function(response) {
+		        if (response.authResponse) {
+		            console.log("User authorized - redirecting to luv.php");
+		            window.open('<?php echo BASE_URL;?>luv.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"];?>', "_top").focus();
+		            return false;
+		          } //end if
+		          else {// The person cancelled the login dialog 
+		          	//TODO:  do something if the user declined the permissions?
+		          }//end else
+		      }, 
+		      {scope: "<?php echo CL_FB_PERMISSION_SCOPE_STRING; ?>"} 
+		    ); //end of fb.login() call
+		}); //end of .click() handler
+	});
 </script>
 
 

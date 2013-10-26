@@ -21,10 +21,9 @@
         <br>We'll let <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?> know you want them to come to your town. 
         <br><br> Please confirm your contact information so that we can let you know when <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?> is coming to <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>
 
-
     </div>
 
-<?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
+    <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
   
 
 

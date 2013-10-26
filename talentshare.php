@@ -22,12 +22,17 @@
     <div class="crowdluvsection">
 
         <br>
-        <h1>Your Crowdluv link:</h1>
-         send this to your fans to let them Luv you: <br>
-        <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=http://67.82.130.92:7999/crowdluv/luv.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid']; ?>">https://www.facebook.com/dialog/oauth?client_id=740484335978197&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=http://67.82.130.92:7999/crowdluv/luv.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid']; ?></a>
+        <h1>Your Crowdluv Landing Page:</h1>
+         send this to your fans to link them to your landing page: <br>
+        <a href="<?php echo CLADDR;?>talent/<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid']; ?>"><?php echo CLADDR;?>talent/<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid']; ?></a>
 
         <br><br>
-        <h1>Crowdluv Facebook tab:</h1>
+        <h1>Your Crowdluv link:</h1>
+         send this to your fans to let them Luv you, skipping the landing page: <br>
+        <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid']; ?>">https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID;?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid']; ?></a>
+
+        <br><br>
+        <h1>Add Crowdluv tab to your Facebook Page:</h1>
          <a href="https://www.facebook.com/dialog/pagetab?app_id=<?php echo FB_APP_ID; ?>&next=http://67.82.130.92:7999/crowdluv/talentdashboard.php?crowdluv_tid=<?php echo $crowdluv_tid;?>">
             Click here</a> to add our tab to your facebook page <br>
     

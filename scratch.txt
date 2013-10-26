@@ -73,3 +73,6 @@ INSERT INTO follower (fb_uid) VALUES (29)
         
 
         
+
+ <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<?php echo GOOGLE_MAPS_APIKEY;?>&sensor=false"> </script>
+ 

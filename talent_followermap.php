@@ -11,46 +11,29 @@
     //if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;  }
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 
+    $topcities=get_top_cities_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+
+
 ?>
 
  
-
     <div class="crowdluvsection" style="text-align:justify;">
         <div style="display:inline-block">
-            <h1>Top Cities</h1>
-            <p>According to Quantity & Quality<br><br>
-            Include followers within 
-            <select>
-               <option value="5">5</option>
-               <option value="10">10</option>
-               <option value="20">20</option>
-               
-             </select>
-             miles of the city.</p>
+            <h1>Follower Map</h1>
+            <p></p>           
         </div>
-
-        <div style="display:inline-block;text-align:right;">
-            <h1><?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?></h1>
-            <img src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'>
-            
-        </div>
-
-            <?php include(ROOT_PATH . "inc/print_top_cities.php");?>
-        <br>
-        <button type="button">More Cities</button>
-        <br><br>
     </div>
 
 
-<div class="centerdiv  clwhitebg" style="width:95%; padding: 5px; ">
-    &nbsp;&nbsp;&nbsp;
-    <input type='checkbox' checked id="cb_showheatmap" /> Show Heatmap &nbsp;&nbsp;&nbsp;
-    <input type='checkbox' checked id="cb_showmarkers" /> Show Markers &nbsp;&nbsp;&nbsp; 
-    <input type='checkbox' checked id="cb_dissipating" /> Dissipating &nbsp;&nbsp;&nbsp;
-    <input type="text" id="txt_radius" size="2" value="45" /> Radius<br> 
-    <div id="CL_topfollower_googlemap"  />  
+    <div class="centerdiv  clwhitebg" style="width:95%; padding: 5px; ">
+        &nbsp;&nbsp;&nbsp;
+        <input type='checkbox' checked id="cb_showheatmap" /> Show Heatmap &nbsp;&nbsp;&nbsp;
+        <input type='checkbox' checked id="cb_showmarkers" /> Show Markers &nbsp;&nbsp;&nbsp; 
+        <input type='checkbox' checked id="cb_dissipating" /> Dissipating &nbsp;&nbsp;&nbsp;
+        <input type="text" id="txt_radius" size="2" value="45" /> Radius<br> 
+        <div id="CL_topfollower_googlemap"  />  
 
-</div>
+    </div>
 
   <br><br>
 

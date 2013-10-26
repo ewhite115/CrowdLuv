@@ -5,7 +5,7 @@
   require_once("facebook-sdk/facebook.php");
 
 
-  $CL_ACTIVE_MANAGED_TALENT = $_SESSION['ACTIVE_MANAGED_TALENT'];
+  if(isset($_SESSION['ACTIVE_MANAGED_TALENT'])) $CL_ACTIVE_MANAGED_TALENT = $_SESSION['ACTIVE_MANAGED_TALENT'];
   echo "SESSION['fb_user']=" . $_SESSION['fb_user'] . "; "; 
 
 

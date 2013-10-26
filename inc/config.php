@@ -21,6 +21,11 @@
 	define("CL_FB_TALENT_PERMISSION_SCOPE_STRING", "email,user_location,user_birthday,user_relationship_details,user_relationships,manage_pages");
 	define("CL_DEBUG_MODE", "1");
 
+
+
+	define("GOOGLE_MAPS_APIKEY", "AIzaSyBc6n2vRhj6szWhvDeTtzBNY1kiDAyJMuo");
+
+
 	function cldbgmsg($debugmessage){
 		if(CL_DEBUG_MODE) echo $debugmessage;
 

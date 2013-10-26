@@ -9,7 +9,7 @@
 		<div class="cl_sitesection_header_navigation">
 		<ul>
 	      <li><a href="topcities.php">Top Cities</a></li>
-	      <li><a href="#">Map</a></li>
+	      <li><a href="talent_followermap.php">Map</a></li>
 	      <li><a href="#">Edit App</a></li>
 	      <li><a href="talentshare.php">Share</a></li>
 	      <li><a href="#">Feedback</a></li>

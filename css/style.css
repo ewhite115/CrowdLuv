@@ -850,3 +850,19 @@ input[type="submit"], button {
 
 }
 
+#CL_topfollower_googlemap {
+
+    height:625px;
+    padding:10px;
+
+}
+.centerdiv {
+
+    margin-left:auto;
+    margin-right:auto;
+
+}
+
+a {
+    color:darkred;
+}

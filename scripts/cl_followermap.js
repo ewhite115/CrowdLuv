@@ -6,8 +6,10 @@
     var heatmapdata = new Array();
     var heatmap= new google.maps.visualization.HeatmapLayer({data: heatmapdata});
     var topcitymarkers = new Array();
+    var infowindowlist = new Array();
+    var dissipating=true;
 
-    function initializeMap() {
+    function initializeCLMap() {
 
         geocoder = new google.maps.Geocoder();
         
@@ -16,12 +18,11 @@
           zoom: 2,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-        map = new google.maps.Map(document.getElementById("CL_topfollower_googlemap"), mapOptions);
-             
+        map = new google.maps.Map(document.getElementById("CL_topfollower_googlemap"), mapOptions);           
 
     }
 
-   function addTopCity(address, followercount) {
+   function addTopCityToCLMap(address, followercount) {
         
         geocoder.geocode( { 'address': address}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {                
@@ -42,7 +43,11 @@
                 topcitymarkers.push(marker);
                 var contentString = address + "<br> " + followercount + " followers";
                 var infowindow = new google.maps.InfoWindow({content: contentString});
+                infowindowlist.push(infowindow);
                 google.maps.event.addListener(marker, 'click', function() {
+                    //TOO: close the infowindow for all other markers
+                    for(var i=0; i< infowindowlist.length;i++){ infowindowlist[i].close(); }
+                
                     infowindow.open(map,marker);
                 });
 
@@ -52,7 +57,8 @@
         });
     }
 
-   function setCenter(address) {        
+
+   function setCLMapCenter(address) {        
         geocoder.geocode( { 'address': address}, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
             map.setCenter(results[0].geometry.location);
@@ -62,33 +68,13 @@
         });
     }
 
-    
-    
+    toggleCLHeatmap = function() {heatmap.setMap(heatmap.getMap() ? null : map);  };
+    toggleCLMarkers = function() {for(var i=0;i<topcitymarkers.length;i++) { topcitymarkers[i].setMap(topcitymarkers[i].getMap() ? null : map);}};
+    toggleCLMapDissipating = function() {heatmap.setOptions({dissipating: dissipating = !dissipating }); };
+
     function changeRadius(radius) {
       //heatmap.setOptions({radius: heatmap.get('radius') ? null : radius});
       heatmap.setOptions({ radius: radius});
     }
 
-    $(document).ready(function(){
-        initializeMap();
-        $("#cb_showheatmap").change(function() {
-            //console.log("toggleheatmap fired");console.log(heatmap);
-            heatmap.setMap(heatmap.getMap() ? null : map);
-        });
-
-        $("#cb_showmarkers").change(function() {
-            //console.log("togglecitymarkers fired");//console.log(heatmap);
-            for(var i=0;i<topcitymarkers.length;i++) { topcitymarkers[i].setMap(topcitymarkers[i].getMap() ? null : map);}
-        });
-
-        $("#txt_radius").change(function() {
-            heatmap.setOptions({radius: parseInt($("#txt_radius").val())});
-        });
-
-        $("#cb_dissipating").change(function() {
-            heatmap.setOptions({dissipating: $("#cb_dissipating").is(':checked') });
-        });
-
-
-
-    });
+    

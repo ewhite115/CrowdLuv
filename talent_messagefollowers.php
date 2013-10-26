@@ -8,17 +8,18 @@ include(ROOT_PATH . 'inc/header.php');
 
 if(! $fb_user) { echo "user is null"; exit;  } 
 if(! $fb_user_pages) { echo "fb_user_pages is null";   }
-if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;  }
+//if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;  }
+if(! isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 if(! isset($_GET['city'])) {echo "no city passed in"; exit;  }
 $city=$_GET['city'];
 
-$citystats= get_city_stats_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid'], $city, 5)
+$citystats= get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $city, 5)
 
 ?>
 
  
     <div class="crowdluvsection"> 
-        <h1>Message Followers - <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?><img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></h1>
+        <h1>Message Followers - <?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?><img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></h1>
         <br> 
     </div>
     
@@ -141,7 +142,7 @@ $citystats= get_city_stats_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid'], $city,
         $("#modal_retrievinginfo").show();  
  
         var qopts = { 
-            crowdluv_tid: "<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>", 
+            crowdluv_tid: "<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>", 
             city: working_targetset.areaname, 
             distance: working_targetset.distance,
             fromafar: new String(working_targetset.fromafar) 

@@ -43,7 +43,7 @@ include(ROOT_PATH . 'inc/header.php');
         else{  //logged in with manage_page permissions
             echo "<h1>Manage your talent accounts</h1><p>";
             foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){                
-                echo '<a href="talentdashboard.php?crowdluv_tid=' . $cltalentobj['crowdluv_tid'] . '">';    
+                echo '<a href="talentdashboard.php?crowdluv_tid=' . $cltalentobj['crowdluv_tid'] . '&activemanagedtalent_tid=' . $cltalentobj['crowdluv_tid'] .'">';    
                 echo '<img src="https://graph.facebook.com/'. $cltalentobj['fb_pid'] . '/picture?access_token=' . $facebook->getAccessToken() . '"> &nbsp;&nbsp' . $cltalentobj['fb_page_name'] . "<br>";
                 echo '</a>';
                 

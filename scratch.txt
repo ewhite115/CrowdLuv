@@ -76,3 +76,27 @@ INSERT INTO follower (fb_uid) VALUES (29)
 
  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<?php echo GOOGLE_MAPS_APIKEY;?>&sensor=false"> </script>
  
+
+
+            echo "<h1>Follower Login</h1>Sign in to CrowdLuv with your facebook account to follow your favorite talent and find new luvs<br><br>";
+            echo '<a href="' . $facebook->getLoginUrl() . '">alt login </a>'; 
+            echo '<div style="height:70;" class="fb-login-button" data-width="200" scope="' . CL_FB_PERMISSION_SCOPE_STRING . '" onlogin="location.reload(true);" size="medium" id="fbfollowerlogin"></div>';
+            //echo "<fb:login-button show-faces=\"false\" width=\"300\" max-rows=\"1\"></fb:login-button>";
+
+
+
+<img src='https://graph.facebook.com//picture?access_token=<?php echo $facebook->getAccessToken();?>'>
+
+
+      <img src='https://graph.facebook.com/<?php echo $fbid;?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'>
+  
+
+
+https://graph.facebook.com/661469737211316/picture?access_token=CAAKhd3HOxtUBADJdYbK5TDrrAwl9nlU95Ryt1MPrOzyZC1EjkGgvmEJz5BFxiHNq8jG7muboh4DHEtKXy4IY3pGIZBzaQqXNxUoFAZA3er1M1Im3XpF6n6mJuklraYuqEnHfGvZBEEPWyEnNrDhS3ZCQCWT6TsfJYX3ZAlKlAuWpUL7WyF2NEmaeDNX6JNVHEZD
+
+
+
+OAuthException: An active access token must be used to query information about the current user.
+
+http://www.devils-heaven.com/facebook-access-tokens/
+https://developers.facebook.com/docs/facebook-login/access-tokens/

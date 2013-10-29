@@ -6,8 +6,7 @@
 
 
   if(isset($_SESSION['ACTIVE_MANAGED_TALENT'])) $CL_ACTIVE_MANAGED_TALENT = $_SESSION['ACTIVE_MANAGED_TALENT'];
-  echo "SESSION['fb_user']=" . $_SESSION['fb_user'] . "; "; 
-
+  echo "CL_SESSION['fb_user']=" . $_SESSION['fb_user'] . "  ***  COOKIE['PHPSESSID']" . $_COOKIE["PHPSESSID"] ;//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
 
 
   $fbconfig = array();
@@ -21,7 +20,7 @@
   //Check for facebook Get User ID
   
   $fb_user = $facebook->getUser();
-  echo "facebook->getUser():"; var_dump($fb_user);
+  echo "  *** facebook->getUser():"; var_dump($fb_user);
   
   //If the user is logged-in to facebook, try to get their profile and 
   //page info from api and store in a 'global' variables
@@ -37,7 +36,7 @@
             $fb_user_profile = $facebook->api('/me');  //var_dump($fb_user_profile); 
           } catch (FacebookApiException $e) {
             //error_log($e);
-            cldbgmsg("FacebookAPIException in cl_facebookinit.php requesting new user info:  " . $e);
+            cldbgmsg("FacebookAPIException in cl_facebookinit.php requesting new user info:  " . $e);// var_dump($e);
             $fb_user = null;
           }
 
@@ -60,10 +59,21 @@
           $CL_LOGGEDIN_TALENTS_ARR[] = get_talent_object_by_tid($cltid);
       
         }}    
-      }catch (FacebookApiException $e) {
-        
-        echo "FacebookAPIException in cl_facebookinit.php requesting page info:  " . $e;
+      }catch (FacebookApiException $e) {        
+        echo "FacebookAPIException in cl_facebookinit.php requesting page info:  " . $e; //var_dump($e);
         $fb_user_pages = null;
+
+        if(isset($_GET["expfbtoken"]) ) {  echo "<BR>Redirected home due to facebookexception (?expired fb token?)"; } 
+        else {
+        header('Location: ' . CLADDR . "?expfbtoken=1" ); 
+        //********  trying this for handling epxpired tokens
+        $loginUrl = $facebook->getLoginUrl() . "&expfbtoken=1";
+        echo "loginurl: " . $loginUrl;
+        //header('Location: ' . $loginUrl );
+        //echo "<script type='text/javascript'>top.location.href = '$loginUrl';</script>";
+      }
+        
+
       }
 
   }//if fbUser

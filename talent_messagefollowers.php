@@ -25,32 +25,46 @@ $citystats= get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'],
     
     <br>
     
-    <div class="crowdluvsection clwhitebg" style="display:inline-block;max-width:50%">
-        <h1>Step 1: Choose your audience</h1>           
+    <div class="crowdluvsection clwhitebg" style="display:inline-block;max-width:50%;min-width:300px;">
+        <h1>Step 1: Choose your target audience(s)</h1>           
         <p id="p_targetgroups">Add one of more target groups for this message by selecting the demographics you would like to target</p>
         <br>
-        <button type="button" id="btn_addATargetGroup">Add a target group</button>
-        <hr>
-        <h2> The message will deliver to:</h2>
-         <p id="p_messageaudience"> You have not selected any target groups yet.</p>
-        <br><br>
+        <button type="button" id="btn_addATargetGroup">Add a target group</button><br>
+        <br>
+
     </div>
     
-    <div class="crowdluvsection" style="display:inline-block;">
-        <h1>Step 2: Send your message</h1>
+    <div class="crowdluvsection clwhitebg" style="display:inline-block;max-width:50%;min-width:300px;">
+        <h1>Step 2: Compose your message</h1>
         <p><input type="checkbox" /> Text Message &nbsp;&nbsp; &nbsp;  <input type="checkbox"> Email Message</p>
-        <textarea rows='10' cols='45' style="display:inline-block;" > </textarea>
+        <textarea rows='10' cols='25' style="box-sizing:border-box;width:90%;margin-left:auto;margin-right:auto;background-color:#ddd;" > </textarea>
+ 
+    </div>
 
-        <br> <button type='button'>Send Message</button>
-        <br><br>
-        <h3>Cost to send:</h3>
-         <p2>nnn credits</p2>
-        <h3>Your current balance</h3>
-         <p>nnn credits (get more)</p2><br><br>
+
+    <div class="crowdluvsection clwhitebg" style="display:inline-block;max-width:50%;min-width:300px;">
+
+        <h1>Step 3: Send your message</h1>
+
+        <h2> The message will deliver to:</h2>
+         <p id="p_messageaudience"> You have not selected any target groups yet.</p>
+        <br>
+        <hr>                
+        <div class="crowdluvsection" style="display:inline-block;width:40%;">        
+            <h3>Cost to send:</h3>
+             <p2>nnn credits</p2>
+        </div>
+        <div class="crowdluvsection" style="display:inline-block;width:40%;">        
+            <h3>Your current balance</h3>
+             <p>nnn credits (get more)</p2><br><br>
+        </div>
+        <hr>
+
+        <button type='button'>Send Message</button><br>
+        <br>
 
 
     </div>
-
 
  
 

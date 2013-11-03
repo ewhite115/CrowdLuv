@@ -1,13 +1,9 @@
 
+	<div class="header cl_site_section_header">
 
-	<div class="cl_site_section_header">
+		<img width="35px" id="cl_navicon" class="threebarnav" src="<?php echo BASE_URL;?>res/3bar-nav.jpg">
 
-		<a href="<?php echo BASE_URL;?>">
-			<img src="<?php echo BASE_URL;?>res/crowdluv_logo_dark.jpg">
-		</a>
-
-		
-		<ul class="cl_sitesection_header_navigation">
+		<ul id="cl_nav" class="nav nav-pills ">
 	      <li><a href="topcities.php">Top Cities</a></li>
 	      <li><a href="talent_followermap.php">Map</a></li>
 	      <li><a href="#">Edit App</a></li>
@@ -17,8 +13,24 @@
 			
    		</ul>
 
-		
+
+
+
+		<a href="<?php echo BASE_URL;?>">
+			<img id="cl_nav_logo" src="<?php echo BASE_URL;?>res/crowdluv_logo_dark.jpg">
+		</a>
 
 	</div>
 
+
 	
+	<script>
+	//Click handler for the mobile navicon
+	$(document).ready(function(){
+		$("#cl_navicon").click(function(){
+
+			$("#cl_nav").toggle();
+		});
+
+	});
+	</script>

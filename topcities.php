@@ -44,9 +44,6 @@
 
 
 
-<?php include(ROOT_PATH . 'inc/cl_followermap_partial.php') ?>
-
-
 
 
 

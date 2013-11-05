@@ -1,5 +1,6 @@
 <?php
 
+
     // these two constants are used to create root-relative web addresses
     // and absolute server paths throughout all the code
 
@@ -26,7 +27,3 @@
 	define("GOOGLE_MAPS_APIKEY", "AIzaSyBc6n2vRhj6szWhvDeTtzBNY1kiDAyJMuo");
 
 
-	function cldbgmsg($debugmessage){
-		if(CL_DEBUG_MODE) echo $debugmessage;
-
-	}

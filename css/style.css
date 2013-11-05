@@ -44,6 +44,10 @@ body{
  
 .cl_site_section_header {
     background: white;   
+    background-image: url("../res/crowdluv_logo_dark.jpg") ;
+    background-position: left center;
+    background-repeat: no-repeat;
+    min-height:40px;
     /*height:auto;*/
     padding-top: 1.1%;
     padding-bottom: 1.1%;
@@ -57,25 +61,43 @@ body{
     float:right;
 
 }
-/* make sure the logo on landing-section headers is centered */
-.cl_site_section_header.landing img {
-    display:block;
-    margin-right: auto;  /* 35/900px */
-    margin-left: auto;
+/* for desktoip mode, make sure the logo on landing-section headers is centered */
+.cl_site_section_header.landing {
+    background-position: center center;
+    min-height:50px;
     
 }
+
+/*Make the logo in the banners clickable on desktop mode*/
+.cl_site_section_header #cl_header_link {
+    position:absolute;
+    display:inline-block;
+    background:none;
+    height:40px;
+    width:20%;  /*needs to be less wide to not interfere with nav */
+    /*top:5%;*/
+    left:5%;
+    margin: 0 auto;
+}
+/*Make the logo in the  landing-page banner clickable on desktop mode*/
+.cl_site_section_header.landing #cl_header_link {    
+    left:35%;
+    width:35%; /*can be wider on landing page since no nav */
+    
+}
+
 
 .cl_site_section_header .threebarnav {
     display:none;
 
 }
 
-/* At under 685px,   */
-@media screen and (max-width: 685px){
+/* At under 768px,   */
+@media screen and (max-width: 768px){
 
             /*change color of header to grey*/
             .cl_site_section_header {
-                background-color: #343235;
+                background-color: #303032;
                 background-image: url("../res/crowdluv-mobile-logo.jpg");
                 background-position: center center;
                 background-repeat: no-repeat;
@@ -90,17 +112,17 @@ body{
                 clear:both;
 
             }
-            /* adjust display of navigation */
+            /* adjust display of navigation from across the top to being a drop-down*/
             .cl_site_section_header #cl_nav {
                 display: none;
                 float:left;
                 clear:both;
                 z-index: 10;
-                background-color:#343235;
+                background-color:#3B393C;
                 color:white;   
                 position:relative; 
-                top:0px;
-                left:0px;
+                top:5px;
+                left:-5px;
                 
                 border: 1px solid black;
 
@@ -117,20 +139,26 @@ body{
             .cl_site_section_header #cl_nav li a:hover {
                 background-color: red;
             }
-            .cl_site_section_header #cl_nav_logo {          
-                display:none;
-                /*margin-right: auto;  /* 35/900px */
-                /*margin-left: auto;*/
-            }       
-
-
+           
+                
+            /*Adjust the link on the header banner logos for small-screen*/
+            .cl_site_section_header #cl_header_link {
+                
+                height:35px;
+                min-width:200px;
+                width:50%;
+                left:20%;
+                
+            }
+        
+            /* Change the full page wrapper to be full screen */
             .CL_fullpagewrapper {
                 width: 100%;
                 
                 background:#f4f4f4; /*#f0eeed;*/
                 /*margin-left:auto;*/
                 /*margin-right:auto;*/
-                /*margin-top: 1.666%;    /* 15/900px */ */
+                margin-top: 0px;    
                 /*margin-bottom: 2.777%;*/
                 margin:0px;
                 padding: 0px 0px 1px 0px;    /*  25/900px   */
@@ -167,6 +195,21 @@ body{
     max-height: 215px;
     min-height: 215px;*/
     height:215px;
+
+    margin: 0 auto;
+    
+}
+
+#CL_landingpage_jumbotron video {
+    /*display:block;*/
+  
+    height:215px;
+    /*width:280px;
+    max-width:400px;
+    min-width:250px;
+    max-height: 215px;
+    min-height: 215px;*/
+    
 
     margin: 0 auto;
     
@@ -215,7 +258,7 @@ body{
 
 }
 .crowdluvsection p2 {
-    font-size: 12px;
+    font-size: 10px;
     margin: .222%;
 
 }

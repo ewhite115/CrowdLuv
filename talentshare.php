@@ -14,8 +14,8 @@
 ?>
 
 
-    <div class="fluid-row crowdluvsection">
-        <div class="col-xs-12">
+    <div class="fluid-row">
+        <div class="col-xs-12 col-sm-12 crowdluvsection">
             <br>
             <h1>Share Your Button</h1>
             <p>Get More Luv!</p>
@@ -33,8 +33,10 @@
                         <img width="33%" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg"></a> 
                 <br>
                 <p>2)Pick an image to post on your timeline</p> 
-                    <img width="33%" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg">
-                <br>
+                    <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/cl_icon_trans_128.jpg">
+                    <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg">
+                    <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
+                <br><br>
                 <p>3)Post a status update with this link and your own message</p>
                 <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
     
@@ -43,7 +45,9 @@
             <h1>Twitter</h1>
                 <p>Two ways to share</p><br>
                 <p>1)Pick an image to tweet</p> 
-                    <img width="33%" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg">
+                    <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg">
+                    <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/cl_icon_trans_128.jpg">
+                    <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
                 <br>
                 <p>2)Post a status update with this link and your own message</p>
                 <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
@@ -53,10 +57,16 @@
         <div id="sharecol3" class="col-sm-6 col-md-3 clwhitebg crowdluvsection">
             <h1>Your Mailing List</h1>
             <br>
-            <p>Send an email to your mailing list</p>
+            <p>Send an email to your mailing list</p><br>
+            <p2>Want me to come to your town? The more people near you who say yes, the sooner I can get there. Please share this link on Facebook, Twitter, and forward this email to your friends
+                <br>
+                <br>
+                            <a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"><?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?></a>
+
+            </p2>
             <br>
 
-            <a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Check out my Crowdluv page</a>
+
         </div>
 
         <div id="sharecol4" class="col-sm-6 col-md-3 clwhitebg crowdluvsection">
@@ -65,9 +75,9 @@
             <p>Copy and paste the HTML below into your website</p>
             <br>
             <div class="cl_graybackground cl_grayborder">
-                <p>
+                <p2>
                 &lt;p&gt;&lt;a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"&gt;Check out my Crowdluv page&lt;/a&gt;&lt;/p&gt;
-                </p>
+                </p2>
             </div>
             <br>
             <h1>Other</h1>

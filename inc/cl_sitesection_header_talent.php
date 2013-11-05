@@ -14,11 +14,7 @@
    		</ul>
 
 
-
-
-		<a href="<?php echo BASE_URL;?>">
-			<img id="cl_nav_logo" src="<?php echo BASE_URL;?>res/crowdluv_logo_dark.jpg">
-		</a>
+   		<a id="cl_header_link" href="<?php echo BASE_URL;?> "></a>
 
 	</div>
 

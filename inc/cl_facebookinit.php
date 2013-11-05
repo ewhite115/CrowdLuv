@@ -5,10 +5,28 @@
   require_once("facebook-sdk/facebook.php");
 
 
+
+  $_SESSION["debugmsgs"] = "";
+  function cldbgmsg($debugmessage){
+    //echo "dumping array before:)"; var_dump($debugmsgs);
+    //array_push($dbgmsgs, $debugmessage);
+    //echo "adding " . $debugmessage;
+    $_SESSION["debugmsgs"][] = $debugmessage;
+
+    //if(CL_DEBUG_MODE) echo $debugmessage;
+    //var_dump($debugmsgs);
+
+  }
+
+
+
+
   if(isset($_SESSION['ACTIVE_MANAGED_TALENT'])) $CL_ACTIVE_MANAGED_TALENT = $_SESSION['ACTIVE_MANAGED_TALENT'];
-  echo "CL_SESSION['fb_user']=" . $_SESSION['fb_user'] . "  ***  COOKIE['PHPSESSID']" . $_COOKIE["PHPSESSID"] ;//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
+  if(isset($_SESSION['fb_user'])) { cldbgmsg("CL_SESSION['fb_user']=" . $_SESSION['fb_user']);} else { cldbgmsg("CL_SESSION['fb_user'] not set");}
+  if(isset($_COOKIE["PHPSESSID"])) { cldbgmsg("COOKIE['PHPSESSID']" . $_COOKIE["PHPSESSID"]) ;} else { cldbgmsg("PHPSEESID cookie doesnt exist");}//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
+  //echo "CL_SESSION['fb_user']=" . $_SESSION['fb_user'] . "  ***  COOKIE['PHPSESSID']" . $_COOKIE["PHPSESSID"] ;//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
 
-
+  $dbgmsgs = array();
   $fbconfig = array();
   $fbconfig['appId'] = FB_APP_ID;
   $fbconfig['secret'] = FB_APP_SECRET;
@@ -20,7 +38,8 @@
   //Check for facebook Get User ID
   
   $fb_user = $facebook->getUser();
-  echo "  *** facebook->getUser():"; var_dump($fb_user);
+  //echo "  *** facebook->getUser():"; var_dump($fb_user);
+  cldbgmsg("  *** facebook->getUser():" . $fb_user); //var_dump($fb_user);
   
   //If the user is logged-in to facebook, try to get their profile and 
   //page info from api and store in a 'global' variables
@@ -60,10 +79,10 @@
       
         }}    
       }catch (FacebookApiException $e) {        
-        echo "FacebookAPIException in cl_facebookinit.php requesting page info:  " . $e; //var_dump($e);
+        cldbgmsg("FacebookAPIException in cl_facebookinit.php requesting page info:  " . $e); //var_dump($e);
         $fb_user_pages = null;
 
-        if(isset($_GET["expfbtoken"]) ) {  echo "<BR>Redirected home due to facebookexception (?expired fb token?)"; } 
+        if(isset($_GET["expfbtoken"]) ) {  cldbgmsg("<BR>Redirected home due to facebookexception (?expired fb token?)"); } 
         else {
         header('Location: ' . CLADDR . "?expfbtoken=1" ); 
         //********  trying this for handling epxpired tokens

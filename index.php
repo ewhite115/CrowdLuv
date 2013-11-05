@@ -11,8 +11,21 @@ include(ROOT_PATH . 'inc/header.php');
 
 <div class= "fluid-row" id="CL_landingpage_jumbotron">
     
-      <div class="col-xs-12 col-sm-6 ">
-        <img class="img-responsive" src="res/vid-comingsoon.png" />
+      <div class="col-xs-12 col-sm-6 text-center">
+
+
+
+        <!-- <img class="img-responsive" src="res/vid-comingsoon.png" /> -->
+
+        <video controls>
+           <source src="res/cyn-intro.mp4" type="video/mp4">
+           <source src="res/cyn-intro.ogv" type="video/ogg">
+           <object data="res/cyn-intro.mp4">
+             <embed src="res/cyn-intro.swf">
+           </object> 
+        </video> 
+
+        
       </div>
       
       <div class="col-sm-6 hidden-xs">
@@ -37,10 +50,11 @@ include(ROOT_PATH . 'inc/header.php');
         <p>Sign in to CrowdLuv with your facebook account to follow your favorite talent and find new luvs</p><br>
         <a href="<?php echo $facebook->getLoginUrl($folparams);?>"><img width="60%" class="img-responsive" src="<?php echo BASE_URL;?>/res/signin-facebook.jpg" /> </a>
         <br>        
+        <?php if(isset($CL_LOGGEDIN_USER_OBJ)){ ?>
          <h1>Welcome back to CrowdLuv, <?php echo $CL_LOGGEDIN_USER_OBJ['firstname'];?>!</h1> 
          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
          <p>You have Luv'ed <a href='followerdashboard.php'><?php echo count(get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
-        
+        <?php } ?>
     </div>
     <div class="col-xs-4 col-md-5 crowdluvsection crowdluv_landingpage_memberlogin_box clwhitebg" >
         <h1>Talent Sign-in / Registration</h1>

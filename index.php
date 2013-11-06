@@ -12,11 +12,7 @@ include(ROOT_PATH . 'inc/header.php');
 <div class= "fluid-row" id="CL_landingpage_jumbotron">
     
       <div class="col-xs-12 col-sm-6 text-center">
-
-
-
         <!-- <img class="img-responsive" src="res/vid-comingsoon.png" /> -->
-
         <video controls>
            <source src="res/cyn-intro.mp4" type="video/mp4">
            <source src="res/cyn-intro.ogv" type="video/ogg">

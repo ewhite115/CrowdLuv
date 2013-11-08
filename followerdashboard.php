@@ -24,14 +24,16 @@
 
     </div>
 
+    
     <div class="fluid-row">
         <div class="col-sm-7">
+            <form method="post" action="<?php echo BASE_URL; ?>updateuserinfo.php">
             <div class="clwhitebg crowdluvsection">
                 <h2>Contact Settings</h2>
                 <div class="row">
                     <div class="col-ms-5">
                         <p>Email Address</p>
-                        <input type="text" value="<?php echo $CL_LOGGEDIN_USER_OBJ['email'];?>"></input>
+                        <input class="cl_graybackground" type="text" name="email" id="email" value="<?php echo $CL_LOGGEDIN_USER_OBJ['email'];?>"></input>
                     </div>
                     <div class="col-ms-7">
                         <p>Allow CrowdLuv Contact?</p>
@@ -44,7 +46,7 @@
                 <div class="row">
                     <div class="col-ms-5">
                         <p>Phone Number</p>
-                        <input type="text" value="<?php echo $CL_LOGGEDIN_USER_OBJ['mobile'];?>"></input>
+                        <input class="cl_graybackground" type="text" name="mobile" id="mobile" value="<?php echo $CL_LOGGEDIN_USER_OBJ['mobile'];?>"></input>
                     </div>
                     <div class="col-ms-7">
                             <p></p>
@@ -53,12 +55,26 @@
                         <p2><input type="radio" value="None" >None</input></p2>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <br><label for="firstname">Name</label><input size="10" class="cl_graybackground" type="text" name="firstname" id="firstname" value="<?php echo $CL_LOGGEDIN_USER_OBJ['firstname'];?>"><input size="10" class="cl_graybackground" type="text" name="lastname" id="lastname" value="<?php echo $CL_LOGGEDIN_USER_OBJ['lastname'];?>">
+                        <br><label for="city">Your City</label><input class="cl_graybackground" type="text" name="city" id="city" value="<?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>" disabled></td>
+                        <br><label for="birthdate">Birth date</label><input class="cl_graybackground" type="text" name="birthdate" id="birthdate" disabled value="<?php echo $CL_LOGGEDIN_USER_OBJ['birthdate'];  ?>">
+                        <br><label for="rltsp">Relationship</label><input class="cl_graybackground" type="text" name="rltsp" id="rltsp" disabled value="<?php echo $CL_LOGGEDIN_USER_OBJ['fb_relationship_status'];  ?>">
+               
+
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-ms-12">
                         <br><p2>Your phone and email will not be shared with anyone on CrowdLuv</p2><br><br>
-                        <button type="button">Submit Changes</button>
+                        <input type="submit" value="Submit Changes">
+                        <!-- <button type="button">Submit Changes</button> -->
                     </div>
                 </div>
+            </form>
             </div>
         </div>
     
@@ -73,14 +89,12 @@
             </div>
         </div>
 
-        <div class="col-sm-1">         
-        </div>
-
-        </div>
+        <div class="col-sm-1"></div>
+    </div>
     
 
 
-    <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
+    <?php  // include(ROOT_PATH . 'inc/userinfoform.php'); ?>
 
     
     </div>

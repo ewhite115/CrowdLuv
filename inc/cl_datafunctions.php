@@ -66,20 +66,20 @@ function update_crowdluv_follower_record($cl_fobj){
 
     try {
         $sql = "update follower set mobile='" . $cl_fobj['mobile'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-        echo $sql;
         $results = $db->query($sql);
-        //var_dump($results);
-        //exit;
-        //$firstline = $results->fetch(PDO::FETCH_ASSOC);
-        //if(!$firstline) return 0;
-        //$tid = $firstline['crowdluv_tid'];
-        //echo "uid= (" . $uid . ")";
-        //return $tid;
+        $sql = "update follower set email='" . $cl_fobj['email'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+        $results = $db->query($sql);
+        $sql = "update follower set firstname='" . $cl_fobj['firstname'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+        $results = $db->query($sql);
+        $sql = "update follower set lastname='" . $cl_fobj['lastname'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+        $results = $db->query($sql);
+        //var_dump($results); exit;
+        
     } catch (Exception $e) {
         echo "Data could not be retrieved from the database. " . $e;
         return -1;//exit;
     }
-    
+
     //exit;
 }
 

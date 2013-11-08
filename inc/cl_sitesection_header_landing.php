@@ -1,10 +1,7 @@
 
 
-	<div class="cl_site_section_header landing">
-		
-		<a href="<?php echo BASE_URL ?>">
-			<img src="<?php echo BASE_URL;?>res/crowdluv_logo_dark.jpg">
-					
-		</a>	
+	<div class="header cl_site_section_header landing">
+		<a id="cl_header_link" href="<?php echo BASE_URL;?> "></a>
 
 	</div>
+

@@ -7,6 +7,12 @@
 
 require_once("cl_facebookinit.php");
 
+
+/**
+ * [create_new_cl_follower_record_from_facebook_user_profile description]
+ * @param  [type] $follower_fbup
+ * @return [type]
+ */
 function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup) {
     //pass in the JSON object returned by FB API
     if(!$follower_fbup) return 0;

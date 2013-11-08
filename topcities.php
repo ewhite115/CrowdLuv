@@ -13,39 +13,26 @@
 
 ?>
 
- 
-
-    <div class="crowdluvsection" style="text-align:justify;">
-        <div style="display:inline-block">
+    <div class="fluid-row">
+        <div class="col-xs-12 crowdluvsection">
             <h1>Top Cities</h1>
             <p>According to Quantity & Quality<br><br>
             Include followers within 
-            <select>
+            <select disabled>
                <option value="5">5</option>
                <option value="10">10</option>
                <option value="20">20</option>
-               
-             </select>
-             miles of the city.</p>
+             </select> miles of the city.</p>
         </div>
+    </div>
 
-        <div style="display:inline-block;text-align:right;">
-            <h1><?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?></h1>
-            <img src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'>
-            
-        </div>
+    <div class="crowdluvsection" style="text-align:justify;">
 
-            <?php include(ROOT_PATH . "inc/print_top_cities.php");?>
+        <?php include(ROOT_PATH . "inc/print_top_cities.php");?>
         <br>
         <button type="button">More Cities</button>
         <br><br>
     </div>
-
-
-
-
-<?php include(ROOT_PATH . 'inc/cl_followermap_partial.php') ?>
-
 
 
 

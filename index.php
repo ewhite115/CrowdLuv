@@ -1,56 +1,75 @@
 <?php 
-$pageTitle = "CrowdLuv2";
+$pageTitle = "CrowdLuv";
 $CL_SITE_SECTION = "landing";
 require_once("inc/config.php");
 include(ROOT_PATH . 'inc/header.php'); 
 
+
+
  ?>
 
 
-    <div class="CL_landingpage_banner">
-        <img src="res/crowdluv_landing_hero.jpg" />
-     </div>
+<div class= "fluid-row" id="CL_landingpage_jumbotron">
+    
+      <div class="col-xs-12 col-sm-6 text-center">
+        <!-- <img class="img-responsive" src="res/vid-comingsoon.png" /> -->
+        <video controls>
+           <source src="res/cyn-intro.mp4" type="video/mp4">
+           <source src="res/cyn-intro.ogv" type="video/ogg">
+           <object data="res/cyn-intro.mp4">
+             <embed src="res/cyn-intro.swf">
+           </object> 
+        </video> 
 
-
-    <div class="crowdluvsection crowdluv_landingpage_memberlogin_box clwhitebg" id="crowdluv_landingpage_memberlogin_notloggedin">
         
-        <?php   if(! $fb_user) { ?>
-            <h1>Follower Login</h1>
-            Sign in to CrowdLuv with your facebook account to follow your favorite talent and find new luvs<br><br>
-            <a href="<?php echo $facebook->getLoginUrl();?>">alt login </a>
-            <div style="height:70;" class="fb-login-button" data-width="200" scope="<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>" onlogin="location.reload(true);" size="medium" id="fbfollowerlogin"></div>
-            
-        <?php } else { ?>
-             <h1>Welcome back to CrowdLuv, <?php echo $CL_LOGGEDIN_USER_OBJ['firstname'];?>!</h1> 
-             <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"><br><br>
-             <p>You have Luv'ed <a href='followerdashboard.php'><?php echo count(get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
+      </div>
+      
+      <div class="col-sm-6 hidden-xs">
+        <h1>Primary CrowdLuv headline</h1>
+        <p>Explanation here blah lorem ipsum. Explanation here blah lorem ipsum. Explanation here blah lorem ipsum</p>
+        <p> Explanation here blah lorem ipsum</p>
+      </div>
+    
+
+ </div>
+
+
+<div class="fluid-row">
+    
+    <div class="col-xs-4 col-md-4 crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box" id="crowdluv_landingpage_memberlogin_notloggedin">
+      
+        <?php 
+          $folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING );
+          $talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
+         ?>
+        <h1>Follower Sign-in / Registration</h1>
+        <p>Sign in to CrowdLuv with your facebook account to follow your favorite talent and find new luvs</p><br>
+        <a href="<?php echo $facebook->getLoginUrl($folparams);?>"><img width="60%" class="img-responsive" src="<?php echo BASE_URL;?>/res/signin-facebook.jpg" /> </a>
+        <br>        
+        <?php if(isset($CL_LOGGEDIN_USER_OBJ)){ ?>
+         <h1>Welcome back to CrowdLuv, <?php echo $CL_LOGGEDIN_USER_OBJ['firstname'];?>!</h1> 
+         <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
+         <p>You have Luv'ed <a href='followerdashboard.php'><?php echo count(get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
         <?php } ?>
     </div>
-
-    <div class="crowdluvsection crowdluv_landingpage_memberlogin_box clwhitebg" >
-       <?php 
-        if ( (! $fb_user) || (!$fb_user_pages)){  //not logged into facebook, or logged in but dont have manage_page permissions
-
-            echo "<h1>Talent Sign-in</h1>Artists, musicians, speakers etc. Sign in to connect with your fans <br><br>";
-            echo '<div  style="height:70; max-height:70; overflow-y:hidden margin:0; padding:0;" class="fb-login-button" width="200" scope="' . 
-                                CL_FB_TALENT_PERMISSION_SCOPE_STRING . '" onlogin="location.reload(true);" size="medium" id="fbtalentlogin"></div>';
-        }
-        else{  //logged in with manage_page permissions
-            echo "<h1>Manage your talent accounts</h1><p>";
-            foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){                
-                echo '<a href="talentdashboard.php?crowdluv_tid=' . $cltalentobj['crowdluv_tid'] . '&activemanagedtalent_tid=' . $cltalentobj['crowdluv_tid'] .'">';    
-                echo '<img src="https://graph.facebook.com/'. $cltalentobj['fb_pid'] . '/picture?access_token=' . $facebook->getAccessToken() . '"> &nbsp;&nbsp' . $cltalentobj['fb_page_name'] . "<br>";
-                echo '</a>';
-                
-            }
-            echo '</p>';
-        }
-
-      ?>                   
-
+    <div class="col-xs-4 col-md-5 crowdluvsection crowdluv_landingpage_memberlogin_box clwhitebg" >
+        <h1>Talent Sign-in / Registration</h1>
+        <p>Artists, musicians, speakers etc. Sign in to connect with your fans </p>    
+        <br>
+        <a href="<?php echo $facebook->getLoginUrl($talparams);?>"><img width="60%" class="img-responsive" src="<?php echo BASE_URL;?>/res/select-facebook-pages.jpg" /></a><br>
+            <?php 
+            if(isset($CL_LOGGEDIN_TALENTS_ARR)){
+               foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){  ?>
+            
+                <div class="cl_graybackground cl_grayborder talentpagelisting"><a href="talentdashboard.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>&activemanagedtalent_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">    
+                <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> &nbsp;&nbsp <?php echo $cltalentobj['fb_page_name'];?>
+                </a></div>        
+            <?php } } ?>
     </div>
+    <div class="col-xs-2"></div>
 
 
+</div>
 
 
 

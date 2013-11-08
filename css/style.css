@@ -168,9 +168,8 @@ body{
             }
 
 
+}   /* end of Under 768px media query */
 
-
-}
 
 
 #content {
@@ -179,6 +178,58 @@ body{
     /*clear: both;*/
 
 }
+
+.crowdluvsection {
+
+    /*display: inline-block;  */
+    color: #383839;
+    padding: .555%;
+    vertical-align: top;
+    
+}
+
+.crowdluvsection h1 {
+    font-weight: bold;
+    font-size: 16px;
+    margin: .222%;
+}
+.crowdluvsection h2 {
+    font-weight: bold;
+    font-size: 13px;
+    margin: .222%;
+}
+.crowdluvsection h3 {
+    font-weight: bold;
+    font-size: 12px;
+    margin: .222%;
+}
+.crowdluvsection p {
+    font-size: 12px;
+    margin: .222%;
+
+}
+.crowdluvsection p2 {
+    font-size: 10px;
+    margin: .222%;
+    line-height: 3px;
+
+}
+
+.clwhitebg {
+    border: 1px solid #E7E5E6;
+    background: #fff;
+    border-radius: 2px;
+    padding-top: 8px;
+
+}
+.cl_graybackground {
+    background-color: #f4f4f4;
+}
+.cl_grayborder {
+    border: 1px solid #E7E5E6;
+}
+
+
 
 #CL_landingpage_jumbotron {
     
@@ -240,60 +291,14 @@ body{
 }
 
 
-.crowdluvsection {
 
-    /*display: inline-block;  */
-    color: #383839;
-    padding: .555%;
-    vertical-align: top;
-    
-}
-
-.crowdluvsection h1 {
-    font-weight: bold;
-    font-size: 16px;
-    margin: .222%;
-}
-.crowdluvsection h2 {
-    font-weight: bold;
-    font-size: 13px;
-    margin: .222%;
-}
-.crowdluvsection h3 {
-    font-weight: bold;
-    font-size: 12px;
-    margin: .222%;
-}
-.crowdluvsection p {
-    font-size: 12px;
-    margin: .222%;
-
-}
-.crowdluvsection p2 {
-    font-size: 10px;
-    margin: .222%;
-
-}
-
-.clwhitebg {
-    border: 1px solid #E7E5E6;
-    background: #fff;
-    border-radius: 2px;
-
-}
-.cl_graybackground {
-    background-color: #f4f4f4;
-}
-.cl_grayborder {
-    border: 1px solid #E7E5E6;
-}
 
 .crowdluv_landingpage_memberlogin_box {
     
-    /*max-width: .333em;*/
-    min-width: 240px; 
+    max-width: 340px;
+    /*min-width: 240px; */
     max-height: 3000px;   /* no scrolling, just print all talent no matter how long it gets. */
-    overflow: auto;
+    /*overflow: auto;*/
     /*margin-left: 2%;*/
      
     /*position: relative;

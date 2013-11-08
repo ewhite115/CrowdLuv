@@ -4,9 +4,9 @@
 	<img width="35px" id="cl_navicon" class="threebarnav" src="<?php echo BASE_URL;?>res/3bar-nav.jpg">
 
 	<ul id="cl_nav" class="nav nav-pills ">
-      <li><a href="#">Share Luv</a></li>
+      <li><a href="shareluv.php">Share Luv</a></li>
       <li><a href="#">Feedback</a></li>
-      <li><a href="#">Settings</a></li>
+      <li><a href="followerdashboard.php">Settings<img width="25px" src='https://graph.facebook.com/<?php echo $fb_user; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></a></li>
 	</ul>
 
 	<a id="cl_header_link" href="<?php echo BASE_URL;?> "></a>

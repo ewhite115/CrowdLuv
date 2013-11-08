@@ -35,8 +35,8 @@ include(ROOT_PATH . 'inc/header.php');
 
 <div class="fluid-row">
     
-    <div class="col-xs-12 col-ms-4  crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box" id="crowdluv_landingpage_memberlogin_notloggedin">
-      
+    <div class="col-xs-12 col-ms-5 col-sm-4">
+      <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
         <?php 
           $folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING );
           $talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
@@ -50,9 +50,11 @@ include(ROOT_PATH . 'inc/header.php');
          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
          <p>You have Luv'ed <a href='followerdashboard.php'><?php echo count(get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
         <?php } ?>
+      </div>
     </div>
 
-    <div class="col-xs-12 col-ms-4  crowdluvsection crowdluv_landingpage_memberlogin_box clwhitebg" >
+    <div class="col-xs-12 col-ms-6 col-sm-4" >
+      <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box">
         <h1>Talent Sign-in / Registration</h1>
         <p>Artists, musicians, speakers etc. Sign in to connect with your fans </p>    
         <br>
@@ -65,8 +67,9 @@ include(ROOT_PATH . 'inc/header.php');
                 <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> &nbsp;&nbsp <?php echo $cltalentobj['fb_page_name'];?>
                 </a></div>        
             <?php } } ?>
+      </div>
     </div>
-    <div class="col-ms-0 col-ms-2"></div>
+    <div class="hidden-xs col-sm-2"></div>
 
 
 </div>

@@ -25,7 +25,8 @@
 
     
     <div class="fluid-row">
-        <div id="sharecol1" class="col-sm-6 col-md-3 clwhitebg crowdluvsection">
+        <div id="sharecol1" class="col-sm-6 col-md-3">
+            <div class="clwhitebg crowdluvsection">
             <h1>Facebook</h1>
                 <p>Three ways to share</p><br>
                 <p>1) Post a box to the top of your facebook page.</p>
@@ -39,9 +40,10 @@
                 <br><br>
                 <p>3)Post a status update with this link and your own message</p>
                 <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
-    
+            </div>
         </div>
-        <div id="sharecol2" class="col-sm-6 col-md-3 clwhitebg crowdluvsection">
+        <div id="sharecol2" class="col-sm-6 col-md-3">
+            <div class="clwhitebg crowdluvsection">
             <h1>Twitter</h1>
                 <p>Two ways to share</p><br>
                 <p>1)Pick an image to tweet</p> 
@@ -51,10 +53,11 @@
                 <br>
                 <p>2)Post a status update with this link and your own message</p>
                 <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
-
+            </div>
         </div>
         <div class="clearfix visible-sm"></div>
-        <div id="sharecol3" class="col-sm-6 col-md-3 clwhitebg crowdluvsection">
+        <div id="sharecol3" class="col-sm-6 col-md-3">
+            <div class="clwhitebg crowdluvsection">
             <h1>Your Mailing List</h1>
             <br>
             <p>Send an email to your mailing list</p><br>
@@ -66,15 +69,16 @@
             </p2>
             <br>
 
-
+        </div>
         </div>
 
-        <div id="sharecol4" class="col-sm-6 col-md-3 clwhitebg crowdluvsection">
+        <div id="sharecol4" class="col-sm-6 col-md-3">
+            <div class="clwhitebg crowdluvsection">
             <h1>Websites and Blogs</h1>
             <br>
             <p>Copy and paste the HTML below into your website</p>
             <br>
-            <div class="cl_graybackground cl_grayborder">
+            <div class="cl_graybackground cl_grayborder" style="overflow:hidden;">
                 <p2>
                 &lt;p&gt;&lt;a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"&gt;Check out my Crowdluv page&lt;/a&gt;&lt;/p&gt;
                 </p2>
@@ -84,7 +88,7 @@
             <p>Share these links anywhere</p>
             <p2><a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"><?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?></a></p2>
 
-
+        </div>
         </div>
 
     </div>

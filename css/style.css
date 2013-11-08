@@ -97,7 +97,7 @@ body{
 /* At under 768px,   */
 @media screen and (max-width: 768px){
 
-            /*change color of header to grey*/
+            /*change to the dark "mobile" header */
             .cl_site_section_header {
                 background-color: #303032;
                 background-image: url("../res/crowdluv-mobile-logo.jpg");
@@ -105,8 +105,14 @@ body{
                 background-repeat: no-repeat;
                 height: 5%;
                 min-height:45px;
+                position: fixed;
+                width:100%;
+                z-index: 1000;
             }
-
+            /*Add padding to the top of the #content div to push it down below the sticky header/nav bar*/
+            #content {
+                padding-top:45px;
+            }
             /*show the 3-bar navicon */
             .cl_site_section_header .threebarnav {
                 display:inline-block;

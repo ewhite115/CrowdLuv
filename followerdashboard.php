@@ -25,11 +25,11 @@
         <div class="col-sm-7 crowdluvsection clwhitebg">
             <h2>Contact Settings</h2>
             <div class="row">
-                <div class="col-sm-5">
+                <div class="col-ms-5">
                     <p>Email Address</p>
                     <input type="text" value="<?php echo $CL_LOGGEDIN_USER_OBJ['email'];?>"></input>
                 </div>
-                <div class="col-sm-7">
+                <div class="col-ms-7">
                     <p>Allow CrowdLuv Contact?</p>
                     <p2><input type="radio" value="All Updates" checked="true">All Updates</input></p2>
                     <p2><input type="radio" value="Only Critical Updates" checked="true">Only Critical Updates</input></p2>
@@ -38,11 +38,11 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-5">
+                <div class="col-ms-5">
                     <p>Phone Number</p>
                     <input type="text" value="<?php echo $CL_LOGGEDIN_USER_OBJ['mobile'];?>"></input>
                 </div>
-                <div class="col-sm-7">
+                <div class="col-ms-7">
                     <br>
                     <p2><input type="radio" value="All Updates" checked="true">All Updates</input></p2>
                     <p2><input type="radio" value="Only Critical Updates" checked="true">Only Critical Updates</input></p2>
@@ -50,7 +50,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-ms-12">
                     <br><p2>Your phone and email will not be shared with anyone on CrowdLuv</p2><br><br>
                     <button type="button">Submit Changes</button>
                 </div>

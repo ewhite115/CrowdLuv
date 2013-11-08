@@ -5,7 +5,6 @@ require_once("inc/config.php");
 include(ROOT_PATH . 'inc/header.php'); 
 
 
-
  ?>
 
 
@@ -36,7 +35,7 @@ include(ROOT_PATH . 'inc/header.php');
 
 <div class="fluid-row">
     
-    <div class="col-xs-4 col-md-4 crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box" id="crowdluv_landingpage_memberlogin_notloggedin">
+    <div class="col-xs-12 col-ms-4  crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box" id="crowdluv_landingpage_memberlogin_notloggedin">
       
         <?php 
           $folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING );
@@ -52,7 +51,8 @@ include(ROOT_PATH . 'inc/header.php');
          <p>You have Luv'ed <a href='followerdashboard.php'><?php echo count(get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
         <?php } ?>
     </div>
-    <div class="col-xs-4 col-md-5 crowdluvsection crowdluv_landingpage_memberlogin_box clwhitebg" >
+
+    <div class="col-xs-12 col-ms-4  crowdluvsection crowdluv_landingpage_memberlogin_box clwhitebg" >
         <h1>Talent Sign-in / Registration</h1>
         <p>Artists, musicians, speakers etc. Sign in to connect with your fans </p>    
         <br>
@@ -66,7 +66,7 @@ include(ROOT_PATH . 'inc/header.php');
                 </a></div>        
             <?php } } ?>
     </div>
-    <div class="col-xs-2"></div>
+    <div class="col-ms-0 col-ms-2"></div>
 
 
 </div>

@@ -13,6 +13,7 @@ require_once("inc/cl_facebookinit.php");
 	<title><?php echo $pageTitle; ?></title>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/bootstrap.css" type="text/css">
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/bootstrap_ms.css" type="text/css">
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="<?php echo BASE_URL; ?>js/bootstrap.min.js"></script>
 

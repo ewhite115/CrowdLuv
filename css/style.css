@@ -56,7 +56,7 @@ body{
     padding-left: 1.111%;   /*  10 /900 px  */
     /*padding-right: 1.111%;   /*  10 /900 px */
     
-    margin-bottom: 1.11%;
+    /*margin-bottom: 1.11%;*/
 }
 
 .cl_site_section_header .nav {   
@@ -294,7 +294,7 @@ body{
     min-width: 240px; 
     max-height: 3000px;   /* no scrolling, just print all talent no matter how long it gets. */
     overflow: auto;
-    margin-left: 2%;
+    /*margin-left: 2%;*/
      
     /*position: relative;
     left: 3.88%;  /* 35/900px */;

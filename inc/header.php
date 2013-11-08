@@ -42,11 +42,7 @@ require_once("inc/cl_facebookinit.php");
   if($CL_SITE_SECTION == "landing") {include(ROOT_PATH . "inc/cl_sitesection_header_landing.php");}
   else if($CL_SITE_SECTION == "talent") {include(ROOT_PATH . "inc/cl_sitesection_header_talent.php");}
   else if($CL_SITE_SECTION == "follower") {include(ROOT_PATH . "inc/cl_sitesection_header_follower.php");}
-
-
 ?>
 
-
-
-	<div id="content">
+<div id="content">
  

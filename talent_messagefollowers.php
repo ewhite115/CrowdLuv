@@ -18,6 +18,8 @@ $citystats= get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'],
 ?>
 
  
+
+ 
     <div class="crowdluvsection"> 
         <h1>Message Followers - <?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?><img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></h1>
         <br> 
@@ -89,37 +91,35 @@ $citystats= get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'],
 
     </div> 
 
- 
 
     <div class="CL_transparentscreen"></div> 
-       
-    
+           
 
     <div class="CL_modal crowdluvsection" id="modal_targetsetbuilder" style="top:5%;">
       <h1>Choose your message audience</h1>
       <p>Create a target group to receive this message</p>
             
         <h2>Select target area / radius</h2>
-        <table class='cldefaulttable' style="width:100%;" ><tr><td style="width:15%;"><label id="lbl_areacount"><?php echo $citystats['followercount'];?></label></td><td style="width:70%;"> in <label id="lbl_areaname"><?php echo $city;?></label></td><td><input type='checkbox' checked disabled="true" class="areaoptions" id="cb_area"/></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_extareacount"></label></td><td style="width:70%;">plus all within<select class="areaoptions" id="select_distance" disabled="true"><option value="5">5</option><option value="10">10</option><option value="20">20</option></select>  mile radius </td><td><input type='checkbox' class="areaoptions" id="cb_distance" /></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_extareacountafar"></label></td><td style="width:70%;"> ..who are willing to travel that far</td><td><input type='checkbox' disabled="true" class="areaoptions" id="cb_fromafar" /></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;" ><tr><td style="width:15%;"><label id="lbl_areacount"><?php echo $citystats['followercount'];?></label></td><td style="width:85%;"> in <label id="lbl_areaname"><?php echo $city;?></label></td><td><input type='checkbox' checked disabled="true" class="areaoptions" id="cb_area"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_extareacount"></label></td><td style="width:85%;">plus all within<select class="areaoptions" id="select_distance" disabled="true"><option value="5">5</option><option value="10">10</option><option value="20">20</option></select>  mile radius </td><td><input type='checkbox' class="areaoptions" id="cb_distance" /></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_extareacountafar"></label></td><td style="width:85%;"> ..who are willing to travel that far</td><td><input type='checkbox' disabled="true" class="areaoptions" id="cb_fromafar" /></td></tr></table><br>
 
         <h2>Select gender(s) to target in this group</h2>
-        <table class='cldefaulttable' style="width:100%;" ><tr><td style="width:15%;"><label id="lbl_femalecount"><?php echo $citystats['female'];?></label></td><td style="width:70%;"> Female</td><td><input type='checkbox' checked class="demooptions" id="cb_female" /></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_malecount"><?php echo $citystats['male'];?></label></td><td style="width:70%;"> Male</td><td><input type='checkbox' checked class="demooptions" id="cb_male" /></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;" ><tr><td style="width:15%;"><label id="lbl_femalecount"><?php echo $citystats['female'];?></label></td><td style="width:85%;"> Female</td><td><input type='checkbox' checked class="demooptions" id="cb_female" /></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_malecount"><?php echo $citystats['male'];?></label></td><td style="width:85%;"> Male</td><td><input type='checkbox' checked class="demooptions" id="cb_male" /></td></tr></table><br>
         
         <h2>Select relationship statuses to target in this group</h2>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_relationshipcount"><?php echo $citystats['relationship'];?></label></td><td style="width:70%;"> Relationship, Engaged, Married</td><td><input type='checkbox' checked class="demooptions" id="cb_relationship"/></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_singlecount"><?php echo $citystats['single'];?></label></td><td style="width:70%;"> Single, Divorced</td><td><input type='checkbox' checked class="demooptions" id="cb_single"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_relationshipcount"><?php echo $citystats['relationship'];?></label></td><td style="width:85%;"> Relationship, Engaged, Married</td><td><input type='checkbox' checked class="demooptions" id="cb_relationship"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_singlecount"><?php echo $citystats['single'];?></label></td><td style="width:85%;"> Single, Divorced</td><td><input type='checkbox' checked class="demooptions" id="cb_single"/></td></tr></table><br>
         
         <h2>Select age range to target in this group (un-check for all ages)</h2> 
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_agerangecount"></label></td><td style="width:70%;"> Age Group <input disabled="true" type="text" class="demooptions" id="txt_min_age" size="2" value="0" /> - <input type="text" disabled="true" class="demooptions" id="txt_max_age" size="2" value="110" /> </td><td><input type='checkbox' class="demooptions" id="cb_agerange" /></td></tr></table><br>              
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_agerangecount"></label></td><td style="width:85%;"> Age Group <input disabled="true" type="text" class="demooptions" id="txt_min_age" size="2" value="0" /> - <input type="text" disabled="true" class="demooptions" id="txt_max_age" size="2" value="110" /> </td><td><input type='checkbox' class="demooptions" id="cb_agerange" /></td></tr></table><br>              
 
         <h2>Target this group based on signup date</h2>          
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signupanydatecount"></label></td><td style="width:70%;"> Signed up any time</td><td><input type='radio' name="signup" checked class="demooptions" id="cb_signupanydate"/></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup30count"><?php echo $citystats['signedup30'];?></label></td><td style="width:70%;"> signed up w/in 30 days</td><td><input type='radio' name="signup" class="demooptions" id="cb_30days"/></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup90count"><?php echo $citystats['signedup90'];?></label></td><td style="width:70%;"> signed up w/in 90 days</td><td><input type='radio' name="signup" class="demooptions" id="cb_90days" /></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup365count"><?php echo $citystats['signedup365'];?></label></td><td style="width:70%;"> signed up w/in 1 year</td><td><input type='radio' name="signup" class="demooptions" id="cb_365days"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signupanydatecount"></label></td><td style="width:85%;"> Signed up any time</td><td><input type='radio' name="signup" checked class="demooptions" id="cb_signupanydate"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup30count"><?php echo $citystats['signedup30'];?></label></td><td style="width:85%;"> signed up w/in 30 days</td><td><input type='radio' name="signup" class="demooptions" id="cb_30days"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup90count"><?php echo $citystats['signedup90'];?></label></td><td style="width:85%;"> signed up w/in 90 days</td><td><input type='radio' name="signup" class="demooptions" id="cb_90days" /></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup365count"><?php echo $citystats['signedup365'];?></label></td><td style="width:85%;"> signed up w/in 1 year</td><td><input type='radio' name="signup" class="demooptions" id="cb_365days"/></td></tr></table><br>
         <button type="button" id="btn_addtargetdemogroup">Add this target group</button>
         <button type="button" id="btn_demoreset">Reset filters</button>       
     </div> 

@@ -8,7 +8,7 @@
 	if(!$servlet_testing)	ob_start();
 
 	require_once("inc/cl_datafunctions.php");
-	require_once("inc/cl_facebookinit.php");
+	require_once("inc/cl_init.php");
 
 	if(!isset($_GET['crowdluv_tid'])) {echo "crowdluv_tid not set"; exit;}
 	if(!isset($_GET['city'])) {echo "city not set"; exit;}

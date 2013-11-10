@@ -13,8 +13,8 @@
 	    $data = json_decode(base64_decode(strtr($payload, '-_', '+/')), true);
 	     
 	    $talentpageid = $data["page"]["id"]; 
-	    //$cl_tobj = get_talent_object_by_tid( get_crowdluv_tid_by_fb_pid($talentpageid)  );
-	    $CL_CUR_TGT_TALENT = get_talent_object_by_tid( get_crowdluv_tid_by_fb_pid($talentpageid));
+	    //$cl_tobj = $CL_model->get_talent_object_by_tid( $CL_model->get_crowdluv_tid_by_fb_pid($talentpageid)  );
+	    $CL_CUR_TGT_TALENT = $CL_model->get_talent_object_by_tid( $CL_model->get_crowdluv_tid_by_fb_pid($talentpageid));
 	    //$app_data is any information that was passed in the query string for the app_data param
 	    $app_data="Empty";
 	    if(array_key_exists("app_data", $data)) $app_data = $data["app_data"];

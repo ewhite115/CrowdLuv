@@ -2,7 +2,7 @@
 
     $pageTitle = "CrowdLuv";
     $CL_SITE_SECTION = "follower";
-    require_once("inc/config.php");
+    // require_once("inc/config.php");
     include(ROOT_PATH . 'inc/header.php');
 
     if(! $fb_user) { echo "fb_user is null"; exit; } 

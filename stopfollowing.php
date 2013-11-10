@@ -5,10 +5,10 @@
 	ob_start();
 
 	require_once("inc/cl_datafunctions.php");
-	require_once("inc/cl_facebookinit.php");
+	require_once("inc/cl_init.php");
 
 	$clt = $_GET['crowdluv_tid'];
-	$result= remove_follower_from_talent(get_crowdluv_uid_by_fb_uid($fb_user), $cltid);
+	$result= remove_follower_from_talent($CL_model->get_crowdluv_uid_by_fb_uid($fb_user), $cltid);
 
 
 	//clear out the buffer so the browser only receives the json object

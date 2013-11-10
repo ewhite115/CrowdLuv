@@ -74,8 +74,7 @@
         <div class="col-sm-5 crowdluvsection">
             <p2>Change your photo</p2>
             <br>
-            <img src="<?php echo $tlpimg;?>" style="max-width: 100%;"/> 
-            
+            <img src="<?php echo $tlpimg;?>" style="max-width: 100%;"/>    
         </div>
 
         <div class="col-sm-3 crowdluvsection">  

@@ -23,7 +23,5 @@
 	define("CL_DEBUG_MODE", "1");
 
 
-
 	define("GOOGLE_MAPS_APIKEY", "AIzaSyBc6n2vRhj6szWhvDeTtzBNY1kiDAyJMuo");
-
 

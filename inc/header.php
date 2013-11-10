@@ -2,7 +2,7 @@
 require_once("inc/config.php");
 session_start();
 require_once("inc/cl_datafunctions.php");
-require_once("inc/cl_facebookinit.php");
+require_once("inc/cl_init.php");
 
   
 ?>

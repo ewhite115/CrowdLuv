@@ -6,13 +6,9 @@ require_once("inc/config.php");
 include(ROOT_PATH . 'inc/header.php');
 
 
-if(! $fb_user) { echo "user is null"; exit;  } 
-if(! $fb_user_pages) { echo "fb_user_pages is null";   }
-//if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;  }
 if(! isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 if(! isset($_GET['city'])) {echo "no city passed in"; exit;  }
 $city=$_GET['city'];
-
 $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $city, 5)
 
 ?>

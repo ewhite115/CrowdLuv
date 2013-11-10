@@ -5,12 +5,6 @@
     require_once("inc/config.php");
     include(ROOT_PATH . 'inc/header.php');
 
-    //Check for query params to execute
-    //Stop following param..  (change this to an ajax call)
-    //if(isset($_GET['stopfollowing'])) $CL_model->remove_follower_from_talent($CL_model->get_crowdluv_uid_by_fb_uid($fb_user), $stopfollowing);
-    //if there is no fb_user, this page should not be requested..
-    if(! $fb_user) { echo "fb_user is null"; exit; } 
-
 ?>
     
 
@@ -21,7 +15,6 @@
                 <p>Edit Information and settings</p><br>
             </div>
         </div>
-
     </div>
 
     

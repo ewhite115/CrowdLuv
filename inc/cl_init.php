@@ -4,8 +4,7 @@
   require_once("inc/cl_datafunctions.php");
   require_once("facebook-sdk/facebook.php");
 
-
-
+  //Open DB connection
   try {
       //echo "creating db conn";
       $CL_db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME .";port=" . DB_PORT,DB_USER,DB_PASS, array(PDO::ATTR_PERSISTENT => true));
@@ -17,32 +16,29 @@
       exit;
   }
 
-
   $CL_model = new CrowdLuvModel();
   //var_dump($CL_model);
   $CL_model->setDB($CL_db);
 
 
-
   $_SESSION["debugmsgs"] = "";
   function cldbgmsg($debugmessage){
-    //echo "dumping array before:)"; var_dump($debugmsgs);
-    //array_push($dbgmsgs, $debugmessage);
     //echo "adding " . $debugmessage;
     $_SESSION["debugmsgs"][] = $debugmessage;
-
     //if(CL_DEBUG_MODE) echo $debugmessage;
     //var_dump($debugmsgs);
-
   }
 
 
-
-
-  if(isset($_SESSION['ACTIVE_MANAGED_TALENT'])) $CL_ACTIVE_MANAGED_TALENT = $_SESSION['ACTIVE_MANAGED_TALENT'];
   if(isset($_SESSION['fb_user'])) { cldbgmsg("CL_SESSION['fb_user']=" . $_SESSION['fb_user']);} else { cldbgmsg("CL_SESSION['fb_user'] not set");}
   if(isset($_COOKIE["PHPSESSID"])) { cldbgmsg("COOKIE['PHPSESSID']" . $_COOKIE["PHPSESSID"]) ;} else { cldbgmsg("PHPSEESID cookie doesnt exist");}//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
+
+  if(isset($_SESSION['CL_LOGGEDIN_USER_UID'])) $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGED_IN_USER_UID"];
+  if(isset($_SESSION['CL_LOGGEDIN_USER_OBJ'])) $CL_LOGGEDIN_USER_OBJ = $_SESSION['CL_LOGGEDIN_USER_OBJ'];
+  if(isset($_SESSION['CL_LOGGEDIN_TALENTS_ARR'])) $CL_LOGGEDIN_TALENTS_ARR = $_SESSION['CL_LOGGEDIN_TALENTS_ARR'];
+  if(isset($_SESSION['CL_ACTIVE_MANAGED_TALENT'])) $CL_ACTIVE_MANAGED_TALENT = $_SESSION['CL_ACTIVE_MANAGED_TALENT'];
   //echo "CL_SESSION['fb_user']=" . $_SESSION['fb_user'] . "  ***  COOKIE['PHPSESSID']" . $_COOKIE["PHPSESSID"] ;//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
+
 
   $dbgmsgs = array();
   $fbconfig = array();
@@ -51,55 +47,56 @@
   $fbconfig['fileUpload'] = false; // optional
   $fbconfig['scope'] = CL_FB_PERMISSION_SCOPE_STRING;
 
+  $facebook = new Facebook($fbconfig);  //echo "facebook: ";  var_dump($facebook); 
 
-  $facebook = new Facebook($fbconfig);  //echo "facebook: ";  var_dump($facebook);
-  //Check for facebook Get User ID
-  
+  //Get fb user ID  
   $fb_user = $facebook->getUser();
-  //echo "  *** facebook->getUser():"; var_dump($fb_user);
   cldbgmsg("  *** facebook->getUser():" . $fb_user); //var_dump($fb_user);
-  
-  //If the user is logged-in to facebook, try to get their profile and 
-  //page info from api and store in a 'global' variables
+  //If we have an fb userid for the current user.... 
   if ($fb_user) {  // Proceed thinking you have a logged in user who's authenticated.
       $_SESSION["fb_user"] = $fb_user;
-      $_SESSION["CL_LOGGED_IN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($_SESSION['fb_user']);
+  
       //Check to see if this fb user exists in CL db.... Set a global variable containing the crowdluv_uid
-      $CL_LOGGEDIN_USER_UID = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
-      //if new.. request profile info from facebook and create a stub entry based on available info
+      $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGED_IN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
+      
+      //if new.. 
       if($CL_LOGGEDIN_USER_UID==0){
-
+          // ...request profile info from facebook and create a stub entry based on available info
           try { 
             $fb_user_profile = $facebook->api('/me');  //var_dump($fb_user_profile); 
+            create_new_cl_follower_record_from_facebook_user_profile($fb_user_profile);
+            $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGED_IN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
           } catch (FacebookApiException $e) {
             //error_log($e);
             cldbgmsg("FacebookAPIException in cl_init.php requesting new user info:  " . $e);// var_dump($e);
             $fb_user = null;
-          }
-
-          create_new_cl_follower_record_from_facebook_user_profile($fb_user_profile);
-          $CL_LOGGEDIN_USER_UID = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
+          }                   
       } 
       //set global var for the user's info
-      $CL_LOGGEDIN_USER_OBJ = $CL_model->get_follower_object_by_uid($CL_LOGGEDIN_USER_UID);
+      $CL_LOGGEDIN_USER_OBJ = $_SESSION['CL_LOGGEDIN_USER_OBJ'] = $CL_model->get_follower_object_by_uid($CL_LOGGEDIN_USER_UID);
 
+  }
+
+  if($fb_user){
       //Now check for facebook pages the user is an administrator of,
       //add them to CL db if new, and store them in 'global' var 
       try{
         $fb_user_pages = $facebook->api('/me/accounts');
         if(sizeof($fb_user_pages['data'])==0){$fb_user_pages=null;}
         else{  
-        foreach ($fb_user_pages['data'] as $fbupg) {
-          //Check to see if this talent exists in the cl db. If not, create a stub entry
-          $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg['id']);
-          if(! $cltid) create_new_cl_talent_record_from_facebook_page_profile($fbupg);
-          $CL_LOGGEDIN_TALENTS_ARR[] = $CL_model->get_talent_object_by_tid($cltid);
-      
-        }}    
+          foreach ($fb_user_pages['data'] as $fbupg) {
+            //Check to see if this talent exists in the cl db. If not, create a stub entry
+            $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg['id']);
+            if(! $cltid) create_new_cl_talent_record_from_facebook_page_profile($fbupg);
+            //Add the talent obj to a global and session var
+            $CL_LOGGEDIN_TALENTS_ARR[] = $CL_model->get_talent_object_by_tid($cltid);
+          }
+          //Set (or update) the session var with the array we were able to build this time since we had a valid token
+          $_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR;
+        }    
       }catch (FacebookApiException $e) {        
         cldbgmsg("FacebookAPIException in cl_init.php requesting page info:  " . $e); //var_dump($e);
         $fb_user_pages = null;
-
         if(isset($_GET["expfbtoken"]) ) {  cldbgmsg("<BR>Redirected home due to facebookexception (?expired fb token?)"); } 
         else {
         header('Location: ' . CLADDR . "?expfbtoken=1" ); 
@@ -118,8 +115,8 @@
 
   if(isset($_GET['crowdluv_tid'])) $CL_CUR_TGT_TALENT = $CL_model->get_talent_object_by_tid($_GET['crowdluv_tid']);
   if(isset($_GET['activemanagedtalent_tid'])){
-    $_SESSION['ACTIVE_MANAGED_TALENT'] = $CL_model->get_talent_object_by_tid($_GET['activemanagedtalent_tid']);
-    $CL_ACTIVE_MANAGED_TALENT = $_SESSION['ACTIVE_MANAGED_TALENT'];
+    $_SESSION['CL_ACTIVE_MANAGED_TALENT'] = $CL_model->get_talent_object_by_tid($_GET['activemanagedtalent_tid']);
+    $CL_ACTIVE_MANAGED_TALENT = $_SESSION['CL_ACTIVE_MANAGED_TALENT'];
  }
   
 

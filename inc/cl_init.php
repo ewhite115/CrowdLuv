@@ -99,18 +99,21 @@
       }catch (FacebookApiException $e) {        
         cldbgmsg("FacebookAPIException in cl_init.php requesting page info:  " . $e); //var_dump($e);
         $fb_user_pages = null;
-        if(isset($_GET["expfbtoken"]) ) {  cldbgmsg("<BR>Redirected home due to facebookexception (?expired fb token?)"); } 
-        else {
-        header('Location: ' . CLADDR . "?expfbtoken=1" ); 
-        //********  trying this for handling epxpired tokens
-        $loginUrl = $facebook->getLoginUrl() . "&expfbtoken=1";
-        echo "loginurl: " . $loginUrl;
-        //header('Location: ' . $loginUrl );
-        //echo "<script type='text/javascript'>top.location.href = '$loginUrl';</script>";
+        //we should still be able to proceed, since the rest of the pages do not rely on fb_user_pages and shud continue to use the talent array in the session var
+
+        //if(isset($_GET["expfbtoken"]) ) {  cldbgmsg("<BR>Redirected home due to facebookexception (?expired fb token?)"); } 
+        //else {
+          //header('Location: ' . CLADDR . "?expfbtoken=1" ); 
+          //********  trying this for handling epxpired tokens
+          //$loginUrl = $facebook->getLoginUrl() . "&expfbtoken=1";
+          //echo "loginurl: " . $loginUrl;
+          //header('Location: ' . $loginUrl );
+          //echo "<script type='text/javascript'>top.location.href = '$loginUrl';</script>";
+        //}
       }
         
 
-      }
+      
 
   }//if fbUser
 

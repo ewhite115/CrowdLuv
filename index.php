@@ -48,7 +48,7 @@ include(ROOT_PATH . 'inc/header.php');
         <?php if(isset($CL_LOGGEDIN_USER_OBJ)){ ?>
          <h1>Welcome back to CrowdLuv, <?php echo $CL_LOGGEDIN_USER_OBJ['firstname'];?>!</h1> 
          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
-         <p>You have Luv'ed <a href='followerdashboard.php'><?php echo count($CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
+         <p>You have Luv'ed <a href='shareluv.php'><?php echo count($CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
         <?php } ?>
       </div>
     </div>
@@ -62,7 +62,6 @@ include(ROOT_PATH . 'inc/header.php');
             <?php 
             if(isset($CL_LOGGEDIN_TALENTS_ARR)){
                foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){  ?>
-            
                 <div class="cl_graybackground cl_grayborder talentpagelisting"><a href="talentdashboard.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>&activemanagedtalent_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">    
                 <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> &nbsp;&nbsp <?php echo $cltalentobj['fb_page_name'];?>
                 </a></div>        

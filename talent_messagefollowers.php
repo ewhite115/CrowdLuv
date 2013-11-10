@@ -13,7 +13,7 @@ if(! isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 if(! isset($_GET['city'])) {echo "no city passed in"; exit;  }
 $city=$_GET['city'];
 
-$citystats= get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $city, 5)
+$citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $city, 5)
 
 ?>
 

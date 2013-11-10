@@ -2,7 +2,7 @@
 
     $pageTitle = "CrowdLuv";
     $CL_SITE_SECTION = "follower";
-    // require_once("inc/config.php");
+    require_once("inc/config.php");
     include(ROOT_PATH . 'inc/header.php');
 
     if(! $fb_user) { echo "fb_user is null"; exit; } 
@@ -37,7 +37,7 @@
             <th></th>
             <th></th>
         <?php 
-            $ret_tals = get_talents_for_follower($CL_LOGGEDIN_USER_UID);
+            $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
             foreach($ret_tals as $ret_tal){ ?>
 
                 <tr id="cltrow<?php echo $ret_tal['crowdluv_tid'];?>">

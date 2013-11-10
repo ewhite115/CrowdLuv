@@ -99,14 +99,190 @@ class CrowdLuvModel {
     }
 
 
+    public function add_follower_to_talent($cl_uidt, $cl_tidt){
+        
+        //require(ROOT_PATH . "inc/database.php");
+        //global $CL_db;
+
+        //Update the "following" table acorindgly
+        try{
+            //Check to see if this follower had previously been following the talent
+            $sql = "select count(*) from follower_luvs_talent where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
+
+            $results = $this->cldb->query($sql);
+            $i = intval($results->fetchColumn(0));
+            if($i >0){ //If yes, just update the "still_following" column
+
+                $sql = "update follower_luvs_talent set still_following=1 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
+                //echo $sql; 
+                $results = $this->cldb->query($sql);
+
+            } else {  //never previously following, so add a row to the luvs table
+                $sql = "INSERT INTO `crowdluv`.`follower_luvs_talent` (`crowdluv_uid`, `crowdluv_tid`, `still_following`) VALUES (" . $cl_uidt . ", " . $cl_tidt . ", 1)";
+                echo $sql; 
+                $results = $this->cldb->query($sql);           
+            }
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database." . $e;
+            exit;
+        }
+    }
+
+
+    public function remove_follower_from_talent($cl_uidt, $cl_tidt){
+
+        //get crowdluv uid and tid based on fb id's;  then call updat eto set follownig=0
+        //require(ROOT_PATH . "inc/database.php");
+        //global $CL_db;
+
+        try {
+
+            $sql = "update follower_luvs_talent set still_following=0 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
+            //echo $sql; exit;
+            $this->cldb->query($sql);
+            return 1;   
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return 0;
+        }
+    }
+
+
+    public function get_talents_for_follower($cl_uidt) {
+        
+        //require(ROOT_PATH . "inc/database.php");
+        //global $CL_db;
+
+        try {
+            $sql = "SELECT talent.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where follower.crowdluv_uid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1,$cl_uidt);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }
+        
+        $tals = $results->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($matches);
+
+        return $tals;
+    }
+
+    public function get_followers_for_talent($cl_tidt) {
+        //require(ROOT_PATH . "inc/database.php");
+        //global $CL_db;
+
+        try {
+            //$sql = "SELECT count(*) FROM `follower_luvs_talent` where crowdluv_tid=? and still_following=1";
+            $sql = "SELECT follower.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1,$cl_tidt);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database." . $e;
+            return -1;
+        }
+        
+        $fols = $results->fetchAll(PDO::FETCH_ASSOC);    
+        //var_dump($fols);
+        return $fols;
+    }
+
+    public function get_followers_by_city_for_talent($cl_tidt, $city, $mileradius){
+
+        //require(ROOT_PATH . "inc/database.php");
+        //global $CL_db;
+
+        try {
+
+            $sql = "SELECT follower.*  
+                    FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid 
+                    where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 and follower.location_fbname=? 
+                    LIMIT 0, 30 ";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1,$cl_tidt);
+            $results->bindParam(2,$city);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database." . $e;
+            return -1;
+        }
+        
+        $fols = $results->fetchAll(PDO::FETCH_ASSOC);    
+        return $fols;
+    }
+
+
+    public function get_city_stats_for_talent($cl_tidt, $city, $mileradius){
+
+        //require(ROOT_PATH . "inc/database.php");
+        $citystats = array();
+        $citystats['followercount']=0;
+        $citystats['female']=0;
+        $citystats['male']=0;
+        $citystats['relationship']=0;
+        $citystats['single']=0;
+        $citystats['12to17']=0;
+        $citystats['18up']=0;
+        $citystats['21up']=0;
+        $citystats['24to49']=0;
+        $citystats['signedup30']=0;
+        $citystats['signedup90']=0;
+        $citystats['signedup365']=0;
+
+        
+        $fols = $this->get_followers_by_city_for_talent($cl_tidt, $city, $mileradius);
+        $citystats['followercount'] = sizeof($fols);
+
+        foreach($fols as $fol) {
+            
+            if($fol['gender'] == 'female')  $citystats["female"]++; 
+            if($fol['gender'] == 'male')  $citystats["male"]++; 
+            if($fol['fb_relationship_status'] == 'Single')  $citystats["single"]++; 
+            if($fol['fb_relationship_status'] == 'Divorced')  $citystats["single"]++;
+            if($fol['fb_relationship_status'] == 'In a relationship')  $citystats["relationship"]++;
+            if($fol['fb_relationship_status'] == 'Engaged')  $citystats["relationship"]++;
+            if($fol['fb_relationship_status'] == 'Married')  $citystats["relationship"]++;
+            //$bdate= strtotime($fol['birthdate']);
+            //$age= floor((time() - strtotime($bdate))/31556926;
+            $now = new DateTime();
+            $bdate=new DateTime($fol['birthdate']);
+            $age = $now->diff($bdate)->y;
+            if($age > 11 & $age < 18)  $citystats["12to17"]++; 
+            if($age > 17)  $citystats["18up"]++; 
+            if($age > 20)  $citystats["21up"]++; 
+            if($age > 23 & $age <50)  $citystats["24to49"]++; 
+            //TODO:  add 'new since last login'
+            $now = new DateTime();
+            $signupdate=new DateTime($fol['signupdate']);
+            $dayssincesignup = $now->diff($signupdate)->d;
+            if($dayssincesignup < 31)  $citystats["signedup30"]++; 
+            if($dayssincesignup < 91)  $citystats["signedup90"]++; 
+            if($dayssincesignup < 366)  $citystats["signedup365"]++; 
+
+        }
+
+        return $citystats; 
+    }
+
+
+
+    //This sould eventually be made private
+   public function create_new_cl_talent_files($cl_tidt){
+        //Create a directory for the talent's data:  -landing page images
+        if (!file_exists(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt)) mkdir(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt, 0777, true);
+        if (!file_exists(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt . '/landingpage_images')) mkdir(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt . '/landingpage_images', 0777, true); 
+    }
+
+
 } //end CrowdLuvModel
 
 
-/**
- * [create_new_cl_follower_record_from_facebook_user_profile description]
- * @param  [type] $follower_fbup
- * @return [type]
- */
+
+
 function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup) {
     //pass in the JSON object returned by FB API
     if(!$follower_fbup) return 0;
@@ -163,16 +339,9 @@ function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
         return -1;
     }
 
-    create_new_cl_talent_files($new_cl_tid);
+    $CL_model->create_new_cl_talent_files($new_cl_tid);
 
 }
-
-function create_new_cl_talent_files($cl_tidt){
-    //Create a directory for the talent's data:  -landing page images
-    if (!file_exists(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt)) mkdir(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt, 0777, true);
-    if (!file_exists(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt . '/landingpage_images')) mkdir(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt . '/landingpage_images', 0777, true); 
-}
-
 
 
 function update_crowdluv_follower_record($cl_fobj){
@@ -246,140 +415,14 @@ function update_talent_landingpage_image($cl_tidt, $newimg){
 
 }
 
-
-
 function get_talents_array_by_uid($cl_uidt){
 //tbd......   db doesnt store or associate uid with talents
 }
 
-
-
-
-
-
-function add_follower_to_talent($cl_uidt, $cl_tidt){
-    
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    //Update the "following" table acorindgly
-    try{
-        //Check to see if this follower had previously been following the talent
-        $sql = "select count(*) from follower_luvs_talent where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
-
-        $results = $CL_db->query($sql);
-        $i = intval($results->fetchColumn(0));
-        if($i >0){ //If yes, just update the "still_following" column
-
-            $sql = "update follower_luvs_talent set still_following=1 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
-            //echo $sql; 
-            $results = $CL_db->query($sql);
-
-        } else {  //never previously following, so add a row to the luvs table
-            $sql = "INSERT INTO `crowdluv`.`follower_luvs_talent` (`crowdluv_uid`, `crowdluv_tid`, `still_following`) VALUES (" . $cl_uidt . ", " . $cl_tidt . ", 1)";
-            echo $sql; 
-            $results = $CL_db->query($sql);           
-        }
-
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database." . $e;
-        exit;
-    }
-}
-
-function remove_follower_from_talent($cl_uidt, $cl_tidt){
-
-    //get crowdluv uid and tid based on fb id's;  then call updat eto set follownig=0
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-
-        $sql = "update follower_luvs_talent set still_following=0 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
-        //echo $sql; exit;
-        $CL_db->query($sql);
-        return 1;   
-
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database. " . $e;
-        return 0;
-    }
-}
-
-
-function get_talents_for_follower($cl_uidt) {
-    
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-        $sql = "SELECT talent.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where follower.crowdluv_uid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
-        $results = $CL_db->prepare($sql);
-        $results->bindParam(1,$cl_uidt);
-        $results->execute();
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database. " . $e;
-        exit;
-    }
-    
-    $tals = $results->fetchAll(PDO::FETCH_ASSOC);
-    //var_dump($matches);
-
-    return $tals;
-}
-
-
-function get_followers_for_talent($cl_tidt) {
-    
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-        //$sql = "SELECT count(*) FROM `follower_luvs_talent` where crowdluv_tid=? and still_following=1";
-        $sql = "SELECT follower.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
-        $results = $CL_db->prepare($sql);
-        $results->bindParam(1,$cl_tidt);
-        $results->execute();
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database." . $e;
-        return -1;
-    }
-    
-    $fols = $results->fetchAll(PDO::FETCH_ASSOC);    
-    //var_dump($fols);
-    return $fols;
-}
-
-function get_followers_by_city_for_talent($cl_tidt, $city, $mileradius){
-
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-
-        $sql = "SELECT follower.*  
-                FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid 
-                where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 and follower.location_fbname=? 
-                LIMIT 0, 30 ";
-        $results = $CL_db->prepare($sql);
-        $results->bindParam(1,$cl_tidt);
-        $results->bindParam(2,$city);
-        $results->execute();
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database." . $e;
-        return -1;
-    }
-    
-    $fols = $results->fetchAll(PDO::FETCH_ASSOC);    
-    return $fols;
-}
-
-
-
 function get_message_audience($cl_tidt, $city, $mileradius, $opts){
 
     $msgaudience=array();
-    $fols = get_followers_by_city_for_talent($cl_tidt, $city, $mileradius);
+    $fols = $CL_model->get_followers_by_city_for_talent($cl_tidt, $city, $mileradius);
     //Now loop through the fols 
 
     //$whereclause = "talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1 and follower.location_fbname=" . $city . " and(" ;
@@ -398,9 +441,7 @@ function get_message_audience($cl_tidt, $city, $mileradius, $opts){
     
     return $msgaudience;
 
-
 }
-
 
 function get_top_cities_for_talent($cl_tidt){
 
@@ -422,59 +463,6 @@ function get_top_cities_for_talent($cl_tidt){
     while ($row = $results->fetch(PDO::FETCH_ASSOC)) { $topcities[] = $row; }
     return $topcities;
 }
-
-function get_city_stats_for_talent($cl_tidt, $city, $mileradius){
-
-    //require(ROOT_PATH . "inc/database.php");
-    $citystats = array();
-    $citystats['followercount']=0;
-    $citystats['female']=0;
-    $citystats['male']=0;
-    $citystats['relationship']=0;
-    $citystats['single']=0;
-    $citystats['12to17']=0;
-    $citystats['18up']=0;
-    $citystats['21up']=0;
-    $citystats['24to49']=0;
-    $citystats['signedup30']=0;
-    $citystats['signedup90']=0;
-    $citystats['signedup365']=0;
-
-    
-    $fols = get_followers_by_city_for_talent($cl_tidt, $city, $mileradius);
-    $citystats['followercount'] = sizeof($fols);
-
-    foreach($fols as $fol) {
-        
-        if($fol['gender'] == 'female')  $citystats["female"]++; 
-        if($fol['gender'] == 'male')  $citystats["male"]++; 
-        if($fol['fb_relationship_status'] == 'Single')  $citystats["single"]++; 
-        if($fol['fb_relationship_status'] == 'Divorced')  $citystats["single"]++;
-        if($fol['fb_relationship_status'] == 'In a relationship')  $citystats["relationship"]++;
-        if($fol['fb_relationship_status'] == 'Engaged')  $citystats["relationship"]++;
-        if($fol['fb_relationship_status'] == 'Married')  $citystats["relationship"]++;
-        //$bdate= strtotime($fol['birthdate']);
-        //$age= floor((time() - strtotime($bdate))/31556926;
-        $now = new DateTime();
-        $bdate=new DateTime($fol['birthdate']);
-        $age = $now->diff($bdate)->y;
-        if($age > 11 & $age < 18)  $citystats["12to17"]++; 
-        if($age > 17)  $citystats["18up"]++; 
-        if($age > 20)  $citystats["21up"]++; 
-        if($age > 23 & $age <50)  $citystats["24to49"]++; 
-        //TODO:  add 'new since last login'
-        $now = new DateTime();
-        $signupdate=new DateTime($fol['signupdate']);
-        $dayssincesignup = $now->diff($signupdate)->d;
-        if($dayssincesignup < 31)  $citystats["signedup30"]++; 
-        if($dayssincesignup < 91)  $citystats["signedup90"]++; 
-        if($dayssincesignup < 366)  $citystats["signedup365"]++; 
-
-    }
-
-    return $citystats; 
-}
-
 
 function get_talent_landingpage_settings($cl_tidt){
 

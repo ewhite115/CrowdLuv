@@ -22,7 +22,7 @@
         if(! ($extension == "jpg" || $extension == "png")) { $badpatherr=true; break;  }
 
         //In case the file storage direcories have not been created for this talent (which should only be the case for the first few talent in the db), call the function that will create them if they dont exist
-        create_new_cl_talent_files($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+        $CL_model->create_new_cl_talent_files($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
         //First, attempt to move the image into their storage folder on the server
         $uploaddir = ROOT_PATH . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'] . '/landingpage_images/';
         $uploadfile = $uploaddir . basename($_FILES['newimg']['name']);

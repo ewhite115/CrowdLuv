@@ -7,7 +7,7 @@
 
     if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}
     if(! $fb_user) { echo "user is null"; exit; }
-    add_follower_to_talent($CL_LOGGEDIN_USER_UID, $_GET['crowdluv_tid']);
+    $CL_model->add_follower_to_talent($CL_LOGGEDIN_USER_UID, $_GET['crowdluv_tid']);
     
 
 ?>

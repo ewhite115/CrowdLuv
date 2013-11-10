@@ -20,7 +20,7 @@
 	$dist = $_GET['crowdluv_tid'];
 	$fromafar = $_GET['fromafar'];
 
-	$result = get_followers_by_city_for_talent($clt, $city, $dist);
+	$result = $CL_model->get_followers_by_city_for_talent($clt, $city, $dist);
 
 	//clear out the buffer so the browser only receives the json object
 	if(!$servlet_testing)	$obcontents = ob_get_contents();

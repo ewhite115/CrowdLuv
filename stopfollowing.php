@@ -8,7 +8,7 @@
 	require_once("inc/cl_init.php");
 
 	$clt = $_GET['crowdluv_tid'];
-	$result= remove_follower_from_talent($CL_model->get_crowdluv_uid_by_fb_uid($fb_user), $cltid);
+	$result= $CL_model->remove_follower_from_talent($CL_LOGGEDIN_USER_UID, $clt);
 
 
 	//clear out the buffer so the browser only receives the json object

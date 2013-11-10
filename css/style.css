@@ -408,10 +408,15 @@ input[type="submit"], button {
 }
 
 .fbtab_hero{
+    max-width:100%;
     padding: 0 0 3px 0;
     margin: 0px 0px 0px 1px; 
     height: 225px; 
-    background: #f0eeed url('../res/crowdluv_fbtab_defaulthero_820.jpg') center center no-repeat;
+    background-color: #f0eeed;
+    background-image:; url('../crowdluvdata/talent_landingpage_images/default.jpg');
+    background-position:  center top;
+    background-repeat: no-repeat;
+    background-size: contain;
 
 }
 

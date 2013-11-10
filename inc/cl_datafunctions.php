@@ -45,20 +45,39 @@ function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
     //var_dump($talent_fbpp);
     require(ROOT_PATH . "inc/database.php");
 
+    $new_cl_tid = "";
+
     try {
+        
+        //Insert the main record into the talent table
         $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
                             VALUES ('" . $talent_fbpp['id'] . "', ?)";
         //echo $sql; //exit;
         $results = $db->prepare($sql);
-        $results->bindParam(1,$talent_fbpp['name'] );
+        $results->bindParam(1, $talent_fbpp['name']);
         $results->execute();
-        var_dump($results);
+        //var_dump($results);
+        $new_cl_tid= get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
+
+        //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
+        update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");        
         //$results = $db->query($sql);
     } catch (Exception $e) {
         echo "Data could not be inserted to the database. " . $e;
         return -1;
     }
+
+    create_new_cl_talent_files($new_cl_tid);
+
 }
+
+function create_new_cl_talent_files($cl_tidt){
+    //Create a directory for the talent's data:  -landing page images
+    if (!file_exists(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt)) mkdir(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt, 0777, true);
+    if (!file_exists(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt . '/landingpage_images')) mkdir(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt . '/landingpage_images', 0777, true); 
+}
+
+
 
 function update_crowdluv_follower_record($cl_fobj){
 
@@ -82,6 +101,52 @@ function update_crowdluv_follower_record($cl_fobj){
 
     //exit;
 }
+
+function update_talent_landingpage_message($cl_tidt, $newmsg){
+
+    require(ROOT_PATH . "inc/database.php");
+
+    try {
+        //get the most recent landingpage settings for this talent, to re-use the img
+        $clpsettings = get_talent_landingpage_settings($cl_tidt);                    
+        $sql = "INSERT INTO talent_landingpage (crowdluv_tid,        message,             image) VALUES ('" . $cl_tidt . "', '" . $newmsg . "', '" . $clpsettings['image'] . "')";
+        echo $sql;// exit;
+        $results = $db->query($sql);
+        //var_dump($results); exit;
+    } catch (Exception $e) {
+        echo "Data could not be inserted to the database. " . $e;
+        return -1;
+    }
+
+}
+
+function update_talent_landingpage_image($cl_tidt, $newimg){
+
+    require(ROOT_PATH . "inc/database.php");
+
+    try {
+        //get the most recent landingpage settings for this talent
+        $clpsettings = get_talent_landingpage_settings($cl_tidt);
+        //if the timestamp is empty, that means this talent doesn't have any landpgae settings set
+        //This should only happen for some early talent records that were created before the code
+        //for new talent stubs was updated to include creating a default entry in the landingpage settings table
+        //But, to handle those instances, call the update_talent_landingpage_message function t create the initial one
+        if($clpsettings['message']=="") update_talent_landingpage_message($cl_tidt, $clpsettings['message']);
+        $clpsettings = get_talent_landingpage_settings($cl_tidt);
+
+        //Update the row corresponding to the most recent timestamp
+        $sql = "update talent_landingpage set image='" . $newimg . "'
+                where crowdluv_tid=" . $cl_tidt . " and message_timestamp = '" . $clpsettings['message_timestamp'] . "'" ;
+        echo $sql;// exit;             
+        $results = $db->query($sql);
+        //var_dump($results); exit;
+    } catch (Exception $e) {
+        echo "Data could not be inserted to the database. " . $e;
+        return -1;
+    }
+
+}
+
 
 function get_talent_object_by_tid($cl_tidt){
 
@@ -374,6 +439,30 @@ function get_city_stats_for_talent($cl_tidt, $city, $mileradius){
     return $citystats; 
 }
 
+
+function get_talent_landingpage_settings($cl_tidt){
+
+    require(ROOT_PATH . "inc/database.php");
+
+    try {
+        $sql = "select message, image, message_timestamp from talent_landingpage where crowdluv_tid=" . $cl_tidt . " ORDER BY message_timestamp DESC LIMIT 0, 1";
+        //echo $sql; exit;
+        $results = $db->query($sql);
+        $settings = $results->fetch(PDO::FETCH_ASSOC);
+        //var_dump($settings); exit;
+        if(!$settings){
+            $settings['image']="default";
+            $settings['message'] = "Want me to come to your town? Click the button above so I can come to the town where I have the most Luv";
+            $settings['message_timestamp']= "";
+        }
+
+        return $settings;
+    } catch (Exception $e) {
+        echo "Data could not be retrieved from the database. " . $e;
+        return -1;
+    }
+
+}
 
 
 

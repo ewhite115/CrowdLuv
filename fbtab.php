@@ -19,11 +19,15 @@
 	    $app_data="Empty";
 	    if(array_key_exists("app_data", $data)) $app_data = $data["app_data"];
 	}
-
-	//If it's not an fb tab and the crowdluv_tid hasn't been passed in, the page has been 
-	//linked erroneously  error out
+	//Otherwise -- If it's not an fb tab and the crowdluv_tid hasn't been passed in, the page has been 
+	//linked erroneously;  error out
 	//TODO:  change this so it redirects or does somehting more user friendly
 	if(!isset($CL_CUR_TGT_TALENT)) {echo "crowdluv_tid was not passed in"; exit;}
+
+
+	//Get the landing page settings for this talent
+	$tlpgsettings = get_talent_landingpage_settings($CL_CUR_TGT_TALENT);
+
 
     
 ?>

@@ -6,9 +6,7 @@
     include(ROOT_PATH . 'inc/header.php');
 
 
-    if(! $fb_user) { echo "user is null"; exit;  } 
-    if(! $fb_user_pages) { echo "fb_user_pages is null";   }
-    //if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;  }
+    if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 
 ?>

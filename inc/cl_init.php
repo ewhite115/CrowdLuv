@@ -84,6 +84,8 @@
         $fb_user_pages = $facebook->api('/me/accounts');
         if(sizeof($fb_user_pages['data'])==0){$fb_user_pages=null;}
         else{  
+          //Clear the global and session variable for talent array
+          $_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR = "";
           foreach ($fb_user_pages['data'] as $fbupg) {
             //Check to see if this talent exists in the cl db. If not, create a stub entry
             $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg['id']);

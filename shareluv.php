@@ -5,7 +5,7 @@
     require_once("inc/config.php");
     include(ROOT_PATH . 'inc/header.php');
 
-    if(! $fb_user) { echo "fb_user is null"; exit; } 
+    if(! $CL_LOGGEDIN_USER_UID) { echo "no logged in user (?)"; exit; } 
 
 ?>
     

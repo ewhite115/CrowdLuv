@@ -6,16 +6,15 @@
     include(ROOT_PATH . 'inc/header.php'); 
 
     if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}
-    if(! $fb_user) { echo "user is null"; exit; }
-    $CL_model->add_follower_to_talent($CL_LOGGEDIN_USER_UID, $_GET['crowdluv_tid']);
-    
+    //if(! $fb_user) { echo "user is null"; exit; }
+    $CL_model->add_follower_to_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT);
 
 ?>
 
     <div class="crowdluvsection" style="text-align:center; width:60%; margin-left:auto;margin-right:auto;">
 
         <br>
-        <img src="https://graph.facebook.com/<?php echo $fb_user;?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> &nbsp;&nbsp;
+        <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> &nbsp;&nbsp;
         Luvs &nbsp;&nbsp;
         <img src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"><br>
         <br>We'll let <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?> know you want them to come to your town. 

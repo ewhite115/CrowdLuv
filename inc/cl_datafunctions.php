@@ -149,6 +149,26 @@ class CrowdLuvModel {
         }
     }
 
+    public function update_follower_preferences_for_talent($cl_uidt, $cl_tidt, $prefname, $prefval){
+
+        $allowed_prefnames = ['allow_email', 'allow_sms', 'will_travel_distance', 'will_travel_time'];
+        if(! in_array($prefname, $allowed_prefnames)) {return 0;}
+        if( ! isset($prefval) || $prefval == "") {return 0;}
+        
+
+        try {
+
+            $sql = "update follower_luvs_talent set " . $prefname ."=" . $prefval . " where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
+            //echo $sql; exit;
+            $this->cldb->query($sql);
+            return 1;   
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return 0;
+        }
+    }
+
 
     public function get_talents_for_follower($cl_uidt) {
         
@@ -156,7 +176,7 @@ class CrowdLuvModel {
         //global $CL_db;
 
         try {
-            $sql = "SELECT talent.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where follower.crowdluv_uid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
+            $sql = "SELECT follower_luvs_talent.*, talent.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where follower.crowdluv_uid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1,$cl_uidt);
             $results->execute();

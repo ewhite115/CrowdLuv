@@ -36,6 +36,7 @@
             <th>Share the Luv</th>
             <th></th>
             <th></th>
+
         <?php 
             $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
             foreach($ret_tals as $ret_tal){ ?>
@@ -47,10 +48,33 @@
                     <td>(insert ranking here)</td>
                     <td>(insert city followers count here)</td>
                     <td>(insert share buttons here)</td>
-                    <td>More Options</td>
+                    <td><button name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $ret_tal["crowdluv_tid"];?>)">More Options</button></td>
 
-                    <td><button type="button" onclick="stopfollowingclickhandler(<?php echo $ret_tal["crowdluv_tid"];?>)">Stop Following</button></td>
+                   
                 </tr>
+
+                
+                <tr hidden id="cltoptsrow<?php echo $ret_tal['crowdluv_tid'];?>">
+                    <td class="cl_darkgraybackground" colspan="7">
+                        <div class="row" >
+                            <div class="col-xs-4">
+                                <p2>Invite your friends who like <?php echo $ret_tal['fb_page_name'];?></p2>
+                                <br><p2>((Insert images of fb friends here))</p2>
+                            </div>
+                            <div class="col-xs-6">
+                                <p2>Your preferences for this talent</p2><br>
+                                <p2> Will travel 2+hours?: Yes No</p2>
+                                <p2> Allow Email contact?: Yes No</p2>
+                                <p2> Allow SMS contact?: Yes No</p2> 
+                            </div>
+                            <div class="col-xs-2 text-right">
+                                <button type="button" onclick="stopfollowingclickhandler(<?php echo $ret_tal["crowdluv_tid"];?>)">Stop Following</button>
+                            </div>
+                        </div>
+                    </td>  
+                </tr>
+
+
 
             <?php }  ?>
         </table>
@@ -62,14 +86,20 @@
 
 <script type="text/javascript">
     
-function stopfollowingclickhandler(crowdluv_tid){
-    console.log("entering stopfollowingclickhandler, crowdluv_tid=" + crowdluv_tid);
-    $.getJSON('stopfollowing.php',{crowdluv_tid:crowdluv_tid},function(res){
-        console.log("entering $.get callback, result=" + res.result + ", res object:" + res);
-        if(res.result==1) $("#cltrow" + crowdluv_tid).hide(1000);
-    });
+    function stopfollowingclickhandler(crowdluv_tid){
+        console.log("entering stopfollowingclickhandler, crowdluv_tid=" + crowdluv_tid);
+        $.getJSON('stopfollowing.php',{crowdluv_tid:crowdluv_tid},function(res){
+            console.log("entering $.get callback, result=" + res.result + ", res object:" + res);
+            if(res.result==1) $("#cltrow" + crowdluv_tid).hide(1000);
+        });
 
-}
+    }
+
+   function btn_moreoptions_clickhandler(crowdluv_tid){
+        console.log("entering btn_moreoptions_clickhandler, crowdluv_tid=" + crowdluv_tid);
+        $("#cltoptsrow" + crowdluv_tid).toggle();
+
+    }
 
 </script>
 

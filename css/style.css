@@ -234,7 +234,11 @@ body{
 .cl_grayborder {
     border: 1px solid #E7E5E6;
 }
+.cl_darkgraybackground {
+    background-color: #3B393C;
+    color: white;
 
+}
 
 
 #CL_landingpage_jumbotron {

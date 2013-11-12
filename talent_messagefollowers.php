@@ -179,7 +179,7 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
             fromafar: new String(working_targetset.fromafar) 
          };
 
-        resl = $.getJSON('MA_getfollowers.php', qopts, function(result) {
+        resl = $.getJSON('ajax_getfollowers.php', qopts, function(result) {
             //console.log("entering callback, received unfiltered result:"); console.log(result);
             working_targetset.followers = result;
             recalculateTargetSet(working_targetset);

@@ -13,17 +13,21 @@
 	    $data = json_decode(base64_decode(strtr($payload, '-_', '+/')), true);
 	     
 	    $talentpageid = $data["page"]["id"]; 
-	    //$cl_tobj = get_talent_object_by_tid( get_crowdluv_tid_by_fb_pid($talentpageid)  );
-	    $CL_CUR_TGT_TALENT = get_talent_object_by_tid( get_crowdluv_tid_by_fb_pid($talentpageid));
+	    //$cl_tobj = $CL_model->get_talent_object_by_tid( $CL_model->get_crowdluv_tid_by_fb_pid($talentpageid)  );
+	    $CL_CUR_TGT_TALENT = $CL_model->get_talent_object_by_tid( $CL_model->get_crowdluv_tid_by_fb_pid($talentpageid));
 	    //$app_data is any information that was passed in the query string for the app_data param
 	    $app_data="Empty";
 	    if(array_key_exists("app_data", $data)) $app_data = $data["app_data"];
 	}
-
-	//If it's not an fb tab and the crowdluv_tid hasn't been passed in, the page has been 
-	//linked erroneously  error out
+	//Otherwise -- If it's not an fb tab and the crowdluv_tid hasn't been passed in, the page has been 
+	//linked erroneously;  error out
 	//TODO:  change this so it redirects or does somehting more user friendly
 	if(!isset($CL_CUR_TGT_TALENT)) {echo "crowdluv_tid was not passed in"; exit;}
+
+
+	//Get the landing page settings for this talent
+	$tlpgsettings = get_talent_landingpage_settings($CL_CUR_TGT_TALENT);
+
 
     
 ?>

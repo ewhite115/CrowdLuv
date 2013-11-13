@@ -8,7 +8,7 @@
 	if(!$servlet_testing)	ob_start();
 
 	require_once("inc/cl_datafunctions.php");
-	require_once("inc/cl_facebookinit.php");
+	require_once("inc/cl_init.php");
 
 	if(!isset($_GET['crowdluv_tid'])) {echo "crowdluv_tid not set"; exit;}
 	if(!isset($_GET['city'])) {echo "city not set"; exit;}
@@ -20,7 +20,7 @@
 	$dist = $_GET['crowdluv_tid'];
 	$fromafar = $_GET['fromafar'];
 
-	$result = get_followers_by_city_for_talent($clt, $city, $dist);
+	$result = $CL_model->get_followers_by_city_for_talent($clt, $city, $dist);
 
 	//clear out the buffer so the browser only receives the json object
 	if(!$servlet_testing)	$obcontents = ob_get_contents();

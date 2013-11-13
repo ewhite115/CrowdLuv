@@ -10,7 +10,7 @@
     //if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;  }
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active managed talent set"; exit;}
 
-    $folst=get_followers_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+    $folst=$CL_model->get_followers_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
 
 ?>
 

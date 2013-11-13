@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-xs-6">
                                 <p2>Your preferences for this talent</p2><br>
-                                <p2> Willing to travel up to <input data-crowdluv_tid="<?php echo $ret_tal['crowdluv_tid'];?>" class="txt_will_travel_time" type="text" size="3" value="<?php echo $ret_tal['will_travel_time'];?>" /> minutes</p2><br>
+                                <p2> Willing to travel up to <input data-crowdluv_tid="<?php echo $ret_tal['crowdluv_tid'];?>" class="txt_will_travel_time" type="text" size="3" value="<?php echo $ret_tal['will_travel_time'];?>" /> minutes to see <?php echo $ret_tal['fb_page_name'];?> </p2><br>
                                 <p2> Allow Email contact?: 
                                     <p2 <?php if(!$ret_tal['allow_email']) echo " hidden " ?> class="p_allow_email_yes" style="color:green">Yes (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_email", "0");'>Stop</a>)</p2>
                                     <p2 <?php if( $ret_tal['allow_email']) echo " hidden " ?> class="p_allow_email_no" style="color:red">No (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_email", "1");'>Start</a>)</p2>
@@ -97,10 +97,11 @@
     
     function stopfollowingclickhandler(crowdluv_tid){
         console.log("entering stopfollowingclickhandler, crowdluv_tid=" + crowdluv_tid);
-        $.getJSON('stopfollowing.php',{crowdluv_tid:crowdluv_tid},function(res){
+        contact_preference_change_handler(crowdluv_tid, "still_following", "0")
+        /*$.getJSON('stopfollowing.php',{crowdluv_tid:crowdluv_tid},function(res){
             console.log("entering $.get callback, result=" + res.result + ", res object:" + res);
             if(res.result==1) $("#cltrow" + crowdluv_tid).hide(1000);
-        });
+        });*/
 
     }
 
@@ -137,6 +138,10 @@
             else if(result.prefname == "allow_sms" && result.prefval=="1" && result.result=="1"){
                 $("#cltoptsrow" + crowdluv_tid + " .p_allow_sms_yes").show();
                 $("#cltoptsrow" + crowdluv_tid + " .p_allow_sms_no").hide();
+            }
+            else if(result.prefname == "still_following" && result.result=="1"){
+                 $("#cltrow" + crowdluv_tid).hide(1000);
+                 $("#cltoptsrow" + crowdluv_tid).hide(1000);
             }
 
         });

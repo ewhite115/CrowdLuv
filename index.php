@@ -38,7 +38,10 @@ include(ROOT_PATH . 'inc/header.php');
     <div class="col-xs-12 col-ms-5 col-sm-4">
       <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
         <?php 
-          $folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING );
+          $folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING,
+                             'redirect_uri' => CLADDR . 'shareluv.php'  );
+
+
           $talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
          ?>
         <h1>Follower Sign-in / Registration</h1>

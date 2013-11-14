@@ -61,7 +61,7 @@
                         <div class="row" >
                             <div class="col-xs-4">
                                 <p2>Invite your friends who like <?php echo $ret_tal['fb_page_name'];?></p2>
-                                <br><p2>((Insert images of fb friends here))</p2>
+                                <br><p2 id="<?php echo $ret_tal['fb_pid'];?>_friendfans"></p2>
                             </div>
                             <div class="col-xs-6">
                                 <p2>Your preferences for this talent</p2><br>
@@ -158,8 +158,33 @@
 
         });
 
+
     });
 
+    //Once the facebook api finished loading and we've loaded the user's data, do a call to fb
+    $(document).on("fbUserDataLoaded", function(){
+
+        //for each of the talents this user is following, do a facebook FQL query to find out which of their friends also like the talent's facebook page
+        <?php foreach($ret_tals as $ret_tal){ ?>             
+        FB.api(
+                {   
+                method: 'fql.query',
+                //query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=661469737211316 AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
+                query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=<?php echo $ret_tal['fb_pid'];?> AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
+                }, 
+                function(data) {
+                    console.log(data);           
+                    //For each of the friends, add their picture to the slide-down for the talent
+                    for(var i=0;i<data.length;i++){
+                        $("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
+                    }
+                    //
+                }
+        ); //end of fb.api
+        <?php } ?>
+
+
+    }); //end of on() trigger for fbuserdataloaded
 
 
 </script>

@@ -1,5 +1,7 @@
 <?php     
 require_once("inc/config.php");
+$dir = sys_get_temp_dir();
+session_save_path($dir);
 session_start();
 require_once("inc/cl_datafunctions.php");
 require_once("inc/cl_init.php");

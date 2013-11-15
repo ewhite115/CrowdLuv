@@ -28,7 +28,7 @@
             <h1>Facebook</h1>
                 <p>Three ways to share</p><br>
                 <p>1) Post a box to the top of your facebook page.</p>
-                    <a href="https://www.facebook.com/dialog/pagetab?app_id=<?php echo FB_APP_ID; ?>&next=<?php echo CLADDR;?>talentdashboard.php?activemanagedtalent_tid=<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>">
+                    <a href="https://www.facebook.com/dialog/pagetab?app_id=<?php echo CL_FB_APP_ID; ?>&next=<?php echo CLADDR;?>talentdashboard.php?activemanagedtalent_tid=<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>">
                         <img width="33%" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg"></a> 
                 <br>
                 <p>2)Pick an image to post on your timeline</p> 
@@ -37,7 +37,7 @@
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
                 <br><br>
                 <p>3)Post a status update with this link and your own message</p>
-                <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
+                <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo CL_FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
             </div>
         </div>
         <div id="sharecol2" class="col-sm-6 col-md-3">
@@ -50,7 +50,7 @@
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
                 <br>
                 <p>2)Post a status update with this link and your own message</p>
-                <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
+                <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo CL_FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
             </div>
         </div>
         <div class="clearfix visible-sm"></div>

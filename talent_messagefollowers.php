@@ -128,10 +128,6 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
 
 
 
-<?php include(ROOT_PATH . 'inc/footer.php') ?>
-
-
-
 <script>
 
     //An array of objects called 
@@ -166,7 +162,7 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
     
  
     function retrievefollowerdata() {      
-        //console.log("entering retrievefollowerdata");
+        console.log("entering retrievefollowerdata");
         //ajax call to get back a JSON object of *all* the followers in the targeted area + radius
         
         $(".CL_transparentscreen").show();
@@ -180,7 +176,7 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
          };
 
         resl = $.getJSON('ajax_getfollowers.php', qopts, function(result) {
-            //console.log("entering callback, received unfiltered result:"); console.log(result);
+            console.log("entering callback, received unfiltered result:"); console.log(result);
             working_targetset.followers = result;
             recalculateTargetSet(working_targetset);
             displayWorkingTargetSetStatistics()
@@ -303,8 +299,8 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
     };
 
     //Page load
-    $("document").ready(function(){
-      
+    $(document).ready(function(){
+        console.log("talent_messagefollowers - entering doc.ready()");
         resetDemographicControls();
         resetWorkingTargetSet();
         
@@ -538,3 +534,9 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
 
 
 </script>
+
+
+
+
+
+<?php include(ROOT_PATH . 'inc/footer.php') ?>

@@ -42,8 +42,8 @@
 
   $dbgmsgs = array();
   $fbconfig = array();
-  $fbconfig['appId'] = FB_APP_ID;
-  $fbconfig['secret'] = FB_APP_SECRET;
+  $fbconfig['appId'] = CL_FB_APP_ID;
+  $fbconfig['secret'] = CL_FB_APP_SECRET;
   $fbconfig['fileUpload'] = false; // optional
   $fbconfig['scope'] = CL_FB_PERMISSION_SCOPE_STRING;
 

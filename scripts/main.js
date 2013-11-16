@@ -1,4 +1,4 @@
-
+<?php require_once("../inc/config.php"); ?>
 
 //Facebook Javascript SDK
 fb_loginstatus_response = "";
@@ -50,8 +50,8 @@ $(document).ready(function() {
   $.getScript('//connect.facebook.net/en_US/all.js', function(){
 
     FB.init({
-      appId      : '740484335978197',                        // App ID from the app dashboard
-      channelUrl : '//67.82.130.92:7999/crowdluv/channel.php', // Channel file for x-domain comms
+      appId      : '<?php echo CL_FB_APP_ID;?>',              // App ID from the app dashboard
+      //channelUrl : '//67.82.130.92:7999/crowdluv/channel.php', // Channel file for x-domain comms
       status     : true,                                 // Check Facebook Login status
       cookie     : true,
       xfbml      : true                                  // Look for social plugins on the page

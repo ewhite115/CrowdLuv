@@ -59,20 +59,19 @@
                 <tr hidden id="cltoptsrow<?php echo $ret_tal['crowdluv_tid'];?>">
                     <td class="cl_darkgraybackground" colspan="7">
                         <div class="row" >
-                            <div class="col-xs-4">
-                                <p2>Invite your friends who like <?php echo $ret_tal['fb_page_name'];?></p2>
-                                <br><p2>((Insert images of fb friends here))</p2>
+                            <div class="col-xs-5">
+                                <p2 id="<?php echo $ret_tal['fb_pid'];?>_friendfans"></p2>
                             </div>
-                            <div class="col-xs-6">
+                            <div class="col-xs-5">
                                 <p2>Your preferences for this talent</p2><br>
                                 <p2> Willing to travel up to <input data-crowdluv_tid="<?php echo $ret_tal['crowdluv_tid'];?>" class="txt_will_travel_time" type="text" size="3" value="<?php echo $ret_tal['will_travel_time'];?>" /> minutes to see <?php echo $ret_tal['fb_page_name'];?> </p2><br>
                                 <p2> Allow Email contact?: 
-                                    <p2 <?php if(!$ret_tal['allow_email']) echo " hidden " ?> class="p_allow_email_yes" style="color:green">Yes (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_email", "0");'>Stop</a>)</p2>
-                                    <p2 <?php if( $ret_tal['allow_email']) echo " hidden " ?> class="p_allow_email_no" style="color:red">No (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_email", "1");'>Start</a>)</p2>
+                                    <p2 <?php if(!$ret_tal['allow_email']) echo " hidden " ?> class="p_allow_email_yes" style="color:green"><strong><b>Yes</b></strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_email", "0");'>Stop</a>)</p2>
+                                    <p2 <?php if( $ret_tal['allow_email']) echo " hidden " ?> class="p_allow_email_no" style="color:red"><strong>No</strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_email", "1");'>Start</a>)</p2>
                                 </p2>
                                 <p2> Allow SMS contact?: 
-                                    <p2 <?php if(!$ret_tal['allow_sms']) echo " hidden " ?> class="p_allow_sms_yes" style="color:green">Yes (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_sms", "0");'>Stop</a>)</p2>
-                                    <p2 <?php if( $ret_tal['allow_sms']) echo " hidden " ?> class="p_allow_sms_no" style="color:red">No (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_sms", "1");'>Start</a>)</p2>
+                                    <p2 <?php if(!$ret_tal['allow_sms']) echo " hidden " ?> class="p_allow_sms_yes" style="color:green"><strong><b>Yes</b></strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_sms", "0");'>Stop</a>)</p2>
+                                    <p2 <?php if( $ret_tal['allow_sms']) echo " hidden " ?> class="p_allow_sms_no" style="color:red"><strong>No</strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_sms", "1");'>Start</a>)</p2>
                                   
                                 </p2> 
                             </div>
@@ -105,7 +104,7 @@
 
     }
 
-   function btn_moreoptions_clickhandler(crowdluv_tid){
+    function btn_moreoptions_clickhandler(crowdluv_tid){
         console.log("entering btn_moreoptions_clickhandler, crowdluv_tid=" + crowdluv_tid);
         $("#cltoptsrow" + crowdluv_tid).toggle();
     }
@@ -158,8 +157,39 @@
 
         });
 
+
     });
 
+    //Once the facebook api finished loading and we've loaded the user's data, do a call to fb
+    $(document).on("fbUserDataLoaded", function(){
+
+        //for each of the talents this user is following, do a facebook FQL query to find out which of their friends also like the talent's facebook page
+        <?php foreach($ret_tals as $ret_tal){ ?>             
+        FB.api(
+                {   
+                method: 'fql.query',
+                //query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=661469737211316 AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
+                query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=<?php echo $ret_tal['fb_pid'];?> AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
+                }, 
+                function(data) {
+                    console.log(data);           
+                    //For each of the friends, add their picture to the slide-down for the talent
+                    if(data.length==0){ 
+                        $("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append("None of your Facebook friends like <?php echo $ret_tal['fb_page_name'];?>... Why not share a post on your wall and invite your friends to show some Luv?<br>"); 
+                    }
+                    else{ 
+                        $("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append("Some of your Facebook friends already like <?php echo $ret_tal['fb_page_name'];?>... So, invite them to LUV <?php echo $ret_tal['fb_page_name'];?>! The more Luv <?php echo $ret_tal['fb_page_name'];?> has, the sooner they will come to your area<br>");
+                    }
+                    for(var i=0;i<data.length;i++){
+                        $("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
+                    }
+                    //
+                }
+        ); //end of fb.api
+        <?php } ?>
+
+
+    }); //end of on() trigger for fbuserdataloaded
 
 
 </script>

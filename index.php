@@ -46,7 +46,7 @@ include(ROOT_PATH . 'inc/header.php');
          ?>
         <h1>Follower Sign-in / Registration</h1>
         <p>Sign in to CrowdLuv with your facebook account to follow your favorite talent and find new luvs</p><br>
-        <a href="<?php echo $facebook->getLoginUrl($folparams);?>"><img width="60%" class="img-responsive" src="<?php echo BASE_URL;?>/res/signin-facebook.jpg" /> </a>
+        <a href="<?php echo $facebook->getLoginUrl($folparams);?>"><img width="60%" class="img-responsive" src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
         <br>        
         <?php if(isset($CL_LOGGEDIN_USER_OBJ)){ ?>
          <h1>Welcome back to CrowdLuv, <?php echo $CL_LOGGEDIN_USER_OBJ['firstname'];?>!</h1> 
@@ -61,7 +61,7 @@ include(ROOT_PATH . 'inc/header.php');
         <h1>Talent Sign-in / Registration</h1>
         <p>Artists, musicians, speakers etc. Sign in to connect with your fans </p>    
         <br>
-        <a href="<?php echo $facebook->getLoginUrl($talparams);?>"><img width="60%" class="img-responsive" src="<?php echo BASE_URL;?>/res/select-facebook-pages.jpg" /></a><br>
+        <a href="<?php echo $facebook->getLoginUrl($talparams);?>"><img width="60%" class="img-responsive" src="<?php echo BASE_URL;?>res/select-facebook-pages.jpg" /></a><br>
             <?php 
             if(isset($CL_LOGGEDIN_TALENTS_ARR)){
                foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){  ?>

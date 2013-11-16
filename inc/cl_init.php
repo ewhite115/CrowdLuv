@@ -1,4 +1,9 @@
 <?php
+  
+  //The following is for compatibility with writing session files on AWS
+  $dir = sys_get_temp_dir();
+  session_save_path($dir);
+  session_start();
 
   require_once("inc/config.php");
   require_once("inc/cl_datafunctions.php");
@@ -42,8 +47,8 @@
 
   $dbgmsgs = array();
   $fbconfig = array();
-  $fbconfig['appId'] = FB_APP_ID;
-  $fbconfig['secret'] = FB_APP_SECRET;
+  $fbconfig['appId'] = CL_FB_APP_ID;
+  $fbconfig['secret'] = CL_FB_APP_SECRET;
   $fbconfig['fileUpload'] = false; // optional
   $fbconfig['scope'] = CL_FB_PERMISSION_SCOPE_STRING;
 

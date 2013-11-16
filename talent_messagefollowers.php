@@ -15,119 +15,6 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
 
  
 
- 
-    <div class="crowdluvsection"> 
-        <h1>Message Followers - <?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?><img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></h1>
-        <br> 
-    </div>
-    
-    <br>
- 
-
-    <div class="fluid-row">
-
-        <div class="col-xs-4 col-sm-6 crowdluvsection cl_grayborder" style="min-width:300px;">
-            <h1>Step 1: Choose your target audience(s)</h1>           
-            <p id="p_targetgroups">Add one of more target groups for this message by selecting the demographics you would like to target</p>
-            <br>
-            <button type="button" id="btn_addATargetGroup">Add a target group</button><br>
-            <br>
-
-        </div>
- 
-    
-        <div class="col-xs-4 col-sm-6 crowdluvsection cl_grayborder" style="min-width:300px;">
-            <h1>Step 2: Compose your message</h1>
-            <p><input type="checkbox" /> Text Message &nbsp;&nbsp; &nbsp;  <input type="checkbox"> Email Message</p>
-            <textarea rows='5' cols='25' style="box-sizing:border-box;width:90%;margin-left:auto;margin-right:auto;background-color:#fff;" > </textarea>
-     
-        </div>
-    </div>
-
-    <div class="fluid-row">
-
-        <div class="col-xs-4 col-sm-6 crowdluvsection cl_grayborder" style="min-width:300px;">
-
-            <h1>Step 3: Send your message</h1>
-
-            <h2> The message will deliver to:</h2>
-             <p id="p_messageaudience"> You have not selected any target groups yet.</p>
-            <br>
-            <hr>                
-            <div class="crowdluvsection" style="display:inline-block;width:40%;">        
-                <h3>Cost to send:</h3>
-                 <p2>nnn credits</p2>
-            </div>
-            <div class="crowdluvsection" style="display:inline-block;width:40%;">        
-                <h3>Your current balance</h3>
-                 <p>nnn credits (get more)</p2><br><br>
-            </div>
-            <hr>
-
-            <button type='button'>Send Message</button><br>
-            <br>
-
-        </div>
-
-        <div class="col-xs-4 col-sm-6 crowdluvsection cl_grayborder" style="min-width:300px;">
-            <p>Text Message History</p>
-            <br>
-            <h2>This will be the previously sent message #1</h2>
-            <p2>Day, time</p2>
-            <p2>Selected: statistics on selection</p2>
-            <br><br>
-            <h2>This will be the previously sent message #2</h2>
-            <p2>Day, time</p2>
-            <p2>Selected: statistics on selection</p2>
-            <br><br>
-            <p2><a href="#">See More &gt;</a></p2>
-
-        </div>
-        
-
-    </div> 
-
-
-    <div class="CL_transparentscreen"></div> 
-           
-
-    <div class="CL_modal crowdluvsection" id="modal_targetsetbuilder" style="top:5%;">
-      <h1>Choose your message audience</h1>
-      <p>Create a target group to receive this message</p>
-            
-        <h2>Select target area / radius</h2>
-        <table class='cldefaulttable' style="width:100%;" ><tr><td style="width:15%;"><label id="lbl_areacount"><?php echo $citystats['followercount'];?></label></td><td style="width:85%;"> in <label id="lbl_areaname"><?php echo $city;?></label></td><td><input type='checkbox' checked disabled="true" class="areaoptions" id="cb_area"/></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_extareacount"></label></td><td style="width:85%;">plus all within<select class="areaoptions" id="select_distance" disabled="true"><option value="5">5</option><option value="10">10</option><option value="20">20</option></select>  mile radius </td><td><input type='checkbox' class="areaoptions" id="cb_distance" /></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_extareacountafar"></label></td><td style="width:85%;"> ..who are willing to travel that far</td><td><input type='checkbox' disabled="true" class="areaoptions" id="cb_fromafar" /></td></tr></table><br>
-
-        <h2>Select gender(s) to target in this group</h2>
-        <table class='cldefaulttable' style="width:100%;" ><tr><td style="width:15%;"><label id="lbl_femalecount"><?php echo $citystats['female'];?></label></td><td style="width:85%;"> Female</td><td><input type='checkbox' checked class="demooptions" id="cb_female" /></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_malecount"><?php echo $citystats['male'];?></label></td><td style="width:85%;"> Male</td><td><input type='checkbox' checked class="demooptions" id="cb_male" /></td></tr></table><br>
-        
-        <h2>Select relationship statuses to target in this group</h2>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_relationshipcount"><?php echo $citystats['relationship'];?></label></td><td style="width:85%;"> Relationship, Engaged, Married</td><td><input type='checkbox' checked class="demooptions" id="cb_relationship"/></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_singlecount"><?php echo $citystats['single'];?></label></td><td style="width:85%;"> Single, Divorced</td><td><input type='checkbox' checked class="demooptions" id="cb_single"/></td></tr></table><br>
-        
-        <h2>Select age range to target in this group (un-check for all ages)</h2> 
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_agerangecount"></label></td><td style="width:85%;"> Age Group <input disabled="true" type="text" class="demooptions" id="txt_min_age" size="2" value="0" /> - <input type="text" disabled="true" class="demooptions" id="txt_max_age" size="2" value="110" /> </td><td><input type='checkbox' class="demooptions" id="cb_agerange" /></td></tr></table><br>              
-
-        <h2>Target this group based on signup date</h2>          
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signupanydatecount"></label></td><td style="width:85%;"> Signed up any time</td><td><input type='radio' name="signup" checked class="demooptions" id="cb_signupanydate"/></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup30count"><?php echo $citystats['signedup30'];?></label></td><td style="width:85%;"> signed up w/in 30 days</td><td><input type='radio' name="signup" class="demooptions" id="cb_30days"/></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup90count"><?php echo $citystats['signedup90'];?></label></td><td style="width:85%;"> signed up w/in 90 days</td><td><input type='radio' name="signup" class="demooptions" id="cb_90days" /></td></tr></table><br>
-        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup365count"><?php echo $citystats['signedup365'];?></label></td><td style="width:85%;"> signed up w/in 1 year</td><td><input type='radio' name="signup" class="demooptions" id="cb_365days"/></td></tr></table><br>
-        <button type="button" id="btn_addtargetdemogroup">Add this target group</button>
-        <button type="button" id="btn_demoreset">Reset filters</button>       
-    </div> 
-    
-           
-    <div class="CL_modal" id="modal_retrievinginfo"><span>Retrieving follower information....</span></div>
-    
-
- 
-
-
-
 <script>
 
     //An array of objects called 
@@ -161,6 +48,34 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
         //update the "message will deliver to" section by calling function that gives text desc of merged set       
     
  
+
+
+    //Page load
+    $(document).ready(function(){
+        console.log("talent_messagefollowers - entering doc.ready()");
+        resetDemographicControls();
+        resetWorkingTargetSet();
+        
+        retrievefollowerdata();
+
+        $("#modal_targetsetbuilder").hide();
+        $(".CL_transparentscreen").hide();
+
+
+        //Set handlers
+        $(".areaoptions").change(areachangehandler);
+        $(".demooptions").change(handler_demographicchanges);
+        $("#btn_demoreset").click(resetDemographicControls);
+        $("#btn_addtargetdemogroup").click( btn_addtargetdemogroup_clickhandler);
+        $("#btn_addATargetGroup").click( function(){ 
+            $(".CL_transparentscreen").show();
+            $("#modal_targetsetbuilder").show();  
+        });
+
+    }); //end doc ready handler
+
+
+    
     function retrievefollowerdata() {      
         console.log("entering retrievefollowerdata");
         //ajax call to get back a JSON object of *all* the followers in the targeted area + radius
@@ -170,23 +85,24 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
  
         var qopts = { 
             crowdluv_tid: "<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>", 
+            crossDomain: true,
             city: working_targetset.areaname, 
             distance: working_targetset.distance,
             fromafar: new String(working_targetset.fromafar) 
          };
 
-        resl = $.getJSON('ajax_getfollowers.php', qopts, function(result) {
+        resl = $.getJSON('<?php echo CLADDR;?>ajax_getfollowers.php', qopts, function(result) {
             console.log("entering callback, received unfiltered result:"); console.log(result);
             working_targetset.followers = result;
             recalculateTargetSet(working_targetset);
-            displayWorkingTargetSetStatistics()
+            displayWorkingTargetSetStatistics();
 
             //$(".CL_transparentscreen").hide();
             $("#modal_retrievinginfo").hide();      
 
         } );
 
-        //console.log("exiting retrievefollowerdata, resl="); console.log(resl);
+        console.log("exiting retrievefollowerdata, resl="); console.log(resl);
     }
 
 
@@ -298,29 +214,6 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
 
     };
 
-    //Page load
-    $(document).ready(function(){
-        console.log("talent_messagefollowers - entering doc.ready()");
-        resetDemographicControls();
-        resetWorkingTargetSet();
-        
-        retrievefollowerdata();
-
-        $("#modal_targetsetbuilder").hide();
-        $(".CL_transparentscreen").hide();
-
-
-        //Set handlers
-        $(".areaoptions").change(areachangehandler);
-        $(".demooptions").change(handler_demographicchanges);
-        $("#btn_demoreset").click(resetDemographicControls);
-        $("#btn_addtargetdemogroup").click( btn_addtargetdemogroup_clickhandler);
-        $("#btn_addATargetGroup").click( function(){ 
-            $(".CL_transparentscreen").show();
-            $("#modal_targetsetbuilder").show();  
-        });
-
-    }); //end doc ready handler
 
 
    function resetWorkingTargetSet(){
@@ -534,6 +427,120 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
 
 
 </script>
+
+
+ 
+    <div class="crowdluvsection"> 
+        <h1>Message Followers - <?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?><img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></h1>
+        <br> 
+    </div>
+    
+    <br>
+ 
+
+    <div class="fluid-row">
+
+        <div class="col-xs-4 col-sm-6 crowdluvsection cl_grayborder" style="min-width:300px;">
+            <h1>Step 1: Choose your target audience(s)</h1>           
+            <p id="p_targetgroups">Add one of more target groups for this message by selecting the demographics you would like to target</p>
+            <br>
+            <button type="button" id="btn_addATargetGroup">Add a target group</button><br>
+            <br>
+
+        </div>
+ 
+    
+        <div class="col-xs-4 col-sm-6 crowdluvsection cl_grayborder" style="min-width:300px;">
+            <h1>Step 2: Compose your message</h1>
+            <p><input type="checkbox" /> Text Message &nbsp;&nbsp; &nbsp;  <input type="checkbox"> Email Message</p>
+            <textarea rows='5' cols='25' style="box-sizing:border-box;width:90%;margin-left:auto;margin-right:auto;background-color:#fff;" > </textarea>
+     
+        </div>
+    </div>
+
+    <div class="fluid-row">
+
+        <div class="col-xs-4 col-sm-6 crowdluvsection cl_grayborder" style="min-width:300px;">
+
+            <h1>Step 3: Send your message</h1>
+
+            <h2> The message will deliver to:</h2>
+             <p id="p_messageaudience"> You have not selected any target groups yet.</p>
+            <br>
+            <hr>                
+            <div class="crowdluvsection" style="display:inline-block;width:40%;">        
+                <h3>Cost to send:</h3>
+                 <p2>nnn credits</p2>
+            </div>
+            <div class="crowdluvsection" style="display:inline-block;width:40%;">        
+                <h3>Your current balance</h3>
+                 <p>nnn credits (get more)</p2><br><br>
+            </div>
+            <hr>
+
+            <button type='button'>Send Message</button><br>
+            <br>
+
+        </div>
+
+        <div class="col-xs-4 col-sm-6 crowdluvsection cl_grayborder" style="min-width:300px;">
+            <p>Text Message History</p>
+            <br>
+            <h2>This will be the previously sent message #1</h2>
+            <p2>Day, time</p2>
+            <p2>Selected: statistics on selection</p2>
+            <br><br>
+            <h2>This will be the previously sent message #2</h2>
+            <p2>Day, time</p2>
+            <p2>Selected: statistics on selection</p2>
+            <br><br>
+            <p2><a href="#">See More &gt;</a></p2>
+
+        </div>
+        
+
+    </div> 
+
+
+    <div class="CL_transparentscreen"></div> 
+           
+
+    <div class="CL_modal crowdluvsection" id="modal_targetsetbuilder" style="top:5%;">
+      <h1>Choose your message audience</h1>
+      <p>Create a target group to receive this message</p>
+            
+        <h2>Select target area / radius</h2>
+        <table class='cldefaulttable' style="width:100%;" ><tr><td style="width:15%;"><label id="lbl_areacount"><?php echo $citystats['followercount'];?></label></td><td style="width:85%;"> in <label id="lbl_areaname"><?php echo $city;?></label></td><td><input type='checkbox' checked disabled="true" class="areaoptions" id="cb_area"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_extareacount"></label></td><td style="width:85%;">plus all within<select class="areaoptions" id="select_distance" disabled="true"><option value="5">5</option><option value="10">10</option><option value="20">20</option></select>  mile radius </td><td><input type='checkbox' class="areaoptions" id="cb_distance" /></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_extareacountafar"></label></td><td style="width:85%;"> ..who are willing to travel that far</td><td><input type='checkbox' disabled="true" class="areaoptions" id="cb_fromafar" /></td></tr></table><br>
+
+        <h2>Select gender(s) to target in this group</h2>
+        <table class='cldefaulttable' style="width:100%;" ><tr><td style="width:15%;"><label id="lbl_femalecount"><?php echo $citystats['female'];?></label></td><td style="width:85%;"> Female</td><td><input type='checkbox' checked class="demooptions" id="cb_female" /></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_malecount"><?php echo $citystats['male'];?></label></td><td style="width:85%;"> Male</td><td><input type='checkbox' checked class="demooptions" id="cb_male" /></td></tr></table><br>
+        
+        <h2>Select relationship statuses to target in this group</h2>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_relationshipcount"><?php echo $citystats['relationship'];?></label></td><td style="width:85%;"> Relationship, Engaged, Married</td><td><input type='checkbox' checked class="demooptions" id="cb_relationship"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_singlecount"><?php echo $citystats['single'];?></label></td><td style="width:85%;"> Single, Divorced</td><td><input type='checkbox' checked class="demooptions" id="cb_single"/></td></tr></table><br>
+        
+        <h2>Select age range to target in this group (un-check for all ages)</h2> 
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_agerangecount"></label></td><td style="width:85%;"> Age Group <input disabled="true" type="text" class="demooptions" id="txt_min_age" size="2" value="0" /> - <input type="text" disabled="true" class="demooptions" id="txt_max_age" size="2" value="110" /> </td><td><input type='checkbox' class="demooptions" id="cb_agerange" /></td></tr></table><br>              
+
+        <h2>Target this group based on signup date</h2>          
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signupanydatecount"></label></td><td style="width:85%;"> Signed up any time</td><td><input type='radio' name="signup" checked class="demooptions" id="cb_signupanydate"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup30count"><?php echo $citystats['signedup30'];?></label></td><td style="width:85%;"> signed up w/in 30 days</td><td><input type='radio' name="signup" class="demooptions" id="cb_30days"/></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup90count"><?php echo $citystats['signedup90'];?></label></td><td style="width:85%;"> signed up w/in 90 days</td><td><input type='radio' name="signup" class="demooptions" id="cb_90days" /></td></tr></table><br>
+        <table class='cldefaulttable' style="width:100%;"><tr><td style="width:15%;"><label id="lbl_signedup365count"><?php echo $citystats['signedup365'];?></label></td><td style="width:85%;"> signed up w/in 1 year</td><td><input type='radio' name="signup" class="demooptions" id="cb_365days"/></td></tr></table><br>
+        <button type="button" id="btn_addtargetdemogroup">Add this target group</button>
+        <button type="button" id="btn_demoreset">Reset filters</button>       
+    </div> 
+    
+           
+    <div class="CL_modal" id="modal_retrievinginfo"><span>Retrieving follower information....</span></div>
+    
+
+ 
+
+
 
 
 

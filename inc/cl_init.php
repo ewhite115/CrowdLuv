@@ -1,4 +1,9 @@
 <?php
+  
+  //The following is for compatibility with writing session files on AWS
+  $dir = sys_get_temp_dir();
+  session_save_path($dir);
+  session_start();
 
   require_once("inc/config.php");
   require_once("inc/cl_datafunctions.php");

@@ -7,9 +7,7 @@
 
     if(! $CL_LOGGEDIN_USER_UID) { echo "no logged in user (?)"; exit; } 
 
-
-?>
-    
+?> 
 
     <div class="fluid-row">
         <div class="col-sm-8 crowdluvsection">

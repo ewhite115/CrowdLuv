@@ -9,6 +9,13 @@
     if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 
+    //If there are no followers for this talent, redirect to the talent tutorial page
+    if(count($CL_model->get_followers_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'])) == 0 ) {
+        header("Location: talent_tutorial.php");
+        die();
+    }
+
+
 ?>
 
     <div class="fluid-row">

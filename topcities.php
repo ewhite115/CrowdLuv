@@ -11,7 +11,7 @@
 
     //If there are no followers for this talent, redirect to the talent tutorial page
     if(count($CL_model->get_followers_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'])) == 0 ) {
-        header("Location: talent_tutorial.php");
+        header("Location: talent_gettingstarted.php");
         die();
     }
 

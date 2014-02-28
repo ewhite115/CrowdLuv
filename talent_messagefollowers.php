@@ -18,15 +18,15 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
 <script>
 
     //An array of objects called 
-    //targetDemoGroup objects contain info about criteria and list of CL followers included based
+    //targetsets  contain info about criteria and list of CL followers included based
     //on that criteria
     var targetsets = new Array();
     var working_targetset = new Object();
  
 
-    //messageAudience object contains a targetset of all the CL followers who are ultimately 
+    //message_audience object contains a targetset of all the CL followers who will ultimately 
     //receive the message.  The "This message will deliver to" section will summarize contents of
-    //this object and this object will be sentoff to server 
+    //this object and this object will be sent to server 
     var message_audience = new Object();
     message_audience.followers = new Array();
 
@@ -42,14 +42,12 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
         //Re-calculate and display the statistics for each category
 
     //When talent clicks add:
-        //add this working set to an array of target sets
+        //add this working set to the array of target sets
         //also, merge the new working set with any previous target sets
         //update the "your selected groups" by calling a funtion that gets a text description of each targetset
         //update the "message will deliver to" section by calling function that gives text desc of merged set       
     
  
-
-
     //Page load
     $(document).ready(function(){
         console.log("talent_messagefollowers - entering doc.ready()");
@@ -104,8 +102,6 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
 
         console.log("exiting retrievefollowerdata, resl="); console.log(resl);
     }
-
-
 
     function displayWorkingTargetSetStatistics(){
 
@@ -213,7 +209,6 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
         //TODO:  reset the checkmarks on the filters to default values
 
     };
-
 
 
    function resetWorkingTargetSet(){

@@ -7,7 +7,7 @@
 	include(ROOT_PATH . 'inc/header.php'); 
 	
 	//Check for the object that fb passes into tabs to determine if we are being loaded
-	//as a facebook tab - if so, and decode the passed in object and use it to set 
+	//as a facebook tab - if so, decode the passed in object and use it to set 
 	//the target talent object
     if(isset($_REQUEST["signed_request"])) {
     	$signed_request = $_REQUEST["signed_request"];
@@ -24,8 +24,9 @@
 
 	//Otherwise -- If it's not an fb tab and the crowdluv_tid hasn't been passed in, the page has been 
 	//linked erroneously;  error out
-	//TODO:  change this so it redirects or does somehting more user friendly
+		//TODO:  change this so it redirects or does somehting more user friendly
 	if(!isset($CL_CUR_TGT_TALENT)) {echo "crowdluv_tid was not passed in"; exit;}
+	
 	//Get the landing page settings for this talent
 	$tlpgsettings = get_talent_landingpage_settings($CL_CUR_TGT_TALENT['crowdluv_tid']);
     //var_dump($tlpgsettings); exit;
@@ -33,7 +34,7 @@
     else $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_CUR_TGT_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
 
 ?>
-<title>Follow <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?> on CrowdLuv</title>
+
 	<div class="fbtab_hero"  style="background-image: url('<?php echo $tlpimg;?>');"> 
 	</div>
 	<div class="fbtab_section_inyourtown">

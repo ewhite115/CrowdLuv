@@ -13,9 +13,9 @@ include(ROOT_PATH . 'inc/header.php');
       <div class="col-xs-12 col-sm-6 text-center">
         <!-- <img class="img-responsive" src="res/vid-comingsoon.png" /> -->
         <video controls>
-           <source src="res/cyn-intro.mp4" type="video/mp4">
-           <source src="res/cyn-intro.ogv" type="video/ogg">
-           <object data="res/cyn-intro.mp4">
+           <source src="res/renthigh.mp4" type="video/mp4">
+           <source src="res/renthigh.ogv" type="video/ogg">
+           <object data="res/renthigh.mp4">
              <embed src="res/cyn-intro.swf">
            </object> 
         </video> 

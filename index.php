@@ -50,6 +50,7 @@ include(ROOT_PATH . 'inc/header.php');
           if(! isset($CL_LOGGEDIN_USER_OBJ)){ ?>
           <a href="<?php echo $facebook->getLoginUrl($folparams);?>"><img width="60%" class="img-responsive" src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
           <br> 
+          <p>By signing in with Facebook, you are agreeing to our <a href="terms.php">Terms and Conditions</a></p>
         <?php } ?>
                
         <?php if(isset($CL_LOGGEDIN_USER_OBJ)){ ?>

@@ -292,17 +292,18 @@ class CrowdLuvModel {
         try {
             
             //Insert the main record into the talent table
-            $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
-                                VALUES ('" . $talent_fbpp['id'] . "', ?)";
+            $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name, crowdluv_vurl) 
+                                VALUES ('" . $talent_fbpp['id'] . "', ?, ?)";
             //echo $sql; //exit;
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $talent_fbpp['name']);
+            $results->bindParam(2, str_replace(" ", "-", htmlspecialchars($talent_fbpp['name'])));
             $results->execute();
-            //var_dump($results);
-            $new_cl_tid= get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
+            var_dump($results);
+            $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
 
             //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
-            update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");        
+            $this->update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");        
             //$results = $CL_db->query($sql);
         } catch (Exception $e) {
             echo "Data could not be inserted to the database. " . $e;
@@ -439,16 +440,11 @@ class CrowdLuvModel {
     }
 
 
-
-
-
-
-
     public function update_talent_landingpage_message($cl_tidt, $newmsg){
 
         try {
             //get the most recent landingpage settings for this talent, to re-use the img
-            $clpsettings = get_talent_landingpage_settings($cl_tidt);                    
+            $clpsettings = $this->get_talent_landingpage_settings($cl_tidt);                    
             $sql = "INSERT INTO talent_landingpage (crowdluv_tid,        message,             image) VALUES ('" . $cl_tidt . "', '" . $newmsg . "', '" . $clpsettings['image'] . "')";
             echo $sql;// exit;
             $results = $this->cldb->query($sql);
@@ -465,13 +461,13 @@ class CrowdLuvModel {
     
         try {
             //get the most recent landingpage settings for this talent
-            $clpsettings = get_talent_landingpage_settings($cl_tidt);
+            $clpsettings = $this->get_talent_landingpage_settings($cl_tidt);
             //if the timestamp is empty, that means this talent doesn't have any landpgae settings set
             //This should only happen for some early talent records that were created before the code
             //for new talent stubs was updated to include creating a default entry in the landingpage settings table
             //But, to handle those instances, call the update_talent_landingpage_message function t create the initial one
-            if($clpsettings['message']=="") update_talent_landingpage_message($cl_tidt, $clpsettings['message']);
-            $clpsettings = get_talent_landingpage_settings($cl_tidt);
+            if($clpsettings['message']=="") $this->update_talent_landingpage_message($cl_tidt, $clpsettings['message']);
+            $clpsettings = $this->get_talent_landingpage_settings($cl_tidt);
 
             //Update the row corresponding to the most recent timestamp
             $sql = "update talent_landingpage set image='" . $newimg . "'
@@ -554,6 +550,26 @@ class CrowdLuvModel {
 
     }
 
+
+    public function get_crowdluv_tid_for_crowdluv_vurl($cl_vurl){
+
+        try {
+            $sql = "select crowdluv_tid from talent where crowdluv_vurl=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_vurl);
+            $results->execute();
+            $firstline = $results->fetch(PDO::FETCH_ASSOC);
+             if(!$firstline) return null;
+             $tid = $firstline['crowdluv_tid'];
+            
+            return $tid;
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;//exit;
+        }
+    
+
+    }
 
 
 

@@ -34,8 +34,26 @@ require_once("inc/cl_init.php");
 <body>
 
 <div id="fb-root"></div>
-  
+ 
+ <!-- Full-page semi-transparent grey screen which is disabled by default but can be enabled by JS as needed  -->
+<div id="CL_fullpage_transparentscreen" class="CL_transparentscreen"> </div>
+
 <div class="container CL_fullpagewrapper">
+
+<!-- Modal pane containing an intro video about CL. Not displayed by default. If JS detects the user has not authorized CL on FB, it will show this dialog -->
+<div id="CL_newuser_introvideo_modal" class="text-center">
+    <h1>Welcome to CrowdLuv</h1>
+    <video controls>
+           <source src="<?php echo BASE_URL;?>/res/cyn-intro.mp4" type="video/mp4">
+           <source src="<?php echo BASE_URL;?>/res/cyn-intro.ogv" type="video/ogg">
+           <object data="<?php echo BASE_URL;?>/res/cyn-intro.mp4">
+             <embed src="<?php echo BASE_URL;?>/res/cyn-intro.swf">
+           </object> 
+     </video> 
+     <p><a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_newuser_introvideo_modal').hide();return false;">Dismiss</a></p>
+</div>
+
+
 
 <?php  // add the correct section header here
   if($CL_SITE_SECTION == "landing") {include(ROOT_PATH . "inc/cl_sitesection_header_landing.php");}

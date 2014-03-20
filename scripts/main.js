@@ -39,10 +39,17 @@ crowdluvFBDataLoader = function(lsresponse) {
         
     } else if (lsresponse.status === 'not_authorized') {
         // the user is logged in to Facebook, but has not authenticated your app
+        //show the new user intro video
+        $("#CL_fullpage_transparentscreen").show();
+        $("#CL_newuser_introvideo_modal").show();
+        
     } else {
         // the user isn't logged in to Facebook.
-        console.log("setting logged_out flag to 1");
         
+        //show the new user intro video
+        $("#CL_fullpage_transparentscreen").show();
+        $("#CL_newuser_introvideo_modal").show();
+
     }
     //Other pages might want to run code after we've checked FB login status and
     //populated global variables. 
@@ -81,6 +88,10 @@ $(document).ready(function() {
 
      // ** any FB SDK initialization goes above here (?)  **
   }); //end of $.getscript callback
+
+
+
+
 
 
 });//end of $document.ready handler 

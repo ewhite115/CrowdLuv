@@ -83,6 +83,7 @@
   }
 
   if($fb_user){
+
       //Now check for facebook pages the user is an administrator of,
       //add them to CL db if new, and store them in 'global' var 
       try{
@@ -122,7 +123,8 @@
 
   }//if fbUser
 
-
+  //cldbgmsg("cl_vurl=" . $_GET['crowdluv_vurl']);
+  if(isset($_GET['crowdluv_vurl'])) $_GET['crowdluv_tid'] = $CL_model->get_crowdluv_tid_for_crowdluv_vurl($_GET['crowdluv_vurl']);
   if(isset($_GET['crowdluv_tid'])) $CL_CUR_TGT_TALENT = $CL_model->get_talent_object_by_tid($_GET['crowdluv_tid']);
   if(isset($_GET['activemanagedtalent_tid'])){
     $_SESSION['CL_ACTIVE_MANAGED_TALENT'] = $CL_model->get_talent_object_by_tid($_GET['activemanagedtalent_tid']);

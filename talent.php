@@ -47,6 +47,8 @@
 		</div>
 	</div>
 
+
+
 	<div class="fluid-row talent_landingpage_talentmessagesection">
 		<div class="col-xs-offset-1  crowdluvsection ">
 			<h1>New Message from <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>:</h1>
@@ -57,6 +59,7 @@
 
 
 	<div class="fluid-row talent_landingpage_whathappens_section">
+			
 			<div class="col-xs-offset-1 crowdluvsection ">
 				<h1>What hapens when I click the big red button?</h1>	
 	

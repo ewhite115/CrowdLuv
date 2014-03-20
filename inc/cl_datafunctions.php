@@ -309,7 +309,7 @@ class CrowdLuvModel {
             $sql = "INSERT INTO follower (fb_uid,        location_fb_id,     location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
                                   VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
             echo $sql;// exit;
-            $results = $CL_db->query($sql);
+            $results = $this->cldb->query($sql);
             //var_dump($results); exit;
         } catch (Exception $e) {
             echo "Data could not be inserted to the database. " . $e;
@@ -330,11 +330,11 @@ class CrowdLuvModel {
             $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
                                 VALUES ('" . $talent_fbpp['id'] . "', ?)";
             //echo $sql; //exit;
-            $results = $CL_db->prepare($sql);
+            $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $talent_fbpp['name']);
             $results->execute();
             //var_dump($results);
-            $new_cl_tid= $CL_model->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
+            $new_cl_tid= get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
 
             //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
             update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");        
@@ -344,25 +344,50 @@ class CrowdLuvModel {
             return -1;
         }
 
-        $CL_model->create_new_cl_talent_files($new_cl_tid);
+        $this->create_new_cl_talent_files($new_cl_tid);
 
     }
 
-
+   /**
+     * Write a follower record from memory into CL DB  
+     * @param    object      $cl_fobj     Object containing the CrowdLuv follower fields to be written into CrowdLuv DB. Field keys correspond to DB schema columns
+     * @return   mixed ...
+     *           nothing if the queries execute without error
+     *           -1 if there is a problem with the DB query
+     */
     public function update_crowdluv_follower_record($cl_fobj){
 
-        //require(ROOT_PATH . "inc/database.php");
-        global $CL_db;
-
         try {
-            $sql = "update follower set mobile='" . $cl_fobj['mobile'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $CL_db->query($sql);
-            $sql = "update follower set email='" . $cl_fobj['email'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $CL_db->query($sql);
-            $sql = "update follower set firstname='" . $cl_fobj['firstname'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $CL_db->query($sql);
-            $sql = "update follower set lastname='" . $cl_fobj['lastname'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $CL_db->query($sql);
+            $sql = "update follower set mobile=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_fobj['mobile']);
+            $results->execute();
+            
+            $sql = "update follower set email=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_fobj['email']);
+            $results->execute();
+            
+            $sql = "update follower set firstname=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_fobj['firstname']);
+            $results->execute();
+            
+            $sql = "update follower set lastname=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_fobj['lastname']);
+            $results->execute();
+
+            $sql = "update follower set allow_cl_email=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_fobj['allow_cl_email']);
+            $results->execute();
+
+            $sql = "update follower set allow_cl_sms=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_fobj['allow_cl_sms']);
+            $results->execute();
+
             //var_dump($results); exit;
             
         } catch (Exception $e) {
@@ -376,15 +401,12 @@ class CrowdLuvModel {
 
     public function update_talent_landingpage_message($cl_tidt, $newmsg){
 
-        //require(ROOT_PATH . "inc/database.php");
-        global $CL_db;
-
         try {
             //get the most recent landingpage settings for this talent, to re-use the img
             $clpsettings = get_talent_landingpage_settings($cl_tidt);                    
             $sql = "INSERT INTO talent_landingpage (crowdluv_tid,        message,             image) VALUES ('" . $cl_tidt . "', '" . $newmsg . "', '" . $clpsettings['image'] . "')";
             echo $sql;// exit;
-            $results = $CL_db->query($sql);
+            $results = $this->cldb->query($sql);
             //var_dump($results); exit;
         } catch (Exception $e) {
             echo "Data could not be inserted to the database. " . $e;
@@ -395,10 +417,7 @@ class CrowdLuvModel {
 
 
     public function update_talent_landingpage_image($cl_tidt, $newimg){
-
-        //require(ROOT_PATH . "inc/database.php");
-        global $CL_db;
-
+    
         try {
             //get the most recent landingpage settings for this talent
             $clpsettings = get_talent_landingpage_settings($cl_tidt);
@@ -413,7 +432,7 @@ class CrowdLuvModel {
             $sql = "update talent_landingpage set image='" . $newimg . "'
                     where crowdluv_tid=" . $cl_tidt . " and message_timestamp = '" . $clpsettings['message_timestamp'] . "'" ;
             echo $sql;// exit;             
-            $results = $CL_db->query($sql);
+            $results = $this->cldb->query($sql);
             //var_dump($results); exit;
         } catch (Exception $e) {
             echo "Data could not be inserted to the database. " . $e;
@@ -452,14 +471,11 @@ class CrowdLuvModel {
 
     public function get_top_cities_for_talent($cl_tidt){
 
-        //require(ROOT_PATH . "inc/database.php");
-        global $CL_db;
-
         try {
             $sql = "select location_fbname, count(location_fbname) from (SELECT follower.location_fbname FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
                 where talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 10";
             //echo $sql;
-            $results = $CL_db->query($sql);
+            $results = $this->cldb->query($sql);
 
         } catch (Exception $e) {
             echo "Data could not be retrieved from the database. " . $e;
@@ -473,13 +489,10 @@ class CrowdLuvModel {
 
     public function get_talent_landingpage_settings($cl_tidt){
 
-        //require(ROOT_PATH . "inc/database.php");
-        global $CL_db;
-
         try {
             $sql = "select message, image, message_timestamp from talent_landingpage where crowdluv_tid=" . $cl_tidt . " ORDER BY message_timestamp DESC LIMIT 0, 1";
             //echo $sql; exit;
-            $results = $CL_db->query($sql);
+            $results = $this->cldb->query($sql);
             $settings = $results->fetch(PDO::FETCH_ASSOC);
             //var_dump($settings); exit;
             if(!$settings){

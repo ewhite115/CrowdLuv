@@ -30,9 +30,8 @@
                     </div>
                     <div class="col-ms-7">
                         <p>Allow CrowdLuv Contact?</p>
-                        <p2><input type="radio" value="All Updates" checked="true">All Updates</input></p2>
-                        <p2><input type="radio" value="Only Critical Updates">Only Critical Updates</input></p2>
-                        <p2><input type="radio" value="None" >None</input></p2>
+                        <p2><input type="radio" name="allow_cl_email" value="all" <?php if($CL_LOGGEDIN_USER_OBJ['allow_cl_email']=='all'){ ?> checked="true" <?php } ?>>All Updates</input></p2>
+                        <p2><input type="radio" name="allow_cl_email" value="onlycritical" <?php if($CL_LOGGEDIN_USER_OBJ['allow_cl_email']=='onlycritical'){ ?> checked="true" <?php } ?>> Only Critical Updates</input></p2>
                     </div>
                 </div>
 
@@ -43,9 +42,9 @@
                     </div>
                     <div class="col-ms-7">
                             <p></p>
-                        <p2><input type="radio" value="All Updates"  checked="true">All Updates</input></p2>
-                        <p2><input type="radio" value="Only Critical Updates" >Only Critical Updates</input></p2>
-                        <p2><input type="radio" value="None" >None</input></p2>
+                        <p2><input type="radio" name="allow_cl_sms" value="all"  <?php if($CL_LOGGEDIN_USER_OBJ['allow_cl_sms']=='all'){ ?>  checked="true" <?php } ?>>All Updates</input></p2>
+                        <p2><input type="radio" name="allow_cl_sms" value="onlycritical" <?php if($CL_LOGGEDIN_USER_OBJ['allow_cl_sms']=='onlycritical'){ ?>  checked="true" <?php } ?>>Only Critical Updates</input></p2>
+                        
                     </div>
                 </div>
 
@@ -91,6 +90,23 @@
 
     
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -35,23 +35,49 @@
 
 ?>
 
-	<div class="fbtab_hero"  style="background-image: url('<?php echo $tlpimg;?>');"> 
-	</div>
-	<div class="fbtab_section_inyourtown">
-		<h1>Want <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> in your town?</h1>
-		<a href="#" id="fbtab_cometomytown"><div class="fbtab_cometomytownbtn" id="fbtab_cometomytown">YES! COME TO MY TOWN<br>.</div></a>
-		
-		The more people near you who click, the sooner <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> will come. So, Share this button now on your timeline, in a group, via email, or in a private message<br>
-	</div>
-	<div class="fbtab_talentmessage">
-		<h1>New Message from <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>:</h1>
-		<?php echo $tlpgsettings['message'];?>
+	<div class="talent_landingpage_hero"  style="background-image: url('<?php echo $tlpimg;?>');"> 	</div>
+	
+	<div class="fluid-row crowdluvsection text-center">
+		<div class="col-xs-12">
+			<h1>Want <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> in your town?</h1><br>
+			<a href="#" id="fbtab_cometomytown">
+				<img src="../res/yescometomytown.jpg">
+			</a><br><br>
+			<p>	The more people near you who click, the sooner <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> will come.</p><p> So, Share this button now on your timeline, in a group, via email, or in a private message</p>
+		</div>
 	</div>
 
-	<div class="fbtab_whathappens">
-		<h1>What hapens when I click the big red button?</h1>
-		Facebook wil ask you to share info. Facebook wil ask you to share info. Facebook wil ask you to share info. Facebook wil ask you to share info. Facebook wil ask you to share info. <br>
+	<div class="fluid-row talent_landingpage_talentmessagesection">
+		<div class="col-xs-offset-1  crowdluvsection ">
+			<h1>New Message from <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>:</h1>
+			<p><?php echo $tlpgsettings['message'];?></p>
+		</div>
+
 	</div>
+
+
+	<div class="fluid-row talent_landingpage_whathappens_section">
+			<div class="col-xs-offset-1 crowdluvsection ">
+				<h1>What hapens when I click the big red button?</h1>	
+	
+				<div class="row">
+					<div class="text-right col-xs-1 crowdluvsection "><img src="../res/allow.jpg"></div>
+					<div class="col-xs-10 "> <p>Facebook wil ask you to share info with CrowdLuv.com, a safe application that allows fans like you to privately and safely entreat musicians, speakers, performers and travelling shows to come to your town. </p>	</div>
+				</div>
+				<div class="row">
+					<div class="text-right col-xs-1 crowdluvsection "><img src="../res/graypadlock.jpg"></div>
+					<div class="col-xs-10 "> <p>The Facebook information you share will remain private and will not be shared with anyone else. Your contact information will not even be shared with <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>! <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> has to log into CrowdLuv in order to send you text messages or emails. Your contact information is hidden from all talent . </p></div>
+				</div>
+				<div class="row">
+					<div class="text-right col-xs-1 crowdluvsection "><img src="../res/grayletter.jpg"></div>
+					<div class="col-xs-10 "> <p><?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> will keep in touch via email or text message to let you know when he comes to your town. By Luv'ing <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>, you get to decide where he goes next! </p>	</div>
+				</div>
+			</div>
+
+		
+
+	</div> 
+	
 
 
 <script>             
@@ -78,4 +104,7 @@
 
 
 <?php include(ROOT_PATH . 'inc/footer.php') ?>
+
+
+
 

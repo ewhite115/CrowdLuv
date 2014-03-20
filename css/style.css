@@ -411,10 +411,10 @@ input[type="submit"], button {
 
 }
 
-.fbtab_hero{
+.talent_landingpage_hero{
     max-width:100%;
     padding: 0 0 3px 0;
-    margin: 0px 0px 0px 1px; 
+    margin: 0px 0px 10px 1px; 
     height: 225px; 
     background-color: #f0eeed;
     background-image:; url('../crowdluvdata/talent_landingpage_images/default.jpg');
@@ -424,71 +424,48 @@ input[type="submit"], button {
 
 }
 
-.fbtab_section_inyourtown {
-    width: 80%;
-    margin-left:auto;
-    margin-right:auto;
-    text-align: center;
-    font-size: 10px;
-    color: black;
 
-}
 
-.fbtab_section_inyourtown h1 {
-    text-align: center;
-    font-size: 20px;
-    font-style: bold;
-    color: black;
-
-}
-.fbtab_cometomytownbtn {
-    margin-left:auto;
-    margin-right:auto;
-    margin-bottom: 10px;
-    padding-top: 3px;
-    width: 200px;
-    background: darkred;
-    color: darkgray;
-    font-style: strong;
-    font-size: 14px;
-    text-align: center;
-
-}
-
-.fbtab_talentmessage {
-    height:85;
+.talent_landingpage_talentmessagesection {
     
     background: #D9D7DA;
     font-size: 10px;
-    padding-left: 5.555%;
     padding-top: .5555%;
+    padding-bottom: .3%;
     color: black;
     margin-top: 1.111%;
+
     
 }
-.fbtab_talentmessage h1 {
-    font-size: 14px;
-    font-style: bold;
-    color: black;
+    .talent_landingpage_talentmessagesection h1 {
+        font-size: 14px;
+        font-style: bold;
+        color: black;
+        margin-bottom:10px;
 
-}
+    }
 
-.fbtab_whathappens {
-    height:135;
+.talent_landingpage_whathappens_section {
     
     background: #C1C1C3;
-    font-size: 10px;
-    padding-left: 5.555%;
-    padding-top: .5555%;
+    font-size: 10px;    
     color: black;
     
 }
-.fbtab_whathappens h1 {
-    font-size: 14px;
-    font-style: bold;
-    color: black;
+    .talent_landingpage_whathappens_section h1 {
+        font-size: 14px;
+        font-style: bold;
+        color: black;
+        margin-bottom:10px;
 
-}
+    }
+   .talent_landingpage_whathappens_section p {
+        margin-bottom:10px;
+
+    }
+
+
+
 
 #CL_topfollower_googlemap {
 

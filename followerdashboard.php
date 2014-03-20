@@ -62,8 +62,8 @@
                 <div class="row">
                     <div class="col-ms-12">
                         <br><p2>Your phone and email will not be shared with anyone on CrowdLuv</p2><br><br>
-                        <input type="submit" value="Submit Changes">
-                        <!-- <button type="button">Submit Changes</button> -->
+                        <!-- <input type="submit" value="Submit Changes">  -->
+                        <p2 visible="false" id="p_settingsupdated">Your settings have been updated</p2>
                     </div>
                 </div>
             </form>
@@ -85,7 +85,6 @@
     </div>
     
 
-
     <?php  // include(ROOT_PATH . 'inc/userinfoform.php'); ?>
 
     
@@ -94,20 +93,57 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <?php include(ROOT_PATH . 'inc/footer.php') ?>
+
+
+<script type="text/javascript">
+
+
+   function animate_settingsupdated_notification(){
+       $("#p_settingsupdated").fadeIn(1800, function(){
+            $(this).fadeOut(1800);
+        });
+   }
+
+    $(document).ready(function(){  
+
+        $("#p_settingsupdated").hide();
+        //Change handler for the "Allow email contact from CrowdLuv" radio options
+        $("[name=allow_cl_email]").change(function(){
+            update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "allow_cl_email", $(this).val());
+            animate_settingsupdated_notification();
+        });
+
+        //Change handler for the "Allow SMS contact from CrowdLuv" radio options
+        $("[name=allow_cl_sms]").change(function(){
+            update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "allow_cl_sms", $(this).val());
+            animate_settingsupdated_notification();
+        });
+
+        //Change handler for the email address text box 
+        $("[name=email]").change(function(){
+            update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "email", $(this).val());
+            animate_settingsupdated_notification();
+        });
+
+        //Change handler for the "Allow SMS contact from CrowdLuv" radio options
+        $("[name=mobile]").change(function(){
+            update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "mobile", $(this).val());
+            animate_settingsupdated_notification();
+        });
+
+        //Change handler for the "Allow SMS contact from CrowdLuv" radio options
+        $("[name=firstname]").change(function(){
+            update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "firstname", $(this).val());
+            animate_settingsupdated_notification();
+        });
+
+        //Change handler for the "Allow SMS contact from CrowdLuv" radio options
+        $("[name=lastname]").change(function(){
+            update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "lastname", $(this).val());
+            animate_settingsupdated_notification();
+        });
+
+    });
+
+</script>

@@ -95,10 +95,6 @@
     function stopfollowingclickhandler(crowdluv_tid){
         console.log("entering stopfollowingclickhandler, crowdluv_tid=" + crowdluv_tid);
         contact_preference_change_handler(crowdluv_tid, "still_following", "0")
-        /*$.getJSON('stopfollowing.php',{crowdluv_tid:crowdluv_tid},function(res){
-            console.log("entering $.get callback, result=" + res.result + ", res object:" + res);
-            if(res.result==1) $("#cltrow" + crowdluv_tid).hide(1000);
-        });*/
 
     }
 
@@ -117,7 +113,7 @@
          };
          console.log(qopts);
 
-        resl = $.getJSON('ajax_updatefollowerprefs.php', qopts, function(result) {
+        resl = $.getJSON('ajax_updatefollowerprefs_fortalent.php', qopts, function(result) {
             console.log("entering callback, received unfiltered result:"); console.log(result);
             //update the display of "Yes/No (Start/Stop)"
             if(result.prefname == "allow_email" && result.prefval=="0" && result.result=="1"){

@@ -7,6 +7,26 @@ fb_accesstoken = "";
 fb_me_response = "";
 
 
+//this function makes an ajax call to  ajax_updatefollowersetting.php to change a setting for a user
+function update_follower_setting(crowdluv_uid, prefname, prefval){
+    console.log("contact pre change handler called:" + crowdluv_uid + ", " + prefname + ", " + prefval);
+
+    var qopts = { 
+        crowdluv_uid: crowdluv_uid, 
+        prefname: prefname, 
+        prefval: prefval
+     };
+     console.log(qopts);
+
+    resl = $.getJSON('ajax_updatefollowersetting.php', qopts, function(result) {
+        console.log("entering callback, received unfiltered result:"); console.log(result);
+    });
+    console.log("json call resl="); console.log(resl);
+
+}
+
+
+
 
 //This is the function that will get called when fb.getloginstatus returns
 crowdluvFBDataLoader = function(lsresponse) {

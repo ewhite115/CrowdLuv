@@ -139,41 +139,6 @@ class CrowdLuvModel {
     }
 
 
-    public function remove_follower_from_talent($cl_uidt, $cl_tidt){
-
-        try {
-
-            $sql = "update follower_luvs_talent set still_following=0 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
-            //echo $sql; exit;
-            $this->cldb->query($sql);
-            return 1;   
-
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            return 0;
-        }
-    }
-
-    public function update_follower_preferences_for_talent($cl_uidt, $cl_tidt, $prefname, $prefval){
-
-        $allowed_prefnames = ['allow_email', 'allow_sms', 'will_travel_distance', 'will_travel_time', 'still_following'];
-        if(! in_array($prefname, $allowed_prefnames)) {return 0;}
-        if( ! isset($prefval) || $prefval == "") {return 0;}
-        
-
-        try {
-
-            $sql = "update follower_luvs_talent set " . $prefname ."=" . $prefval . " where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
-            //echo $sql; exit;
-            $this->cldb->query($sql);
-            return 1;   
-
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            return 0;
-        }
-    }
-
 
     public function get_talents_for_follower($cl_uidt) {
         
@@ -358,35 +323,43 @@ class CrowdLuvModel {
     public function update_crowdluv_follower_record($cl_fobj){
 
         try {
-            $sql = "update follower set mobile=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            
+            $this->update_follower_setting($cl_fobj[crowdluv_uid], "mobile", $cl_fobj['mobile'] );
+            /*$sql = "update follower set mobile=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_fobj['mobile']);
-            $results->execute();
+            $results->execute();*/
             
-            $sql = "update follower set email=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+
+            $this->update_follower_setting($cl_fobj[crowdluv_uid], "email", $cl_fobj['email'] );
+            /*$sql = "update follower set email=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_fobj['email']);
-            $results->execute();
+            $results->execute();*/
             
-            $sql = "update follower set firstname=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $this->update_follower_setting($cl_fobj[crowdluv_uid], "firstname", $cl_fobj['firstname'] );
+            /*$sql = "update follower set firstname=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_fobj['firstname']);
-            $results->execute();
+            $results->execute();*/
             
-            $sql = "update follower set lastname=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $this->update_follower_setting($cl_fobj[crowdluv_uid], "lastname", $cl_fobj['lastname'] );
+            /*$sql = "update follower set lastname=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_fobj['lastname']);
-            $results->execute();
+            $results->execute();*/
 
-            $sql = "update follower set allow_cl_email=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $this->update_follower_setting($cl_fobj[crowdluv_uid], "allow_cl_email", $cl_fobj['allow_cl_email'] );
+            /*$sql = "update follower set allow_cl_email=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_fobj['allow_cl_email']);
-            $results->execute();
+            $results->execute();*/
 
-            $sql = "update follower set allow_cl_sms=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $this->update_follower_setting($cl_fobj[crowdluv_uid], "allow_cl_sms", $cl_fobj['allow_cl_sms'] );
+            /*$sql = "update follower set allow_cl_sms=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_fobj['allow_cl_sms']);
-            $results->execute();
+            $results->execute();*/
 
             //var_dump($results); exit;
             
@@ -397,6 +370,78 @@ class CrowdLuvModel {
 
         //exit;
     }
+
+   /**
+     * Write a single preference setting for follower into CL DB  
+     * @param    object      $cl_fobj     Object containing the CrowdLuv follower fields to be written into CrowdLuv DB. Field keys correspond to DB schema columns
+     * @return   mixed ...
+     *           nothing if the queries execute without error
+     *           -1 if there is a problem with the DB query
+     */
+    public function update_follower_setting($cl_uidt, $prefname, $prefval){
+        
+        $allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms'];
+        if(! in_array($prefname, $allowed_prefnames)) {return 0;}
+        if(! isset($prefval) || $prefval == "") {return 0;}
+
+        try {
+            $sql = "update follower set " . $prefname . "=? where crowdluv_uid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $prefval);
+            $results->bindParam(2, $cl_uidt);
+            $results->execute();
+            return 1;   
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return 0;
+        }
+
+
+    }
+
+
+    public function update_follower_preferences_for_talent($cl_uidt, $cl_tidt, $prefname, $prefval){
+
+        $allowed_prefnames = ['allow_email', 'allow_sms', 'will_travel_distance', 'will_travel_time', 'still_following'];
+        if(! in_array($prefname, $allowed_prefnames)) {return 0;}
+        if(! isset($prefval) || $prefval == "") {return 0;}
+        
+        try {
+
+            $sql = "update follower_luvs_talent set " . $prefname ."=" . $prefval . " where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
+            //echo $sql; exit;
+            $this->cldb->query($sql);
+            return 1;   
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return 0;
+        }
+    }
+
+    public function remove_follower_from_talent($cl_uidt, $cl_tidt){
+
+        return $this->update_follower_preferences_for_talent($cl_uidt, $cl_tidt, "still_following", "0");
+        
+        /*try {
+
+            $sql = "update follower_luvs_talent set still_following=0 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
+            //echo $sql; exit;
+            $this->cldb->query($sql);
+            return 1;   
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return 0;
+        }*/
+
+    }
+
+
+
+
+
 
 
     public function update_talent_landingpage_message($cl_tidt, $newmsg){

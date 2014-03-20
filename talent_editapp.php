@@ -10,10 +10,10 @@
 
     $badpatherr=false; //flag to indicate the user tried to upload an image in unsupported file format
     //Get the landing page settings for this talent
-    $tlpgsettings = get_talent_landingpage_settings($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+    $tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
     
     //If this is a postback and the user has specified a new message, insert a new row into the CL db for the new msg   
-    if(isset($_POST['newmsg']) &&  $_POST['newmsg'] != ""  && ($_POST['newmsg'] != $tlpgsettings['message'])) { update_talent_landingpage_message($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $_POST['newmsg']);  }    
+    if(isset($_POST['newmsg']) &&  $_POST['newmsg'] != ""  && ($_POST['newmsg'] != $tlpgsettings['message'])) { $CL_model->update_talent_landingpage_message($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $_POST['newmsg']);  }    
 
     //If this is a postback and the user is setting a new image for their landing page ...
     do if(isset($_FILES['newimg']) && basename($_FILES['newimg']['name']) != "" & basename($_FILES['newimg']['name']) != $tlpgsettings['image']) {
@@ -33,13 +33,13 @@
             echo "Possible file upload attack!\n";
         }
         //Now update the CL database to reflect the new img file name
-        update_talent_landingpage_image($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], basename($_FILES['newimg']['name']));        
+        $CL_model->update_talent_landingpage_image($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], basename($_FILES['newimg']['name']));        
 
 
     } while(false);   //wrap the if block in a do-while so that we can break out on bad file extensions
 
     //Get the landing page settings for this talent  (again)
-    $tlpgsettings = get_talent_landingpage_settings($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+    $tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
     //var_dump($tlpgsettings); exit;
     if($tlpgsettings['image'] == "" || $tlpgsettings['image'] == "default") $tlpimg = BASE_URL . 'crowdluvdata/talent_landingpage_images/default.jpg';
     else $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];

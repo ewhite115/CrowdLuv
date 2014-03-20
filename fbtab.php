@@ -26,7 +26,7 @@
 
 
 	//Get the landing page settings for this talent
-	$tlpgsettings = get_talent_landingpage_settings($CL_CUR_TGT_TALENT);
+	$tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_CUR_TGT_TALENT);
 
 
     

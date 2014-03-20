@@ -4,19 +4,23 @@
  * @return   array           a list of the last four products in the array;
                              the most recent product is the last one in the array
  */
-// require_once("inc/config.php");
-// require_once("cl_facebookinit.php");
 
 
 class CrowdLuvModel {
 
     private $cldb="";
 
-    public function setDB($thedbobj){
-     $this->cldb = $thedbobj; 
-    }
+    public function setDB($thedbobj){ $this->cldb = $thedbobj;  }
 
-
+    /**
+     * Retrieve information about a CrowdLuv talent from CL database  
+     * @param    int    $cl_tidt     CrowdLuv talent ID of the talent to retrieve the info about
+     * @return   mixed      An array or int    
+     *           array      an array containing the DB fields for the talent matching the specified talent ID (cl_tidt)
+     *           int     0 if no talent is found with the TalentID specified
+     *           int     -1 if there is a problem with the DB query
+     *                    
+     */
     public function get_talent_object_by_tid($cl_tidt){
 
        //require(ROOT_PATH . "inc/database.php");
@@ -36,7 +40,14 @@ class CrowdLuvModel {
         }
 
     }
-
+   /**
+     * Retrieve information about a CrowdLuv user from CL database  
+     * @param    int      $cl_uidt     CrowdLuv UserID of the user to retrieve the info about
+     * @return   mixed ...
+     *           an array containing the DB fields for the user matching the specified user ID (cl_uidt)
+     *           0 if no user is found with the UserID specified
+     *           -1 if there is a problem with the DB query
+     */
     public function get_follower_object_by_uid($cl_uidt){
 
         //require(ROOT_PATH . "inc/database.php");
@@ -56,12 +67,16 @@ class CrowdLuvModel {
         }
     }
 
+    /**
+     * Find out the CrowdLuv User-ID for a user, based on a facebook user ID  
+     * @param    int      $cl_tidt     CrowdLuv talent ID of the talent to retrieve the info about
+     * @return   mixed    int    CrowdLuv UserID if found
+     *                    int    0 if no user was found for the facebook UserID specified
+     *                    int    -1 if there is an error with the DB query
+     */
     public function get_crowdluv_uid_by_fb_uid($follower_fb_uid){
 
         if(!$follower_fb_uid) return 0;
-
-        //require(ROOT_PATH . "inc/database.php");
-        //global $CL_db;
         
         try {
             $sql = "select crowdluv_uid from follower where fb_uid=" . $follower_fb_uid . " LIMIT 0, 30 ";
@@ -81,9 +96,6 @@ class CrowdLuvModel {
 
     public function get_crowdluv_tid_by_fb_pid($follower_fb_pid){
 
-        //require(ROOT_PATH . "inc/database.php");
-        //global $CL_db;
-
         try {
             $sql = "select crowdluv_tid from talent where fb_pid=" . $follower_fb_pid . " LIMIT 0, 30 ";
             $results = $this->cldb->query($sql);
@@ -101,9 +113,6 @@ class CrowdLuvModel {
 
     public function add_follower_to_talent($cl_uidt, $cl_tidt){
         
-        //require(ROOT_PATH . "inc/database.php");
-        //global $CL_db;
-
         //Update the "following" table acorindgly
         try{
             //Check to see if this follower had previously been following the talent
@@ -131,10 +140,6 @@ class CrowdLuvModel {
 
 
     public function remove_follower_from_talent($cl_uidt, $cl_tidt){
-
-        //get crowdluv uid and tid based on fb id's;  then call updat eto set follownig=0
-        //require(ROOT_PATH . "inc/database.php");
-        //global $CL_db;
 
         try {
 
@@ -172,9 +177,6 @@ class CrowdLuvModel {
 
     public function get_talents_for_follower($cl_uidt) {
         
-        //require(ROOT_PATH . "inc/database.php");
-        //global $CL_db;
-
         try {
             $sql = "SELECT follower_luvs_talent.*, talent.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where follower.crowdluv_uid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
             $results = $this->cldb->prepare($sql);
@@ -192,11 +194,8 @@ class CrowdLuvModel {
     }
 
     public function get_followers_for_talent($cl_tidt) {
-        //require(ROOT_PATH . "inc/database.php");
-        //global $CL_db;
 
         try {
-            //$sql = "SELECT count(*) FROM `follower_luvs_talent` where crowdluv_tid=? and still_following=1";
             $sql = "SELECT follower.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1,$cl_tidt);
@@ -212,9 +211,6 @@ class CrowdLuvModel {
     }
 
     public function get_followers_by_city_for_talent($cl_tidt, $city, $mileradius){
-
-        //require(ROOT_PATH . "inc/database.php");
-        //global $CL_db;
 
         try {
 
@@ -238,7 +234,6 @@ class CrowdLuvModel {
 
     public function get_city_stats_for_talent($cl_tidt, $city, $mileradius){
 
-        //require(ROOT_PATH . "inc/database.php");
         $citystats = array();
         $citystats['followercount']=0;
         $citystats['female']=0;
@@ -298,220 +293,225 @@ class CrowdLuvModel {
     }
 
 
+    public function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup) {
+        //pass in the JSON object returned by FB API
+        if(!$follower_fbup) return 0;
+
+        try {
+            //Update this line to insert any/all values from the user profile into db
+            $f = $follower_fbup;
+            //var_dump($f);exit;       
+            $fblocid="0"; $fblocname="Unspecified"; if(isset($f['location'])) {$fblocid=$f['location']['id']; $fblocname=$f['location']['name'];}
+            $fbemail="Unspecified"; if(isset($f['email'])) $fbemail=$f['email'];
+            $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
+            date_default_timezone_set('America/New_York');
+            $fbbdate="1900-01-01"; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
+            $sql = "INSERT INTO follower (fb_uid,        location_fb_id,     location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
+                                  VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
+            echo $sql;// exit;
+            $results = $CL_db->query($sql);
+            //var_dump($results); exit;
+        } catch (Exception $e) {
+            echo "Data could not be inserted to the database. " . $e;
+            return -1;
+        }
+    }
+
+    public function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
+        //pass in json object of the page
+        if(!$talent_fbpp) return 0;
+        //var_dump($talent_fbpp);
+        
+        $new_cl_tid = "";
+
+        try {
+            
+            //Insert the main record into the talent table
+            $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
+                                VALUES ('" . $talent_fbpp['id'] . "', ?)";
+            //echo $sql; //exit;
+            $results = $CL_db->prepare($sql);
+            $results->bindParam(1, $talent_fbpp['name']);
+            $results->execute();
+            //var_dump($results);
+            $new_cl_tid= $CL_model->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
+
+            //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
+            update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");        
+            //$results = $CL_db->query($sql);
+        } catch (Exception $e) {
+            echo "Data could not be inserted to the database. " . $e;
+            return -1;
+        }
+
+        $CL_model->create_new_cl_talent_files($new_cl_tid);
+
+    }
+
+
+    public function update_crowdluv_follower_record($cl_fobj){
+
+        //require(ROOT_PATH . "inc/database.php");
+        global $CL_db;
+
+        try {
+            $sql = "update follower set mobile='" . $cl_fobj['mobile'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $CL_db->query($sql);
+            $sql = "update follower set email='" . $cl_fobj['email'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $CL_db->query($sql);
+            $sql = "update follower set firstname='" . $cl_fobj['firstname'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $CL_db->query($sql);
+            $sql = "update follower set lastname='" . $cl_fobj['lastname'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
+            $results = $CL_db->query($sql);
+            //var_dump($results); exit;
+            
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;//exit;
+        }
+
+        //exit;
+    }
+
+
+    public function update_talent_landingpage_message($cl_tidt, $newmsg){
+
+        //require(ROOT_PATH . "inc/database.php");
+        global $CL_db;
+
+        try {
+            //get the most recent landingpage settings for this talent, to re-use the img
+            $clpsettings = get_talent_landingpage_settings($cl_tidt);                    
+            $sql = "INSERT INTO talent_landingpage (crowdluv_tid,        message,             image) VALUES ('" . $cl_tidt . "', '" . $newmsg . "', '" . $clpsettings['image'] . "')";
+            echo $sql;// exit;
+            $results = $CL_db->query($sql);
+            //var_dump($results); exit;
+        } catch (Exception $e) {
+            echo "Data could not be inserted to the database. " . $e;
+            return -1;
+        }
+
+    }
+
+
+    public function update_talent_landingpage_image($cl_tidt, $newimg){
+
+        //require(ROOT_PATH . "inc/database.php");
+        global $CL_db;
+
+        try {
+            //get the most recent landingpage settings for this talent
+            $clpsettings = get_talent_landingpage_settings($cl_tidt);
+            //if the timestamp is empty, that means this talent doesn't have any landpgae settings set
+            //This should only happen for some early talent records that were created before the code
+            //for new talent stubs was updated to include creating a default entry in the landingpage settings table
+            //But, to handle those instances, call the update_talent_landingpage_message function t create the initial one
+            if($clpsettings['message']=="") update_talent_landingpage_message($cl_tidt, $clpsettings['message']);
+            $clpsettings = get_talent_landingpage_settings($cl_tidt);
+
+            //Update the row corresponding to the most recent timestamp
+            $sql = "update talent_landingpage set image='" . $newimg . "'
+                    where crowdluv_tid=" . $cl_tidt . " and message_timestamp = '" . $clpsettings['message_timestamp'] . "'" ;
+            echo $sql;// exit;             
+            $results = $CL_db->query($sql);
+            //var_dump($results); exit;
+        } catch (Exception $e) {
+            echo "Data could not be inserted to the database. " . $e;
+            return -1;
+        }
+
+    }
+
+    public function get_talents_array_by_uid($cl_uidt){
+    //tbd......   db doesnt store or associate uid with talents
+    }
+
+    /*public function get_message_audience($cl_tidt, $city, $mileradius, $opts){
+
+        $msgaudience=array();
+        $fols = $CL_model->get_followers_by_city_for_talent($cl_tidt, $city, $mileradius);
+        //Now loop through the fols 
+
+        //$whereclause = "talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1 and follower.location_fbname=" . $city . " and(" ;
+
+        $whereopts= array();
+        foreach($opts as $opt){
+            if($opt=="female") $whereopts[]="follower.gender=female";
+            if($opt=="male") $whereopts[]="follower.gender=male";
+            if($opt=="relationship") $whereopts[]="follower.fb_relationship_status='In a relationship' or follower.fb_relationship_status='Married' or follower.fb_relationship_status='Engaged'";
+            if($opt=="single") $whereopts[]="follower.fb_relationship_status='Single' or follower.fb_relationship_status='Divorced'";
+            //TODO add whereopts for age
+
+        }
+        
+        //foreach ($whereopts as $whereopt) $whereclause = $whereclause . 
+        
+        return $msgaudience;
+
+    }*/
+
+    public function get_top_cities_for_talent($cl_tidt){
+
+        //require(ROOT_PATH . "inc/database.php");
+        global $CL_db;
+
+        try {
+            $sql = "select location_fbname, count(location_fbname) from (SELECT follower.location_fbname FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
+                where talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 10";
+            //echo $sql;
+            $results = $CL_db->query($sql);
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;
+        }
+        
+        $topcities= array();
+        while ($row = $results->fetch(PDO::FETCH_ASSOC)) { $topcities[] = $row; }
+        return $topcities;
+    }
+
+    public function get_talent_landingpage_settings($cl_tidt){
+
+        //require(ROOT_PATH . "inc/database.php");
+        global $CL_db;
+
+        try {
+            $sql = "select message, image, message_timestamp from talent_landingpage where crowdluv_tid=" . $cl_tidt . " ORDER BY message_timestamp DESC LIMIT 0, 1";
+            //echo $sql; exit;
+            $results = $CL_db->query($sql);
+            $settings = $results->fetch(PDO::FETCH_ASSOC);
+            //var_dump($settings); exit;
+            if(!$settings){
+                $settings['image']="default";
+                $settings['message'] = "Want me to come to your town? Click the button above so I can come to the town where I have the most Luv";
+                $settings['message_timestamp']= "";
+            }
+
+            return $settings;
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;
+        }
+
+    }
+
+
+
+
 } //end CrowdLuvModel
 
 
 
-
-function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup) {
-    //pass in the JSON object returned by FB API
-    if(!$follower_fbup) return 0;
-
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-        //Update this line to insert any/all values from the user profile into db
-        $f = $follower_fbup;
-        //var_dump($f);exit;       
-        $fblocid="0"; $fblocname="Unspecified"; if(isset($f['location'])) {$fblocid=$f['location']['id']; $fblocname=$f['location']['name'];}
-        $fbemail="Unspecified"; if(isset($f['email'])) $fbemail=$f['email'];
-        $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
-        date_default_timezone_set('America/New_York');
-        $fbbdate="1900-01-01"; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
-        $sql = "INSERT INTO follower (fb_uid,        location_fb_id,     location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
-                              VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
-        echo $sql;// exit;
-        $results = $CL_db->query($sql);
-        //var_dump($results); exit;
-    } catch (Exception $e) {
-        echo "Data could not be inserted to the database. " . $e;
-        return -1;
-    }
-}
-
-function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
-    //pass in json object of the page
-    if(!$talent_fbpp) return 0;
-    //var_dump($talent_fbpp);
     
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-    $new_cl_tid = "";
-
-    try {
-        
-        //Insert the main record into the talent table
-        $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
-                            VALUES ('" . $talent_fbpp['id'] . "', ?)";
-        //echo $sql; //exit;
-        $results = $CL_db->prepare($sql);
-        $results->bindParam(1, $talent_fbpp['name']);
-        $results->execute();
-        //var_dump($results);
-        $new_cl_tid= $CL_model->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
-
-        //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
-        update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");        
-        //$results = $CL_db->query($sql);
-    } catch (Exception $e) {
-        echo "Data could not be inserted to the database. " . $e;
-        return -1;
-    }
-
-    $CL_model->create_new_cl_talent_files($new_cl_tid);
-
-}
-
-
-function update_crowdluv_follower_record($cl_fobj){
-
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-        $sql = "update follower set mobile='" . $cl_fobj['mobile'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-        $results = $CL_db->query($sql);
-        $sql = "update follower set email='" . $cl_fobj['email'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-        $results = $CL_db->query($sql);
-        $sql = "update follower set firstname='" . $cl_fobj['firstname'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-        $results = $CL_db->query($sql);
-        $sql = "update follower set lastname='" . $cl_fobj['lastname'] . "' where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-        $results = $CL_db->query($sql);
-        //var_dump($results); exit;
-        
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database. " . $e;
-        return -1;//exit;
-    }
-
-    //exit;
-}
-
-function update_talent_landingpage_message($cl_tidt, $newmsg){
-
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-        //get the most recent landingpage settings for this talent, to re-use the img
-        $clpsettings = get_talent_landingpage_settings($cl_tidt);                    
-        $sql = "INSERT INTO talent_landingpage (crowdluv_tid,        message,             image) VALUES ('" . $cl_tidt . "', '" . $newmsg . "', '" . $clpsettings['image'] . "')";
-        echo $sql;// exit;
-        $results = $CL_db->query($sql);
-        //var_dump($results); exit;
-    } catch (Exception $e) {
-        echo "Data could not be inserted to the database. " . $e;
-        return -1;
-    }
-
-}
-
-function update_talent_landingpage_image($cl_tidt, $newimg){
-
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-        //get the most recent landingpage settings for this talent
-        $clpsettings = get_talent_landingpage_settings($cl_tidt);
-        //if the timestamp is empty, that means this talent doesn't have any landpgae settings set
-        //This should only happen for some early talent records that were created before the code
-        //for new talent stubs was updated to include creating a default entry in the landingpage settings table
-        //But, to handle those instances, call the update_talent_landingpage_message function t create the initial one
-        if($clpsettings['message']=="") update_talent_landingpage_message($cl_tidt, $clpsettings['message']);
-        $clpsettings = get_talent_landingpage_settings($cl_tidt);
-
-        //Update the row corresponding to the most recent timestamp
-        $sql = "update talent_landingpage set image='" . $newimg . "'
-                where crowdluv_tid=" . $cl_tidt . " and message_timestamp = '" . $clpsettings['message_timestamp'] . "'" ;
-        echo $sql;// exit;             
-        $results = $CL_db->query($sql);
-        //var_dump($results); exit;
-    } catch (Exception $e) {
-        echo "Data could not be inserted to the database. " . $e;
-        return -1;
-    }
-
-}
-
-function get_talents_array_by_uid($cl_uidt){
-//tbd......   db doesnt store or associate uid with talents
-}
-
-function get_message_audience($cl_tidt, $city, $mileradius, $opts){
-
-    $msgaudience=array();
-    $fols = $CL_model->get_followers_by_city_for_talent($cl_tidt, $city, $mileradius);
-    //Now loop through the fols 
-
-    //$whereclause = "talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1 and follower.location_fbname=" . $city . " and(" ;
-
-    $whereopts= array();
-    foreach($opts as $opt){
-        if($opt=="female") $whereopts[]="follower.gender=female";
-        if($opt=="male") $whereopts[]="follower.gender=male";
-        if($opt=="relationship") $whereopts[]="follower.fb_relationship_status='In a relationship' or follower.fb_relationship_status='Married' or follower.fb_relationship_status='Engaged'";
-        if($opt=="single") $whereopts[]="follower.fb_relationship_status='Single' or follower.fb_relationship_status='Divorced'";
-        //TODO add whereopts for age
-
-    }
-    
-    //foreach ($whereopts as $whereopt) $whereclause = $whereclause . 
-    
-    return $msgaudience;
-
-}
-
-function get_top_cities_for_talent($cl_tidt){
-
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-        $sql = "select location_fbname, count(location_fbname) from (SELECT follower.location_fbname FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
-            where talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 10";
-        //echo $sql;
-        $results = $CL_db->query($sql);
-
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database. " . $e;
-        return -1;
-    }
-    
-    $topcities= array();
-    while ($row = $results->fetch(PDO::FETCH_ASSOC)) { $topcities[] = $row; }
-    return $topcities;
-}
-
-function get_talent_landingpage_settings($cl_tidt){
-
-    //require(ROOT_PATH . "inc/database.php");
-    global $CL_db;
-
-    try {
-        $sql = "select message, image, message_timestamp from talent_landingpage where crowdluv_tid=" . $cl_tidt . " ORDER BY message_timestamp DESC LIMIT 0, 1";
-        //echo $sql; exit;
-        $results = $CL_db->query($sql);
-        $settings = $results->fetch(PDO::FETCH_ASSOC);
-        //var_dump($settings); exit;
-        if(!$settings){
-            $settings['image']="default";
-            $settings['message'] = "Want me to come to your town? Click the button above so I can come to the town where I have the most Luv";
-            $settings['message_timestamp']= "";
-        }
-
-        return $settings;
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database. " . $e;
-        return -1;
-    }
-
-}
 
 
 
-//might use this for calc distance
+/*
+ * Stole this from online, might use this for calc distance
+ * @param    float    $latitudeFrom    origin latitude
+ * @return   float           distance
+ */
 function vincentyGreatCircleDistance(
   $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)
 {
@@ -533,178 +533,5 @@ function vincentyGreatCircleDistance(
 
 
 
-
-
-
-function get_products_recent() {
-    
-    require(ROOT_PATH . "inc/database.php");
-
-    try {
-        $results = $CL_db->query("
-                SELECT name, price, img, sku, paypal
-                FROM products
-                ORDER BY sku DESC
-                LIMIT 4");
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database. get_products_recent";
-        exit;
-    }
-
-    $recent = $results->fetchAll(PDO::FETCH_ASSOC);
-    $recent = array_reverse($recent);
-
-    return $recent;
-}
-
-/*
- * Looks for a search term in the product names
- * @param    string    $s    the search term
- * @return   array           a list of the products that contain the search term in their name
- */
-function get_products_search($s) {
-
-    require(ROOT_PATH . "inc/database.php");
-
-    try {
-        $results = $CL_db->prepare("
-                SELECT name, price, img, sku, paypal
-                FROM products
-                WHERE name LIKE ?
-                ORDER BY sku");
-        $results->bindValue(1,"%" . $s . "%");
-        $results->execute();
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database.";
-        exit;
-    }
-
-    $matches = $results->fetchAll(PDO::FETCH_ASSOC);
-
-    return $matches;
-}
-
-/*
- * Counts the total number of products
- * @return   int             the total number of products
- */
-function get_products_count() {
-    
-    require(ROOT_PATH . "inc/database.php");
-
-    try {
-        $results = $CL_db->query("
-            SELECT COUNT(sku)
-            FROM products");
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database.";
-        exit;
-    }
-
-    return intval($results->fetchColumn(0));
-}
-
-/*
- * Returns a specified subset of products, based on the values received,
- * using the order of the elements in the array .
- * @param    int             the position of the first product in the requested subset 
- * @param    int             the position of the last product in the requested subset 
- * @return   array           the list of products that correspond to the start and end positions
- */
-function get_products_subset($positionStart, $positionEnd) {
-
-    $offset = $positionStart - 1;
-    $rows = $positionEnd - $positionStart + 1;
-
-    require(ROOT_PATH . "inc/database.php");
-
-    try {
-        $results = $CL_db->prepare("
-                SELECT name, price, img, sku, paypal
-                FROM products
-                ORDER BY sku
-                LIMIT ?, ?");
-        $results->bindParam(1,$offset,PDO::PARAM_INT);
-        $results->bindParam(2,$rows,PDO::PARAM_INT);
-        $results->execute();
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database.";
-        exit;
-    }
-
-    $subset = $results->fetchAll(PDO::FETCH_ASSOC);
-
-    return $subset;
-}
-
-/*
- * Returns the full list of products. This function contains the full list of products,
- * and the other model functions first call this function.
- * @return   array           the full list of products
- */
-function get_products_all() {
-
-    require(ROOT_PATH . "inc/database.php");
-
-    try {
-        $results = $CL_db->query("SELECT name, price, img, sku, paypal FROM products ORDER BY sku ASC");
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database.";
-        exit;
-    }
-
-    $products = $results->fetchAll(PDO::FETCH_ASSOC);    
-
-    return $products;
-}
-
-
-/*
- * Returns an array of product information for the product that matches the sku;
- * returns a boolean false if no product matches the sku
- * @param    int      $sku     the sku
- * @return   mixed    array    list of product information for the one matching product
- *                    bool     false if no product matches
- */
-
-function get_product_single($sku) {
-
-    require(ROOT_PATH . "inc/database.php");
-
-    try {
-        $results = $CL_db->prepare("SELECT name, price, img, sku, paypal FROM products WHERE sku = ?");
-        $results->bindParam(1,$sku);
-        $results->execute();
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database. get_product_single: querying for sku: " . $sku;
-        exit;
-    }
-
-    $product = $results->fetch(PDO::FETCH_ASSOC);
-
-    if ($product === false) return $product;
-
-    $product["sizes"] = array();
-
-    try {
-        $results = $CL_db->prepare("
-            SELECT size
-            FROM   products_sizes ps
-            INNER JOIN sizes s ON ps.size_id = s.id
-            WHERE product_sku = ?
-            ORDER BY `order`");
-        $results->bindParam(1,$sku);
-        $results->execute();
-    } catch (Exception $e) {
-        echo "Data could not be retrieved from the database. get_product_single querying sizes:" . $e;
-        exit;
-    }
-
-    while ($row = $results->fetch(PDO::FETCH_ASSOC)) {
-        $product["sizes"][] = $row["size"];
-    }
-
-    return $product;
-}
 
 ?>

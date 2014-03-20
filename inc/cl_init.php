@@ -69,7 +69,7 @@
           // ...request profile info from facebook and create a stub entry based on available info
           try { 
             $fb_user_profile = $facebook->api('/me');  //var_dump($fb_user_profile); 
-            create_new_cl_follower_record_from_facebook_user_profile($fb_user_profile);
+            $CL_model->create_new_cl_follower_record_from_facebook_user_profile($fb_user_profile);
             $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGED_IN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
           } catch (FacebookApiException $e) {
             //error_log($e);
@@ -94,7 +94,7 @@
           foreach ($fb_user_pages['data'] as $fbupg) {
             //Check to see if this talent exists in the cl db. If not, create a stub entry
             $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg['id']);
-            if(! $cltid) create_new_cl_talent_record_from_facebook_page_profile($fbupg);
+            if(! $cltid) $CL_model->create_new_cl_talent_record_from_facebook_page_profile($fbupg);
             //Add the talent obj to a global and session var
             $CL_LOGGEDIN_TALENTS_ARR[] = $CL_model->get_talent_object_by_tid($cltid);
           }

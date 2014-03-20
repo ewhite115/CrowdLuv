@@ -10,7 +10,7 @@
     //if(! $fb_user_pages) { echo "fb_user_pages is null";   }
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 
-    $topcities=get_top_cities_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+    $topcities= $CL_model->get_top_cities_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
 
 
 ?>

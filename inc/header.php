@@ -44,10 +44,10 @@ require_once("inc/cl_init.php");
 <div id="CL_newuser_introvideo_modal" class="text-center">
     <h1>Welcome to CrowdLuv</h1>
     <video controls>
-           <source src="<?php echo BASE_URL;?>/res/cyn-intro.mp4" type="video/mp4">
-           <source src="<?php echo BASE_URL;?>/res/cyn-intro.ogv" type="video/ogg">
-           <object data="<?php echo BASE_URL;?>/res/cyn-intro.mp4">
-             <embed src="<?php echo BASE_URL;?>/res/cyn-intro.swf">
+           <source src="<?php echo CLADDR;?>res/cyn-intro.mp4" type="video/mp4">
+           <source src="<?php echo CLADDR;?>res/cyn-intro.ogv" type="video/ogg">
+           <object data="<?php echo CLADDR;?>res/cyn-intro.mp4">
+             <embed src="<?php echo CLADDR;?>res/cyn-intro.swf">
            </object> 
      </video> 
      <p><a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_newuser_introvideo_modal').hide();return false;">Dismiss</a></p>

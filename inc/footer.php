@@ -23,27 +23,14 @@ require_once("inc/cl_init.php");
 </body>
 
 
-<?php 
-if(CL_DEBUG_MODE){   
-	//var_dump($_SESSION["debugmsgs"]);
-	//var_dump($debugmsgs);
-
-	 /*foreach($debugmsgs as $dbgmsg){
-	 	echo $dbgmsg . "<br>";
-	 }*/
-?>
-<br>
+<?php if(CL_DEBUG_MODE){  ?>
+	<br>
 	<div class="cl_debug clwhitebg" style="overflow:hidden;width:90%;max-width:900px;margin:0 auto;color:lightgray;background:gray;padding:.25%;">
 		CrowdLuv Diagnostics...<br>
 		<?php foreach($_SESSION["debugmsgs"] as $dbgmsg){ echo $dbgmsg . "<br>";} ?>
 	</div>
 	<br><br><br>
-
 <?php } ?>
-
-
-
-
 
 
 

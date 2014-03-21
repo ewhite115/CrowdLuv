@@ -136,6 +136,7 @@ class CrowdLuvModel {
             echo "Data could not be retrieved from the database." . $e;
             exit;
         }
+        
     }
 
 

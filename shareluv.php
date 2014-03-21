@@ -9,6 +9,22 @@
 
 ?> 
 
+
+    <!-- modal to request / confirm contact info if itis the first time user is Luving a talent -->
+    <div id="CL_contactinfo_confirmation_modal" class="text-center crowdluvsection">
+        <h1>Welcome to CrowdLuv</h1>
+        <p> Please confirm your contact information. </p>
+
+        <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
+        <p><a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_contactinfo_confirmation_modal').hide();return false;">Confirm</a></p>
+
+    </div>
+    <!-- small banner at top of page to remind user to update contact info on new luvs -->
+    <div class="CL_small_reminder_banner text-center">
+        <p>Make sure CrowdLuv has your current contact info! <a href="followerdashboard.php">Click here to confirm/update</a></p>
+    </div>
+
+
     <div class="fluid-row">
         <div class="col-sm-8 crowdluvsection">
             <h1>Share the Luv</h1>
@@ -148,8 +164,25 @@
         $(".txt_will_travel_time").change(function(){
             //console.log("inside txtwilltraveeltime handler. cltid=" + $(this).data('crowdluv_tid') + ", " + $(this).val());
             contact_preference_change_handler($(this).data('crowdluv_tid'), "will_travel_time", $(this).val());
-
         });
+
+        <?php 
+        //if the flag was passed in indicating that this is the first talent the user has Luv'ed, 
+        //  show the modal asking the user to confirm their contact info
+        if(isset($_GET['newluv']) && $_GET['newluv'] == 1) { ?>
+            $('#CL_fullpage_transparentscreen').show();
+            $("#CL_contactinfo_confirmation_modal").show();
+        
+        <?php } ?>
+
+        <?php 
+        //if the flag was passed in indicating that the user has Luv'ed a new talent (but not the first time), 
+        //  show the small reminder banner suggesting the user to confirm their contact info
+        if(isset($_GET['newluv']) && $_GET['newluv'] > 1) { ?>
+            $('.CL_small_reminder_banner').show();
+        
+        <?php } ?>
+        
 
 
     });

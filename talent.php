@@ -48,7 +48,6 @@
 	</div>
 
 
-
 	<div class="fluid-row talent_landingpage_talentmessagesection">
 		<div class="col-xs-offset-1  crowdluvsection ">
 			<h1>New Message from <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>:</h1>
@@ -86,9 +85,9 @@
 <script>             
  	//click-handler for the "come to my town" button
    	$(document).ready(function(){
-   		console.log("tal docready");
+   		//console.log("tal docready");
 	    $("#fbtab_cometomytown").click(function () {
-	    	console.log("clickhandl fired");
+	    	//console.log("clickhandl fired");
 		    FB.login(function(response) {
 		        if (response.authResponse) {
 		            console.log("User authorized - redirecting to luv.php");

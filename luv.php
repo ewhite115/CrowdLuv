@@ -6,11 +6,18 @@
     include(ROOT_PATH . 'inc/header.php'); 
 
     if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}
-    //if(! $fb_user) { echo "user is null"; exit; }
+    
+
     $CL_model->add_follower_to_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']);
+    //Check if this is the first talent that the follower has Luv'ed.
+    $tcnt = count($CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID));
+    //Redirect to the follower dashboard/ "share luv" page. 
+    header('Location: shareluv.php?newluv=' . $tcnt );
+    exit;
 
 ?>
 
+<!-- 
     <div class="crowdluvsection" style="text-align:center; width:60%; margin-left:auto;margin-right:auto;">
 
         <br>
@@ -21,9 +28,11 @@
         <br><br> Please confirm your contact information so that we can let you know when <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?> is coming to <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>
 
     </div>
-
+-
     <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
   
 
 
 <?php include(ROOT_PATH . 'inc/footer.php') ?>
+
+-->

@@ -314,6 +314,11 @@ class CrowdLuvModel {
 
     }
 
+
+
+
+
+
    /**
      * Write a follower record from memory into CL DB  
      * @param    object      $cl_fobj     Object containing the CrowdLuv follower fields to be written into CrowdLuv DB. Field keys correspond to DB schema columns
@@ -425,17 +430,45 @@ class CrowdLuvModel {
 
         return $this->update_follower_preferences_for_talent($cl_uidt, $cl_tidt, "still_following", "0");
         
-        /*try {
+    }
 
-            $sql = "update follower_luvs_talent set still_following=0 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
-            //echo $sql; exit;
-            $this->cldb->query($sql);
+
+
+    public function update_talent_landingpage_vurl($cl_tid, $cl_vurl){
+
+        return $this->update_talent_setting($cl_tid, "crowdluv_vurl", $cl_vurl);
+
+    }
+
+
+   /**
+     * Write a single preference setting for a talent into CL DB  
+     * @param    int      $cl_tidt     CrowdLuv talent ID of the talent to update 
+     * @param    string    $prefname   Name of the preference to update (correspond to DB schema columns)
+     * @param    string    $prefval    Value of the preference to update 
+     * @return   mixed ...
+     *           nothing if the queries execute without error
+     *           -1 if there is a problem with the DB query
+     */
+    public function update_talent_setting($cl_tidt, $prefname, $prefval){
+        
+        $allowed_prefnames = ['crowdluv_tid', 'fb_pid', 'fb_page_name', 'waitlisted', 'crowdluv_vurl'];
+        if(! in_array($prefname, $allowed_prefnames)) {return 0;}
+        if(! isset($prefval) || $prefval == "") {return 0;}
+
+        try {
+            $sql = "update talent set " . $prefname . "=? where crowdluv_tid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $prefval);
+            $results->bindParam(2, $cl_tidt);
+            $results->execute();
             return 1;   
 
         } catch (Exception $e) {
             echo "Data could not be retrieved from the database. " . $e;
             return 0;
-        }*/
+        }
+
 
     }
 

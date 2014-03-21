@@ -62,7 +62,10 @@
             <p2>Want me to come to your town? The more people near you who say yes, the sooner I can get there. Please share this link on Facebook, Twitter, and forward this email to your friends
                 <br>
                 <br>
-                            <a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"><?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?></a>
+                   <a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
+                    <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?></a>
 
             </p2>
             <br>
@@ -84,7 +87,10 @@
             <br>
             <h1>Other</h1>
             <p>Share these links anywhere</p>
-            <p2><a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"><?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?></a></p2>
+            <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
+                    <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?></a></p2>
 
         </div>
         </div>

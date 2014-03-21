@@ -41,7 +41,8 @@
   if(isset($_SESSION['CL_LOGGEDIN_USER_UID'])) $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGED_IN_USER_UID"];
   if(isset($_SESSION['CL_LOGGEDIN_USER_OBJ'])) $CL_LOGGEDIN_USER_OBJ = $_SESSION['CL_LOGGEDIN_USER_OBJ'];
   if(isset($_SESSION['CL_LOGGEDIN_TALENTS_ARR'])) $CL_LOGGEDIN_TALENTS_ARR = $_SESSION['CL_LOGGEDIN_TALENTS_ARR'];
-  if(isset($_SESSION['CL_ACTIVE_MANAGED_TALENT'])) $CL_ACTIVE_MANAGED_TALENT = $_SESSION['CL_ACTIVE_MANAGED_TALENT'];
+  //if(isset($_SESSION['CL_ACTIVE_MANAGED_TALENT'])) $CL_ACTIVE_MANAGED_TALENT = $_SESSION['CL_ACTIVE_MANAGED_TALENT'];
+  if(isset($_SESSION['CL_ACTIVE_MANAGED_TALENT'])) $CL_ACTIVE_MANAGED_TALENT = $_SESSION['CL_ACTIVE_MANAGED_TALENT'] = $CL_model->get_talent_object_by_tid($_SESSION['CL_ACTIVE_MANAGED_TALENT']['crowdluv_tid']);
   //echo "CL_SESSION['fb_user']=" . $_SESSION['fb_user'] . "  ***  COOKIE['PHPSESSID']" . $_COOKIE["PHPSESSID"] ;//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
 
 
@@ -123,13 +124,13 @@
 
   }//if fbUser
 
-  //cldbgmsg("cl_vurl=" . $_GET['crowdluv_vurl']);
+  
   if(isset($_GET['crowdluv_vurl'])) $_GET['crowdluv_tid'] = $CL_model->get_crowdluv_tid_for_crowdluv_vurl($_GET['crowdluv_vurl']);
   if(isset($_GET['crowdluv_tid'])) $CL_CUR_TGT_TALENT = $CL_model->get_talent_object_by_tid($_GET['crowdluv_tid']);
   if(isset($_GET['activemanagedtalent_tid'])){
     $_SESSION['CL_ACTIVE_MANAGED_TALENT'] = $CL_model->get_talent_object_by_tid($_GET['activemanagedtalent_tid']);
     $CL_ACTIVE_MANAGED_TALENT = $_SESSION['CL_ACTIVE_MANAGED_TALENT'];
- }
+  }
   
 
 ?>

@@ -9,8 +9,17 @@
 
 
     $badpatherr=false; //flag to indicate the user tried to upload an image in unsupported file format
+    $vurl_err=false;  //flag to indicate whether the user requested an invalid or unavailable vanity url
     //Get the landing page settings for this talent
     $tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+    
+    //If this is a postback and the user has specified a new vanitu URL for their landing page, make a function call to update the DB
+    if(isset($_POST['txt_crowdluv_vurl']) &&  $_POST['txt_crowdluv_vurl'] != ""  && ($_POST['txt_crowdluv_vurl'] != $CL_ACTIVE_MANAGED_TALENT['crowdluv_vurl'])) { 
+            //Attempt to update the db with the newly requested vanitu URL.  If it's successful, update in-memory record with the new value
+            if($CL_model->update_talent_landingpage_vurl($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $_POST['txt_crowdluv_vurl']) == 1){$CL_ACTIVE_MANAGED_TALENT['crowdluv_vurl']=$_POST['txt_crowdluv_vurl']; } 
+            else $vurl_err=true;  //set an error flag to print a notification for the user below
+    }    
+    
     
     //If this is a postback and the user has specified a new message, insert a new row into the CL db for the new msg   
     if(isset($_POST['newmsg']) &&  $_POST['newmsg'] != ""  && ($_POST['newmsg'] != $tlpgsettings['message'])) { $CL_model->update_talent_landingpage_message($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $_POST['newmsg']);  }    
@@ -68,6 +77,11 @@
             <p2>Current message: <?php echo $tlpgsettings['message'];?>
             </p2>
 
+            <h2>Change your CrowdLuv URL</h2>
+
+            <p2><?php echo CLADDR;?><input type="text" name="txt_crowdluv_vurl" id="txt_crowdluv_vurl" value='<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>'></input>
+                <?php if($vurl_err){ ?><p2>The URL you requested in not available. Please try another</p2> <?php } ?>
         </div>
     
 

@@ -162,7 +162,7 @@ class CrowdLuvModel {
     public function get_followers_for_talent($cl_tidt) {
 
         try {
-            $sql = "SELECT follower.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
+            $sql = "SELECT follower.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where follower.deactivated=0 and talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 LIMIT 0, 30 ";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1,$cl_tidt);
             $results->execute();
@@ -387,7 +387,7 @@ class CrowdLuvModel {
      */
     public function update_follower_setting($cl_uidt, $prefname, $prefval){
         
-        $allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms'];
+        $allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms', 'deactivated'];
         if(! in_array($prefname, $allowed_prefnames)) {return 0;}
         if(! isset($prefval) || $prefval == "") {return 0;}
 
@@ -403,6 +403,19 @@ class CrowdLuvModel {
             echo "Data could not be retrieved from the database. " . $e;
             return 0;
         }
+
+    }
+
+
+    /**
+     * Updates CL DB to reflect that a follower account has been deactivated  
+     * @param    int      $cl_uidt     CrowdLuv user ID of the follower to be deactivated
+     * @return   mixed    int    0 if no user was found for the facebook UserID specified
+     *                    int    -1 if there is an error with the DB query
+     */
+    public function deactivate_follower($cl_uidt){
+
+        $this->update_follower_setting($cl_uidt, "deactivated", 1);
 
 
     }
@@ -435,10 +448,9 @@ class CrowdLuvModel {
 
 
 
-    public function update_talent_landingpage_vurl($cl_tid, $cl_vurl){
-
-        return $this->update_talent_setting($cl_tid, "crowdluv_vurl", $cl_vurl);
-
+ 
+    public function get_talents_array_by_uid($cl_uidt){
+    //tbd......   db doesnt store or associate uid with talents
     }
 
 
@@ -473,6 +485,34 @@ class CrowdLuvModel {
 
     }
 
+
+    public function get_talent_landingpage_settings($cl_tidt){
+
+        try {
+            $sql = "select message, image, message_timestamp from talent_landingpage where crowdluv_tid=" . $cl_tidt . " ORDER BY message_timestamp DESC LIMIT 0, 1";
+            //echo $sql; exit;
+            $results = $this->cldb->query($sql);
+            $settings = $results->fetch(PDO::FETCH_ASSOC);
+            //var_dump($settings); exit;
+            if(!$settings){
+                $settings['image']="default";
+                $settings['message'] = "Want me to come to your town? Click the button above so I can come to the town where I have the most Luv";
+                $settings['message_timestamp']= "";
+            }
+
+            return $settings;
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;
+        }
+
+    }
+
+    public function update_talent_landingpage_vurl($cl_tid, $cl_vurl){
+
+        return $this->update_talent_setting($cl_tid, "crowdluv_vurl", $cl_vurl);
+
+    }
 
     public function update_talent_landingpage_message($cl_tidt, $newmsg){
 
@@ -516,9 +556,6 @@ class CrowdLuvModel {
 
     }
 
-    public function get_talents_array_by_uid($cl_uidt){
-    //tbd......   db doesnt store or associate uid with talents
-    }
 
     /*public function get_message_audience($cl_tidt, $city, $mileradius, $opts){
 
@@ -548,8 +585,8 @@ class CrowdLuvModel {
 
         try {
             $sql = "select location_fbname, count(location_fbname) from (SELECT follower.location_fbname FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
-                where talent.crowdluv_tid=" . $cl_tidt . " and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 10";
-            //echo $sql;
+                where talent.crowdluv_tid=" . $cl_tidt . " and follower.deactivated=0 and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 10";
+            
             $results = $this->cldb->query($sql);
 
         } catch (Exception $e) {
@@ -562,27 +599,6 @@ class CrowdLuvModel {
         return $topcities;
     }
 
-    public function get_talent_landingpage_settings($cl_tidt){
-
-        try {
-            $sql = "select message, image, message_timestamp from talent_landingpage where crowdluv_tid=" . $cl_tidt . " ORDER BY message_timestamp DESC LIMIT 0, 1";
-            //echo $sql; exit;
-            $results = $this->cldb->query($sql);
-            $settings = $results->fetch(PDO::FETCH_ASSOC);
-            //var_dump($settings); exit;
-            if(!$settings){
-                $settings['image']="default";
-                $settings['message'] = "Want me to come to your town? Click the button above so I can come to the town where I have the most Luv";
-                $settings['message_timestamp']= "";
-            }
-
-            return $settings;
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            return -1;
-        }
-
-    }
 
 
     public function get_crowdluv_tid_for_crowdluv_vurl($cl_vurl){

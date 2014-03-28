@@ -19,6 +19,7 @@
         <p><a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_contactinfo_confirmation_modal').hide();return false;">Confirm</a></p>
 
     </div>
+    
     <!-- small banner at top of page to remind user to update contact info on new luvs -->
     <div class="CL_small_reminder_banner text-center">
         <p>Make sure CrowdLuv has your current contact info! <a href="followerdashboard.php">Click here to confirm/update</a></p>

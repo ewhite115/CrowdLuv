@@ -26,6 +26,27 @@ function update_follower_setting(crowdluv_uid, prefname, prefval){
 }
 
 
+function deactivate_follower(crowdluv_uid, handler){
+    console.log("deactivate_follower called:" + crowdluv_uid);
+
+    var qopts = { 
+        crowdluv_uid: crowdluv_uid
+        //prefname: prefname, 
+        //prefval: prefval
+     };
+     console.log(qopts);
+
+    resl = $.getJSON('ajax_deactivate_follower.php', qopts, handler);
+
+    /*function(result) {
+        console.log("entering callback, received unfiltered result:"); console.log(result);
+    }*/
+
+    console.log("json call resl="); console.log(resl);
+
+}
+
+
 
 
 //This is the function that will get called when fb.getloginstatus returns

@@ -77,7 +77,7 @@
                 <br>
                 <h3>Delete Account</h3>
                 <p2>If you want to cancel your account and remove all of your information from CrowdLuv you may delete your accuont here. By clicking this button you are confirming that you would like to delete all information and settings you have on Crowdluv</p2>
-                <br><button disabled type="button">Delete Account</button>
+                <br><button type="button" name="btn_deactivate_account">Deactivate Account</button> <button disabled type="button" name="btn_delete_account">Delete Account</button>
             </div>
         </div>
 
@@ -143,6 +143,20 @@
             update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "lastname", $(this).val());
             animate_settingsupdated_notification();
         });
+
+        //Click handler for the "Deactivate account" button
+        $("[name=btn_deactivate_account]").click(function(){
+            //update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "lastname", $(this).val());
+            //animate_settingsupdated_notification();
+            
+            //TODO  callback function should redirec to CL home
+            deactivate_follower(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, function(){
+                window.open('<?php echo BASE_URL;?>', "_top").focus();
+            });
+            
+
+        });
+
 
     });
 

@@ -54,9 +54,13 @@ include(ROOT_PATH . 'inc/header.php');
         <?php } ?>
                
         <?php if(isset($CL_LOGGEDIN_USER_OBJ)){ ?>
-         <h1>Welcome back to CrowdLuv, <?php echo $CL_LOGGEDIN_USER_OBJ['firstname'];?>!</h1> 
-         <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
-         <p>You have Luv'ed <a href='shareluv.php'><?php echo count($CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
+          <h1>Welcome back to CrowdLuv, <?php echo $CL_LOGGEDIN_USER_OBJ['firstname'];?>!</h1> 
+          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
+          <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']==0){ ?>
+            <p>You have Luv'ed <a href='shareluv.php'><?php echo count($CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
+          <?php } else { ?>
+            <p>You have deactivated your account. Click here to re-activate.</p>
+          <?php } ?>
         <?php } ?>
       </div>
     </div>

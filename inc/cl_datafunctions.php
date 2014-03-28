@@ -421,6 +421,19 @@ class CrowdLuvModel {
     }
 
 
+    /**
+     * Updates CL DB to reflect that a follower account has been reactivated  
+     * @param    int      $cl_uidt     CrowdLuv user ID of the follower to be reactivated
+     * @return   mixed    int    0 if no user was found for the facebook UserID specified
+     *                    int    -1 if there is an error with the DB query
+     */
+    public function reactivate_follower($cl_uidt){
+
+        $this->update_follower_setting($cl_uidt, "deactivated", "0");
+
+
+    }
+
     public function update_follower_preferences_for_talent($cl_uidt, $cl_tidt, $prefname, $prefval){
 
         $allowed_prefnames = ['allow_email', 'allow_sms', 'will_travel_distance', 'will_travel_time', 'still_following'];

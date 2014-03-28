@@ -20,7 +20,7 @@
 
 	//if(! in_array($prefname, $allowed_prefnames)) {echo "invalid pref name"; exit;}
 
-	$result = $CL_model->deactivate_follower($CL_LOGGEDIN_USER_UID);
+	$result = $CL_model->reactivate_follower($CL_LOGGEDIN_USER_UID);
 
 	//clear out the buffer so the browser only receives the json object
 	if(!$servlet_testing)	$obcontents = ob_get_contents();

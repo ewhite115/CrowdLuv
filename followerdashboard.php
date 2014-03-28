@@ -146,10 +146,7 @@
 
         //Click handler for the "Deactivate account" button
         $("[name=btn_deactivate_account]").click(function(){
-            //update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "lastname", $(this).val());
-            //animate_settingsupdated_notification();
             
-            //TODO  callback function should redirec to CL home
             deactivate_follower(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, function(){
                 window.open('<?php echo BASE_URL;?>', "_top").focus();
             });

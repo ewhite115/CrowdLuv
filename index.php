@@ -59,7 +59,7 @@ include(ROOT_PATH . 'inc/header.php');
           <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']==0){ ?>
             <p>You have Luv'ed <a href='shareluv.php'><?php echo count($CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID));?> of your favorite talent</a></p>
           <?php } else { ?>
-            <p>You have deactivated your account. Click here to re-activate.</p>
+            <p>You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
           <?php } ?>
         <?php } ?>
       </div>
@@ -106,3 +106,22 @@ include(ROOT_PATH . 'inc/header.php');
 
 
 <?php include(ROOT_PATH . 'inc/footer.php') ?>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){  
+
+          //Click handler for the "Deactivate account" button
+        $("[name=btn_reactivate_account]").click(function(){
+            
+            reactivate_follower(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, function(){
+                window.open('<?php echo BASE_URL;?>', "_top").focus();
+            });
+            
+
+        });
+
+
+    });
+
+</script>

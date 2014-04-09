@@ -64,7 +64,16 @@
                     <td><?php echo $ret_tal['fb_page_name'];?></td>
                     <td>(insert ranking here)</td>
                     <td>(insert city followers count here)</td>
-                    <td>(insert share buttons here)</td>
+                    <td>
+                        <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($ret_tal["crowdluv_vurl"] == ""){ echo $ret_tal["crowdluv_tid"];}
+                                else {echo $ret_tal["crowdluv_vurl"];} ?>" data-width="80" data-type="button">
+                        </div><br>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-text="Want <?php echo $ret_tal["fb_page_name"];?> in our area? Luv them here!" data-url="<?php echo CLADDR;?>talent/<?php if($ret_tal["crowdluv_vurl"] == ""){ echo $ret_tal["crowdluv_tid"];}
+                          else {echo $ret_tal["crowdluv_vurl"];} ?>" data-count="none">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                    </td>
+                    
+
                     <td><button name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $ret_tal["crowdluv_tid"];?>)">More Options</button></td>
 
                    

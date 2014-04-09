@@ -75,9 +75,9 @@
             <div class="clwhitebg crowdluvsection">
                 <h2>Account Settings</h2>
                 <br>
-                <h3>Delete Account</h3>
-                <p2>If you want to cancel your account and remove all of your information from CrowdLuv you may delete your accuont here. By clicking this button you are confirming that you would like to delete all information and settings you have on Crowdluv</p2>
-                <br><button type="button" name="btn_deactivate_account">Deactivate Account</button> <button disabled type="button" name="btn_delete_account">Delete Account</button>
+                <h3>Deactivate Account</h3>
+                <p2>If you want to deactivate your account and stop all communication from CrowdLuv, you may do so here.</p2>
+                <br><button type="button" name="btn_deactivate_account">Deactivate Account</button> 
             </div>
         </div>
 

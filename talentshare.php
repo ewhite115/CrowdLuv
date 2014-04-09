@@ -26,31 +26,40 @@
         <div id="sharecol1" class="col-sm-6 col-md-3">
             <div class="clwhitebg crowdluvsection">
             <h1>Facebook</h1>
-                <p>Three ways to share</p><br>
+                
                 <p>1) Post a box to the top of your facebook page.</p>
                     <a href="https://www.facebook.com/dialog/pagetab?app_id=<?php echo CL_FB_APP_ID; ?>&next=<?php echo CLADDR;?>talentdashboard.php?activemanagedtalent_tid=<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>">
                         <img width="33%" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg"></a> 
-                <br>
+                <!-- <br>
                 <p>2)Pick an image to post on your timeline</p> 
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/cl_icon_trans_128.jpg">
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg">
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
-                <br><br>
-                <p>3)Post a status update with this link and your own message</p>
-                <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo CL_FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
+                <br><br> -->
+                <p>2)Post a status update with this link and your own message</p>
+                <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
+                      <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>
+                </a></p2>
+                
             </div>
         </div>
         <div id="sharecol2" class="col-sm-6 col-md-3">
             <div class="clwhitebg crowdluvsection">
             <h1>Twitter</h1>
-                <p>Two ways to share</p><br>
-                <p>1)Pick an image to tweet</p> 
+                
+                <!-- <p>1)Pick an image to tweet</p> 
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg">
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/cl_icon_trans_128.jpg">
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
-                <br>
-                <p>2)Post a status update with this link and your own message</p>
-                <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo CL_FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>            
+                <br>  -->
+                <p>1)Post a status update with this link and your own message</p>
+                <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
+                      <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>
+                </a></p2>            
             </div>
         </div>
         <div class="clearfix visible-sm"></div>
@@ -81,7 +90,7 @@
             <br>
             <div class="cl_graybackground cl_grayborder" style="overflow:hidden;">
                 <p2>
-                &lt;p&gt;&lt;a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"&gt;Check out my Crowdluv page&lt;/a&gt;&lt;/p&gt;
+                &lt;p&gt;&lt;a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"&gt;Want me in your town?&lt;/a&gt;&lt;/p&gt;
                 </p2>
             </div>
             <br>
@@ -129,3 +138,5 @@
 
 
 <?php include(ROOT_PATH . 'inc/footer.php') ?>
+
+

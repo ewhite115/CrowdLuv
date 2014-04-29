@@ -29,6 +29,21 @@ require_once("inc/cl_init.php");
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
+  <meta property="og:site_name" content="CrowdLuv" />
+  <meta property="og:title" content="<?php echo $pageTitle;?>" />
+  <meta property="fb:app_id" content="<?php echo CL_FB_APP_ID;?>" />
+
+  <?php if($CL_SITE_SECTION=="landing"){  ?>
+    <!-- <meta property="og:title" content="<?php echo "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv"; ?>" />  -->
+    <meta property="og:description" content="<?php echo $CL_CUR_TGT_TALENT['fb_page_name'] . " wants to know where to visit. Vote for your town"; ?>" />  
+    <meta property="og:image" content="<?php echo $tlpimg; ?>" />      
+
+  <?php }  ?>
+
+  
+
+
+
 </head>
 
 <body>

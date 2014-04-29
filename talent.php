@@ -4,7 +4,7 @@
 	require_once("inc/cl_datafunctions.php");
 	require_once("inc/cl_init.php");
 	$pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
-	include(ROOT_PATH . 'inc/header.php'); 
+	
 	
 	//Check for the object that fb passes into tabs to determine if we are being loaded
 	//as a facebook tab - if so, decode the passed in object and use it to set 
@@ -30,10 +30,14 @@
 	//Get the landing page settings for this talent
 	$tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_CUR_TGT_TALENT['crowdluv_tid']);
     //var_dump($tlpgsettings); exit;
-    if($tlpgsettings['image'] == "" || $tlpgsettings['image'] == "default") $tlpimg = BASE_URL . 'res/crowdluv_fbtab_defaulthero_820.jpg';
-    else $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_CUR_TGT_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
+    if($tlpgsettings['image'] == "" || $tlpgsettings['image'] == "default") $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';
+    else $tlpimg = CLADDR . 'crowdluvdata/talent/' . $CL_CUR_TGT_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
+
+	include(ROOT_PATH . 'inc/header.php'); 
 
 ?>
+
+	
 
 	<div class="talent_landingpage_hero"  style="background-image: url('<?php echo $tlpimg;?>');"> 	</div>
 	

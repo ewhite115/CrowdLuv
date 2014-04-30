@@ -180,7 +180,7 @@ class CrowdLuvModel {
 
         try {
 
-            $sql = "SELECT follower.*  
+            $sql = "SELECT follower.* , follower_luvs_talent.*  
                     FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid 
                     where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 and follower.location_fbname=? 
                     LIMIT 0, 30 ";
@@ -197,7 +197,13 @@ class CrowdLuvModel {
         return $fols;
     }
 
-
+   /**
+     * For a given talent, calculate demographic stats and an overall "Score" for a specified city
+     * @param    int      $cl_tidt     CrowdLuv talent ID of the talent to retrieve the info about
+     * @param    String   $city        Name of the city to get stats/score for. Follow facebook city naming convention     
+     * @return   mixed    array        an array of statistics 
+     *                   
+     */
     public function get_city_stats_for_talent($cl_tidt, $city, $mileradius){
 
         $citystats = array();
@@ -213,7 +219,10 @@ class CrowdLuvModel {
         $citystats['signedup30']=0;
         $citystats['signedup90']=0;
         $citystats['signedup365']=0;
-
+        $citystats['allowed_sms']=0;
+        $citystats['allowed_email']=0;
+        $citystats["avg_willing_travel_time"]=0;
+        $willing_travel_time_sum=0;
         
         $fols = $this->get_followers_by_city_for_talent($cl_tidt, $city, $mileradius);
         $citystats['followercount'] = sizeof($fols);
@@ -243,13 +252,34 @@ class CrowdLuvModel {
             if($dayssincesignup < 31)  $citystats["signedup30"]++; 
             if($dayssincesignup < 91)  $citystats["signedup90"]++; 
             if($dayssincesignup < 366)  $citystats["signedup365"]++; 
+            if($fol['allow_sms'] == '1')  $citystats["allowed_sms"]++;
+            if($fol['allow_email'] == '1')  $citystats["allowed_email"]++;
+            $willing_travel_time_sum += $fol["will_travel_time"];
 
         }
 
+        $citystats["avg_willing_travel_time"]= $willing_travel_time_sum / $citystats["followercount"];
+       
+        //For now, the city's score will be computed by a simple point system with
+        //fixed weightings
+        $cityscore =0;
+        
+
+        //For now, system-wide weightings :
+        $cityscore +=  0.5 * $citystats['followercount'];
+        $cityscore +=  0.5 * $citystats['allowed_email'];
+        $cityscore +=  1.0 * $citystats['allowed_sms'];
+        $cityscore +=  0.01 * $citystats['followercount'] * $citystats['avg_willing_travel_time'];
+
+
+        $citystats["city_score"] = $cityscore;
+
         return $citystats; 
     }
+    
 
-
+    
+    
 
     //This sould eventually be made private
    public function create_new_cl_talent_files($cl_tidt){
@@ -594,11 +624,11 @@ class CrowdLuvModel {
 
     }*/
 
-    public function get_top_cities_for_talent($cl_tidt){
+    private function get_top_cities_for_talent_by_count($cl_tidt){
 
         try {
             $sql = "select location_fbname, count(location_fbname) from (SELECT follower.location_fbname FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
-                where talent.crowdluv_tid=" . $cl_tidt . " and follower.deactivated=0 and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 10";
+                where talent.crowdluv_tid=" . $cl_tidt . " and follower.deactivated=0 and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 50";
             
             $results = $this->cldb->query($sql);
 
@@ -610,6 +640,28 @@ class CrowdLuvModel {
         $topcities= array();
         while ($row = $results->fetch(PDO::FETCH_ASSOC)) { $topcities[] = $row; }
         return $topcities;
+    }
+
+
+    public function get_top_cities_for_talent($cl_tidt){
+
+        //Get the list of top cities for the talent, sorted by # of followers
+        $topc_bycount = $this->get_top_cities_for_talent_by_count($cl_tidt);
+
+        //make a copy of the array along with the score for each city, and prep it 
+        //to be sorted by those scores
+        $topc_byscore = array();       
+        foreach($topc_bycount as $topc){
+            $citystats = $this->get_city_stats_for_talent($cl_tidt, $topc["location_fbname"], 5);
+            $cscore[] = $citystats["city_score"]; 
+            
+            $topc_byscore[] = array('city_score' => $citystats["city_score"], 'location_fbname' => $topc["location_fbname"], 'count(location_fbname)' => $topc["count(location_fbname)"]); 
+
+        }
+        //Sort the array of cities by the scores
+        array_multisort($cscore, SORT_DESC, $topc_byscore);
+        return $topc_byscore;
+
     }
 
 

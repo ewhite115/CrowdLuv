@@ -278,8 +278,127 @@ class CrowdLuvModel {
     }
     
 
+    public function calculate_follower_score_for_talent($cl_uidt, $cl_tidt){
+
+      try {
+            $sql = "SELECT follower.*, follower_luvs_talent.* FROM follower join follower_luvs_talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid where follower.crowdluv_uid=? and follower_luvs_talent.crowdluv_tid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1,$cl_uidt);
+            $results->bindParam(2,$cl_tidt);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }
+        
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        $score=0;
+        //var_dump($data);
+        $score= $data[0]['allow_email'] * 50 + $data[0]['allow_sms'] * 100 + $data[0]['will_travel_time'] / 2;
+
+
+        return $score;
+
+
+    }
+
+    public function get_follower_scores_for_talent($cl_tidt){
+
+        //get a list of all follower uids for the talent
+        $fols = $this->get_followers_for_talent($cl_tidt);
+        //calculate score for every follower, and store into array using uid as index
+        $scores=array();  //column of the scores, used for the multisort call
+        $folscores=array();
+        foreach($fols as $fol) {
+            $thisfolscore = $this->calculate_follower_score_for_talent($fol['crowdluv_uid'], $cl_tidt);
+            $scores[] = $thisfolscore;
+            $folscores[] = array( 'crowdluv_uid' => $fol['crowdluv_uid'], 'folscore' => $thisfolscore );
+
+        }
+        //sort in descending order by scores, and return that sorted array
+        //arsort($scores);
+        array_multisort($scores, SORT_DESC, $folscores);
+        //var_dump($folscores); exit;
+        return $folscores;
+
+    }
+
+    public function calculate_follower_rank_for_talent($cl_uidt, $cl_tidt){
+       
+        $folscores = $this->get_follower_scores_for_talent($cl_tidt);
+
+        //var_dump($folscores);exit;
+        $this_followers_score = $this->calculate_follower_score_for_talent($cl_uidt, $cl_tidt);//$folscores[array_search($cl_uidt, $folscores[0])];
+        
+        $rank = 1;
+        $tie_count= -1;
+        $last_score = -1;
+        
+        //loop to figure out what 'rank' this follower sits at, taking ties into account
+        foreach($folscores as $folscore){
+            if($folscore['folscore'] == $this_followers_score ) break;
+            $rank++;
+
+        }
+
+        
+        // loop again to determine how many followers have the same score as this follower
+        foreach($folscores as $folscore){
+            if($folscore['folscore'] == $this_followers_score) $tie_count++;
+        }
+
+        //return 2 values:  their rank, and how many others they are tied with
+        //return array_search($cl_uidt, array_keys($scores)) +1 ;
+        return array('rank' => $rank, 'tie_count' => $tie_count);
+
+    }
+
     
-    
+    private function get_top_cities_for_talent_by_count($cl_tidt){
+
+        try {
+            $sql = "select location_fbname, count(location_fbname) from (SELECT follower.location_fbname FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
+                where talent.crowdluv_tid=" . $cl_tidt . " and follower.deactivated=0 and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 50";
+            
+            $results = $this->cldb->query($sql);
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;
+        }
+        
+        $topcities= array();
+        while ($row = $results->fetch(PDO::FETCH_ASSOC)) { $topcities[] = $row; }
+        return $topcities;
+    }
+
+
+    public function get_top_cities_for_talent($cl_tidt){
+
+        //Get the list of top cities for the talent, sorted by # of followers
+        $topc_bycount = $this->get_top_cities_for_talent_by_count($cl_tidt);
+
+        //make a copy of the array along with the score for each city, and prep it 
+        //to be sorted by those scores
+        $topc_byscore = array();       
+        foreach($topc_bycount as $topc){
+            $citystats = $this->get_city_stats_for_talent($cl_tidt, $topc["location_fbname"], 5);
+            $cscore[] = $citystats["city_score"]; 
+            
+            $topc_byscore[] = array('city_score' => $citystats["city_score"], 'location_fbname' => $topc["location_fbname"], 'count(location_fbname)' => $topc["count(location_fbname)"]); 
+
+        }
+        //Sort the array of cities by the scores
+        array_multisort($cscore, SORT_DESC, $topc_byscore);
+        return $topc_byscore;
+
+    }
+
+
+
+
+
 
     //This sould eventually be made private
    public function create_new_cl_talent_files($cl_tidt){
@@ -624,45 +743,6 @@ class CrowdLuvModel {
 
     }*/
 
-    private function get_top_cities_for_talent_by_count($cl_tidt){
-
-        try {
-            $sql = "select location_fbname, count(location_fbname) from (SELECT follower.location_fbname FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
-                where talent.crowdluv_tid=" . $cl_tidt . " and follower.deactivated=0 and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 50";
-            
-            $results = $this->cldb->query($sql);
-
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            return -1;
-        }
-        
-        $topcities= array();
-        while ($row = $results->fetch(PDO::FETCH_ASSOC)) { $topcities[] = $row; }
-        return $topcities;
-    }
-
-
-    public function get_top_cities_for_talent($cl_tidt){
-
-        //Get the list of top cities for the talent, sorted by # of followers
-        $topc_bycount = $this->get_top_cities_for_talent_by_count($cl_tidt);
-
-        //make a copy of the array along with the score for each city, and prep it 
-        //to be sorted by those scores
-        $topc_byscore = array();       
-        foreach($topc_bycount as $topc){
-            $citystats = $this->get_city_stats_for_talent($cl_tidt, $topc["location_fbname"], 5);
-            $cscore[] = $citystats["city_score"]; 
-            
-            $topc_byscore[] = array('city_score' => $citystats["city_score"], 'location_fbname' => $topc["location_fbname"], 'count(location_fbname)' => $topc["count(location_fbname)"]); 
-
-        }
-        //Sort the array of cities by the scores
-        array_multisort($cscore, SORT_DESC, $topc_byscore);
-        return $topc_byscore;
-
-    }
 
 
 

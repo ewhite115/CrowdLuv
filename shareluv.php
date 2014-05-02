@@ -30,7 +30,7 @@
         <div class="col-sm-8 crowdluvsection">
             <h1>Share the Luv</h1>
             <p><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname']; ?>'s most luved talent<br>
-            Your local follower rank can qualify you for rewardds and prizes! Invite new friends and encourage others to luv your favorite talent to improve your rank<br>
+            Your local follower rank can qualify you for rewards and prizes! Invite new friends and encourage others to luv your favorite talent to improve your rank<br>
             </p>
         </div>
         <div class="col-sm-4 text-right">
@@ -44,26 +44,36 @@
     <div class="col-sm-12 crowdluvsection">
         
         <table class="cldefaulttable">
-            <th>Most Luved</th>
+            <th>Your Most Luved</th>
             <th></th>
             <th>Talent Name</th>
             <th>Your Ranking</th>
-            <th><?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?> followers</th>
-            <th>Share the Luv</th>
+            <!-- <th><?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?> followers</th>  -->
+            <th>Share the Luv<br>Earn LuvPoints<br>Rank Up</th>
             <th></th>
-            <th></th>
+            
 
         <?php 
+            //Get the list of talent this user is following, and sort by how many LuvPoints they have for each
             $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
-
-            foreach($ret_tals as $ret_tal){ ?>
+            $scores=array();
+            foreach($ret_tals as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); }
+            array_multisort($scores, SORT_DESC, $ret_tals);
+            
+            //Display a row for each talent
+            foreach($ret_tals as $ret_tal){ 
+                $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']);
+        
+        ?>
 
                 <tr id="cltrow<?php echo $ret_tal['crowdluv_tid'];?>">
                     <td><img style='vertical-align:middle;' src='res/top-heart.png'></td>
                     <td><img src="https://graph.facebook.com/<?php echo $ret_tal["fb_pid"];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"></td>
                     <td><?php echo $ret_tal['fb_page_name'];?></td>
-                    <td>(insert ranking here)</td>
-                    <td>(insert city followers count here)</td>
+                    <td><?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?>  fan (out of  <?php echo count($CL_model->get_followers_for_talent($ret_tal['crowdluv_tid'])); ?>)
+                        </br>(LuvPoints: <?php echo $ret_tal['score']; ?>)
+                    </td>
+                    <!-- <td>(insert city followers count here)</td>  -->
                     <td>
                         <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($ret_tal["crowdluv_vurl"] == ""){ echo $ret_tal["crowdluv_tid"];}
                                 else {echo $ret_tal["crowdluv_vurl"];} ?>" data-width="80" data-type="button">

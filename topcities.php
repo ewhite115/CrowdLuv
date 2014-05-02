@@ -15,6 +15,8 @@
         die();
     }
 
+    if(isset($_GET['nfinterval']))  $nfinterval = $_GET['nfinterval'];
+    else $nfinterval = 7;
 
 ?>
 
@@ -22,12 +24,21 @@
         <div class="col-xs-12 crowdluvsection">
             <h1>Top Cities</h1>
             <p>According to Quantity & Quality<br><br>
-            Include followers within 
+            <!-- Include followers within 
             <select disabled>
                <option value="5">5</option>
                <option value="10">10</option>
                <option value="20">20</option>
-             </select> miles of the city.</p>
+             </select> miles of the city.</p>  -->
+            
+            <p>Show new followers within the past 
+            <select id="opt_new_follower_interval">
+               <option <?php if($nfinterval==1) echo "selected"; ?> value="1">day</option>
+               <option <?php if($nfinterval==7) echo "selected"; ?> value="7">week</option>
+               <option <?php if($nfinterval==30) echo "selected"; ?> value="30">month</option>
+               <option <?php if($nfinterval==365) echo "selected"; ?> value="365">year</option>
+             </select> </p>
+
         </div>
     </div>
 
@@ -39,6 +50,23 @@
         <br><br>
     </div>
 
+
+<script type="text/javascript">
+
+     $(document).ready(function(){  
+
+            //Handler to reload the page when user changes the drop down for new follower interval
+            $("#opt_new_follower_interval").change(function(){
+                //console.log("inside handler for new follower interval dropdown");
+                window.open('<?php echo BASE_URL;?>topcities.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"];?>&activemanagedtalentid=<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>&nfinterval=' + $("#opt_new_follower_interval").val() , "_top").focus();
+            
+            });
+
+
+        });
+
+
+</script>
 
 
 

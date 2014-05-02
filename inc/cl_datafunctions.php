@@ -354,7 +354,8 @@ class CrowdLuvModel {
 
     }
 
-    
+ 
+
     private function get_top_cities_for_talent_by_count($cl_tidt){
 
         try {
@@ -393,7 +394,47 @@ class CrowdLuvModel {
         array_multisort($cscore, SORT_DESC, $topc_byscore);
         return $topc_byscore;
 
+
     }
+
+
+    public function calculate_new_followers_for_talent_in_city_pastweek($cl_tidt, $city){
+
+
+
+    }
+
+    public function calculate_new_followers_for_talent_in_city($cl_tidt, $city, $past_n_days){
+
+        //select count(*) from 
+
+        try {
+            $sql = "select count(*) from (SELECT follower.* FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
+                where talent.crowdluv_tid=" . $cl_tidt . " 
+                    and follower.deactivated=0 
+                    and follower_luvs_talent.still_following=1 
+                    and follower.location_fbname = '" . $city . "' 
+                    and follower_luvs_talent.follow_date > DATE_SUB(CURDATE(), INTERVAL " . $past_n_days . " DAY)) as joined";
+            
+            $results = $this->cldb->query($sql);
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;
+        }
+        
+        
+        /*while ($row = $results->fetch(PDO::FETCH_ASSOC)) { $topcities[] = $row; }
+        return $topcities;
+        */
+        $newfolcount = $results->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($newfolcount); exit;
+        return  $newfolcount[0]['count(*)'];
+
+
+    }
+
+
 
 
 

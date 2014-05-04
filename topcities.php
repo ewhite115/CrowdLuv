@@ -15,6 +15,8 @@
         die();
     }
 
+    //The drop-down for the amount of time to calculate new followers for posts back to this same
+    //page with a querystring param called nfinterval. If it's not set, default to 1 week
     if(isset($_GET['nfinterval']))  $nfinterval = $_GET['nfinterval'];
     else $nfinterval = 7;
 

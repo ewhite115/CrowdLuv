@@ -47,6 +47,8 @@ require_once("inc/cl_init.php");
 </head>
 
 <body>
+<!-- Google analytics -->
+<?php include_once("analyticstracking.php") ?>
 
 <div id="fb-root"></div>
  

@@ -36,12 +36,16 @@
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg">
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
                 <br><br> -->
-                <p>2)Post a status update with this link and your own message</p>
-                <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                <p>2) Post a status update linking to your CrowdLuv Landing Page</p>
+                    <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                                else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>" data-width="80" data-type="button">
+                    </div>                  
+
+                <!-- <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
                       else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
                       <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
                       else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>
-                </a></p2>
+                </a></p2> -->
                 
             </div>
         </div>
@@ -55,11 +59,16 @@
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
                 <br>  -->
                 <p>1)Post a status update with this link and your own message</p>
-                <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="Want me in your area? Luv me!" data-url="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                        else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>" data-count="none">Tweet</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+                    <!--  <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
                       else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
                       <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
                       else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>
-                </a></p2>            
+                </a></p2>  -->
+
             </div>
         </div>
         <div class="clearfix visible-sm"></div>

@@ -26,7 +26,7 @@
     </div>
 
 
-    <div class="fluid-row">
+    <div class="row">
         <div class="col-sm-8 crowdluvsection">
             <h1>Share the Luv</h1>
             <p><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname']; ?>'s most luved talent<br>
@@ -40,7 +40,7 @@
     </div>
 
 
-    <div class="fluid-row">
+    <div class="row">
     <div class="col-sm-12 crowdluvsection">
         
         <table class="cldefaulttable">

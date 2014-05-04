@@ -22,7 +22,7 @@
 
 ?>
 
-    <div class="fluid-row">
+    <div class="row">
         <div class="col-xs-12 crowdluvsection">
             <h1>Top Cities</h1>
             <p>According to Quantity & Quality<br><br>

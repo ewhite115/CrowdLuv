@@ -55,7 +55,7 @@ require_once("inc/cl_init.php");
  <!-- Full-page semi-transparent grey screen which is disabled by default but can be enabled by JS as needed  -->
 <div id="CL_fullpage_transparentscreen" class="CL_transparentscreen"> </div>
 
-<div class="container CL_fullpagewrapper">
+<div class="CL_fullpagewrapper">
 
 <!-- Modal pane containing an intro video about CL. Not displayed by default. If JS detects the user has not authorized CL on FB, it will show this dialog -->
 <div id="CL_newuser_introvideo_modal" class="text-center">
@@ -79,5 +79,5 @@ require_once("inc/cl_init.php");
   else if($CL_SITE_SECTION == "follower") {include(ROOT_PATH . "inc/cl_sitesection_header_follower.php");}
 ?>
 
-<div id="content">
+<div class="container" id="content">
  

@@ -269,6 +269,10 @@ body{
 #content {
     min-height: 600px; 
     background: #f0eeed;
+    width:100%;
+    margin-left:0;
+    margin-right:0;
+
     /*clear: both;*/
 
 }

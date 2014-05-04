@@ -61,14 +61,14 @@
 
 <form enctype="multipart/form-data" action="#" method="POST">
     <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
-    <div class="fluid-row">
+    <div class="row">
         <div class="col-xs-12 crowdluvsection">
         <h1>Edit App</h1>
         </div>
     </div>
 
 
-    <div class="fluid-row">
+    <div class="row">
         <div class="col-sm-4 crowdluvsection">
             <h2><?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?></h2>
             <p2>Edit your personal message</p2><br>

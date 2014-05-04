@@ -12,7 +12,7 @@
 ?>
 
 
-    <div class="fluid-row">
+    <div class="row">
         <div class="col-xs-12 col-sm-12 crowdluvsection">
             <br>
             <h1>Share Your Button</h1>
@@ -22,7 +22,7 @@
 
 
     
-    <div class="fluid-row">
+    <div class="row">
         <div id="sharecol1" class="col-sm-6 col-md-3">
             <div class="clwhitebg crowdluvsection">
             <h1>Facebook</h1>

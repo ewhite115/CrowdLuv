@@ -127,7 +127,7 @@ class CrowdLuvModel {
                 $results = $this->cldb->query($sql);
 
             } else {  //never previously following, so add a row to the luvs table
-                $sql = "INSERT INTO `crowdluv`.`follower_luvs_talent` (`crowdluv_uid`, `crowdluv_tid`, `still_following`) VALUES (" . $cl_uidt . ", " . $cl_tidt . ", 1)";
+                $sql = "INSERT INTO `crowdluv`.`follower_luvs_talent` (`crowdluv_uid`, `crowdluv_tid`, `still_following`, `follow_date`) VALUES (" . $cl_uidt . ", " . $cl_tidt . ", 1, Now())";
                 echo $sql; 
                 $results = $this->cldb->query($sql);           
             }

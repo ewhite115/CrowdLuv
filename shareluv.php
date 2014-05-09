@@ -27,32 +27,26 @@
 
 
     <div class="row">
-        <div class="col-sm-8 crowdluvsection">
+        <div class="col-ms-8 crowdluvsection">
             <h1>Share the Luv</h1>
             <p><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname']; ?>'s most luved talent<br>
-            Your local follower rank can qualify you for rewards and prizes! Invite new friends and encourage others to luv your favorite talent to improve your rank<br>
+            Your fan rank can qualify you for rewards and prizes! Invite new friends and encourage others to luv your favorite talent to improve your rank<br>
             </p>
         </div>
-        <div class="col-sm-4 text-right">
-            <br>
+        <div class="hidden-xs col-ms-4">
             <input type="text" value="Search for talent"></input>
         </div>
     </div>
 
 
-    <div class="row">
-    <div class="col-sm-12 crowdluvsection">
+  
         
-        <table class="cldefaulttable">
-            <th>Your Most Luved</th>
-            <th></th>
-            <th>Talent Name</th>
-            <th>Your Ranking</th>
-            <!-- <th><?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?> followers</th>  -->
-            <th>Share the Luv<br>Earn LuvPoints<br>Rank Up</th>
-            <th></th>
+        <div class="row crowdluvsection clwhitebg cl_grayborder">
+            <div class="col-xs-4 col-xs-offset-3 col-sm-3 col-sm-offset-2"><b>Your Fan Rank</b></div>
+            <div class="col-xs-5 col-sm-3"><b>Share the Luv -Earn LuvPoints</b></div>
             
-
+        </div>
+        
         <?php 
             //Get the list of talent this user is following, and sort by how many LuvPoints they have for each
             $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
@@ -66,62 +60,87 @@
         
         ?>
 
-                <tr id="cltrow<?php echo $ret_tal['crowdluv_tid'];?>">
-                    <td><img style='vertical-align:middle;' src='res/top-heart.png'></td>
-                    <td><img src="https://graph.facebook.com/<?php echo $ret_tal["fb_pid"];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"></td>
-                    <td><?php echo $ret_tal['fb_page_name'];?></td>
-                    <td><?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?>  fan (out of  <?php echo count($CL_model->get_followers_for_talent($ret_tal['crowdluv_tid'])); ?>)
-                        </br>(LuvPoints: <?php echo $ret_tal['score']; ?>)
-                    </td>
-                    <!-- <td>(insert city followers count here)</td>  -->
-                    <td>
+                <div class="row crowdluvsection cl_grayborder clwhitebg" id="cltrow<?php echo $ret_tal['crowdluv_tid'];?>">
+                    <!-- <div class="hidden-xs col-sm-1 "><img class="img-responsive" style='vertical-align:middle;' src='res/top-heart.png'></div>  -->
+                    <div class="col-xs-3 col-sm-2 text-center">
+                       <p>
+                       <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $ret_tal["fb_pid"];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
+                       <b><?php echo $ret_tal['fb_page_name'];?></b>
+                       </p>
+                       <button name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $ret_tal["crowdluv_tid"];?>)">Preferences</button>                      
+                    </div>
+                    <div class="col-xs-4 col-sm-3 ">                      
+                        
+                        <!-- <p><b><?php // if($rank['tie_count'] > 0 ) echo "Tied for";  ?> </b></p> -->
+                        
+                        <img class="img-responsive " src='res/top-heart.png'>           
+                        <div style='position:absolute;top:10px;left:25px;color:white;font-size:14px;'><b>#<?php echo $rank['rank'];   ?></b>                       
+                        </div> 
+                        <p2>out of <?php echo count($CL_model->get_followers_for_talent($ret_tal['crowdluv_tid']));?> fans on CrowdLuv</p2>
+                        <br><p2>(<?php echo $ret_tal['score']; ?> LuvPoints)</p2>
+                        
+                    </div>
+                    <div class="col-xs-5 col-sm-3 ">
+                       
                         <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($ret_tal["crowdluv_vurl"] == ""){ echo $ret_tal["crowdluv_tid"];}
-                                else {echo $ret_tal["crowdluv_vurl"];} ?>" data-width="80" data-type="button">
-                        </div><br>
+                            else {echo $ret_tal["crowdluv_vurl"];} ?>" data-width="80" data-type="button">
+                        </div>
                         <a href="https://twitter.com/share" class="twitter-share-button" data-text="Want <?php echo $ret_tal["fb_page_name"];?> in our area? Luv them here!" data-url="<?php echo CLADDR;?>talent/<?php if($ret_tal["crowdluv_vurl"] == ""){ echo $ret_tal["crowdluv_tid"];}
                           else {echo $ret_tal["crowdluv_vurl"];} ?>" data-count="none">Tweet</a>
                         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-                    </td>
+                        
+ 
+                    </div>
+                    
+              
+                    <div class="col-xs-5 col-xs-offset-2 col-sm-3 col-sm-offset-1">
+                        
+
+                    </div>
+
+                    <div class="col-xs-4 col-sm-2 col-sm-offset-1">
+                        
+
+                    </div>
                     
 
-                    <td><button name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $ret_tal["crowdluv_tid"];?>)">More Options</button></td>
+
 
                    
-                </tr>
+                </div>
 
                 
-                <tr hidden id="cltoptsrow<?php echo $ret_tal['crowdluv_tid'];?>">
-                    <td class="cl_darkgraybackground" colspan="7">
+                <div class="row crowdluvsection" hidden id="cltoptsrow<?php echo $ret_tal['crowdluv_tid'];?>">
+                    <div class="col-xs-12 cl_darkgraybackground">
                         <div class="row" >
-                            <div class="col-xs-5">
-                                <p2 id="<?php echo $ret_tal['fb_pid'];?>_friendfans"></p2>
-                            </div>
-                            <div class="col-xs-5">
-                                <p2>Your preferences for this talent</p2><br>
-                                <p2> Willing to travel up to <input data-crowdluv_tid="<?php echo $ret_tal['crowdluv_tid'];?>" class="txt_will_travel_time" type="text" size="3" value="<?php echo $ret_tal['will_travel_time'];?>" /> minutes to see <?php echo $ret_tal['fb_page_name'];?> </p2><br>
+                            <div class="col-ms-6">
+                                <p2> Allow SMS contact?: 
+                                    <p2 <?php if(!$ret_tal['allow_sms']) echo " hidden " ?> class="p_allow_sms_yes" style="color:green"><strong><b>Yes</b></strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_sms", "0");'>Stop</a>)</p2>
+                                    <p2 <?php if( $ret_tal['allow_sms']) echo " hidden " ?> class="p_allow_sms_no" style="color:red"><strong>No</strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_sms", "1");'>Start</a>)</p2>                                  
+                                </p2> 
                                 <p2> Allow Email contact?: 
                                     <p2 <?php if(!$ret_tal['allow_email']) echo " hidden " ?> class="p_allow_email_yes" style="color:green"><strong><b>Yes</b></strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_email", "0");'>Stop</a>)</p2>
                                     <p2 <?php if( $ret_tal['allow_email']) echo " hidden " ?> class="p_allow_email_no" style="color:red"><strong>No</strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_email", "1");'>Start</a>)</p2>
-                                </p2>
-                                <p2> Allow SMS contact?: 
-                                    <p2 <?php if(!$ret_tal['allow_sms']) echo " hidden " ?> class="p_allow_sms_yes" style="color:green"><strong><b>Yes</b></strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_sms", "0");'>Stop</a>)</p2>
-                                    <p2 <?php if( $ret_tal['allow_sms']) echo " hidden " ?> class="p_allow_sms_no" style="color:red"><strong>No</strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $ret_tal['crowdluv_tid'];?>, "allow_sms", "1");'>Start</a>)</p2>
-                                  
-                                </p2> 
-                            </div>
-                            <div class="col-xs-2 text-right">
+                                </p2><br>
+                                
+                                <p2> Willing to travel up to <input data-crowdluv_tid="<?php echo $ret_tal['crowdluv_tid'];?>" class="txt_will_travel_time" type="text" size="3" value="<?php echo $ret_tal['will_travel_time'];?>" /> minutes to see <?php echo $ret_tal['fb_page_name'];?> </p2><br>
                                 <button type="button" onclick="stopfollowingclickhandler(<?php echo $ret_tal["crowdluv_tid"];?>)">Stop Following</button>
+                                <br>
                             </div>
+                            <div class="col-ms-6">
+                                <p2 id="<?php echo $ret_tal['fb_pid'];?>_friendfans"></p2>
+                            </div>
+                            
                         </div>
-                    </td>  
-                </tr>
+                    </div>  
+                </div>
 
 
 
             <?php }  ?>
-        </table>
-    </div>
-    </div>
+        
+    
+    
 
         
         <br><br>

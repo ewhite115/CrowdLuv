@@ -8,7 +8,7 @@ include(ROOT_PATH . 'inc/header.php');
  ?>
 
 
-<div class= "fluid-row" id="CL_landingpage_jumbotron">
+<div class= "row" id="CL_landingpage_jumbotron">
     
       <div class="col-xs-12 col-sm-6 text-center">
         <!-- <img class="img-responsive" src="res/vid-comingsoon.png" /> -->
@@ -23,7 +23,7 @@ include(ROOT_PATH . 'inc/header.php');
         
       </div>
       
-      <div class="col-sm-6 hidden-xs">
+      <div class=" hidden-xs col-sm-6">
         <h1>Primary CrowdLuv headline</h1>
         <p>Explanation here blah lorem ipsum. Explanation here blah lorem ipsum. Explanation here blah lorem ipsum</p>
         <p> Explanation here blah lorem ipsum</p>
@@ -33,7 +33,7 @@ include(ROOT_PATH . 'inc/header.php');
  </div>
 
 
-<div class="fluid-row">
+<div class="row">
     
     <div class="col-xs-12 col-ms-5 col-sm-4">
       <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">

@@ -9,7 +9,8 @@
 	      <li><a href="talent_editapp.php">Edit App</a></li>
 	      <li><a href="talentshare.php">Share</a></li>
 	      <li><a href="#">Feedback</a></li>
-	      <li><a href="talentdashboard.php">Settings <img style="display:inline-block;width:20%;" src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></a></li>
+	      <li><a href="talentdashboard.php">Settings </a></li>
+	      <li class="text-center"><img style="width:70%;"  src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></li>
 			
    		</ul>
 

@@ -6,7 +6,7 @@ require_once("inc/cl_init.php");
 
 	</div>
 
-	<br>
+	
 
 	<div class="fluid-row footer">
 

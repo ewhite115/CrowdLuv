@@ -11,7 +11,6 @@ require_once("inc/cl_init.php");
 	<div class="fluid-row footer">
 
 		<div class="col-md-2 col-md-offset-10">
-			<br>
 			<p>&copy;<?php echo date('Y'); ?> CrowdLuv</p>
 		</div>
 

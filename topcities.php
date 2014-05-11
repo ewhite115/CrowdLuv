@@ -47,9 +47,7 @@
     <div class="crowdluvsection" style="text-align:justify;">
 
         <?php include(ROOT_PATH . "inc/print_top_cities.php");?>
-        <br>
-        <button type="button">More Cities</button>
-        <br><br>
+        
     </div>
 
 

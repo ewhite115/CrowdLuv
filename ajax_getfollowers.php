@@ -2,7 +2,8 @@
 
 	//start output buffering in order to intercept debug messages so 
 	//they dont get returned to the browser and corrupt the json object
-	
+	//For debugging purposes, set this var to 1 to allow echo statements and other output to be written
+	//out and elivered to the browse
 	$servlet_testing=0;
 
 	if(!$servlet_testing)	ob_start();

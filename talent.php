@@ -39,9 +39,9 @@
 
 	
 
-	<div class="talent_landingpage_hero"  style="background-image: url('<?php echo $tlpimg;?>');"> 	</div>
+	<!-- <div class="talent_landingpage_hero"  style="background-image: url('<?php echo $tlpimg;?>');"> 	</div> -->
 	
-	<div class="fluid-row crowdluvsection text-center">
+	<div class="row crowdluvsection text-center">
 		<div class="col-xs-12">
 			<h1>Want <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> in your town?</h1><br>
 			<a href="#" id="fbtab_cometomytown">
@@ -52,7 +52,7 @@
 	</div>
 
 
-	<div class="fluid-row talent_landingpage_talentmessagesection">
+	<div class="row talent_landingpage_talentmessagesection">
 		<div class="col-xs-offset-1  crowdluvsection ">
 			<h1>New Message from <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>:</h1>
 			<p><?php echo $tlpgsettings['message'];?></p>
@@ -61,7 +61,7 @@
 	</div>
 
 
-	<div class="fluid-row talent_landingpage_whathappens_section">
+	<div class="row talent_landingpage_whathappens_section">
 			
 			<div class="col-xs-offset-1 crowdluvsection ">
 				<h1>What hapens when I click the big red button?</h1>	

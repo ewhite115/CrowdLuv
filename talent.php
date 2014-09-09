@@ -39,7 +39,7 @@
 
 	
 
-	<!-- <div class="talent_landingpage_hero"  style="background-image: url('<?php echo $tlpimg;?>');"> 	</div> -->
+	<div class="talent_landingpage_hero"  style="background-image: url('<?php echo $tlpimg;?>');"> 	</div> 
 	
 	<div class="row crowdluvsection text-center">
 		<div class="col-xs-12">

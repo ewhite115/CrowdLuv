@@ -12,14 +12,15 @@ include(ROOT_PATH . 'inc/header.php');
     
       <div class="col-xs-12 col-sm-6 text-center">
         <!-- <img class="img-responsive" src="res/vid-comingsoon.png" /> -->
-        <video controls>
+        <!-- <video controls>
            <source src="res/renthigh.mp4" type="video/mp4">
            <source src="res/renthigh.ogv" type="video/ogg">
            <object data="res/renthigh.mp4">
              <embed src="res/cyn-intro.swf">
            </object> 
-        </video> 
+        </video>  -->
 
+      <iframe src="//www.youtube.com/embed/4vfdMqEE5lY?rel=0&showinfo=0&modestbranding=1&controls=0&autoplay=1&end=10" frameborder="0" allowfullscreen></iframe>
         
       </div>
       

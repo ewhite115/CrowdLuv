@@ -1,0 +1,46 @@
+<?php
+
+namespace CrowdLuv\AdminBundle\Form;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+class TalentType extends AbstractType
+{
+        /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('fbPid')
+            ->add('fbPageName')
+            ->add('firstname')
+            ->add('lastname')
+            ->add('mobile')
+            ->add('homeCity')
+            ->add('waitlisted')
+            ->add('crowdluvVurl')
+        ;
+    }
+    
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'CrowdLuv\AdminBundle\Entity\Talent'
+        ));
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'crowdluv_adminbundle_talent';
+    }
+}

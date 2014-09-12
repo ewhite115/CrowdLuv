@@ -1,0 +1,5 @@
+crowd_luv_admin:
+    resource: "@CrowdLuvAdminBundle/Controller/"
+    type:     annotation
+    prefix:   /
+

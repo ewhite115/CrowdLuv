@@ -1,0 +1,84 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Follower</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Fbuid</th>
+                <td>{{ entity.fbUid }}</td>
+            </tr>
+            <tr>
+                <th>Mobile</th>
+                <td>{{ entity.mobile }}</td>
+            </tr>
+            <tr>
+                <th>Locationfbid</th>
+                <td>{{ entity.locationFbId }}</td>
+            </tr>
+            <tr>
+                <th>Locationfbname</th>
+                <td>{{ entity.locationFbname }}</td>
+            </tr>
+            <tr>
+                <th>Firstname</th>
+                <td>{{ entity.firstname }}</td>
+            </tr>
+            <tr>
+                <th>Lastname</th>
+                <td>{{ entity.lastname }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ entity.email }}</td>
+            </tr>
+            <tr>
+                <th>Gender</th>
+                <td>{{ entity.gender }}</td>
+            </tr>
+            <tr>
+                <th>Birthdate</th>
+                <td>{{ entity.birthdate|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Fbrelationshipstatus</th>
+                <td>{{ entity.fbRelationshipStatus }}</td>
+            </tr>
+            <tr>
+                <th>Signupdate</th>
+                <td>{{ entity.signupdate|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Allowclemail</th>
+                <td>{{ entity.allowClEmail }}</td>
+            </tr>
+            <tr>
+                <th>Allowclsms</th>
+                <td>{{ entity.allowClSms }}</td>
+            </tr>
+            <tr>
+                <th>Deactivated</th>
+                <td>{{ entity.deactivated }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('follower') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('follower_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>FollowerLuvsTalent list</h1>
+
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Stillfollowing</th>
+                <th>Allowemail</th>
+                <th>Allowsms</th>
+                <th>Willtraveldistance</th>
+                <th>Willtraveltime</th>
+                <th>Followdate</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('followerluvstalent_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.stillFollowing }}</td>
+                <td>{{ entity.allowEmail }}</td>
+                <td>{{ entity.allowSms }}</td>
+                <td>{{ entity.willTravelDistance }}</td>
+                <td>{{ entity.willTravelTime }}</td>
+                <td>{% if entity.followDate %}{{ entity.followDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('followerluvstalent_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('followerluvstalent_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('followerluvstalent_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

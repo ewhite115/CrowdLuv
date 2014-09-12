@@ -1,0 +1,52 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>FollowerLuvsTalent</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Stillfollowing</th>
+                <td>{{ entity.stillFollowing }}</td>
+            </tr>
+            <tr>
+                <th>Allowemail</th>
+                <td>{{ entity.allowEmail }}</td>
+            </tr>
+            <tr>
+                <th>Allowsms</th>
+                <td>{{ entity.allowSms }}</td>
+            </tr>
+            <tr>
+                <th>Willtraveldistance</th>
+                <td>{{ entity.willTravelDistance }}</td>
+            </tr>
+            <tr>
+                <th>Willtraveltime</th>
+                <td>{{ entity.willTravelTime }}</td>
+            </tr>
+            <tr>
+                <th>Followdate</th>
+                <td>{{ entity.followDate|date('Y-m-d H:i:s') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('followerluvstalent') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('followerluvstalent_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

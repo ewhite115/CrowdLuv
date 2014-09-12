@@ -30,7 +30,7 @@ class FollowerLuvsTalent
      * @ORM\ManyToOne(targetEntity="Follower", inversedBy="follower_luvs_talent")
      * @ORM\JoinColumn(name="crowdluv_uid", referencedColumnName="crowdluv_uid")
      */
-    private $crowdluv_follower;
+    private $crowdluvFollower;
 
     
     /**
@@ -39,7 +39,7 @@ class FollowerLuvsTalent
      * @ORM\ManyToOne(targetEntity="Talent", inversedBy="follower_luvs_talent")
      * @ORM\JoinColumn(name="crowdluv_tid", referencedColumnName="crowdluv_tid")
      */
-    private $crowdluv_talent;
+    private $crowdluvTalent;
 
 
     /**
@@ -242,7 +242,7 @@ class FollowerLuvsTalent
      */
     public function setCrowdluvFollower(\CrowdLuv\AdminBundle\Entity\Follower $crowdluvFollower = null)
     {
-        $this->crowdluv_follower = $crowdluvFollower;
+        $this->crowdluvFollower = $crowdluvFollower;
 
         return $this;
     }
@@ -254,7 +254,7 @@ class FollowerLuvsTalent
      */
     public function getCrowdluvFollower()
     {
-        return $this->crowdluv_follower;
+        return $this->crowdluvFollower;
     }
 
     /**
@@ -265,7 +265,7 @@ class FollowerLuvsTalent
      */
     public function setCrowdluvTalent(\CrowdLuv\AdminBundle\Entity\Talent $crowdluvTalent = null)
     {
-        $this->crowdluv_talent = $crowdluvTalent;
+        $this->crowdluvTalent = $crowdluvTalent;
 
         return $this;
     }
@@ -277,7 +277,7 @@ class FollowerLuvsTalent
      */
     public function getCrowdluvTalent()
     {
-        return $this->crowdluv_talent;
+        return $this->crowdluvTalent;
     }
 
    

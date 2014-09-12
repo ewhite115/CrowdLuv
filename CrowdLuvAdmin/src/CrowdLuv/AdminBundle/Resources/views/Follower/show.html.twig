@@ -65,6 +65,19 @@
                 <th>Deactivated</th>
                 <td>{{ entity.deactivated }}</td>
             </tr>
+
+            <tr>
+                <th>Luvs:</th>
+                <td>
+                    {% for followedTalent in followedTalents %}
+                        <li>
+                        <a href="{{ path('talent_show', { 'id': followedTalent.id }) }}">
+                        {{followedTalent.crowdluvTalent}} </a>
+                        </li>
+
+                    {% endfor %}
+                </td>
+            </tr>
         </tbody>
     </table>
 

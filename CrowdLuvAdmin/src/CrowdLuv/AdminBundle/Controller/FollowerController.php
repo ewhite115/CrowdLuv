@@ -111,6 +111,7 @@ class FollowerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('CrowdLuvAdminBundle:Follower')->find($id);
+        $followedTalents = $em->getRepository('CrowdLuvAdminBundle:FollowerLuvsTalent')->findBycrowdluv_follower($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Follower entity.');
@@ -120,6 +121,7 @@ class FollowerController extends Controller
 
         return array(
             'entity'      => $entity,
+            'followedTalents' => $followedTalents,
             'delete_form' => $deleteForm->createView(),
         );
     }

@@ -5,7 +5,7 @@
   session_save_path($dir);
   session_start();
 
-  require_once("inc/config.php");
+  require_once("inc/init_config.php"); 
   require_once("inc/cl_datafunctions.php");
   require_once("facebook-sdk/facebook.php");
 

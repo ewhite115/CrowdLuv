@@ -1,6 +1,6 @@
 <?php 
 	$CL_SITE_SECTION = "landing";
-	require_once("inc/config.php");
+	require_once("inc/init_config.php");
 	require_once("inc/cl_datafunctions.php");
 	require_once("inc/cl_init.php");
 	$pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";

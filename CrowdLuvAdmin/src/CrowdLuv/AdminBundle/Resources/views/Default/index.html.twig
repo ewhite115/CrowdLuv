@@ -7,4 +7,12 @@
 
 Hello {{ name }}!
 
+Hi {{ app.session.get('eddiesessvar') }}
+
+
+
+ <p><a href="{{ path('follower') }}">Manage Followers </a></p>
+ <p><a href="{{ path('talent') }}">Manage Talent </a></p>
+
+
 {% endblock %}

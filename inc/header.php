@@ -1,5 +1,5 @@
 <?php     
-require_once("inc/config.php");
+require_once("inc/init_config.php");
 require_once("inc/cl_datafunctions.php");
 require_once("inc/cl_init.php");
  

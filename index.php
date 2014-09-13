@@ -1,7 +1,7 @@
 <?php 
 $pageTitle = "CrowdLuv";
 $CL_SITE_SECTION = "home";
-require_once("inc/config.php");
+require_once("inc/init_config.php");
 
 
 include(ROOT_PATH . 'inc/header.php'); 

@@ -67,3 +67,10 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+
+services:
+    kernel.listener.PageLoadListener:
+        class: CrowdLuv\AdminBundle\Listener\PageLoadListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }

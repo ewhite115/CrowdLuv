@@ -2,7 +2,7 @@
 
     $pageTitle = "CrowdLuv";
     $CL_SITE_SECTION = "talent";
-    require_once("inc/config.php");
+    require_once("inc/init_config.php"); 
     include(ROOT_PATH . 'inc/header.php');
 
     if(! $CL_LOGGEDIN_USER_UID) { echo "no logged in user(?)"; exit; } 

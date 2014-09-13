@@ -18,3 +18,5 @@
   $CL_model = new CrowdLuvModel();
   //var_dump($CL_model);
   $CL_model->setDB($CL_db);
+
+  //var_dump($CL_model->get_talent_object_by_tid("1"));

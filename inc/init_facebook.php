@@ -1,6 +1,7 @@
   <?php
 
   
+  
   require_once("facebook-sdk/facebook.php");
 
   $fbconfig = array();
@@ -9,17 +10,18 @@
   $fbconfig['fileUpload'] = false; // optional
   $fbconfig['scope'] = CL_FB_PERMISSION_SCOPE_STRING;
 
-  $facebook = new Facebook($fbconfig);  //echo "facebook: ";  var_dump($facebook); 
-
+  $facebook = new Facebook($fbconfig);   
+  //var_dump($facebook);
   //Get fb user ID  
   $fb_user = $facebook->getUser();
+  //var_dump($fb_user);
   cldbgmsg("  *** facebook->getUser():" . $fb_user); //var_dump($fb_user);
   //If we have an fb userid for the current user.... 
   if ($fb_user) {  // Proceed thinking you have a logged in user who's authenticated.
       $_SESSION["fb_user"] = $fb_user;
   
       //Check to see if this fb user exists in CL db.... Set a global variable containing the crowdluv_uid
-      $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGED_IN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
+      $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
       
       //if new.. 
       if($CL_LOGGEDIN_USER_UID==0){
@@ -27,7 +29,7 @@
           try { 
             $fb_user_profile = $facebook->api('/me');  //var_dump($fb_user_profile); 
             $CL_model->create_new_cl_follower_record_from_facebook_user_profile($fb_user_profile);
-            $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGED_IN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
+            $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
           } catch (FacebookApiException $e) {
             //error_log($e);
             cldbgmsg("FacebookAPIException in cl_init.php requesting new user info:  " . $e);// var_dump($e);

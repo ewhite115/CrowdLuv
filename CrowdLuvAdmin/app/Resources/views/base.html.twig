@@ -41,15 +41,30 @@
                 <script src="{{ asset_url }}"></script>
                 {% endjavascripts %}
 
-
             {% endblock %}
 
+
+            <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box">
+                <h1> Admin Sign-in </h1>        
+                <a href="{{ app.session.get('fbloginurl') }}">
+                    <img width="60%" class="img-responsive" src="{{ app.session.get('BASE_URL') }}res/select-facebook-pages.jpg" /></a><br>
+
+                <p>Logged In as: {{ app.session.get('CL_LOGGEDIN_USER_OBJ').firstname }} {{ app.session.get('CL_LOGGEDIN_USER_OBJ').lastname }}</p>
+                <p>CL_UID: {{ app.session.get('CL_LOGGEDIN_USER_UID') }}; fb_user: {{ app.session.get('fb_user') }}</p>
+                <p>Administrating on Environment: {{ app.session.get('CROWDLUV_ENV') }}</p>
+                
+                
+
+           
+            </div>
+
         </div>
+
 
         <div class="fluid-row footer">
 
             <div class="col-md-2 col-md-offset-10">
-                <p>&copy;<?php echo date('Y'); ?> CrowdLuv</p>
+                <p>&copy; CrowdLuv</p>
             </div>
 
         </div>

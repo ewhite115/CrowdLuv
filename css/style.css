@@ -371,7 +371,7 @@ body{
 
 }
 
-#CL_landingpage_jumbotron h1, #CL_landingpage_jumbotron p {
+#CL_landingpage_jumbotron h1, h2, #CL_landingpage_jumbotron p {
     color:white;
     font-size: 24px;
     font-weight: bold;
@@ -381,6 +381,11 @@ body{
 #CL_landingpage_jumbotron p {
     font-size:10px;
     font-weight: normal;
+}
+#CL_landingpage_jumbotron h2 {
+    font-size: 13px;
+    font-weight: normal;
+
 }
 
 

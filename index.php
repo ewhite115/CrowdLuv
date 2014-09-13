@@ -12,7 +12,7 @@ include(ROOT_PATH . 'inc/header.php');
 
 <div class= "row" id="CL_landingpage_jumbotron">
     
-      <div class="col-xs-12 col-sm-6 text-center">
+      <div class="col-xs-12 col-ms-7 text-center">
         <!-- <img class="img-responsive" src="res/vid-comingsoon.png" /> -->
         <!-- <video controls>
            <source src="res/renthigh.mp4" type="video/mp4">
@@ -22,14 +22,14 @@ include(ROOT_PATH . 'inc/header.php');
            </object> 
         </video>  -->
 
-      <iframe src="//www.youtube.com/embed/4vfdMqEE5lY?rel=0&showinfo=0&modestbranding=1&controls=0&autoplay=1&end=10" frameborder="0" allowfullscreen></iframe>
+      <iframe src="//www.youtube.com/embed/4vfdMqEE5lY?rel=0&showinfo=0&modestbranding=1&controls=0&autoplay=0&end=10" frameborder="0" allowfullscreen></iframe>
         
       </div>
       
-      <div class=" hidden-xs col-sm-6">
-        <h1>Primary CrowdLuv headline</h1>
-        <p>Explanation here blah lorem ipsum. Explanation here blah lorem ipsum. Explanation here blah lorem ipsum</p>
-        <p> Explanation here blah lorem ipsum</p>
+      <div class="col-xs-12 col-ms-4 ">
+        <h1>Show Some Luv</h1>
+        <h2>CrowdLuv lets YOU decide where your favorite artists, speakers, authors should visit next. </h2>
+        <h2>Show them how much Luv they have in your town. </h2>
       </div>
     
 
@@ -38,7 +38,7 @@ include(ROOT_PATH . 'inc/header.php');
 
 <div class="row">
     
-    <div class="col-xs-12 col-ms-5 col-sm-4">
+    <div class="col-xs-12 col-ms-5 ">
       <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
         <?php 
           $folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING,

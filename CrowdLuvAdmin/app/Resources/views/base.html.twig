@@ -1,17 +1,61 @@
 
-
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}CrowdLuv Admin{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+<head>
+  <title>CrowdLuv Admin</title>
+  
+  <link rel="shortcut icon" href="%kernel.root_dir%/../../favicon.ico">  
+    
+    {% block stylesheets %}
+        {% stylesheets             
+            '%kernel.root_dir%/../../css/bootstrap.css'
+            '%kernel.root_dir%/../../css/bootstrap_ms.css'
+            '%kernel.root_dir%/../../css/style.css'
+            
+        %}
+        <link rel ="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+
+    {% endblock %}
 
 
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+</head>
+
+<body>
+
+    <div class="CL_fullpagewrapper">
+   
+        <div class="header cl_site_section_header landing">
+            <a id="cl_header_link" href="<?php echo BASE_URL;?> "></a>
+        </div>
+
+        <div class="container" id="content">
+ 
+           {% block body %}       {% endblock %}
+ 
+
+            {% block javascripts %}
+                {% javascripts '%kernel.root_dir%/../../js/bootstrap.min.js'
+                    '%kernel.root_dir%/../../scripts/main.js' 
+                %}
+                <script src="{{ asset_url }}"></script>
+                {% endjavascripts %}
+
+
+            {% endblock %}
+
+        </div>
+
+        <div class="fluid-row footer">
+
+            <div class="col-md-2 col-md-offset-10">
+                <p>&copy;<?php echo date('Y'); ?> CrowdLuv</p>
+            </div>
+
+        </div>
+
+    </div> 
+
+
+</body>
 </html>

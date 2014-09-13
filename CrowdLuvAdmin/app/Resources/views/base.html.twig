@@ -1,9 +1,22 @@
+
+
+<?php 
+$pageTitle = "CrowdLuv";
+$CL_SITE_SECTION = "home";
+require_once("inc/config.php");
+include(ROOT_PATH . 'inc/header.php'); 
+
+
+ ?>
+ 
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}CrowdLuv Admin{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
+
+
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>

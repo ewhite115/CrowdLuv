@@ -26,7 +26,7 @@ class Follower
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="FollowerLuvsTalent", mappedBy="crowdluv_follower")
+     * @ORM\OneToMany(targetEntity="FollowerLuvsTalent", mappedBy="crowdluvFollower")
      */
     private $follower_luvs_talent;
 

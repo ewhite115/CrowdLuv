@@ -1,7 +1,7 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Follower</h1>
+    <h1>Follower Info - {{ entity.firstname }} {{ entity.lastname }} - crowdluv UserID {{ entity.id }}</h1>
 
     <table class="record_properties">
         <tbody>
@@ -54,11 +54,11 @@
                 <td>{{ entity.signupdate|date('Y-m-d H:i:s') }}</td>
             </tr>
             <tr>
-                <th>Allowclemail</th>
+                <th>Allowing CL email?</th>
                 <td>{{ entity.allowClEmail }}</td>
             </tr>
             <tr>
-                <th>Allowclsms</th>
+                <th>Allowing CL sms</th>
                 <td>{{ entity.allowClSms }}</td>
             </tr>
             <tr>
@@ -71,7 +71,7 @@
                 <td>
                     {% for followedTalent in followedTalents %}
                         <li>
-                        <a href="{{ path('talent_show', { 'id': followedTalent.id }) }}">
+                        <a href="{{ path('followerluvstalent_edit', { 'id': followedTalent.id }) }}">
                         {{followedTalent.crowdluvTalent}} </a>
                         </li>
 

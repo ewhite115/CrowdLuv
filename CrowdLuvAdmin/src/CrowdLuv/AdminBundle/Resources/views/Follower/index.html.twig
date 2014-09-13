@@ -6,20 +6,17 @@
     <table class="records_list">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Fbuid</th>
-                <th>Mobile</th>
-                <th>Locationfbid</th>
-                <th>Locationfbname</th>
+                <th>CrowdLuv Id</th>   
+                
                 <th>Firstname</th>
                 <th>Lastname</th>
-                <th>Email</th>
-                <th>Gender</th>
+                <th>Facebook Location</th>
+                                
                 <th>Birthdate</th>
-                <th>Fbrelationshipstatus</th>
+                <th>Mobile</th>
                 <th>Signupdate</th>
-                <th>Allowclemail</th>
-                <th>Allowclsms</th>
+                <th>Allowing CL email?</th>
+                <th>Allowing CL SMS</th>
                 <th>Deactivated</th>
                 <th>Actions</th>
             </tr>
@@ -28,17 +25,15 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('follower_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.fbUid }}</td>
-                <td>{{ entity.mobile }}</td>
-                <td>{{ entity.locationFbId }}</td>
-                <td>{{ entity.locationFbname }}</td>
+                                
+                
                 <td>{{ entity.firstname }}</td>
-                <td>{{ entity.lastname }}</td>
-                <td>{{ entity.email }}</td>
-                <td>{{ entity.gender }}</td>
-                <td>{% if entity.birthdate %}{{ entity.birthdate|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{{ entity.fbRelationshipStatus }}</td>
-                <td>{% if entity.signupdate %}{{ entity.signupdate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ entity.lastname|slice(0,15) }}</td>
+                <td>{{ entity.locationFbname }}</td>
+                                
+                <td>{% if entity.birthdate %}{{ entity.birthdate|date('Y-m-d') }}{% endif %}</td>
+                <td>{{ entity.mobile }}</td>
+                <td>{% if entity.signupdate %}{{ entity.signupdate|date('Y-m-d') }}{% endif %}</td>
                 <td>{{ entity.allowClEmail }}</td>
                 <td>{{ entity.allowClSms }}</td>
                 <td>{{ entity.deactivated }}</td>

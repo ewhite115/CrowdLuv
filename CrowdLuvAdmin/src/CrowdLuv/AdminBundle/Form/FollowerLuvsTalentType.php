@@ -21,8 +21,8 @@ class FollowerLuvsTalentType extends AbstractType
             ->add('willTravelDistance')
             ->add('willTravelTime')
             ->add('followDate')
-            ->add('crowdluv_follower')
-            ->add('crowdluv_talent')
+            ->add('crowdluvFollower')
+            ->add('crowdluvTalent')
         ;
     }
     

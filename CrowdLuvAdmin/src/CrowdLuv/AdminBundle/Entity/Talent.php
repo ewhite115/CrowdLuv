@@ -17,7 +17,7 @@ class Talent
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="FollowerLuvsTalent", mappedBy="crowdluv_talent")
+     * @ORM\OneToMany(targetEntity="FollowerLuvsTalent", mappedBy="crowdluvTalent")
      */
     private $follower_luvs_talent;
 

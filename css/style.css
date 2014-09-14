@@ -313,6 +313,7 @@ body{
     font-size: 10px;
     margin: .222%;
     line-height: 1;
+    display:block;
 
 }
 
@@ -393,15 +394,21 @@ body{
 
 .crowdluv_landingpage_memberlogin_box {
     
-    max-width: 340px;
+    /* max-width: 340px; */
     max-height: 3000px;   /* no scrolling, just print all talent no matter how long it gets. */
     
 }
 .crowdluv_landingpage_memberlogin_box .talentpagelisting {
-    margin: 2%;
+    /*margin: 2%;*/
+    display: inline-block;
+    width:250px;
+
 }
 .crowdluv_landingpage_memberlogin_box .talentpagelisting img {
-    width:15%;
+    width:25%;
+    float:left;
+    margin-right: 5px;
+
 }
 
 
@@ -578,6 +585,6 @@ input[type="submit"], button {
     background: darkred;
     padding: 10px 40px;
     color: white;
-    
+
 
 }

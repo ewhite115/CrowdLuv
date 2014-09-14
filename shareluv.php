@@ -30,10 +30,13 @@
 
     </div>
     
-    <!-- small banner at top of page to remind user to update contact info when they follow new luvs -->
+    <!-- small banner at top of page to remind user to update contact info when they follow new luvs
+            This is hidden by default but gets shown if querystring newluv=x is passed  -->
+    <a href="followerdashboard.php">
     <div class="CL_small_reminder_banner text-center">
-        <p>Make sure CrowdLuv has your current contact info! <a href="followerdashboard.php">Click here to confirm/update</a></p>
+        <p>Make sure CrowdLuv has your current contact info! Click here to confirm/update</p>
     </div>
+    </a>
 
 
     <div class="row">

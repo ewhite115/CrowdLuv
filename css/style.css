@@ -129,7 +129,7 @@ body{
 
     position:fixed; 
     display: none;
-    z-index: 101;
+    z-index: 111;
     
     top:0;
     left:20%;
@@ -162,7 +162,7 @@ body{
                 min-height:45px;
                 position: fixed;
                 width:100%;
-                z-index: 1000;
+                z-index: 110;
                 padding-top: 4.5px;
 
             }

@@ -13,7 +13,7 @@
 <!-- Modal pane containing an intro video about CL. Hidden by default. 
   If JS detects the user has not authorized CL on FB, it will show this dialog -->
 <div id="CL_newuser_introvideo_modal" class="text-center">
-    <h1>Welcome to CrowdLuv</h1>
+    <h1 class="clredtext">Welcome to CrowdLuv</h1>
       <!-- For video hosted on CL env
         <video controls>
            <source src="<?php echo CLADDR;?>res/cyn-intro.mp4" type="video/mp4">
@@ -25,8 +25,18 @@
       -->
     <!-- YouTube-hosted video embedding -->
     <iframe src="//www.youtube.com/embed/4vfdMqEE5lY?rel=0&showinfo=0&modestbranding=1&controls=0&autoplay=1&end=10" frameborder="0" allowfullscreen></iframe>
-    <p>CrowdLuv allows YOU to decide where your favorite acts will come next! Show your Luv</p>
-      <p><a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_newuser_introvideo_modal').hide();return false;">Dismiss</a></p>
+    <p class="crowdluvsection text-strong">
+      CrowdLuv allows YOU to decide where <?php echo ( isset($CL_CUR_TGT_TALENT) ? $CL_CUR_TGT_TALENT['fb_page_name']  :  "your favorite acts"  )   ?>  will come next.
+    </p>
+    <p class="crowdluvsection">
+      
+    </p>
+
+    <p>
+    <a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_newuser_introvideo_modal').hide();return false;">
+      <span class="clredbutton">Show your Luv!</span>
+    </a>
+    </p>
 
   </div>
 

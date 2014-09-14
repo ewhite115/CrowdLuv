@@ -23,20 +23,15 @@
            </object> 
       </video>   
       -->
-    <!-- YouTube Embedded play with JS Control
-    <iframe id="cl-modal-intro-player" src="http://www.youtube.com/embed/4vfdMqEE5lY?rel=0&showinfo=0&modestbranding=1&controls=0" frameborder="0" allowfullscreen></iframe>
-     -->    
+    <!-- YouTube Embedded play with JS Control -->
     <iframe id="cl-modal-intro-player" src="http://www.youtube.com/embed/4vfdMqEE5lY?enablejsapi=1&rel=0&showinfo=0&modestbranding=1&controls=0" frameborder="0" allowfullscreen></iframe>    
      
     <p class="crowdluvsection text-strong">
       CrowdLuv allows YOU to decide where <?php echo ( isset($CL_CUR_TGT_TALENT) ? $CL_CUR_TGT_TALENT['fb_page_name']  :  "your favorite acts"  )   ?>  will come next.
     </p>
-    <p class="crowdluvsection">
-      
-    </p>
 
     <p>
-    <a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_newuser_introvideo_modal').hide();return false;">
+    <a href="#" onclick="hideNewUserModal();return false;">
       <span class="clredbutton">Show your Luv!</span>
     </a>
     </p>

@@ -29,7 +29,7 @@ function onYouTubeIframeAPIReady() {
                   },
       'onStateChange': function onPlayerStateChange(event) {
                           if (event.data == YT.PlayerState.PLAYING && !introModalVideoDone) {
-                            setTimeout(stopIntroModalVideo, 10000);
+                            setTimeout(hideNewUserModal, 10000);
                             introModalVideoDone = true;
                           }
                         }
@@ -47,7 +47,7 @@ function onYouTubeIframeAPIReady() {
  *                             and hides the new-user modal]
  * @return {[type]} [description]
  */
-function stopIntroModalVideo() {
+function hideNewUserModal() {
   introModalPlayer.stopVideo();
   $("#CL_fullpage_transparentscreen").hide();
   $("#CL_newuser_introvideo_modal").hide();

@@ -4,11 +4,27 @@
 
 {% block body %}
 
+<h1>Administration Console</h1>
+
+<div class="row">
+	<div class="col-xs-12 crowdluvsection clwhitebg">
+		<a href="">CrowdLuv Overview </a></p>
+		<p> Overall Dashboard Overview information will go here </p>
+		<BR><BR><BR><BR>
+	</div>
 
 
+	<div class="col-xs-12 col-sm-6 crowdluvsection clwhitebg">
+		<a href="{{ path('follower') }}">Manage Followers </a></p>
+		<p> Follower Dashboard Overview information will go here </p>
+		<BR><BR><BR><BR>
+	</div>
 
-<p><a href="{{ path('follower') }}">Manage Followers </a></p>
-<p><a href="{{ path('talent') }}">Manage Talent </a></p>
-
+	<div class="col-xs-12 col-sm-6 crowdluvsection clwhitebg">
+		<a href="{{ path('talent') }}">Manage Talent </a>
+		<p> Talent Dashboard Overview information will go here </p>
+		<BR><BR><BR><BR>
+	</div>
+</div>
 
 {% endblock %}

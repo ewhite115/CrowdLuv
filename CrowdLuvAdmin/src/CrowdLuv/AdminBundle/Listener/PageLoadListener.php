@@ -48,17 +48,22 @@ class PageLoadListener
   		
   		//Check for facebook session, create/update globals and DB accordingly
 		require_once("../../inc/init_facebook.php");
-		//'copy' key legacy-session info to Symfony session
+		
+		//'copy' key legacy-session info to Symfony session.
+		//	this should happen after the above facebook initialization
 		require_once("../../inc/init_sessionglobals_symfony.php");
+
+
 		$session->set('fb_user', $fb_user);
 		//Generate facebook login URL and set it into a session variable
 		//  that the twig templates can use to create a login button
 		$talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
 		$fbloginurl = $facebook->getLoginUrl($talparams);
 		$session->set('fbloginurl', $fbloginurl);
+		
+		$session->set('fbAccessToken', $facebook->getAccessToken());
 
 		// End CrowdLuv config/initializations
-
 
 		
 		//Test 'direct' db querying 

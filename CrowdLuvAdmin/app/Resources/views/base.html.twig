@@ -49,11 +49,11 @@
                 <a href="{{ app.session.get('fbloginurl') }}">
                     <img width="60%" class="img-responsive" src="{{ app.session.get('BASE_URL') }}res/select-facebook-pages.jpg" /></a><br>
 
+                {% if  app.session.get('CL_LOGGEDIN_USER_OBJ').firstname is defined %}
                 <p>Logged In as: {{ app.session.get('CL_LOGGEDIN_USER_OBJ').firstname }} {{ app.session.get('CL_LOGGEDIN_USER_OBJ').lastname }}</p>
                 <p>CL_UID: {{ app.session.get('CL_LOGGEDIN_USER_UID') }}; fb_user: {{ app.session.get('fb_user') }}</p>
-                <p>Administrating on Environment: {{ app.session.get('CROWDLUV_ENV') }}</p>
-                
-                
+                {% endif %}
+                <p>Administrating on Environment: {{ app.session.get('CROWDLUV_ENV') }}</p>                
 
            
             </div>

@@ -26,7 +26,32 @@
     <div class="CL_fullpagewrapper">
    
         <div class="header cl_site_section_header admin">
+                    
+            <img width="35px" id="cl_navicon" class="threebarnav" src="{{ app.session.get('BASE_URL') }}res/3bar-nav.jpg">
+
+            <ul id="cl_nav" class="nav nav-pills ">
+              <!-- <li><a href="shareluv.php">Share Luv</a></li>
+              <li><a href="#">Feedback</a></li>  -->
+              {% if app.session.get("fb_user") is defined %}
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown"  href="#">
+                      Admin <span class="caret"></span>            </a>
+
+                    <ul class="dropdown-menu" role="menu">
+                      <li><a href="{{ app.session.get('BASE_URL') }}crowdluvadmin/web/">Admin Home</a></li>
+                      <li><a href="{{ app.session.get('BASE_URL') }}crowdluvadmin/web/follower">Follower Console</a></li>
+                      <li><a href="{{ app.session.get('BASE_URL') }}crowdluvadmin/web/talent">Talent Console</a></li>
+                    </ul>
+                </li>
+
+
+
+              {% endif %}
+            </ul>
+
             <a id="cl_header_link" href="{{ app.session.get('BASE_URL') }}"></a>
+            
         </div>
 
         <div class="container" id="content">
@@ -35,8 +60,12 @@
  
 
             {% block javascripts %}
-                {% javascripts '%kernel.root_dir%/../../js/bootstrap.min.js'
+                {% javascripts 
+                    'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'
+                    '%kernel.root_dir%/../../js/bootstrap.min.js'
                     '%kernel.root_dir%/../../scripts/main.js' 
+
+
                 %}
                 <script src="{{ asset_url }}"></script>
                 {% endjavascripts %}

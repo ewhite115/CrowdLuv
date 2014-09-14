@@ -1,4 +1,3 @@
-<?php require_once("../inc/config.php"); ?>
 
 //Facebook Javascript SDK
 fb_loginstatus_response = "";

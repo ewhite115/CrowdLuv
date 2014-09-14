@@ -16,16 +16,18 @@
 
   <?php }  ?>
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/bootstrap.css" type="text/css">
-  <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/bootstrap_ms.css" type="text/css">
-  <script src="<?php echo BASE_URL; ?>js/bootstrap.min.js"></script>
-
   <!-- JQuery -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
   <!-- Google Maps -->
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=visualization&key=<?php echo GOOGLE_MAPS_APIKEY;?>&sensor=false"> </script>
 
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/bootstrap.css" type="text/css">
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/bootstrap_ms.css" type="text/css">
+  <script src="<?php echo BASE_URL; ?>js/bootstrap.js"></script>
+
+ 
   
 
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:400,700" type="text/css">

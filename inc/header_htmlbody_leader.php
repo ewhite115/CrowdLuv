@@ -23,8 +23,11 @@
            </object> 
       </video>   
       -->
-    <!-- YouTube-hosted video embedding -->
-    <iframe src="//www.youtube.com/embed/4vfdMqEE5lY?rel=0&showinfo=0&modestbranding=1&controls=0&autoplay=1&end=10" frameborder="0" allowfullscreen></iframe>
+    <!-- YouTube Embedded play with JS Control
+    <iframe id="cl-modal-intro-player" src="http://www.youtube.com/embed/4vfdMqEE5lY?rel=0&showinfo=0&modestbranding=1&controls=0" frameborder="0" allowfullscreen></iframe>
+     -->    
+    <iframe id="cl-modal-intro-player" src="http://www.youtube.com/embed/4vfdMqEE5lY?enablejsapi=1&rel=0&showinfo=0&modestbranding=1&controls=0" frameborder="0" allowfullscreen></iframe>    
+     
     <p class="crowdluvsection text-strong">
       CrowdLuv allows YOU to decide where <?php echo ( isset($CL_CUR_TGT_TALENT) ? $CL_CUR_TGT_TALENT['fb_page_name']  :  "your favorite acts"  )   ?>  will come next.
     </p>

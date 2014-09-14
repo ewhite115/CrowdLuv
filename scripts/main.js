@@ -1,7 +1,82 @@
 //Even though this is a JS file, We can have PHP intepreted in order to insert 
-//  some configuration constants into the JS below 
+//  some configuration constants into the JS below  (ie  FB App ID)
 // <?php require_once("../inc/init_config.php"); ?>
- 
+
+
+
+
+
+
+/**
+ * YouTube player Object for the video that plays inside the "new user" intro modal
+ */
+var introModalPlayer;
+var introModalVideoDone = false;
+
+/**
+ * [onYouTubeIframeAPIReady  If the page loads a JavaScript-enabled YouTube player,
+ *                           This function gets called after the YouTube 
+ *                           API code finishes downloading asynchrounously.
+ *                           It creates YT,player object(s) for player on the page, and 
+ *                           includes handlers to control their behavior
+ * @return {[type]} [description]
+ */
+function onYouTubeIframeAPIReady() {
+  introModalPlayer = new YT.Player('cl-modal-intro-player', {
+    events: {
+      'onReady': function onIntroModalPlayerReady(event) {
+                      event.target.playVideo()
+                  },
+      'onStateChange': function onPlayerStateChange(event) {
+                          if (event.data == YT.PlayerState.PLAYING && !introModalVideoDone) {
+                            setTimeout(stopIntroModalVideo, 10000);
+                            introModalVideoDone = true;
+                          }
+                        }
+      } //events
+    }); 
+
+  //Potentially create additional players  (ie for the home page jumbotron or elsewhere)
+
+} //onYouTubeIframeAPIReady
+
+
+/**
+ * [stopIntroModalPlayerVideo This executes at a specified time interval after
+ *                             the intro modal video begins playing. It stops the video 
+ *                             and hides the new-user modal]
+ * @return {[type]} [description]
+ */
+function stopIntroModalVideo() {
+  introModalPlayer.stopVideo();
+  $("#CL_fullpage_transparentscreen").hide();
+  $("#CL_newuser_introvideo_modal").hide();
+}
+
+
+
+/**
+ * [showNewUserModal This function makes visible the transparent screen and
+ *                   intro modal, and initiates asynchronous load of the youTube embedded 
+ *                   player inside of it.
+ *                   This will typically be called if init code determines that this 
+ *                   is a new/unknown user, (based on the FB status check )   ]                  
+ * @return {[none]} [description]
+ */
+function showNewUserModal(){
+  $("#CL_fullpage_transparentscreen").show();
+  $("#CL_newuser_introvideo_modal").show();
+
+  // Loads the IFrame Player API code asynchronously for the intro video
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+ }
+
+
+
 
 //Facebook Javascript SDK
 fb_loginstatus_response = "";
@@ -21,15 +96,15 @@ crowdluvFBDataLoader = function(lsresponse) {
         
     } else if (lsresponse.status === 'not_authorized') {
         // the user is logged in to Facebook, but has not authenticated your app
+        console.log("FB response.status=not authorized");
         //show the new user intro video
-        $("#CL_fullpage_transparentscreen").show();
-        $("#CL_newuser_introvideo_modal").show();
+        showNewUserModal();  
         
     } else {
         // the user isn't logged in to Facebook.
+        console.log("FB response.status=not logged in");
         //show the new user intro video
-        $("#CL_fullpage_transparentscreen").show();
-        $("#CL_newuser_introvideo_modal").show();
+        showNewUserModal();
 
     }
     //Other pages might want to run code after we've checked FB login status and

@@ -1,45 +1,31 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Talent list</h1>
+    <h1>Talent Management Console</h1>
 
-    <table class="records_list">
+    <table class="records_list cldefaulttable">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Fbpid</th>
-                <th>Fbpagename</th>
-                <th>Firstname</th>
-                <th>Lastname</th>
-                <th>Mobile</th>
-                <th>Homecity</th>
+                
+                <th>Talent Name (Facebook Page Name)</th>
+                
+                
                 <th>Waitlisted</th>
-                <th>Crowdluvvurl</th>
-                <th>Actions</th>
+                <th>CrowdLuv Vanity URL</th>
+             
             </tr>
         </thead>
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td><a href="{{ path('talent_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.fbPid }}</td>
-                <td>{{ entity.fbPageName }}</td>
-                <td>{{ entity.firstname }}</td>
-                <td>{{ entity.lastname }}</td>
-                <td>{{ entity.mobile }}</td>
-                <td>{{ entity.homeCity }}</td>
+                <td>{{ entity.id }}</td>
+                
+                <td><a href="{{ path('talent_show', { 'id': entity.id }) }}">{{ entity.fbPageName }}</a></td>
+                
                 <td>{{ entity.waitlisted }}</td>
                 <td>{{ entity.crowdluvVurl }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('talent_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('talent_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
+         
             </tr>
         {% endfor %}
         </tbody>

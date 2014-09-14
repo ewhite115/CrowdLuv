@@ -7,6 +7,16 @@
 
     if(! $CL_LOGGEDIN_USER_UID) { echo "no logged in user (?)"; exit; } 
 
+
+    //Get the list of talent this user is following, 
+    $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
+    //re-sort the list by how many LuvPoints the fan has for each
+    $scores=array();
+    foreach($ret_tals as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); }
+    array_multisort($scores, SORT_DESC, $ret_tals);
+
+
+
 ?> 
 
 
@@ -20,7 +30,7 @@
 
     </div>
     
-    <!-- small banner at top of page to remind user to update contact info on new luvs -->
+    <!-- small banner at top of page to remind user to update contact info when they follow new luvs -->
     <div class="CL_small_reminder_banner text-center">
         <p>Make sure CrowdLuv has your current contact info! <a href="followerdashboard.php">Click here to confirm/update</a></p>
     </div>
@@ -40,28 +50,19 @@
 
 
   
-        
         <div class="row crowdluvsection clwhitebg cl_grayborder">
             <div class="col-xs-4 col-xs-offset-3 col-sm-3 col-sm-offset-2"><b>Your Fan Rank</b></div>
             <div class="col-xs-5 col-sm-3"><b>Share the Luv -Earn LuvPoints</b></div>
             
         </div>
         
-        <?php 
-            //Get the list of talent this user is following, and sort by how many LuvPoints they have for each
-            $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
-            $scores=array();
-            foreach($ret_tals as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); }
-            array_multisort($scores, SORT_DESC, $ret_tals);
-            
-            //Display a row for each talent
+        <?php  //Display a row for each talent
             foreach($ret_tals as $ret_tal){ 
                 $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']);
-        
         ?>
 
                 <div class="row crowdluvsection cl_grayborder clwhitebg" id="cltrow<?php echo $ret_tal['crowdluv_tid'];?>">
-                    <!-- <div class="hidden-xs col-sm-1 "><img class="img-responsive" style='vertical-align:middle;' src='res/top-heart.png'></div>  -->
+                    <!-- Talent Image -->
                     <div class="col-xs-3 col-sm-2 text-center">
                        <p>
                        <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $ret_tal["fb_pid"];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
@@ -69,6 +70,7 @@
                        </p>
                        <button name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $ret_tal["crowdluv_tid"];?>)">Preferences</button>                      
                     </div>
+                    <!-- Fan Rank -->
                     <div class="col-xs-4 col-sm-3 ">                      
                         
                         <!-- <p><b><?php // if($rank['tie_count'] > 0 ) echo "Tied for";  ?> </b></p> -->
@@ -80,10 +82,11 @@
                         <br><p2>(<?php echo $ret_tal['score']; ?> LuvPoints)</p2>
                         
                     </div>
+                    <!-- Share The Luv section -->
                     <div class="col-xs-5 col-sm-3 ">
                        
                         <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($ret_tal["crowdluv_vurl"] == ""){ echo $ret_tal["crowdluv_tid"];}
-                            else {echo $ret_tal["crowdluv_vurl"];} ?>" data-width="80" data-type="button">
+                                                                                                 else {echo $ret_tal["crowdluv_vurl"];} ?>" data-width="80" data-type="button">
                         </div>
                         <a href="https://twitter.com/share" class="twitter-share-button" data-text="Want <?php echo $ret_tal["fb_page_name"];?> in our area? Luv them here!" data-url="<?php echo CLADDR;?>talent/<?php if($ret_tal["crowdluv_vurl"] == ""){ echo $ret_tal["crowdluv_tid"];}
                           else {echo $ret_tal["crowdluv_vurl"];} ?>" data-count="none">Tweet</a>
@@ -99,7 +102,6 @@
                     </div>
 
                     <div class="col-xs-4 col-sm-2 col-sm-offset-1">
-                        
 
                     </div>
                     
@@ -109,7 +111,7 @@
                    
                 </div>
 
-                
+                <!--  Pop-down Preferences section for each talent   -->
                 <div class="row crowdluvsection" hidden id="cltoptsrow<?php echo $ret_tal['crowdluv_tid'];?>">
                     <div class="col-xs-12 cl_darkgraybackground">
                         <div class="row" >
@@ -137,7 +139,7 @@
 
 
 
-            <?php }  ?>
+            <?php } //end of the for loop for each talent ?>
         
     
     

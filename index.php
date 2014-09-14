@@ -3,11 +3,16 @@ $pageTitle = "CrowdLuv";
 $CL_SITE_SECTION = "home";
 require_once("inc/init_config.php");
 
-
 include(ROOT_PATH . 'inc/header.php'); 
 
 
- ?>
+//Create parameters for creating facebook login URL that will be used for the login buttons
+$folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING,'redirect_uri' => CLADDR . 'shareluv.php'  );
+$talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
+
+
+
+?>
 
 
 <div class= "row" id="CL_landingpage_jumbotron">
@@ -40,13 +45,6 @@ include(ROOT_PATH . 'inc/header.php');
     
     <div class="col-xs-12 col-ms-5 ">
       <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
-        <?php 
-          $folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING,
-                             'redirect_uri' => CLADDR . 'shareluv.php'  );
-
-
-          $talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
-         ?>
         <h1>Follower Sign-in / Registration</h1>
         <p>Sign in to CrowdLuv with your facebook account to follow your favorite talent and find new luvs</p><br>
         <?php //Only show the follower login button if not logged in
@@ -114,10 +112,10 @@ include(ROOT_PATH . 'inc/header.php');
 <script type="text/javascript">
     $(document).ready(function(){  
 
-          //Click handler for the "Deactivate account" button
+          //Click handler for the "Reactivate account" button
         $("[name=btn_reactivate_account]").click(function(){
             
-            reactivate_follower(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, function(){
+            reactivate_follower(<?php echo (isset($CL_LOGGEDIN_USER_OBJ['crowdluv_uid']) ? $CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] : "no_user"); ?>, function(){
                 window.open('<?php echo BASE_URL;?>', "_top").focus();
             });
             

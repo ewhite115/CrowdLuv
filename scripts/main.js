@@ -25,6 +25,7 @@ function onYouTubeIframeAPIReady() {
   introModalPlayer = new YT.Player('cl-modal-intro-player', {
     events: {
       'onReady': function onIntroModalPlayerReady(event) {
+
                       event.target.playVideo()
                   },
       'onStateChange': function onPlayerStateChange(event) {
@@ -40,7 +41,6 @@ function onYouTubeIframeAPIReady() {
 
 } //onYouTubeIframeAPIReady
 
-
 /**
  * [stopIntroModalPlayerVideo This executes at a specified time interval after
  *                             the intro modal video begins playing. It stops the video 
@@ -51,6 +51,9 @@ function hideNewUserModal() {
   introModalPlayer.stopVideo();
   $("#CL_fullpage_transparentscreen").hide();
   $("#CL_newuser_introvideo_modal").hide();
+  //The iframe for the home page video gets hidden in the showNewUserModal()
+  // function in order to address a bug in IE 11. Re-show it here
+  $("#homepage-jumbotron-video-iframe").show();
 }
 
 
@@ -64,14 +67,20 @@ function hideNewUserModal() {
  * @return {[none]} [description]
  */
 function showNewUserModal(){
-  $("#CL_fullpage_transparentscreen").show();
-  $("#CL_newuser_introvideo_modal").show();
 
   // Loads the IFrame Player API code asynchronously for the intro video
   var tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  //In IE 11, there is abug where the YouTube iframe from the 
+  //  homepage jumbotron is displayed above the modal. Hide it here 
+  //    before launching the modal
+  $("#homepage-jumbotron-video-iframe").hide();
+  //Now show the modal
+  $("#CL_fullpage_transparentscreen").show();
+  $("#CL_newuser_introvideo_modal").show();
 
  }
 

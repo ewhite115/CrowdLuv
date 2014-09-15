@@ -66,10 +66,10 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
               <div class="col-xs-12 col-sm-3 text-center ">
                 <h1 class="clredtext">Who Do You Luv?</h1>
                 <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
-                <p2><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
-                <p>Manage Your CrowdLuv Profile</p>                            
+                <p2 class="cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
+                <p class="cl-textcolor-default">Manage Your CrowdLuv Profile</p>                            
                 <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']){ ?>
-                  <p>You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
+                  <p class="cl-textcolor-default">You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
 
                 <?php }  ?>
               </div>
@@ -79,7 +79,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
               <div class="col-xs-12 col-sm-3 text-center">
                 <h1 class="clredtext">Share the Luv </h1>
                 <img src="res/top-heart.png">
-                <p>Build Luv. Become the #1 fan</p>
+                <p class="cl-textcolor-default">Build Luv. Become the #1 fan</p>
                 <br><br>
               </div>
               </a>

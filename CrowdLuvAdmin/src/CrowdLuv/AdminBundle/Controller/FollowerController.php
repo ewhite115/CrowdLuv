@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use CrowdLuv\AdminBundle\Entity\Follower;
+use CrowdLuv\AdminBundle\Entity\FollowerLuvsTalent;
 use CrowdLuv\AdminBundle\Form\FollowerType;
 
 /**
@@ -217,14 +218,23 @@ class FollowerController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('CrowdLuvAdminBundle:Follower')->find($id);
 
+            
+            $entity = $em->getRepository('CrowdLuvAdminBundle:Follower')->find($id);
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Follower entity.');
             }
 
-            $em->remove($entity);
-            $em->flush();
+            //First retrieve and delete corresponding entries in FollowerLuvsTalent
+            //   by calling ...?
+            $followerLuvsTalentEntries = $em->getRepository('CrowdLuvAdminBundle:FollowerLuvsTalent')->findByCrowdluvFollower($entity);
+            //var_dump(sizeof($followerLuvsTalentEntries)); exit;
+            foreach($followerLuvsTalentEntries as $flt){
+                $em->remove($flt);
+            }
+
+           $em->remove($entity);
+           $em->flush();
         }
 
         return $this->redirect($this->generateUrl('follower'));

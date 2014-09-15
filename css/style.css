@@ -577,14 +577,17 @@ input[type="submit"], button {
 
 }
 
-.clredtext, a {
+.cl-textcolor-standout, .clredtext, a {
     color:darkred;
 }
 
-.clredbutton {
+.cl-button-standout, .clredbutton {
     background: darkred;
     padding: 10px 40px;
     color: white;
 
+}
 
+.cl-textcolor-default {
+    color: #383839;}
 }

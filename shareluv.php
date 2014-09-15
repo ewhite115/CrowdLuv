@@ -22,11 +22,13 @@
 
     <!-- modal to request / confirm contact info if itis the first time user is Luving a talent -->
     <div id="CL_contactinfo_confirmation_modal" class="text-center crowdluvsection">
-        <h1>Welcome to CrowdLuv</h1>
+        <h1 class="cl-textcolor-standout">Welcome to CrowdLuv</h1>
         <p> Please confirm your contact information. </p>
 
         <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
-        <p><a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_contactinfo_confirmation_modal').hide();return false;">Confirm</a></p>
+        <a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_contactinfo_confirmation_modal').hide();return false;">
+            <p class="cl-button-standout">Confirm</p>
+        </a>
 
     </div>
     

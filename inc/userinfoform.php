@@ -20,6 +20,7 @@
                     <div class="col-ms-5">
                         <p>Mobile Number</p>
                         <input class="cl_graybackground" type="text" name="mobile" id="mobile" value="<?php echo $CL_LOGGEDIN_USER_OBJ['mobile'];?>"></input>
+                        <p2 class="cl-textcolor-standout">Receive SMS alerts when your favorite performers come to your town</p2>
                     </div>
                     <div class="col-ms-7">
                             <p></p>
@@ -42,7 +43,9 @@
 
                 <div class="row">
                     <div class="col-ms-12">
-                        <br><p2>Your phone and email will not be shared with anyone on CrowdLuv</p2><br><br>
+                        <br><p class="cl-textcolor-standout"
+                            Providing your contact info will allow you to request to receive alerts from your favorite acts when they come to your town. Your phone and email will not be shared with anyone on CrowdLuv
+                        </p><br><br>
                         <!-- <input type="submit" value="Submit Changes">  -->
                         <p2 visible="false" id="p_settingsupdated">Your settings have been updated</p2>
                     </div>
@@ -82,8 +85,9 @@
             animate_settingsupdated_notification();
         });
 
-        //Change handler for the "Allow SMS contact from CrowdLuv" radio options
+        //Change handler for the mobile number box
         $("[name=mobile]").change(function(){
+            //TODO:  validate ph# and give feedback
             update_follower_setting(<?php echo $CL_LOGGEDIN_USER_OBJ['crowdluv_uid']; ?>, "mobile", $(this).val());
             animate_settingsupdated_notification();
         });

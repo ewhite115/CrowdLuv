@@ -240,14 +240,17 @@ body{
             #CL_newuser_introvideo_modal h1{
                 font-size:20px;
             }
-            
+           
+            /*// On mobile browsers, auto-play is disabled - so dont show the intro video in 
+            // the new user modal.   */
+            #cl-modal-intro-player { display:none; }
+
             #CL_contactinfo_confirmation_modal {
                              
                 top:50px;
                 left:10%;
                 width:80%;
                 min-width: 300px;
-                
                 
                 background:#f4f4f4;
                 border: 1px solid red;
@@ -256,7 +259,7 @@ body{
             #CL_contactinfo_confirmation_modal h1{
                 font-size:20px;
             }
-
+           
 
 }   /* end of Under 768px media query */
 

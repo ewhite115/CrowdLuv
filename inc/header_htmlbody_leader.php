@@ -5,15 +5,15 @@
 
 
  
- <!-- Full-page semi-transparent grey screen which is disabled by default but can be enabled by JS as needed  -->
+ <!-- ** Transparent Screen ** Full-page semi-transparent grey screen which is disabled by default but can be enabled by JS as needed  -->
 <div id="CL_fullpage_transparentscreen" class="CL_transparentscreen"> </div>
 
 <div class="CL_fullpagewrapper">
 
-<!-- Modal pane containing an intro video about CL. Hidden by default. 
+<!-- *** New-User Modal *** Modal pane containing an intro video about CL. Hidden by default. 
   If JS detects the user has not authorized CL on FB, it will show this dialog -->
 <div id="CL_newuser_introvideo_modal" class="text-center">
-    <h1 class="clredtext">Welcome to CrowdLuv</h1>
+    <h1 class="cl-textcolor-standout">Welcome to CrowdLuv</h1>
       <!-- For video hosted on CL env
         <video controls>
            <source src="<?php echo CLADDR;?>res/cyn-intro.mp4" type="video/mp4">
@@ -31,9 +31,9 @@
     </p>
 
     <p>
-    <a href="#" onclick="hideNewUserModal();return false;">
-      <span class="clredbutton">Show your Luv!</span>
-    </a>
+      <a href="#" onclick="hideNewUserModal();return false;" >
+        <span class="cl-button-standout"  >Show your Luv!</span>  
+      </a>
     </p>
 
   </div>

@@ -71,23 +71,23 @@ function hideNewUserModal() {
 function showNewUserModal(){
 
   //Loads the IFrame Player API code asynchronously for the intro video
-  // On mobile browsers, auto-play is disabled - so dont show the intro video in 
-  // the new user modal.
+  // On mobile browsers, auto-play is disabled - so forego this 
   if(Math.max(document.documentElement.clientWidth, window.innerWidth || 0) > 768){
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    
+    //In IE 11, there is abug where the YouTube iframe from the 
+    //  homepage jumbotron is displayed above the modal. Hide it here 
+    //    before launching the modal
+    $("#homepage-jumbotron-video-iframe").hide();
+    //Now show the modal
+    $("#CL_fullpage_transparentscreen").show();
+    $("#CL_newuser_introvideo_modal").show();
   }
-  //In IE 11, there is abug where the YouTube iframe from the 
-  //  homepage jumbotron is displayed above the modal. Hide it here 
-  //    before launching the modal
-  $("#homepage-jumbotron-video-iframe").hide();
-  //Now show the modal
-  $("#CL_fullpage_transparentscreen").show();
-  $("#CL_newuser_introvideo_modal").show();
 
- }
+}
 
 
 

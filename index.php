@@ -17,7 +17,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 
 <div class= "row" id="CL_landingpage_jumbotron">
     
-      <div class="col-xs-12 col-ms-7 text-center">
+      <div id="cl-landingpage-jumbotron-video-col" class="col-xs-12 col-ms-7 text-center">
         <!-- <img class="img-responsive" src="res/vid-comingsoon.png" /> -->
         <!-- <video controls>
            <source src="res/renthigh.mp4" type="video/mp4">

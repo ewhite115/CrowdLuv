@@ -89,14 +89,15 @@ body{
 }
 
 #CL_newuser_introvideo_modal{
-    position:fixed; 
+    
+    position: fixed; 
     display: none;
     z-index: 101;
-    
-    
+      
     left:25%;
-    width:50%;
-    min-width: 300px;
+    width:500px;
+    /*min-width: 300px;*/
+    /*max-width:500px;*/
     
     
     background:#f4f4f4;
@@ -227,11 +228,11 @@ body{
 
             #CL_newuser_introvideo_modal {
                              
-                top:50px;
-                left:10%;
+                top:60px;
+                left: 10%;
                 width:80%;
-                min-width: 300px;
-                height:310px;
+                min-width: initial;
+                
                 
                 background:#f4f4f4;
                 border: 1px solid red;
@@ -258,6 +259,13 @@ body{
             }
             #CL_contactinfo_confirmation_modal h1{
                 font-size:20px;
+            }
+            /* Reduce the padding  of the column containing the jumbotron video
+                when on mobile,  so that it fits on 320px width screens*/
+            #cl-landingpage-jumbotron-video-col {
+                padding-left: 5px;
+                padding-right: 5px;
+
             }
            
 
@@ -513,18 +521,31 @@ input[type="submit"], button {
 
 
 .talent_landingpage_hero{
-    max-width:100%;
+    /*max-width:100%;*/
     padding: 0 0 3px 0;
-    margin: 0px 0px 10px 1px; 
+    /*margin: 0px 0px 10px 1px; */
+    margin: 0px -15px 10px -15px;
     height: 225px; 
     background-color: #f0eeed;
     background-image:; url('../crowdluvdata/talent_landingpage_images/default.jpg');
     background-position:  center top;
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: auto 225px;  /* Fixed height for all viewscreens, set the width accordingly */
 
 }
 
+/*.talent_landingpage_hero {
+
+width: 110%;
+padding: 0;
+margin: 0px 0px 10px -25px;
+min-height: 205px;
+background-color: #f0eeed;
+background-image: url('../crowdluvdata/talent_landingpage_images/default.jpg');
+background-position: center top;
+background-repeat: no-repeat;
+background-size: contain;
+}*/
 
 
 .talent_landingpage_talentmessagesection {

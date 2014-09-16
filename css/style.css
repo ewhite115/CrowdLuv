@@ -54,7 +54,7 @@ body{
 
 .cl_site_section_header .nav {   
     float:right;
-    
+
 }
 
 /* for desktop mode, make sure the logo on landing-section headers is centered */
@@ -283,10 +283,17 @@ body{
     
 }
 
+
 .crowdluvsection h1 {
     font-weight: bold;
     font-size: 16px;
     margin: .222%;
+}
+h1.cl-major-heading{
+    font-weight: bold;
+    font-size: 20px;
+    margin: .222%;
+    
 }
 .crowdluvsection h2 {
     font-weight: bold;

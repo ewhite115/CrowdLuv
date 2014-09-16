@@ -68,6 +68,8 @@ function hideNewUserModal() {
  */
 function showNewUserModal(){
 
+  
+
   // Loads the IFrame Player API code asynchronously for the intro video
   var tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";

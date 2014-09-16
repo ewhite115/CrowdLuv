@@ -44,12 +44,13 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 <div class="row">
     
 
-  <!-- If not logged in, show the Call-to-action homepage with facebook login buttons -->
+  <!--  Fan Call-to-Action     
+           If not logged in, show the Call-to-action homepage with facebook login buttons -->
   <?php if(! isset($CL_LOGGEDIN_USER_OBJ)){ ?>
     <div class="col-xs-12 col-ms-6 ">
       <div class="text-center crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
-          <h1 class="clredtext">For Fans</h1>
-          <p class=""> Get your favorite acts to come to you. Share the Luv to establish yourself as the #1 fan and earn perks.  </p><br>
+          <h1 class="cl-textcolor-standout cl-major-heading">For Fans</h1>
+          <p class=""> Get your favorite acts to come to you. Share the Luv to establish yourself as the #1 fan and earn VIP perks.  </p><br>
           <a href="<?php echo $facebook->getLoginUrl($folparams);?>"><img width="60%" class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
           <br> 
           <p>By signing in with Facebook, you are agreeing to our <a href="terms.php">Terms and Conditions</a></p>     
@@ -64,7 +65,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
           <div class="row">       
               <a href="followerdashboard.php">
               <div class="col-xs-12 col-sm-3 text-center ">
-                <h1 class="clredtext">Who Do You Luv?</h1>
+                <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
                 <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
                 <p2 class="cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
                 <p class="cl-textcolor-default">Manage Your CrowdLuv Profile</p>                            
@@ -77,7 +78,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 
               <a href='shareluv.php'> 
               <div class="col-xs-12 col-sm-3 text-center">
-                <h1 class="clredtext">Share the Luv </h1>
+                <h1 class="cl-textcolor-standout">Share the Luv </h1>
                 <img src="res/top-heart.png">
                 <p class="cl-textcolor-default">Build Luv. Become the #1 fan</p>
                 <br><br>
@@ -86,7 +87,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 
               
               <div class="hidden-xs col-ms-6 text-left">
-                <h1 class="clredtext">Activity </h1>
+                <h1 class="cl-textcolor-standout">Activity </h1>
                 
                 <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p>
                 <br><br>
@@ -107,7 +108,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
     
     <div class="col-xs-12 col-ms-6" >
       <div class="text-center crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box">
-        <h1 class="clredtext"> Artists, musicians, speakers </h1>        
+        <h1 class="cl-textcolor-standout cl-major-heading"> Artists, musicians, speakers </h1>        
         <p> </p>
             <p>Find out where you have the most Luv. Build relationships with your fans.  </p>    
             <br>

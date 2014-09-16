@@ -11,7 +11,18 @@
 	      <li><a href="#">Feedback</a></li>
 	      <li><a href="talentdashboard.php">Settings </a></li>
 	      <li class="text-center"><img style="width:70%;"  src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></li>
-			
+
+ 		<li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown"  href="#">
+              Admin <span class="caret"></span>            </a>
+
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="crowdluvadmin/web/">Admin Home</a></li>
+              <li><a href="crowdluvadmin/web/follower">Follower Console</a></li>
+              <li><a href="{{ app.session.get('BASE_URL') }}crowdluvadmin/web/talent">Talent Console</a></li>
+            </ul>
+        </li>
+        			
    		</ul>
 
 

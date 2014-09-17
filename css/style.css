@@ -384,7 +384,7 @@ h1.cl-major-heading{
 
 }
 
-#CL_landingpage_jumbotron h1, h2, #CL_landingpage_jumbotron p {
+#CL_landingpage_jumbotron h1, #CL_landingpage_jumbotron h2, #CL_landingpage_jumbotron p {
     color:white;
     font-size: 24px;
     font-weight: bold;

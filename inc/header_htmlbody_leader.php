@@ -35,8 +35,7 @@
         <span class="cl-button-standout"  >Show your Luv!</span>  
       </a>
     </p>
-
-  </div>
+</div>
 
 
 

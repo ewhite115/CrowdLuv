@@ -4,9 +4,10 @@
     $CL_SITE_SECTION = "talent";
     require_once("inc/init_config.php");  
     include(ROOT_PATH . 'inc/header.php');
-
-
-    if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
+    
+    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
+            // if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
+    
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 
     //If there are no followers for this talent, redirect to the talent tutorial page
@@ -31,7 +32,7 @@
                <option value="5">5</option>
                <option value="10">10</option>
                <option value="20">20</option>
-             </select> miles of the city.</p>  -->
+            </select> miles of the city.</p>  -->
             
             <p>Show new followers within the past 
             <select id="opt_new_follower_interval">
@@ -39,8 +40,8 @@
                <option <?php if($nfinterval==7) echo "selected"; ?> value="7">week</option>
                <option <?php if($nfinterval==30) echo "selected"; ?> value="30">month</option>
                <option <?php if($nfinterval==365) echo "selected"; ?> value="365">year</option>
-             </select> </p>
-
+            </select> </p>
+            
         </div>
     </div>
 

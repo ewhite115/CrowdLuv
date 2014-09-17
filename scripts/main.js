@@ -26,7 +26,7 @@ function onYouTubeIframeAPIReady() {
     events: {
       'onReady': function onIntroModalPlayerReady(event) {
 
-                      event.target.playVideo()
+                      event.target.playVideo();
                   },
       'onStateChange': function onPlayerStateChange(event) {
                           if (event.data == YT.PlayerState.PLAYING && !introModalVideoDone) {
@@ -35,7 +35,7 @@ function onYouTubeIframeAPIReady() {
                           }
                         }
       } //events
-    }); 
+    });
 
   //Potentially create additional players  (ie for the home page jumbotron or elsewhere)
 
@@ -71,13 +71,13 @@ function hideNewUserModal() {
 function showNewUserModal(){
 
   //Make sure we only show the new user modal one time per session
-  //Set a flag at the end of this function. Check for the flag at the beginnning,
-  //if found - exit the function immediately
+  //  Set a flag at the end of this function. Check for the flag at the beginnning,
+  //  if found - exit the function immediately
   var shownAlready = sessionStorage.getItem("newUserModalShown");
   if( typeof shownAlready != "undefined"  && shownAlready == '1'  )  return;
 
   //Loads the IFrame Player API code asynchronously for the intro video
-  // On mobile browsers, auto-play is disabled - so forego this 
+  //  On mobile browsers, auto-play is disabled - so forego this 
   if(Math.max(document.documentElement.clientWidth, window.innerWidth || 0) > 768){
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -91,7 +91,7 @@ function showNewUserModal(){
     //Now show the modal
     $("#CL_fullpage_transparentscreen").show();
     $("#CL_newuser_introvideo_modal").show();
-    sessionStorage.setItem("newUserModalShown", "1");  
+    sessionStorage.setItem("newUserModalShown", "1");
   }
 
 }
@@ -217,7 +217,7 @@ function deactivate_follower(crowdluv_uid, handler){
 function reactivate_follower(crowdluv_uid, handler){
   console.log("reactivate_follower called:" + crowdluv_uid);
 
-  var qopts = { 
+  var qopts = {
         crowdluv_uid: crowdluv_uid
   };
   //console.log(qopts);

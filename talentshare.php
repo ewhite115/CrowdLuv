@@ -5,8 +5,8 @@
     require_once("inc/init_config.php"); 
     include(ROOT_PATH . 'inc/header.php');
 
-
-    if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
+    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
+        // if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 
 ?>

@@ -5,7 +5,8 @@
     require_once("inc/init_config.php"); 
     include(ROOT_PATH . 'inc/header.php');
 
-    if(! $CL_LOGGEDIN_USER_UID) { echo "no logged in user(?)"; exit; } 
+    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
+        // if(! $CL_LOGGEDIN_USER_UID) { echo "no logged in user(?)"; exit; } 
 
 
     $badpatherr=false; //flag to indicate the user tried to upload an image in unsupported file format

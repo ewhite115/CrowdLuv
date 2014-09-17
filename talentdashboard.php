@@ -5,9 +5,11 @@
     require_once("inc/init_config.php"); 
     include(ROOT_PATH . 'inc/header.php');
 
-    if(! $fb_user) { echo "user is null"; exit;  } 
-    if(! $fb_user_pages) { echo "fb_user_pages is null";   }
-    //if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;  }
+    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
+        //if(! $fb_user) { echo "user is null"; exit;  } 
+        //if(! $fb_user_pages) { echo "fb_user_pages is null";   }
+    
+    
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active managed talent set"; exit;}
 
     $folst=$CL_model->get_followers_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);

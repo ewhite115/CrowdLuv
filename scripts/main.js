@@ -70,6 +70,12 @@ function hideNewUserModal() {
  */
 function showNewUserModal(){
 
+  //Make sure we only show the new user modal one time per session
+  //Set a flag at the end of this function. Check for the flag at the beginnning,
+  //if found - exit the function immediately
+  var shownAlready = sessionStorage.getItem("newUserModalShown");
+  if( typeof shownAlready != "undefined"  && shownAlready == '1'  )  return;
+
   //Loads the IFrame Player API code asynchronously for the intro video
   // On mobile browsers, auto-play is disabled - so forego this 
   if(Math.max(document.documentElement.clientWidth, window.innerWidth || 0) > 768){
@@ -85,6 +91,7 @@ function showNewUserModal(){
     //Now show the modal
     $("#CL_fullpage_transparentscreen").show();
     $("#CL_newuser_introvideo_modal").show();
+    sessionStorage.setItem("newUserModalShown", "1");  
   }
 
 }

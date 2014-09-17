@@ -10,11 +10,11 @@
 	require_once("inc/cl_init.php");
 
 	$allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms'];
-	if(!isset($_GET['crowdluv_uid'])) {echo "crowdluv_uid not set"; exit;}
+	//if(!isset($_GET['crowdluv_uid'])) {echo "crowdluv_uid not set"; exit;}
 	if(!isset($_GET['prefname'])) {echo "preftype not set"; exit;}
 	if(!isset($_GET['prefval'])) {echo "prefval not set"; exit;}
 	
-	$cluidt = $_GET['crowdluv_uid'];
+	//$cluidt = $_GET['crowdluv_uid'];
 	$prefname = $_GET['prefname'];
 	$prefval = $_GET['prefval'];
 

@@ -180,11 +180,10 @@ $(document).ready(function() {
 //CrowdLuv Javascript Functions called by various pages
 
 //this function makes an ajax call to  ajax_updatefollowersetting.php to change a setting for a user
-function update_follower_setting(crowdluv_uid, prefname, prefval){
-    console.log("contact pre change handler called:" + crowdluv_uid + ", " + prefname + ", " + prefval);
+function update_follower_setting(prefname, prefval){
+    console.log("contact pre change handler called:" + prefname + ", " + prefval);
 
     var qopts = { 
-        crowdluv_uid: crowdluv_uid, 
         prefname: prefname, 
         prefval: prefval
      };
@@ -226,5 +225,14 @@ function reactivate_follower(crowdluv_uid, handler){
   console.log("json call resl="); console.log(resl);
 
 }
+
+
+
+
+
+
+
+
+
 
 

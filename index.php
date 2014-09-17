@@ -43,9 +43,8 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 
 <div class="row">
     
-
-  <!--  Fan Call-to-Action     
-           If not logged in, show the Call-to-action homepage with facebook login buttons -->
+  <!--  Fan Call-to-Action   -->
+  <!-- If not logged in, show the Call-to-action homepage with facebook login buttons -->
   <?php if(! isset($CL_LOGGEDIN_USER_OBJ)){ ?>
     <div class="col-xs-12 col-ms-6 ">
       <div class="text-center crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
@@ -53,52 +52,58 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
           <p class=""> Get your favorite acts to come to you. Share the Luv to establish yourself as the #1 fan and earn VIP perks.  </p><br>
           <a href="<?php echo $facebook->getLoginUrl($folparams);?>"><img width="60%" class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
           <br> 
+          <!-- User Denied Facebook Permission -->
+          <?php if((isset( $_GET['fb_user_denied_permissions'] ) && $_GET['fb_user_denied_permissions'] == '1')){ ?>
+            <h1 class="fb-user-denied-permissions-message cl-textcolor-standout">
+              *You must accept the Facebook login in order to use CrowdLuv             
+            </h1>
+          <?php } ?>
           <p>By signing in with Facebook, you are agreeing to our <a href="terms.php">Terms and Conditions</a></p>     
       </div>
     </div>
+  <?php } else { ?>  
 
   <!--  Fan logged-in homepage panel  -->
-  <?php } else { ?>  
   <div class="col-xs-12 col-ms-12 crowdluvsection clwhitebg">
         
             
-          <div class="row">       
-              <a href="followerdashboard.php">
-              <div class="col-xs-12 col-sm-3 text-center ">
-                <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
-                <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
-                <p2 class="cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
-                <p class="cl-textcolor-default">Manage Your CrowdLuv Profile</p>                            
-                <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']){ ?>
-                  <p class="cl-textcolor-default">You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
+    <div class="row">       
+        <a href="followerdashboard.php">
+        <div class="col-xs-12 col-sm-3 text-center ">
+          <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
+          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
+          <p2 class="cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
+          <p class="cl-textcolor-default">Manage Your CrowdLuv Profile</p>                            
+          <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']){ ?>
+            <p class="cl-textcolor-default">You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
 
-                <?php }  ?>
-              </div>
-              </a> 
+          <?php }  ?>
+        </div>
+        </a> 
 
-              <a href='shareluv.php'> 
-              <div class="col-xs-12 col-sm-3 text-center">
-                <h1 class="cl-textcolor-standout">Share the Luv </h1>
-                <img src="res/top-heart.png">
-                <p class="cl-textcolor-default">Build Luv. Become the #1 fan</p>
-                <br><br>
-              </div>
-              </a>
+        <a href='shareluv.php'> 
+        <div class="col-xs-12 col-sm-3 text-center">
+          <h1 class="cl-textcolor-standout">Share the Luv </h1>
+          <img src="res/top-heart.png">
+          <p class="cl-textcolor-default">Build Luv. Become the #1 fan</p>
+          <br><br>
+        </div>
+        </a>
 
-              
-              <div class="hidden-xs col-ms-6 text-left">
-                <h1 class="cl-textcolor-standout">Activity </h1>
-                
-                <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p>
-                <br><br>
-              </div>
-              
+        
+        <div class="hidden-xs col-ms-6 text-left">
+          <h1 class="cl-textcolor-standout">Activity </h1>
+          
+          <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p>
+          <br><br>
+        </div>
+        
 
- 
-  
 
-          </div>              
-                    
+
+
+    </div>              
+                  
                     
   </div>   
   <?php }  ?>
@@ -113,47 +118,51 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
             <p>Find out where you have the most Luv. Build relationships with your fans.  </p>    
             <br>
             <a href="<?php echo $facebook->getLoginUrl($talparams);?>"><img width="50%" class="" src="<?php echo BASE_URL;?>res/select-facebook-pages.jpg" /></a><br>      
+            
+            <!-- User Denied Facebook Permission -->
+            <?php if((isset( $_GET['fb_user_denied_permissions'] ) && $_GET['fb_user_denied_permissions'] == '1')){ ?>
+              <h1 class="fb-talent-denied-permissions-message cl-textcolor-standout">
+                *You must accept the Facebook login in order to use CrowdLuv             
+              </h1>
+            <?php } ?>
+   
+            
       </div>
     </div>
 
   <!-- Talent logged-in panel Displayed if logged in as a talent -->  
   <?php } else { ?>
       
-        <div class="col-xs-12 col-ms-12" >
-          <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box">
-            <h1>Your CrowdLuv Talent Profiles </h1>        
-            <p></p>
-            
-
-            <?php  //Display each of the facebook pages for which logged in user is an admin of
-            if(isset($CL_LOGGEDIN_TALENTS_ARR)){
-              //Check to see if any of the talents are whitelisted or not. Print out a message correspondingly 
-              $anywhitelistedtalent=false;
-              foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){ if(! $cltalentobj['waitlisted']) $anywhitelistedtalent = true; break; }
-              if(! $anywhitelistedtalent) { ?> <p> Thank you for your interest in CrowdLuv! You have been added to our talent waitlist, and you'll be contacted when we are accepting new talent signups.</p> <?php }
-              else { ?> 
-                <p> Select a CrowdLuv talent profile and connect with your fans</p>    
-              <!-- Print out the talent profiles this user has access to manage -->
-              <?php  } 
-              foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){  ?>
-                <?php if(! $cltalentobj['waitlisted']) {  ?> <a href="topcities.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>&activemanagedtalent_tid=<?php echo $cltalentobj['crowdluv_tid'];?>"> <?php } ?> 
-                <div class="text-left cl_graybackground cl_grayborder talentpagelisting">
-                    
-                  <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> 
-                  <span>  <?php echo $cltalentobj['fb_page_name'];?>  <?php if($cltalentobj['waitlisted']) { ?> (Wait-listed) <?php } ?></span>
-                  
-                </div>        
-                <?php if(! $cltalentobj['waitlisted']) { ?> </a> <?php } ?>
-            <?php }
-            } ?>
+      <div class="col-xs-12 col-ms-12" >
+        <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box">
+          <h1>Your CrowdLuv Talent Profiles </h1>        
+          <p></p>
           
-          </div>
+
+          <?php  //Display each of the facebook pages for which logged in user is an admin of
+          if(isset($CL_LOGGEDIN_TALENTS_ARR)){
+            //Check to see if any of the talents are whitelisted or not. Print out a message correspondingly 
+            $anywhitelistedtalent=false;
+            foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){ if(! $cltalentobj['waitlisted']) $anywhitelistedtalent = true; break; }
+            if(! $anywhitelistedtalent) { ?> <p> Thank you for your interest in CrowdLuv! You have been added to our talent waitlist, and you'll be contacted when we are accepting new talent signups.</p> <?php }
+            else { ?> 
+              <p> Select a CrowdLuv talent profile and connect with your fans</p>    
+            <!-- Print out the talent profiles this user has access to manage -->
+            <?php  } 
+            foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){  ?>
+              <?php if(! $cltalentobj['waitlisted']) {  ?> <a href="topcities.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>&activemanagedtalent_tid=<?php echo $cltalentobj['crowdluv_tid'];?>"> <?php } ?> 
+              <div class="text-left cl_graybackground cl_grayborder talentpagelisting">
+                  
+                <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> 
+                <span>  <?php echo $cltalentobj['fb_page_name'];?>  <?php if($cltalentobj['waitlisted']) { ?> (Wait-listed) <?php } ?></span>
+                
+              </div>        
+              <?php if(! $cltalentobj['waitlisted']) { ?> </a> <?php } ?>
+          <?php }
+          } ?>
         </div>
-    
-    <?php } ?>  
-
-
-
+      </div>   
+  <?php } ?>  
 </div>
 
 
@@ -171,8 +180,10 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
                 window.open('<?php echo BASE_URL;?>', "_top").focus();
             });
             
-
         });
+
+
+
 
 
     });

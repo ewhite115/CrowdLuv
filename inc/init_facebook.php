@@ -4,26 +4,46 @@
   
   require_once("facebook-sdk/facebook.php");
 
+
+  /**
+   * Facebook Permissions Denied
+   * If this was the first time the user tried to login, but they denied
+   * the facebook permission dialog, the query string will include the following
+   * provided by facebook
+   *     ?error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied&state=939d1a76d41e3612ff16087f39afc14c#_=_
+   * So, check for this, and if found, redirect to the home page with
+   * a flad to include explanation that the permission are required
+   */
+  if((isset( $_GET['error_reason'] ) && $_GET['error_reason'] == 'user_denied')){
+     header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
+     die(); 
+  }
+
+
+  /**
+   * Initialize the Facebook SDK
+   */
   $fbconfig = array();
   $fbconfig['appId'] = CL_FB_APP_ID;
   $fbconfig['secret'] = CL_FB_APP_SECRET;
   $fbconfig['fileUpload'] = false; // optional
   $fbconfig['scope'] = CL_FB_PERMISSION_SCOPE_STRING;
-
   $facebook = new Facebook($fbconfig);   
   //var_dump($facebook);
-  //Get fb user ID  
+
+  /**
+   * Check for a facebook session
+   */
   $fb_user = $facebook->getUser();
-  //var_dump($fb_user);
   cldbgmsg("  *** facebook->getUser():" . $fb_user); //var_dump($fb_user);
+  
   //If we have an fb userid for the current user.... 
   if ($fb_user) {  // Proceed thinking you have a logged in user who's authenticated.
+      //Set a session global with the fb user id
       $_SESSION["fb_user"] = $fb_user;
-  
       //Check to see if this fb user exists in CL db.... Set a global variable containing the crowdluv_uid
       $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
-      
-      //if new.. 
+      //if this is new user to CrowdLuv.. 
       if($CL_LOGGEDIN_USER_UID==0){
           // ...request profile info from facebook and create a stub entry based on available info
           try { 
@@ -41,10 +61,12 @@
 
   }
 
+  /**
+   * Now check for facebook pages the user is an administrator of,
+   * add them to CL db if new, and store them in 'global' var 
+   */
   if($fb_user){
 
-      //Now check for facebook pages the user is an administrator of,
-      //add them to CL db if new, and store them in 'global' var 
       try{
         $fb_user_pages = $facebook->api('/me/accounts');
         if(sizeof($fb_user_pages['data'])==0){$fb_user_pages=null;}
@@ -64,7 +86,8 @@
       }catch (FacebookApiException $e) {        
         cldbgmsg("FacebookAPIException in cl_init.php requesting page info:  " . $e); //var_dump($e);
         $fb_user_pages = null;
-        //we should still be able to proceed, since the rest of the pages do not rely on fb_user_pages and shud continue to use the talent array in the session var
+        //we should still be able to proceed, since the rest of the pages do not rely on 
+        //fb_user_pages and should continue to use the talent array in the session var
 
         //if(isset($_GET["expfbtoken"]) ) {  cldbgmsg("<BR>Redirected home due to facebookexception (?expired fb token?)"); } 
         //else {

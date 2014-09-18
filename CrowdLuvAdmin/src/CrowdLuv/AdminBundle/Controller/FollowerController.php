@@ -230,6 +230,7 @@ class FollowerController extends Controller
             $followerLuvsTalentEntries = $em->getRepository('CrowdLuvAdminBundle:FollowerLuvsTalent')->findByCrowdluvFollower($entity);
             //var_dump(sizeof($followerLuvsTalentEntries)); exit;
             foreach($followerLuvsTalentEntries as $flt){
+                //TODO:  change this to call followerLuvsTalent->DeleteAction
                 $em->remove($flt);
             }
 

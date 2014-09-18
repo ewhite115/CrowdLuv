@@ -119,7 +119,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
             <br>
             <a href="<?php echo $facebook->getLoginUrl($talparams);?>"><img width="50%" class="" src="<?php echo BASE_URL;?>res/select-facebook-pages.jpg" /></a><br>      
             
-            <!-- User Denied Facebook Permission -->
+            <!-- Talent Denied Facebook Permission -->
             <?php if((isset( $_GET['fb_user_denied_permissions'] ) && $_GET['fb_user_denied_permissions'] == '1')){ ?>
               <h1 class="fb-talent-denied-permissions-message cl-textcolor-standout">
                 *You must accept the Facebook login in order to use CrowdLuv             

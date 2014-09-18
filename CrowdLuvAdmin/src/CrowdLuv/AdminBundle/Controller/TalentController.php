@@ -203,7 +203,7 @@ class TalentController extends Controller
         );
     }
     /**
-     * Deletes a Talent entity.
+     * Deletes a Talent entity, corresponding FollowerLuvTalent entities
      *
      * @Route("/{id}", name="talent_delete")
      * @Method("DELETE")
@@ -219,6 +219,15 @@ class TalentController extends Controller
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Talent entity.');
+            }
+
+            //First retrieve and delete corresponding entries in FollowerLuvsTalent
+            //  
+            $followerLuvsTalentEntries = $em->getRepository('CrowdLuvAdminBundle:FollowerLuvsTalent')->findByCrowdluvTalent($entity);
+            //var_dump(sizeof($followerLuvsTalentEntries)); exit;
+            foreach($followerLuvsTalentEntries as $flt) {
+                //TODO:  change this to call followerLuvsTalent->DeleteAction
+                $em->remove($flt);                
             }
 
             $em->remove($entity);

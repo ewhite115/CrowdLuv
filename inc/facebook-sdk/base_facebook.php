@@ -451,6 +451,10 @@ abstract class BaseFacebook
     return $this->accessToken;
   }
 
+
+
+
+
   /**
    * Determines and returns the user access token, first using
    * the signed request if present, and then falling back on
@@ -477,18 +481,29 @@ abstract class BaseFacebook
       // the JS SDK puts a code in with the redirect_uri of ''
       if (array_key_exists('code', $signed_request)) {
         $code = $signed_request['code'];
+        //if the code in the signed req is the same as the code we had stored,
+        // just return the access token we had stored
         if ($code && $code == $this->getPersistentData('code')) {
           // short-circuit if the code we have is the same as the one presented
           return $this->getPersistentData('access_token');
         }
 
+        //otherwise, attempt to generate an accesstoken from the new code provided
         $access_token = $this->getAccessTokenFromCode($code, '');
+        //if that yielded a valid acesstoken, persist it and return it
         if ($access_token) {
           $this->setPersistentData('code', $code);
           $this->setPersistentData('access_token', $access_token);
           return $access_token;
         }
-      }
+
+        //EW at this point it seems we've received a signed req with a 
+        //  bogus code from js sdk- so, if we have an access token 
+        //  stored, just return that
+        if( $this->getPersistentData('access_token')) return $this->getPersistentData('access_token');
+
+
+      } //if we got a code in the signed req
 
       // signed request states there's no access token, so anything
       // stored should be cleared.
@@ -496,6 +511,7 @@ abstract class BaseFacebook
       return false; // respect the signed request's data, even
                     // if there's an authorization code or something else
     }
+
 
     $code = $this->getCode();
     if ($code && $code != $this->getPersistentData('code')) {

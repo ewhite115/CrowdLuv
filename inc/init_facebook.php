@@ -1,6 +1,6 @@
   <?php
 
-
+var_dump($_SESSION);
 
 /*
 
@@ -126,6 +126,10 @@ object(FacebookApiException)#4 (8) {
   
   //If we have an fb userid for the current user.... 
   if ($fb_user) {  // Proceed thinking you have a logged in user who's authenticated.
+
+
+
+
       //Set a session global with the fb user id
       //TODO:  Remove this. Nowhere else shouuld be relying or referring ro fb_user
       //  fb_user is just used to determine logged in follower, and set CL_LOGGEDIN_USER accordingly

@@ -2,12 +2,9 @@
 
     $pageTitle = "CrowdLuv";
     $CL_SITE_SECTION = "talent";
-    require_once("inc/init_config.php");  
-    include(ROOT_PATH . 'inc/header.php');
-    
-    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
-            // if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
-    
+    require_once("inc/init_config.php"); 
+    require_once("inc/cl_init.php");
+
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
 
     //If there are no followers for this talent, redirect to the talent tutorial page
@@ -15,6 +12,10 @@
         header("Location: talent_gettingstarted.php");
         die();
     }
+
+    include(ROOT_PATH . 'inc/header.php');
+    
+    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');    
 
     //The drop-down for the amount of time to calculate new followers for posts back to this same
     //page with a querystring param called nfinterval. If it's not set, default to 1 week

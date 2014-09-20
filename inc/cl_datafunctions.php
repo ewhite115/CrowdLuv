@@ -465,7 +465,7 @@ class CrowdLuvModel {
             $fbbdate="1900-01-01"; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
             $sql = "INSERT INTO follower (fb_uid,        location_fb_id,     location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
                                   VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
-            echo $sql;// exit;
+            //echo $sql;// exit;
             $results = $this->cldb->query($sql);
             //var_dump($results); exit;
         } catch (Exception $e) {
@@ -750,7 +750,7 @@ class CrowdLuvModel {
             //Update the row corresponding to the most recent timestamp
             $sql = "update talent_landingpage set image='" . $newimg . "'
                     where crowdluv_tid=" . $cl_tidt . " and message_timestamp = '" . $clpsettings['message_timestamp'] . "'" ;
-            echo $sql;// exit;             
+            //echo $sql;// exit;             
             $results = $this->cldb->query($sql);
             //var_dump($results); exit;
         } catch (Exception $e) {
@@ -801,7 +801,7 @@ class CrowdLuvModel {
             
             return $tid;
         } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
+            echo "Failed retrieving tid for vurl " . $e;
             return -1;//exit;
         }
     

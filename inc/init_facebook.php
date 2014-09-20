@@ -175,7 +175,9 @@ object(FacebookApiException)#4 (8) {
             $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg['id']);
             //If not, create a stub entry
             if(! $cltid) {cldbgmsg("Found new facebook page to add: " . $fbupg['id']); $CL_model->create_new_cl_talent_record_from_facebook_page_profile($fbupg);}
-            //Add the talent obj to a global 
+            //Get the tid for the newly created talent record, and
+            //  Add the talent obj to a global 
+            $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg['id']);
             $CL_LOGGEDIN_TALENTS_ARR[] = $CL_model->get_talent_object_by_tid($cltid);
           }
           //Set (or update) the session var with the array we were able to build this time since we had a valid token

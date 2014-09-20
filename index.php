@@ -97,10 +97,6 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
           <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p>
           <br><br>
         </div>
-        
-
-
-
 
     </div>              
                   

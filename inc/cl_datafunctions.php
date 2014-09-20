@@ -28,6 +28,7 @@ class CrowdLuvModel {
 
         try {
             $sql = "select * from talent where crowdluv_tid=" . $cl_tidt . " LIMIT 0, 30 ";
+            //echo $sql;
             $results = $this->cldb->query($sql);
             $firstline = $results->fetch(PDO::FETCH_ASSOC);
             if(!$firstline) return 0;
@@ -485,19 +486,19 @@ class CrowdLuvModel {
             //Insert the main record into the talent table
             $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name, crowdluv_vurl) 
                                 VALUES ('" . $talent_fbpp['id'] . "', ?, ?)";
-            //echo $sql; //exit;
+            cldbgmsg("Inserting new talent record based on facebook page: " . $sql);
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $talent_fbpp['name']);
             $results->bindParam(2, str_replace(" ", "-", htmlspecialchars($talent_fbpp['name'])));
-            $results->execute();
-            var_dump($results);
+            $results->execute();            
             $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
 
             //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
             $this->update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");        
             //$results = $CL_db->query($sql);
         } catch (Exception $e) {
-            echo "Data could not be inserted to the database. " . $e;
+            echo "Failed inserting into talent table from create_new_cl_tlent_record_from_facebook_page_profile" . $e->getMessage();
+            die;
             return -1;
         }
 
@@ -723,11 +724,11 @@ class CrowdLuvModel {
             //get the most recent landingpage settings for this talent, to re-use the img
             $clpsettings = $this->get_talent_landingpage_settings($cl_tidt);                    
             $sql = "INSERT INTO talent_landingpage (crowdluv_tid,        message,             image) VALUES ('" . $cl_tidt . "', '" . $newmsg . "', '" . $clpsettings['image'] . "')";
-            echo $sql;// exit;
+            //echo $sql;// exit;
             $results = $this->cldb->query($sql);
             //var_dump($results); exit;
         } catch (Exception $e) {
-            echo "Data could not be inserted to the database. " . $e;
+            echo "Failed inserting into talent_landingpage: " . $e;
             return -1;
         }
 

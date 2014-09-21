@@ -494,7 +494,8 @@ class CrowdLuvModel {
             $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
 
             //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
-            $this->update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");        
+            $this->update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");
+            $this->update_talent_landingpage_image($new_cl_tid, 'facebookprofile');
             //$results = $CL_db->query($sql);
         } catch (Exception $e) {
             echo "Failed inserting into talent table from create_new_cl_tlent_record_from_facebook_page_profile" . $e->getMessage();
@@ -723,7 +724,8 @@ class CrowdLuvModel {
         try {
             //get the most recent landingpage settings for this talent, to re-use the img
             $clpsettings = $this->get_talent_landingpage_settings($cl_tidt);                    
-            $sql = "INSERT INTO talent_landingpage (crowdluv_tid,        message,             image) VALUES ('" . $cl_tidt . "', '" . $newmsg . "', '" . $clpsettings['image'] . "')";
+            $sql = "INSERT INTO talent_landingpage (crowdluv_tid,        message,             image) 
+                                            VALUES ('" . $cl_tidt . "', '" . $newmsg . "', '" . $clpsettings['image'] . "')";
             //echo $sql;// exit;
             $results = $this->cldb->query($sql);
             //var_dump($results); exit;
@@ -754,7 +756,7 @@ class CrowdLuvModel {
             $results = $this->cldb->query($sql);
             //var_dump($results); exit;
         } catch (Exception $e) {
-            echo "Data could not be inserted to the database. " . $e;
+            echo "updated landing page image could not be inserted to the database . " . $e;
             return -1;
         }
 

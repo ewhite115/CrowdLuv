@@ -3,8 +3,9 @@
 	require_once("inc/init_config.php");
 	require_once("inc/cl_datafunctions.php");
 	require_once("inc/cl_init.php");
-	$pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
 	
+
+	$pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
 	
 	//Check for the object that fb passes into tabs to determine if we are being loaded
 	//as a facebook tab - if so, decode the passed in object and use it to set 
@@ -21,26 +22,19 @@
 	    $app_data="Empty";
 	    if(array_key_exists("app_data", $data)) $app_data = $data["app_data"];
 	}
+	//Otherwise -- we are on the crowdluv website. Print page header/banner, 
+	//   and check that a crowdluv_tid has been passed in
+	include(ROOT_PATH . 'inc/header.php'); 
+	include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
 
-	//Otherwise -- If it's not an fb tab and the crowdluv_tid hasn't been passed in, the page has been 
-	//linked erroneously;  error out
-		//TODO:  change this so it redirects or does somehting more user friendly
-	if(!isset($CL_CUR_TGT_TALENT)) {echo "crowdluv_tid was not passed in"; exit;}
-	
 	//Get the landing page settings for this talent
-	$tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_CUR_TGT_TALENT['crowdluv_tid']);
-    //var_dump($tlpgsettings); exit;
-    
-    
-
+	$tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_CUR_TGT_TALENT['crowdluv_tid']);   //var_dump($tlpgsettings); exit;
+    //Set the URL for the image that will be used on the page
     if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT['fb_pid'] . "/picture?type=large&access_token=" . $facebook->getAccessToken();
     //else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default")  $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
  	else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = CLADDR . 'crowdluvdata/talent/' . $CL_CUR_TGT_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';
 
-	
-
-	include(ROOT_PATH . 'inc/header.php'); 
 
 ?>
 

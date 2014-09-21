@@ -6,12 +6,7 @@
     include(ROOT_PATH . 'inc/header.php');
 
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
-    // if(! $CL_LOGGEDIN_USER_UID) { 
-    //     echo "no logged in user (?)";
-    //     require_once("inc/footer_body_footer.php");
-    //     require_once("inc/footer_html_footer.php"); 
-    //     exit; 
-    // } 
+
 
 
     //Get the list of talent this user is following, 

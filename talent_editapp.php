@@ -55,12 +55,67 @@
     else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';//else $tlpimg = BASE_URL . 'crowdluvdata/default_talent_landingpage_image.jpg';
     
-    
-
 
 
 ?>
     
+
+<div class="row">
+    <div class="col-xs-12 crowdluvsection">
+    <h1>Customizing Your CrowdLuv Landing Page</h1>
+    </div>
+</div>
+
+<!--  STEP 1:  Vanity URL  -->
+<div class="row crowdluvsection clwhitebg">
+    <div class="col-xs-12 col-sm-5">
+        <h1>Step 1:  Choose a CrowdLuv URL</h1>
+    </div>
+    <div class="col-xs-12 col-sm-7">
+        <p>
+            <?php echo CLADDR;?>
+                <input type="text" name="txt_crowdluv_vurl" id="txt_crowdluv_vurl" 
+                                value='<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
+                                              else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>'>
+                </input>
+                <?php if($vurl_err){ ?><p2>The URL you requested in not available. Please try another</p2> <?php } ?>
+        </p1>
+    </div>
+    <div class="col-xs-10 col-xs-offset-1 text-center">
+        <p>This will be the address of your CrowdLuv landing page, where your fans can Luv you, allowing you 
+            to connect with them more effectively. You will be able to share this link on social media, email etc
+        </p>
+
+    </div>
+
+</div>
+
+
+
+
+<!--  STEP 2: Picture  -->
+<div class="row crowdluvsection clwhitebg">
+    <div class="col-xs-12 col-sm-4">
+        <h1>Step 2:  Choose a splash picture</h1>
+    </div>
+    <div class="col-xs-12 col-sm-8">
+        <p>Explanation </p>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-xs-12 col-sm-4">
+        
+    </div>
+
+</div>
+
+
+
+
+
+<BR><BR><BR><BR><BR>
 
 <form enctype="multipart/form-data" action="#" method="POST">
     <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
@@ -85,6 +140,8 @@
             <p2><?php echo CLADDR;?><input type="text" name="txt_crowdluv_vurl" id="txt_crowdluv_vurl" value='<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
                       else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>'></input>
                 <?php if($vurl_err){ ?><p2>The URL you requested in not available. Please try another</p2> <?php } ?>
+
+            </p2>
         </div>
     
 

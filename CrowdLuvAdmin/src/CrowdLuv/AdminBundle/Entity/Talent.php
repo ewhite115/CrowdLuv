@@ -21,6 +21,13 @@ class Talent
      */
     private $follower_luvs_talent;
 
+   /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="TalentLandingPage", mappedBy="crowdluvTalent")
+     */
+    private $talentLandingPages;
+
     /**
      * @var integer
      *
@@ -351,4 +358,37 @@ class Talent
     }
 
 
+
+    /**
+     * Add talentLandingPages
+     *
+     * @param \CrowdLuv\AdminBundle\Entity\TalentLandingPage $talentLandingPages
+     * @return Talent
+     */
+    public function addTalentLandingPage(\CrowdLuv\AdminBundle\Entity\TalentLandingPage $talentLandingPages)
+    {
+        $this->talentLandingPages[] = $talentLandingPages;
+
+        return $this;
+    }
+
+    /**
+     * Remove talentLandingPages
+     *
+     * @param \CrowdLuv\AdminBundle\Entity\TalentLandingPage $talentLandingPages
+     */
+    public function removeTalentLandingPage(\CrowdLuv\AdminBundle\Entity\TalentLandingPage $talentLandingPages)
+    {
+        $this->talentLandingPages->removeElement($talentLandingPages);
+    }
+
+    /**
+     * Get talentLandingPages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTalentLandingPages()
+    {
+        return $this->talentLandingPages;
+    }
 }

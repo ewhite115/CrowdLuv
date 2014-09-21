@@ -7,21 +7,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use CrowdLuv\AdminBundle\Entity\Talent;
-use CrowdLuv\AdminBundle\Form\TalentType;
+use CrowdLuv\AdminBundle\Entity\TalentLandingPage;
+use CrowdLuv\AdminBundle\Form\TalentLandingPageType;
 
 /**
- * Talent controller.
+ * TalentLandingPage controller.
  *
- * @Route("/talent")
+ * @Route("/talentlandingpage")
  */
-class TalentController extends Controller
+class TalentLandingPageController extends Controller
 {
 
     /**
-     * Lists all Talent entities.
+     * Lists all TalentLandingPage entities.
      *
-     * @Route("/", name="talent")
+     * @Route("/", name="talentlandingpage")
      * @Method("GET")
      * @Template()
      */
@@ -29,22 +29,22 @@ class TalentController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('CrowdLuvAdminBundle:Talent')->findAll();
+        $entities = $em->getRepository('CrowdLuvAdminBundle:TalentLandingPage')->findAll();
 
         return array(
             'entities' => $entities,
         );
     }
     /**
-     * Creates a new Talent entity.
+     * Creates a new TalentLandingPage entity.
      *
-     * @Route("/", name="talent_create")
+     * @Route("/", name="talentlandingpage_create")
      * @Method("POST")
-     * @Template("CrowdLuvAdminBundle:Talent:new.html.twig")
+     * @Template("CrowdLuvAdminBundle:TalentLandingPage:new.html.twig")
      */
     public function createAction(Request $request)
     {
-        $entity = new Talent();
+        $entity = new TalentLandingPage();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
@@ -53,7 +53,7 @@ class TalentController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('talent_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('talentlandingpage_show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -63,16 +63,16 @@ class TalentController extends Controller
     }
 
     /**
-     * Creates a form to create a Talent entity.
+     * Creates a form to create a TalentLandingPage entity.
      *
-     * @param Talent $entity The entity
+     * @param TalentLandingPage $entity The entity
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Talent $entity)
+    private function createCreateForm(TalentLandingPage $entity)
     {
-        $form = $this->createForm(new TalentType(), $entity, array(
-            'action' => $this->generateUrl('talent_create'),
+        $form = $this->createForm(new TalentLandingPageType(), $entity, array(
+            'action' => $this->generateUrl('talentlandingpage_create'),
             'method' => 'POST',
         ));
 
@@ -82,15 +82,15 @@ class TalentController extends Controller
     }
 
     /**
-     * Displays a form to create a new Talent entity.
+     * Displays a form to create a new TalentLandingPage entity.
      *
-     * @Route("/new", name="talent_new")
+     * @Route("/new", name="talentlandingpage_new")
      * @Method("GET")
      * @Template()
      */
     public function newAction()
     {
-        $entity = new Talent();
+        $entity = new TalentLandingPage();
         $form   = $this->createCreateForm($entity);
 
         return array(
@@ -100,9 +100,9 @@ class TalentController extends Controller
     }
 
     /**
-     * Finds and displays a Talent entity.
+     * Finds and displays a TalentLandingPage entity.
      *
-     * @Route("/{id}", name="talent_show")
+     * @Route("/{id}", name="talentlandingpage_show")
      * @Method("GET")
      * @Template()
      */
@@ -110,10 +110,10 @@ class TalentController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CrowdLuvAdminBundle:Talent')->find($id);
+        $entity = $em->getRepository('CrowdLuvAdminBundle:TalentLandingPage')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Talent entity.');
+            throw $this->createNotFoundException('Unable to find TalentLandingPage entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -125,9 +125,9 @@ class TalentController extends Controller
     }
 
     /**
-     * Displays a form to edit an existing Talent entity.
+     * Displays a form to edit an existing TalentLandingPage entity.
      *
-     * @Route("/{id}/edit", name="talent_edit")
+     * @Route("/{id}/edit", name="talentlandingpage_edit")
      * @Method("GET")
      * @Template()
      */
@@ -135,10 +135,10 @@ class TalentController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CrowdLuvAdminBundle:Talent')->find($id);
+        $entity = $em->getRepository('CrowdLuvAdminBundle:TalentLandingPage')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Talent entity.');
+            throw $this->createNotFoundException('Unable to find TalentLandingPage entity.');
         }
 
         $editForm = $this->createEditForm($entity);
@@ -152,16 +152,16 @@ class TalentController extends Controller
     }
 
     /**
-    * Creates a form to edit a Talent entity.
+    * Creates a form to edit a TalentLandingPage entity.
     *
-    * @param Talent $entity The entity
+    * @param TalentLandingPage $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Talent $entity)
+    private function createEditForm(TalentLandingPage $entity)
     {
-        $form = $this->createForm(new TalentType(), $entity, array(
-            'action' => $this->generateUrl('talent_update', array('id' => $entity->getId())),
+        $form = $this->createForm(new TalentLandingPageType(), $entity, array(
+            'action' => $this->generateUrl('talentlandingpage_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -170,20 +170,20 @@ class TalentController extends Controller
         return $form;
     }
     /**
-     * Edits an existing Talent entity.
+     * Edits an existing TalentLandingPage entity.
      *
-     * @Route("/{id}", name="talent_update")
+     * @Route("/{id}", name="talentlandingpage_update")
      * @Method("PUT")
-     * @Template("CrowdLuvAdminBundle:Talent:edit.html.twig")
+     * @Template("CrowdLuvAdminBundle:TalentLandingPage:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('CrowdLuvAdminBundle:Talent')->find($id);
+        $entity = $em->getRepository('CrowdLuvAdminBundle:TalentLandingPage')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Talent entity.');
+            throw $this->createNotFoundException('Unable to find TalentLandingPage entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -193,7 +193,7 @@ class TalentController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('talent_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('talentlandingpage_edit', array('id' => $id)));
         }
 
         return array(
@@ -203,9 +203,9 @@ class TalentController extends Controller
         );
     }
     /**
-     * Deletes a Talent entity, corresponding FollowerLuvTalent entities
+     * Deletes a TalentLandingPage entity.
      *
-     * @Route("/{id}", name="talent_delete")
+     * @Route("/{id}", name="talentlandingpage_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -215,39 +215,21 @@ class TalentController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('CrowdLuvAdminBundle:Talent')->find($id);
+            $entity = $em->getRepository('CrowdLuvAdminBundle:TalentLandingPage')->find($id);
 
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Talent entity.');
-            }
-
-            //First retrieve and delete corresponding entries in FollowerLuvsTalent
-            //  
-            $followerLuvsTalentEntries = $em->getRepository('CrowdLuvAdminBundle:FollowerLuvsTalent')->findByCrowdluvTalent($entity);
-            //var_dump(sizeof($followerLuvsTalentEntries)); exit;
-            foreach($followerLuvsTalentEntries as $flt) {
-                //TODO:  change this to call followerLuvsTalent->DeleteAction
-                $em->remove($flt);                
-            }
-
-           //retrieve and delete corresponding entries in TalentLandingPage
-            //  
-            $talentLandingPageEntries = $em->getRepository('CrowdLuvAdminBundle:TalentLandingPage')->findByCrowdluvTalent($entity);
-            //var_dump(sizeof($followerLuvsTalentEntries)); exit;
-            foreach($talentLandingPageEntries as $tlp) {
-                //TODO:  change this to call followerLuvsTalent->DeleteAction
-                $em->remove($tlp);                
+                throw $this->createNotFoundException('Unable to find TalentLandingPage entity.');
             }
 
             $em->remove($entity);
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('talent'));
+        return $this->redirect($this->generateUrl('talentlandingpage'));
     }
 
     /**
-     * Creates a form to delete a Talent entity by id.
+     * Creates a form to delete a TalentLandingPage entity by id.
      *
      * @param mixed $id The entity id
      *
@@ -256,7 +238,7 @@ class TalentController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('talent_delete', array('id' => $id)))
+            ->setAction($this->generateUrl('talentlandingpage_delete', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()

@@ -79,15 +79,21 @@
                                               else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>'>
                 </input>
                 <?php if($vurl_err){ ?><p2>The URL you requested in not available. Please try another</p2> <?php } ?>
-        </p1>
+        </p>
     </div>
-    <div class="col-xs-10 col-xs-offset-1 text-center">
+
+</div>
+
+
+
+<div class="row ">
+    <div class="col-xs-10 col-xs-offset-1 text-center crowdluvsection">
+
         <p>This will be the address of your CrowdLuv landing page, where your fans can Luv you, allowing you 
             to connect with them more effectively. You will be able to share this link on social media, email etc
         </p>
 
     </div>
-
 </div>
 
 
@@ -104,50 +110,9 @@
 </div>
 
 
-<div class="row">
-    <div class="col-xs-12 col-sm-4">
-        
-    </div>
-
-</div>
-
-
-
-
-
-<BR><BR><BR><BR><BR>
-
-<form enctype="multipart/form-data" action="#" method="POST">
-    <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
-    <div class="row">
-        <div class="col-xs-12 crowdluvsection">
-        <h1>Edit App</h1>
-        </div>
-    </div>
-
-
-    <div class="row">
-        <div class="col-sm-4 crowdluvsection">
-            <h2><?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?></h2>
-            <p2>Edit your personal message</p2><br>
-            <textarea name="newmsg" id="newmsg" cols="34"></textarea>
-            <br>
-            <p2>Current message: <?php echo $tlpgsettings['message'];?>
-            </p2>
-
-            <h2>Change your CrowdLuv URL</h2>
-
-            <p2><?php echo CLADDR;?><input type="text" name="txt_crowdluv_vurl" id="txt_crowdluv_vurl" value='<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>'></input>
-                <?php if($vurl_err){ ?><p2>The URL you requested in not available. Please try another</p2> <?php } ?>
-
-            </p2>
-        </div>
-    
-
+<div class="row ">
         <div class="col-sm-5 crowdluvsection">
-            <p2>Change your photo</p2>
-            <br>
+            
             <img src="<?php echo $tlpimg;?>" style="max-width: 100%;"/>    
         </div>
 
@@ -156,26 +121,39 @@
             <?php if($badpatherr) {             ?>
                 <p style="color:red;">You uplodaded a <?php echo $extension;?> file. Only .jpg and .png files are allowed</p>
             <?php } ?>
-            <input type="file" name="newimg" id="newimg" accept="image/*"></input><br>
-            <p2>Link to new Image</p2><br>
-            <input disabled type="text"></input>
-            <button disabled type="button">Load</button><br>
-            <p2>Make sure your photo is ..... This photo will appear on your Facebook CrowdLuv page and your CrodLuv landing page </p2>
+            <form enctype="multipart/form-data" action="#" method="POST">
+                <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
+                <input type="file" name="newimg" id="newimg" accept="image/*"></input><br>
+                <button type="submit">Submit Changes</button>
+            </form>
 
         </div>
+
+</div>
+
+
+<!--  STEP 3: Message -->
+<div class="row crowdluvsection clwhitebg">
+    <div class="col-xs-12 col-sm-4">
+        <h1>Step 3:  Add a Personal Message</h1>
+    </div>
+    <div class="col-xs-12 col-sm-8">
+        <p> Current message: <?php echo $tlpgsettings['message'];?>   </p>
+    </div>
+</div>
+
+
+<div class="row ">
+    <div class="col-xs-12 crowdluvsection">
+
+        <textarea name="newmsg" id="newmsg" cols="34"></textarea>
 
     </div>
-    
-    <div class="fluid-row">
-        <div class="col-sm-6 crowdluvsection">
-            <button disabled type="button">Facebook Preview</button>
-            <button disabled type="button">CrowdLuv Preview</button> 
-        </div>
-        <div class="col-sm-6 crowdluvsection text-right">
-            <button type="submit">Submit Changes</button>
-        </div>
-   </div>
-</form>
+</div>
+
+
+
+
 
 
 <?php include(ROOT_PATH . 'inc/footer.php') ?>

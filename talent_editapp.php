@@ -14,13 +14,6 @@
     //Get the landing page settings for this talent
     $tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
     
-    //If this is a postback and the user has specified a new vanitu URL for their landing page, make a function call to update the DB
-    if(isset($_POST['txt_crowdluv_vurl']) &&  $_POST['txt_crowdluv_vurl'] != ""  && ($_POST['txt_crowdluv_vurl'] != $CL_ACTIVE_MANAGED_TALENT['crowdluv_vurl'])) { 
-            //Attempt to update the db with the newly requested vanitu URL.  If it's successful, update in-memory record with the new value
-            if($CL_model->update_talent_landingpage_vurl($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $_POST['txt_crowdluv_vurl']) == 1){$CL_ACTIVE_MANAGED_TALENT['crowdluv_vurl']=$_POST['txt_crowdluv_vurl']; } 
-            else $vurl_err=true;  //set an error flag to print a notification for the user below
-    }    
-    
     
     //If this is a postback and the user has specified a new message, insert a new row into the CL db for the new msg   
     if(isset($_POST['newmsg']) &&  $_POST['newmsg'] != ""  && ($_POST['newmsg'] != $tlpgsettings['message'])) { $CL_model->update_talent_landingpage_message($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $_POST['newmsg']);  }    
@@ -78,15 +71,15 @@
                                 value='<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
                                               else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>'>
                 </input>
-                <?php if($vurl_err){ ?><p2>The URL you requested in not available. Please try another</p2> <?php } ?>
+                <button id="btnCheckAndSetVURL" class="cl-button-standout">Check and Set</button>
+                <p class="cl-textcolor-standout" id="p-vanity-url-result"></p> 
         </p>
     </div>
 
 </div>
 
 
-
-<div class="row ">
+<div id="div-vurl-details" class="row">
     <div class="col-xs-10 col-xs-offset-1 text-center crowdluvsection">
 
         <p>This will be the address of your CrowdLuv landing page, where your fans can Luv you, allowing you 
@@ -123,8 +116,8 @@
             <?php } ?>
             <form enctype="multipart/form-data" action="#" method="POST">
                 <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
-                <input type="file" name="newimg" id="newimg" accept="image/*"></input><br>
-                <button type="submit">Submit Changes</button>
+                <input type="file" name="newimg" id="newimg" accept="image/*"></input>
+                <button type="submit" class="cl-button-standout">Add</button>
             </form>
 
         </div>
@@ -145,14 +138,56 @@
 
 <div class="row ">
     <div class="col-xs-12 crowdluvsection">
-
-        <textarea name="newmsg" id="newmsg" cols="34"></textarea>
+        <form enctype="multipart/form-data" action="#" method="POST">
+            <textarea name="newmsg" id="newmsg" cols="34"></textarea>
+            <button type="submit" class="cl-button-standout">Update</button>
+        </form>
 
     </div>
 </div>
 
 
 
+
+<script>
+
+
+$(document).ready(function(){
+
+    $("#p-vanity-url-result").hide();
+    $("#div-vurl-details").hide();
+
+    //Change handler for the vanity URL textbox 
+    $("#btnCheckAndSetVURL").click(function(){
+
+        update_talent_landingpage_vurl($("#txt_crowdluv_vurl").val(), function(response){            
+            //On callback: 
+            console.log('in callback for vurl. received response:');  console.log(response);
+            //set the textbox to the returned/sanitized vurl
+            $("#txt_crowdluv_vurl").val(response.vurl);
+            //fade in and out the result message
+            $("#p-vanity-url-result").html(response.description).fadeIn(1800);
+            
+
+        });
+
+    });
+
+    //on focus handler for the vanity URL textbox  to show detail div
+    $("#txt_crowdluv_vurl").focus(function(){
+
+        $("#div-vurl-details").show();
+    });
+    $("#txt_crowdluv_vurl").focusout(function(){
+
+    $("#div-vurl-details").hide();
+});
+
+
+}); //docready
+
+
+</script>
 
 
 

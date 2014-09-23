@@ -27,7 +27,7 @@ class CrowdLuvModel {
        //global $CL_db;
 
         try {
-            $sql = "select * from talent where crowdluv_tid=" . $cl_tidt . " LIMIT 0, 30 ";
+            $sql = "select * from talent where crowdluv_tid=" . $cl_tidt;
             //echo $sql;
             $results = $this->cldb->query($sql);
             $firstline = $results->fetch(PDO::FETCH_ASSOC);
@@ -468,6 +468,8 @@ class CrowdLuvModel {
             //echo $sql;// exit;
             $results = $this->cldb->query($sql);
             //var_dump($results); exit;
+            
+            
         } catch (Exception $e) {
             echo "Data could not be inserted to the database. " . $e;
             return -1;
@@ -493,9 +495,14 @@ class CrowdLuvModel {
             $results->execute();            
             $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
 
+            //Default the vanity URL to the sanitized version of their facebook page name
+            $this->update_talent_landingpage_vurl($new_cl_tid, $talent_fbpp['name']);
+
             //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
             $this->update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");
             $this->update_talent_landingpage_image($new_cl_tid, 'facebookprofile');
+
+
             //$results = $CL_db->query($sql);
         } catch (Exception $e) {
             echo "Failed inserting into talent table from create_new_cl_tlent_record_from_facebook_page_profile" . $e->getMessage();
@@ -713,9 +720,38 @@ class CrowdLuvModel {
 
     }
 
+
+    /**
+     * [update_talent_landingpage_vurl Attempts to update the vanity URL for a talent. Returns a response object with a result code and description]
+     * @param  [int] $cl_tid  [crowdluv talent id]
+     * @param  [string] $cl_vurl [the requested vanity url (after base url/talent/)]
+     * @return [object]          [object with 3 values: result [code], description, and vurl [with the vurl that was used - whch may differ from that requested due to removal of special characters ]]
+     */
     public function update_talent_landingpage_vurl($cl_tid, $cl_vurl){
 
-        return $this->update_talent_setting($cl_tid, "crowdluv_vurl", $cl_vurl);
+        //Sanitize the string, removing special chars and replacing spaces with hyphens
+        $cl_vurl = strtolower($cl_vurl);
+        $cl_vurl = preg_replace('/[^a-z0-9 -]+/', '', $cl_vurl);
+        $cl_vurl = str_replace(' ', '-', $cl_vurl);
+        $cl_vurl = trim($cl_vurl, '-');
+
+        //Default response values
+        $response['result'] = 0;
+        $response['description'] = "The URL you requested is invalid";
+        $response['vurl'] = $cl_vurl;
+
+
+        //Check validity of sanitized URL
+        if($cl_vurl == "") {$response['description'] = "URL can not be empty"; return $response;}
+        if(strlen($cl_vurl) > 50) {$response['description'] = "URL can not be over 50 characters"; return $response;}
+
+        //TODO  Check if the vurl is already in use
+        
+
+        //Finally,.. call the function to update the value in the DB table
+        $response['result'] = $this->update_talent_setting($cl_tid, "crowdluv_vurl", $cl_vurl);
+        if($response['result'] == 1) $response['description'] = "Your URL has been updated";
+        return $response;
 
     }
 

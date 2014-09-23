@@ -119,7 +119,7 @@ crowdluvFBDataLoader = function(lsresponse) {
         // the user is logged in to Facebook, but has not authenticated your app
         console.log("FB response.status=not authorized");
         //show the new user intro video
-        showNewUserModal();  
+        showNewUserModal(); 
         
     } else {
         // the user isn't logged in to Facebook.
@@ -200,7 +200,7 @@ function update_follower_setting(prefname, prefval){
 function deactivate_follower(crowdluv_uid, handler){
   console.log("deactivate_follower called:" + crowdluv_uid);
 
-  var qopts = { 
+  var qopts = {
         crowdluv_uid: crowdluv_uid
         //prefname: prefname, 
         //prefval: prefval
@@ -226,6 +226,21 @@ function reactivate_follower(crowdluv_uid, handler){
 
 }
 
+function update_talent_landingpage_vurl(vurl, handler){
+  console.log("update_talent_landingpage_vurl: " + vurl);
+
+  var qopts = {
+        vurl: vurl
+        //prefname: prefname, 
+        //prefval: prefval
+  };
+  console.log(qopts);
+
+  resl = $.getJSON('ajax_update_talent_vanity_url.php', qopts, handler);
+
+  console.log("json call resl="); console.log(resl);
+
+}
 
 
 

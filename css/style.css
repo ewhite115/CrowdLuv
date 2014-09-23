@@ -612,6 +612,13 @@ background-size: contain;
     color: white;
 
 }
+.cl-button-standout-narrow, .clredbutton {
+    background: darkred;
+    padding: 10px 10px;
+    color: white;
+
+}
+
 
 .cl-textcolor-default {
     color: #383839;}

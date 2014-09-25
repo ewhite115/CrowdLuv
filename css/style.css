@@ -285,6 +285,8 @@ body{
 
 }
 
+
+
 .crowdluvsection {
 
     /*display: inline-block;  */
@@ -328,6 +330,11 @@ h1.cl-major-heading{
     display:block;
 
 }
+
+.inline-block {
+    display: inline-block;
+}
+
 
 .clwhitebg {
     border: 1px solid #E7E5E6;
@@ -410,18 +417,95 @@ h1.cl-major-heading{
     max-height: 3000px;   /* no scrolling, just print all talent no matter how long it gets. */
     
 }
-.crowdluv_landingpage_memberlogin_box .talentpagelisting {
+.talentpagelisting {
     /*margin: 2%;*/
     display: inline-block;
+    vertical-align: top;
     width:250px;
 
+
 }
-.crowdluv_landingpage_memberlogin_box .talentpagelisting img {
+.talentpagelisting img {
     width:25%;
     float:left;
     margin-right: 5px;
 
 }
+
+
+.cl-full-width-row {
+    /*white-space: nowrap;*/
+    /*overflow-x: scroll;*/
+    /*height:11em;*/
+    width:103.5%;
+    margin-left: -15px;
+    /*padding-left:8.333%;*/
+    
+}
+.cl-talent-listing-card-container-single-row {
+    white-space: nowrap;
+    overflow-x: scroll;
+    height:11em;
+    /*width:103.5%;*/
+    /*margin-left: -15px;*/
+    margin: 0 8.333%;
+
+    
+}
+
+.cl-talent-listing-card-square {
+    margin-right: .6em;
+    display: inline-block;
+    vertical-align: top;
+    position:relative;
+
+    width: 12em;
+    height: 8.3em;
+
+}
+
+.cl-talent-listing-card-square .talent-avatar {
+    width:50%;
+    height:60%;
+    display: inline-block;
+    margin-right: 5px;
+
+}
+.cl-talent-listing-card-square .talent-avatar img {
+    width:75%;  
+}
+
+.cl-talent-listing-card-square .talent-avatar .talent-name {
+    white-space: normal;  
+}
+
+
+.cl-talent-listing-card-square .heart-rank {
+    width:50%;
+    height:60%;
+    display: inline-block;
+    vertical-align: top;
+
+    
+}
+.cl-talent-listing-card-square .heart-rank img {
+    /*width:50%;*/
+    padding: .8em 0;
+
+}
+
+
+
+
+.cl-talent-listing-card-square .extra-info {
+    
+    text-decoration: none;
+    position: absolute;
+    bottom:0;
+    width: 100%;
+}
+
+
 
 
 /* For some reason, the facebook social login loads in an iframe that is 1000px 

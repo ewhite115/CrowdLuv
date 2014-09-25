@@ -7,7 +7,7 @@ include(ROOT_PATH . 'inc/header.php');
 
 
 //Create parameters for creating facebook login URL that will be used for the login buttons
-$folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING,'redirect_uri' => CLADDR . 'shareluv.php'  );
+$folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING,'redirect_uri' => CLADDR . 'follower_dashboard.php'  );
 $talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
 
 if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
@@ -68,8 +68,8 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         
             
     <div class="row">       
-        <a href="followerdashboard.php">
-        <div class="col-xs-12 col-sm-3 text-center ">
+        <a href="follower_dashboard.php">
+        <div class="col-xs-6 col-sm-3 text-center ">
           <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
           <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
           <p2 class="cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
@@ -82,7 +82,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         </a> 
 
         <a href='shareluv.php'> 
-        <div class="col-xs-12 col-sm-3 text-center">
+        <div class="col-xs-6 col-sm-3 text-center">
           <h1 class="cl-textcolor-standout">Share the Luv </h1>
           <img src="res/top-heart.png">
           <p class="cl-textcolor-default">Build Luv. Become the #1 fan</p>
@@ -91,8 +91,8 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         </a>
 
         
-        <div class="hidden-xs col-ms-6 text-left">
-          <h1 class="cl-textcolor-standout">Activity </h1>
+        <div class="col-xs-12 col-sm-6 text-left center-block">
+          <h1 class="cl-textcolor-standout text-left">Activity </h1>
           
           <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p>
           <br><br>
@@ -129,9 +129,10 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
   <!-- Talent logged-in panel Displayed if logged in as a talent -->  
   <?php } else { ?>
       
+
       <div class="col-xs-12 col-ms-12" >
         <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box">
-          <h1>Your CrowdLuv Talent Profiles </h1>        
+          <h1 class="cl-textcolor-standout" >Your CrowdLuv Talent Profiles </h1>        
           <p></p>
           
 
@@ -142,7 +143,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
             foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){ if(! $cltalentobj['waitlisted']) $anywhitelistedtalent = true; break; }
             if(! $anywhitelistedtalent) { ?> <p> Thank you for your interest in CrowdLuv! You have been added to our talent waitlist, and you'll be contacted when we are accepting new talent signups.</p> <?php }
             else { ?> 
-              <p> Select a CrowdLuv talent profile and connect with your fans</p>    
+              
             <!-- Print out the talent profiles this user has access to manage -->
             <?php  } 
             foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){  ?>
@@ -150,12 +151,14 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
               <div class="text-left cl_graybackground cl_grayborder talentpagelisting">
                   
                 <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> 
-                <span>  <?php echo $cltalentobj['fb_page_name'];?>  <?php if($cltalentobj['waitlisted']) { ?> (Wait-listed) <?php } ?></span>
+                <p>  <?php echo $cltalentobj['fb_page_name'];?></p>  <?php if($cltalentobj['waitlisted']) { ?> <p>(Wait-listed)</p> <?php } ?></span>
                 
               </div>        
               <?php if(! $cltalentobj['waitlisted']) { ?> </a> <?php } ?>
-          <?php }
-          } ?>
+
+            <?php } ?>
+            <p> Select a CrowdLuv talent profile and connect with your fans</p> 
+          <?php } ?>
         </div>
       </div>   
   <?php } ?>  

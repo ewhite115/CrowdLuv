@@ -847,6 +847,39 @@ class CrowdLuvModel {
     }
 
 
+    /**
+     * [getMobileValidityForFollower Determine if the follower specified has provided a mobile contact #]
+     * @param  [int] $cl_uidt [CrowdLuv UserID to check]
+     * @return [string]          ["invalid", "valid", or "verified"]
+     */
+    public function getMobileValidityForFollower($cl_uidt) {
+
+        //TODO:  implement this
+    
+        $follower = $this->get_follower_object_by_uid($cl_uidt);
+        
+        if($follower['mobile'] == "") return "invalid";
+
+        return "valid";
+
+    }
+    /**
+     * [getEmailValidityForFollower Determine if the follower specified has provided a mobile contact #]
+     * @param  [int] $cl_uidt [CrowdLuv UserID to check]
+     * @return [string]          ["invalid", "valid", or "verified"]
+     */
+    public function getEmailValidityForFollower($cl_uidt ) {
+
+        //TODO:  implement this
+        
+        $follower = $this->get_follower_object_by_uid($cl_uidt);
+        
+        if($follower['email'] == "") return "invalid";
+
+        return "valid";
+    }
+
+
 
 } //end CrowdLuvModel
 

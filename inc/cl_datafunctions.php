@@ -155,6 +155,10 @@ class CrowdLuvModel {
         }
         
         $tals = $results->fetchAll(PDO::FETCH_ASSOC);
+        foreach($tals as &$tal){ 
+            $tal['score'] = $this->calculate_follower_score_for_talent($cl_uidt, $tal['crowdluv_tid']); 
+        }
+
         //var_dump($matches);
 
         return $tals;
@@ -172,7 +176,7 @@ class CrowdLuvModel {
             return -1;
         }
         
-        $fols = $results->fetchAll(PDO::FETCH_ASSOC);    
+        $fols = $results->fetchAll(PDO::FETCH_ASSOC);
         //var_dump($fols);
         return $fols;
     }

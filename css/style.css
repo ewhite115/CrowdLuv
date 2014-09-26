@@ -480,21 +480,19 @@ h1.cl-major-heading{
 }
 
 
-.cl-talent-listing-card-square .heart-rank {
-    width:50%;
+.cl-talent-listing-card-square .card-info {
+    width:45%;
     height:60%;
     display: inline-block;
     vertical-align: top;
 
     
 }
-.cl-talent-listing-card-square .heart-rank img {
+.cl-talent-listing-card-square .card-info img {
     /*width:50%;*/
     padding: .8em 0;
 
 }
-
-
 
 
 .cl-talent-listing-card-square .extra-info {
@@ -504,6 +502,31 @@ h1.cl-major-heading{
     bottom:0;
     width: 100%;
 }
+
+
+
+.cl-talent-share-listing-card-square {
+    margin-right: 0;
+    width: 25em;
+    height: 10em;
+
+}
+.cl-talent-share-listing-card-square .talent-avatar {
+    width:25%;
+
+}
+.cl-talent-share-listing-card-square .talent-avatar img {
+    width:75%;  
+}
+.cl-talent-listing-card-square .card-info {
+    width:65%;
+     
+}
+
+
+
+
+
 
 
 

@@ -93,7 +93,7 @@
                         <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $facebook->getAccessToken();?>"> 
                         <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
                     </div>
-                    <div class="heart-rank text-center">
+                    <div class="card-info text-center">
                         <img src='res/top-heart.png'/>
                         <p class="follower-rank">Your Rank</p>
                     </div>

@@ -14,9 +14,11 @@
 
 
 
+  
   require_once("inc/init_config.php"); 
   require_once("inc/cl_datafunctions.php");
-
+  require 'vendor/autoload.php';
+  
 
   //Establish DB connection and global $CL_model object
   require_once("inc/init_db.php");

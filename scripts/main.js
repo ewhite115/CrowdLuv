@@ -185,7 +185,7 @@ function update_follower_setting(prefname, prefval){
     console.log("contact pre change handler called:" + prefname + ", " + prefval);
 
     var qopts = { 
-        prefname: prefname, 
+        prefname: prefname,
         prefval: prefval
      };
      console.log(qopts);

@@ -462,7 +462,7 @@ class CrowdLuvModel {
             //Update this line to insert any/all values from the user profile into db
             $f = $follower_fbup;
             //var_dump($f);exit;       
-            $fblocid="0"; $fblocname="Unspecified"; if(isset($f['location'])) {$fblocid=$f['location']['id']; $fblocname=$f['location']['name'];}
+            $fblocid="0"; $fblocname="Unspecified"; if(isset($f['location'])) {$fblocid=$f['location']->id; $fblocname=$f['location']->name;}
             $fbemail="Unspecified"; if(isset($f['email'])) $fbemail=$f['email'];
             $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
             date_default_timezone_set('America/New_York');
@@ -482,8 +482,9 @@ class CrowdLuvModel {
 
     public function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
         //pass in json object of the page
+        //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
         if(!$talent_fbpp) return 0;
-        //var_dump($talent_fbpp);
+        
         
         $new_cl_tid = "";
 
@@ -491,16 +492,16 @@ class CrowdLuvModel {
             
             //Insert the main record into the talent table
             $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name, crowdluv_vurl) 
-                                VALUES ('" . $talent_fbpp['id'] . "', ?, ?)";
+                                VALUES ('" . $talent_fbpp->id . "', ?, ?)";
             cldbgmsg("Inserting new talent record based on facebook page: " . $sql);
             $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $talent_fbpp['name']);
-            $results->bindParam(2, str_replace(" ", "-", htmlspecialchars($talent_fbpp['name'])));
+            $results->bindParam(1, $talent_fbpp->name);
+            $results->bindParam(2, str_replace(" ", "-", htmlspecialchars($talent_fbpp->name)));
             $results->execute();            
-            $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
+            $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id);
 
             //Default the vanity URL to the sanitized version of their facebook page name
-            $this->update_talent_landingpage_vurl($new_cl_tid, $talent_fbpp['name']);
+            $this->update_talent_landingpage_vurl($new_cl_tid, htmlspecialchars($talent_fbpp->name));
 
             //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
             $this->update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");
@@ -785,7 +786,7 @@ class CrowdLuvModel {
             //if the timestamp is empty, that means this talent doesn't have any landpgae settings set
             //This should only happen for some early talent records that were created before the code
             //for new talent stubs was updated to include creating a default entry in the landingpage settings table
-            //But, to handle those instances, call the update_talent_landingpage_message function t create the initial one
+            //But, to handle those intances, call the update_talent_landingpage_message function t create the initial one
             if($clpsettings['message']=="") $this->update_talent_landingpage_message($cl_tidt, $clpsettings['message']);
             $clpsettings = $this->get_talent_landingpage_settings($cl_tidt);
 

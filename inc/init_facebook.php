@@ -1,5 +1,6 @@
   <?php
-  require 'vendor/autoload.php';
+
+  require  ROOT_PATH . 'vendor/autoload.php';
   use Facebook\FacebookSession;
   use Facebook\FacebookRequest;
   use Facebook\FacebookRedirectLoginHelper;
@@ -109,7 +110,8 @@ $talentFacebookPermissionScope = array(
   if(! $facebookSession){
     //$followerLoginURL = $facebookLoginHelper->getLoginUrl($followerFacebookPermissionScope);
     $talentLoginURL = $facebookLoginHelper->getLoginUrl($talentFacebookPermissionScope);
-
+    //Save the fb login URL in a session var (mainly to be accessible by crowdluv admin app)
+    $_SESSION['CL_fb_talentLoginURL'] = $talentLoginURL;
   }
 
   
@@ -136,12 +138,17 @@ $talentFacebookPermissionScope = array(
       $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
       //if this is new user to CrowdLuv.. 
       if($CL_LOGGEDIN_USER_UID==0){
-          echo "**** TODO: Implement new user reg in php sdk 4 **. Exiting. ";
-          die;
+          
           // ...request profile info from facebook and create a stub entry based on available info
           try { 
-            $fb_user_profile = $facebook->api('/me');  //var_dump($fb_user_profile); 
-
+            //$fb_user_profile = $facebook->api('/me');  //var_dump($fb_user_profile); 
+            // graph api request for user data
+            $request = new FacebookRequest( $facebookSession, 'GET', '/me' );
+            $response = $request->execute();
+            // get response
+            $fb_user_profile = $response->getGraphObject()->asArray();
+            //echo "<pre> Response to facebook graph cal /me :"; var_dump($fb_user_profile); echo "</pre>";
+            //die;
             $CL_model->create_new_cl_follower_record_from_facebook_user_profile($fb_user_profile);
             $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
           } catch (FacebookApiException $e) {
@@ -183,8 +190,7 @@ $talentFacebookPermissionScope = array(
             //If not, create a stub entry
             if(! $cltid) {
               cldbgmsg("Found new facebook page to add: " . $fbupg->id); 
-              //TODO:  implement create new talent for fb php sdk 4
-              //$CL_model->create_new_cl_talent_record_from_facebook_page_profile($fbupg);
+              $CL_model->create_new_cl_talent_record_from_facebook_page_profile($fbupg);
             }
             //Get the tid for the newly created talent record, and
             //  Add the talent obj to a global 

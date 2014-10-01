@@ -20,7 +20,12 @@
 	//define("FB_APP_SECRET","24a9bbdc678e3ffbf8ce8e506f995251");	
 	define("CL_FB_APP_SECRET", $_SERVER['CL_FB_APP_SECRET']);	
 	
-	define("CL_FB_PERMISSION_SCOPE_STRING", "email,user_location,user_birthday,user_relationships");
+//	define("CL_FB_PERMISSION_SCOPE_STRING", "email,user_location,user_birthday,user_relationships");
+
+	define("CL_FB_PERMISSION_SCOPE_STRING", "'email', 'user_location', 'user_birthday', 'user_relationships'");
+
+
+
 	define("CL_FB_TALENT_PERMISSION_SCOPE_STRING", "email,user_location,user_birthday,user_relationship_details,user_relationships,manage_pages");
 	
 	define("GOOGLE_MAPS_APIKEY", "AIzaSyBc6n2vRhj6szWhvDeTtzBNY1kiDAyJMuo");

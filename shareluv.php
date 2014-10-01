@@ -50,13 +50,13 @@
                 <div class="  crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder"> 
                 
                     <div class="talent-avatar text-center"> 
-                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> 
+                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
                         <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
                     </div>
              
                     <div class="card-info">
 
-                        <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];}                                                                                                else {echo $cltalentobj["crowdluv_vurl"];}?>" 
+                        <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>" 
                             data-width="80" 
                             data-type="button">.
                         </div>

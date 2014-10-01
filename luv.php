@@ -25,22 +25,3 @@
 
 ?>
 
-<!-- 
-    <div class="crowdluvsection" style="text-align:center; width:60%; margin-left:auto;margin-right:auto;">
-
-        <br>
-        <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> &nbsp;&nbsp;
-        Luvs &nbsp;&nbsp;
-        <img src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"><br>
-        <br>We'll let <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?> know you want them to come to your town. 
-        <br><br> Please confirm your contact information so that we can let you know when <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?> is coming to <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>
-
-    </div>
--
-    <?php // include(ROOT_PATH . 'inc/userinfoform.php'); ?>
-  
-
-
-<?php // include(ROOT_PATH . 'inc/footer.php') ?>
-
--->

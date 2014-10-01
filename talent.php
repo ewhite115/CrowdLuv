@@ -30,7 +30,7 @@
 	//Get the landing page settings for this talent
 	$tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_CUR_TGT_TALENT['crowdluv_tid']);   //var_dump($tlpgsettings); exit;
     //Set the URL for the image that will be used on the page
-    if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT['fb_pid'] . "/picture?type=large&access_token=" . $facebook->getAccessToken();
+    if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT['fb_pid'] . "/picture?type=large&access_token=" . $facebookSession->getToken();
     //else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default")  $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
  	else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = CLADDR . 'crowdluvdata/talent/' . $CL_CUR_TGT_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';

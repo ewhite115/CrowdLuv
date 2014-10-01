@@ -90,7 +90,7 @@
                 <a class="cl-talent-listing-card-square text-left cl_graybackground cl_grayborder " href="follower_talent_detail.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">     
                     
                     <div class="talent-avatar text-center"> 
-                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $facebook->getAccessToken();?>"> 
+                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>"> 
                         <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
                     </div>
                     <div class="card-info text-center">
@@ -106,7 +106,7 @@
                 <a class="cl-talent-listing-card-square text-left cl_graybackground cl_grayborder " href="follower_all_luvs.php">     
                     
                     <div class="talent-avatar text-center"> 
-                        <img src="https://graph.facebook.com/dddddddddddd/picture?type=normal&access_token=<?php echo $facebook->getAccessToken();?>"> 
+                        <img src="https://graph.facebook.com/dddddddddddd/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>"> 
                         <p class="talent-name">  More... </p>
                     </div>
                     <div class="heart-rank text-center">

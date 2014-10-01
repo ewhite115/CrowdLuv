@@ -64,7 +64,7 @@
 <div class="fluid-row">
 
     <div class="col-xs-12 col-sm-4 clwhitebg crowdluvsection text-center">
-        <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large&access_token=<?php echo $facebook->getAccessToken();?>">
+        <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large&access_token=<?php echo $facebookSession->getToken();?>">
         <h1><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
         <hr>
         <!-- ****  Fan Rank -->

@@ -1,93 +1,14 @@
   <?php
-
-//var_dump($_SESSION);
-
-/*
-
-object(FacebookApiException)#4 (8) {
-  ["result":protected]=> array(1) {
-    ["error"]=> array(3) { 
-      ["message"]=> string(80) "An active access token must be used to query information about the current user." 
-      ["type"]=> string(14) "OAuthException" 
-      ["code"]=> int(2500) 
-    } 
-  } 
-  ["message":protected]=> string(80) "An active access token must be used to query information about the current user." 
-  ["string":"Exception":private]=> string(0) "" 
-  ["code":protected]=> int(0) 
-  ["file":protected]=> string(93) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\inc\facebook-sdk\base_facebook.php" 
-  ["line":protected]=> int(1270) 
-  ["trace":"Exception":private]=> array(7) { 
-    [0]=> array(6) { 
-      ["file"]=> string(93) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\inc\facebook-sdk\base_facebook.php" 
-      ["line"]=> int(879) 
-      ["function"]=> string(17) "throwAPIException" 
-      ["class"]=> string(12) "BaseFacebook" 
-      ["type"]=> string(2) "->" 
-      ["args"]=> array(1) { 
-        [0]=> array(1) { 
-          ["error"]=> array(3) { 
-            ["message"]=> string(80) "An active access token must be used to query information about the current user." 
-            ["type"]=> string(14) "OAuthException" ["code"]=> int(2500) 
-          } 
-        } 
-      } 
-    } 
-    [1]=> array(4) { 
-      ["function"]=> string(6) "_graph" 
-      ["class"]=> string(12) "BaseFacebook" 
-      ["type"]=> string(2) "->" 
-      ["args"]=> array(1) { 
-        [0]=> string(12) "/me/accounts" 
-      } 
-    } 
-    [2]=> array(4) { 
-      ["file"]=> string(93) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\inc\facebook-sdk\base_facebook.php" 
-      ["line"]=> int(653) 
-      ["function"]=> string(20) "call_user_func_array" 
-      ["args"]=> array(2) { 
-        [0]=> array(2) { 
-          [0]=> object(Facebook)#3 (9) { 
-            ["sharedSessionID":protected]=> NULL 
-            ["appId":protected]=> string(15) "740484335978197" 
-            ["appSecret":protected]=> string(32) "24a9bbdc678e3ffbf8ce8e506f995251" 
-            ["user":protected]=> NULL 
-            ["signedRequest":protected]=> NULL 
-            ["state":protected]=> NULL 
-            ["accessToken":protected]=> NULL 
-            ["fileUploadSupport":protected]=> bool(false) 
-            ["trustForwarded":protected]=> bool(false) 
-          } [1]=> string(6) "_graph" 
-        } 
-        [1]=> array(1) { 
-          [0]=> string(12) "/me/accounts" 
-      } 
-    } 
-  } 
-  [3]=> array(6) { 
-    ["file"]=> string(80) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\inc\init_facebook.php" 
-    ["line"]=> int(73) 
-    ["function"]=> string(3) "api" 
-    ["class"]=> string(12) "BaseFacebook" 
-    ["type"]=> string(2) "->" ["args"]=> array(1) { 
-      [0]=> string(12) "/me/accounts" 
-    } 
-  } 
-  [4]=> array(4) 
-  { 
-    ["file"]=> string(74) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\inc\cl_init.php" ["line"]=> int(31) ["args"]=> array(1) { [0]=> string(80) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\inc\init_facebook.php" } ["function"]=> string(12) "require_once" } [5]=> array(4) { ["file"]=> string(73) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\inc\header.php" ["line"]=> int(4) ["args"]=> array(1) { [0]=> string(74) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\inc\cl_init.php" } ["function"]=> string(12) "require_once" } [6]=> array(4) { ["file"]=> string(71) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\shareluv.php" ["line"]=> int(6) ["args"]=> array(1) { [0]=> string(73) "C:\Users\USER\SkyDrive\CodingProjects\xampphtdocs\CrowdLuv\inc\header.php" } ["function"]=> string(7) "include" } } ["previous":"Exception":private]=> NULL } 
-
-
-
-
-
- */
-
-
+  require 'vendor/autoload.php';
+  use Facebook\FacebookSession;
+  use Facebook\FacebookRequest;
+  use Facebook\FacebookRedirectLoginHelper;
+  //var_dump($_SESSION);
 
   
   
-  require_once("facebook-sdk/facebook.php");
+  //require_once("facebook-sdk/facebook.php");
+  
 
 
   /**
@@ -108,26 +29,101 @@ object(FacebookApiException)#4 (8) {
   /**
    * Initialize the Facebook SDK
    */
+  
+  /*  php sdk3.2.3
   $fbconfig = array();
   $fbconfig['appId'] = CL_FB_APP_ID;
   $fbconfig['secret'] = CL_FB_APP_SECRET;
   $fbconfig['fileUpload'] = false; // optional
   $fbconfig['scope'] = CL_FB_PERMISSION_SCOPE_STRING;
   $facebook = new Facebook($fbconfig);   
-  //$access_token =  $facebook->getAccessToken();
-  //$facebook->setAccessToken($access_token);
-  //var_dump($facebook);
+  */
+ 
 
-  /**
-   * Check for a facebook session
-   */
+$followerFacebookPermissionScope = array(
+   'scope' => 'email',
+   'user_location',
+   'user_birthday',
+   'user_relationships'
+
+    );
+$talentFacebookPermissionScope = array(
+   'scope' => 'email',
+   'user_location',
+   'user_birthday',
+   'user_relationships',
+   'manage_pages'
+    );
+
+
+  FacebookSession::setDefaultApplication( CL_FB_APP_ID, CL_FB_APP_SECRET);
+  
+  $facebookLoginHelper = new FacebookRedirectLoginHelper(CLADDR);
+
+  /*facebook php sdk 3.2.3 
+      * Check for a facebook session
+   
   $fb_user = $facebook->getUser();
   cldbgmsg("  *** facebook->getUser():" . $fb_user . " --- Access Token: " . $facebook->getAccessToken()); //var_dump($fb_user);
+  */
+
+  $facebookSession= null;
+  // see if we've previously saved a facebook session token
+  if ( isset( $_SESSION ) && isset( $_SESSION['fb_token'] ) ) {
+    // create new fb session from saved access_token
+    $facebookSession = new FacebookSession( $_SESSION['fb_token'] );
+    
+    // validate the access_token to make sure it's still valid
+    try {
+      if ( !$facebookSession->validate() ) {
+        $facebookSession = null;
+      }
+    } catch ( Exception $e ) {
+      // catch any exceptions
+      $facebookSession = null;
+    }
+  }  
+
+  //No previously saved session token, so check to see if this is a new facebook login
+  if ( !isset( $facebookSession ) || $facebookSession === null ) {
+    // no session exists
+    
+    try {
+      $facebookSession = $facebookLoginHelper->getSessionFromRedirect();
+      echo "session:";
+      echo "<pre>"; var_dump($facebookSession); echo "</pre>";
+    } catch( FacebookRequestException $ex ) {
+      echo "FacebookRequestException getting session in init_facebook";
+      echo "<pre>"; var_dump($ex); echo "</pre>";
+      die;
+    } catch( Exception $ex ) {
+      // When validation fails or other local issues
+      echo "Exception getting session in init_facebook";
+      echo "<pre>"; var_dump($ex); echo "</pre>";
+      die;
+    }
+    
+  }
+
+  //If we dont have a facebook session, generate a login URL 
+  if(! $facebookSession){
+    //$followerLoginURL = $facebookLoginHelper->getLoginUrl($followerFacebookPermissionScope);
+    $talentLoginURL = $facebookLoginHelper->getLoginUrl($talentFacebookPermissionScope);
+
+  }
+
   
   //If we have an fb userid for the current user.... 
-  if ($fb_user) {  // Proceed thinking you have a logged in user who's authenticated.
+  if ($facebookSession) {  // Proceed thinking you have a logged in user who's authenticated.
+      //echo "we have a session";
+      cldbgmsg("Active Facebook session with token<br>" . $facebookSession->getToken());// var_dump($e);
 
+      $fb_user = $facebookSession->getSessionInfo()->asArray()['user_id'];
 
+      // save the facebook session token to persistent session storage 
+      $_SESSION['fb_token'] = $facebookSession->getToken();
+      // create a session using saved token or the new one we generated at login
+      $facebookSession = new FacebookSession( $facebookSession->getToken() );
 
 
       //Set a session global with the fb user id
@@ -140,9 +136,12 @@ object(FacebookApiException)#4 (8) {
       $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
       //if this is new user to CrowdLuv.. 
       if($CL_LOGGEDIN_USER_UID==0){
+          echo "**** TODO: Implement new user reg in php sdk 4 **. Exiting. ";
+          die;
           // ...request profile info from facebook and create a stub entry based on available info
           try { 
             $fb_user_profile = $facebook->api('/me');  //var_dump($fb_user_profile); 
+
             $CL_model->create_new_cl_follower_record_from_facebook_user_profile($fb_user_profile);
             $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
           } catch (FacebookApiException $e) {
@@ -151,6 +150,7 @@ object(FacebookApiException)#4 (8) {
             $fb_user = null;
           }                   
       } 
+      
       //set global var for the user's info
       $CL_LOGGEDIN_USER_OBJ = $_SESSION['CL_LOGGEDIN_USER_OBJ'] = $CL_model->get_follower_object_by_uid($CL_LOGGEDIN_USER_UID);
 
@@ -160,10 +160,17 @@ object(FacebookApiException)#4 (8) {
    * Now check for facebook pages the user is an administrator of,
    * add them to CL db if new, and store them in 'global' var 
    */
-  if($fb_user){
+  if($facebookSession){
 
       try{
-        $fb_user_pages = $facebook->api('/me/accounts');
+        //fb php sdk 3.2.3:  //$fb_user_pages = $facebook->api('/me/accounts');
+        // graph api request for user data
+        $request = new FacebookRequest( $facebookSession, 'GET', '/me/accounts' );
+        $response = $request->execute();
+        // get response
+        $fb_user_pages = $response->getGraphObject()->asArray();
+        //echo "<pre>"; var_dump($fb_user_pages); echo "</pre>";
+        
         // TODO:  ?  If the call succeeded, call setExtenedAccessToken()   ?
         //
         if(sizeof($fb_user_pages['data'])==0){$fb_user_pages=null;}
@@ -172,12 +179,16 @@ object(FacebookApiException)#4 (8) {
           $_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR = "";
           foreach ($fb_user_pages['data'] as $fbupg) {
             //Check to see if this talent exists in the cl db. 
-            $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg['id']);
+            $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg->id);
             //If not, create a stub entry
-            if(! $cltid) {cldbgmsg("Found new facebook page to add: " . $fbupg['id']); $CL_model->create_new_cl_talent_record_from_facebook_page_profile($fbupg);}
+            if(! $cltid) {
+              cldbgmsg("Found new facebook page to add: " . $fbupg->id); 
+              //TODO:  implement create new talent for fb php sdk 4
+              //$CL_model->create_new_cl_talent_record_from_facebook_page_profile($fbupg);
+            }
             //Get the tid for the newly created talent record, and
             //  Add the talent obj to a global 
-            $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg['id']);
+            $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg->id);
             $CL_LOGGEDIN_TALENTS_ARR[] = $CL_model->get_talent_object_by_tid($cltid);
           }
           //Set (or update) the session var with the array we were able to build this time since we had a valid token

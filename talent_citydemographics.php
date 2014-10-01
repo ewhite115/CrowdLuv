@@ -426,7 +426,7 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
 
     <div class="fluid-row">
         <div class="col-xs-12 crowdluvsection"> 
-            <h1>Follower Demographics in <?php echo $city;?> for <?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?> &nbsp; <img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebook->getAccessToken();?>'></h1>
+            <h1>Follower Demographics in <?php echo $city;?> for <?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?> &nbsp; <img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebookSession->getToken();?>'></h1>
              
         </div>
     </div>

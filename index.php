@@ -1,14 +1,20 @@
 <?php 
+use Facebook\FacebookSession;
+use Facebook\FacebookRedirectLoginHelper;
+
+
 $pageTitle = "CrowdLuv";
 $CL_SITE_SECTION = "home";
 require_once("inc/init_config.php");
 
 include(ROOT_PATH . 'inc/header.php'); 
 
-
+/*facebook php3.2.3 sdk
 //Create parameters for creating facebook login URL that will be used for the login buttons
 $folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING,'redirect_uri' => CLADDR . 'follower_dashboard.php'  );
 $talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
+*/
+
 
 if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
 
@@ -50,7 +56,8 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
       <div class="text-center crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
           <h1 class="cl-textcolor-standout cl-major-heading">For Fans</h1>
           <p class=""> Get your favorite acts to come to you. Share the Luv to establish yourself as the #1 fan and earn VIP perks.  </p><br>
-          <a href="<?php echo $facebook->getLoginUrl($folparams);?>"><img width="60%" class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
+          <a href="<?php echo $talentLoginURL;?>"><img width="60%" class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
+
           <br> 
           <!-- User Denied Facebook Permission -->
           <?php if((isset( $_GET['fb_user_denied_permissions'] ) && $_GET['fb_user_denied_permissions'] == '1')){ ?>
@@ -71,7 +78,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         <a href="follower_dashboard.php">
         <div class="col-xs-6 col-sm-3 text-center ">
           <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
-          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>">
+          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>">
           <p2 class="cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
           <p class="cl-textcolor-default">Manage Your CrowdLuv Profile</p>                            
           <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']){ ?>
@@ -113,7 +120,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         <p> </p>
             <p>Find out where you have the most Luv. Build relationships with your fans.  </p>    
             <br>
-            <a href="<?php echo $facebook->getLoginUrl($talparams);?>"><img width="50%" class="" src="<?php echo BASE_URL;?>res/select-facebook-pages.jpg" /></a><br>      
+            <a href="<?php echo $talentLoginURL;?>"><img width="50%" class="" src="<?php echo BASE_URL;?>res/select-facebook-pages.jpg" /></a><br>      
             
             <!-- Talent Denied Facebook Permission -->
             <?php if((isset( $_GET['fb_user_denied_permissions'] ) && $_GET['fb_user_denied_permissions'] == '1')){ ?>
@@ -150,7 +157,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
               <?php if(! $cltalentobj['waitlisted']) {  ?> <a href="topcities.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>&activemanagedtalent_tid=<?php echo $cltalentobj['crowdluv_tid'];?>"> <?php } ?> 
               <div class="text-left cl_graybackground cl_grayborder talentpagelisting">
                   
-                <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebook->getAccessToken();?>"> 
+                <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
                 <p>  <?php echo $cltalentobj['fb_page_name'];?></p>  <?php if($cltalentobj['waitlisted']) { ?> <p>(Wait-listed)</p> <?php } ?></span>
                 
               </div>        

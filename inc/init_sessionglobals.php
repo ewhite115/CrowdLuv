@@ -6,7 +6,7 @@
   //If there is logged in user, set global Obj's with that user's data
   //TODO:  change this to load latest info from DB instead of re-loading session var which may be "stale" ?
   if(isset($_SESSION['CL_LOGGEDIN_USER_UID'])){
-  	 cldbgmsg("Found session value for cluid");
+  	 cldbgmsg("Found session value for cluid: " . $_SESSION["CL_LOGGEDIN_USER_UID"]);
   	 $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"];
   }
   if(isset($_SESSION['CL_LOGGEDIN_USER_OBJ'])) {

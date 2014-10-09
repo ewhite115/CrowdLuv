@@ -32,6 +32,7 @@ $followerFacebookPermissionScope = array(
     );
 $talentFacebookPermissionScope = array(
    'scope' => 'email',
+   'user_friends',
    'user_location',
    'user_birthday',
    'user_relationships',
@@ -101,7 +102,7 @@ $talentFacebookPermissionScope = array(
   if ( !isset( $facebookSession ) || $facebookSession === null ) {
     try {
       $facebookSession = $facebookLoginHelper->getSessionFromRedirect();
-      //echo "session:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
+      echo "facebooksession:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
       //If this was in fact a newly-logged-in session, get facebook Permissions, check for minimums
       if($facebookSession){
         if(!checkFacebookPermissions($facebookSession, $talentFacebookPermissionScope)){
@@ -125,11 +126,13 @@ $talentFacebookPermissionScope = array(
 
   //If we dont have a facebook session, generate a login URL 
   if(! $facebookSession){
+    echo " no fb session: generating url";
     //Get the login URL - 
     $talentLoginURL = $facebookLoginHelper->getLoginUrl($talentFacebookPermissionScope);
     //if user previously declined, set rerequest flag to true
     if( isset( $_GET['fb_user_denied_permissions'] ) && $_GET['fb_user_denied_permissions'] == '1'){
-      echo "getting rerequest url"; $talentLoginURL = $talentLoginURL . "&auth_type=rerequest";
+      //echo "getting rerequest url"; 
+      $talentLoginURL = $talentLoginURL . "&auth_type=rerequest";
     }   
     //Save the fb login URL in a session var (mainly to be accessible by crowdluv admin app)
     $_SESSION['CL_fb_talentLoginURL'] = $talentLoginURL;
@@ -139,7 +142,7 @@ $talentFacebookPermissionScope = array(
 
   //Now - If we have an active fb session.... 
   if ($facebookSession) {  // Proceed thinking you have a logged in user who's authenticated.
-      //echo "we have a session";
+      echo "we have a session";
       cldbgmsg("Active Facebook session with token<br>" . $facebookSession->getToken());// var_dump($e);
 
       // save the facebook session token to persistent session storage 

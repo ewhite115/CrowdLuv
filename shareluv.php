@@ -100,7 +100,8 @@
                 query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=<?php echo $ret_tal['fb_pid'];?> AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
                 }, 
                 function(data) {
-                    console.log(data);           
+                    console.log("Result of FQL call for friends who like <?php echo $ret_tal['fb_page_name']?>" ); 
+                    console.log(data);
                     //For each of the friends, add their picture to the slide-down for the talent
                     if(data.length==0){ 
                         $("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append("Facebook friends who like <?php echo $ret_tal['fb_page_name'];?><br>None. "); 
@@ -111,14 +112,15 @@
                     for(var i=0;i<data.length;i++){
                         $("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
                     }
-                    //
+                    
                 }
         ); //end of fb.api
         <?php } ?>
 
 
-    }); //end of on() trigger for fbuserdataloaded
 
+    }); //end of on() trigger for fbuserdataloaded
+    
 
 </script>
 

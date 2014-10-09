@@ -21,23 +21,17 @@ class PageLoadListener
             return;
         }
         
+        //session_start();
+
         //if you are passing through any data
         $request = $event->getRequest();
-        //Get the Symfony session object from the request
-        //$session = $request->getSession();              
-        
-        //Get a session object that bridges to the 'legacy' PHP session variables 
-        //set by the parent CrowdLuv app
-		$session = new Session(new PhpBridgeSessionStorage());
-		$session->set('eddiesessvar', 'eddieeeee');
+
 
 		//Import/excute general CrowdLuv config / initialization code from 
 		//	'Parent' CrowdLuv application
         require_once("../../inc/init_config.php"); 
    		//Set some session variables that can be output by the TWIG templates
-	    $session->set('CROWDLUV_ENV', CROWDLUV_ENV);   //Current Environment
-        $session->set('BASE_URL', BASE_URL);
- 
+
         require_once("../../inc/cl_datafunctions.php");
 		//Establish DB connection and global $CL_model object
 		require_once("../../inc/init_db.php");
@@ -47,23 +41,33 @@ class PageLoadListener
   		require_once("../../inc/init_sessionglobals.php");
   		
   		//Check for facebook session, create/update globals and DB accordingly
-		require_once("../../inc/init_facebook.php");
-		
+		//require_once("../../inc/init_facebook.php");
+
+        //Get the Symfony session object from the request
+        //$session = $request->getSession();                      
+        //Get a session object that bridges to the 'legacy' PHP session variables 
+        //set by the parent CrowdLuv app
+		$session = new Session(new PhpBridgeSessionStorage());
+		$session->start();
+		$session->set('eddiesessvar', 'eddieeeee');
+	    $session->set('CROWDLUV_ENV', CROWDLUV_ENV);   //Current Environment
+        $session->set('BASE_URL', BASE_URL);
+ 	
 		//'copy' key legacy-session info to Symfony session.
 		//	this should happen after the above facebook initialization
 		require_once("../../inc/init_sessionglobals_symfony.php");
 
 
 		//$session->set('fb_user', $fb_user);
-		//Generate facebook login URL and set it into a session variable
+		//put facebook login URL into a session variable
 		//  that the twig templates can use to create a login button
-		//$talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
-		//$fbloginurl = $facebook->getLoginUrl($talparams);
-		//$session->set('fbloginurl', $fbloginurl);
 		if(isset($_SESSION['CL_fb_talentLoginURL'])) $session->set('fbloginurl', $_SESSION['CL_fb_talentLoginURL']);
-		
+
+		//echo "_session<pre>"; var_dump($_SESSION);echo"</pre>";
 		//$session->set('fbAccessToken', $facebook->getAccessToken());
 		if(isset($_SESSION['fb_token'])) $session->set('fbAccessToken', $_SESSION['fb_token']);
+
+
 
 		// End CrowdLuv config/initializations
 

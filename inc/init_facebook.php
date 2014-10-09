@@ -33,11 +33,21 @@ $followerFacebookPermissionScope = array(
 $talentFacebookPermissionScope = array(
    'scope' => 'email',
    'user_friends',
+   'user_likes',
    'user_location',
    'user_birthday',
    'user_relationships',
    'manage_pages'
     );
+
+/**
+ * [$facebookLikeCategoriesToCreateStubsFor Contains the list of Facebook like categories that should be automatically added to the CL DB as new talent]
+ * @var array
+ */
+$facebookLikeCategoriesToCreateStubsFor = array (
+  //'Community',
+  'Author'
+  );
 
 
 
@@ -71,6 +81,9 @@ $talentFacebookPermissionScope = array(
     return true;
 
   }//ChekFacebookPermissions
+
+
+
 
 
   /**
@@ -139,8 +152,10 @@ $talentFacebookPermissionScope = array(
   }
 
 
-
-  //Now - If we have an active fb session.... 
+  /**
+   * If we have a logged-in facebook user - Look up their crowdluv profile or
+   *     create a new one if they are new to crowdluv
+   */
   if ($facebookSession) {  // Proceed thinking you have a logged in user who's authenticated.
       echo "we have a session";
       cldbgmsg("Active Facebook session with token<br>" . $facebookSession->getToken());// var_dump($e);
@@ -163,6 +178,7 @@ $talentFacebookPermissionScope = array(
       //if this is new user to CrowdLuv.. 
       if($CL_LOGGEDIN_USER_UID==0){          
           //..request profile info from facebook and create a stub entry based on available info
+          //TODO: pull this out into a separate function?
           try { 
             // graph api request for user data
             $request = new FacebookRequest( $facebookSession, 'GET', '/me' );
@@ -227,7 +243,64 @@ $talentFacebookPermissionScope = array(
         //we should still be able to proceed, since the rest of the pages do not rely on 
         //  fb_user_pages, and should continue to use the talent array in the session var
 
-      }
-          
+      }       
 
   }//if fbUser
+
+
+
+  /**
+   * Check for facebook pages the user 'likes',
+   *   add those pages to CL db (as new talent) if not already
+   *   add an entry in db indicating this user "likes" that page/talent 
+   */
+  if($facebookSession){
+    //We may need to make multiple requests to get all the likes.
+    //  Loop making api call ..  
+    $done=false;
+    //Create the initial request object for retrieving user's likes
+    $request = new FacebookRequest( $facebookSession, 'GET', '/me/likes?limit=100' );
+    do{  
+      try{          
+          $response = $request->execute();
+          // get response
+          $fb_user_likes = $response->getGraphObject()->asArray();
+          //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
+          
+          if(isset($fb_user_likes['data']) && sizeof($fb_user_likes['data']) > 0) {  
+              //Clear the global and session variable for talent array
+              //$_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR = "";
+              foreach ($fb_user_likes['data'] as $fbupg) {
+                  //...See if it already exists as a talent in the CL DB
+                  $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg->id);
+                  //If not, and it's in an "enabled" category, add it
+                  if(! $cltid && (in_array($fbupg->category, $facebookLikeCategoriesToCreateStubsFor))) {          
+                      cldbgmsg("Found new facebook like page to add: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->category); 
+                      $CL_model->create_new_cl_talent_record_from_facebook_user_like($fbupg);
+                      $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg->id);
+                      $CL_model->setFollower_FacebookLikes_Talent($CL_LOGGEDIN_USER_UID, $cltid, 1);
+                  }
+                  
+                  //$CL_LOGGEDIN_TALENTS_ARR[] = $CL_model->get_talent_object_by_tid($cltid);    
+              }//foreach
+              //Set (or update) the session var with the array we were able to build this time since we had a valid token
+              //$_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR;
+          } //if we got data back fro api call
+
+          //Check to see if there is more data or not
+          //if(! ($request = $response->getRequestForNextPage())) { echo "didnt find more data"; $done=true; }
+
+      }catch (FacebookApiException $e) {
+        cldbgmsg("FacebookAPIException requesting /me/likes -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+        $fb_user_likes = null;
+        //we should still be able to proceed, since the rest of the pages do not rely on 
+        //  fb_user_likes, and should continue to use the talent array in the session var
+      } 
+      //Create a new request object and start over if there are more likes
+  } while (($response) && $request = $response->getRequestForNextPage());
+
+
+  }//if fbUser
+
+
+

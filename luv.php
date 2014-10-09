@@ -12,7 +12,7 @@
     if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}
     
 
-    $CL_model->add_follower_to_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']);
+    $CL_model->setFollower_Luvs_Talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid'], 1);
     //Check if this is the first talent that the follower has Luv'ed.
     $tcnt = count($CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID));
     

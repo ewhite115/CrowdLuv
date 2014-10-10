@@ -157,7 +157,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
    *     create a new one if they are new to crowdluv
    */
   if ($facebookSession) {  // Proceed thinking you have a logged in user who's authenticated.
-      echo "we have a session";
+      //echo "we have a session";
       cldbgmsg("Active Facebook session with token<br>" . $facebookSession->getToken());// var_dump($e);
 
       // save the facebook session token to persistent session storage 
@@ -207,7 +207,6 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   if($facebookSession){
 
       try{
-        //fb php sdk 3.2.3:  //$fb_user_pages = $facebook->api('/me/accounts');
         // graph api request for user data
         $request = new FacebookRequest( $facebookSession, 'GET', '/me/accounts' );
         $response = $request->execute();

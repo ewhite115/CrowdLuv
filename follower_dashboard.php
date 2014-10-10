@@ -11,14 +11,17 @@
     $emailStatus = $CL_model->getEmailValidityForFollower($CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] );
 
 
-    //Get the list of talent this user is following, 
+    //Get the list of talent this user luvs 
     $mostLuvd = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
     //re-sort the list by how many LuvPoints the fan has for each
     $scores=array();
     foreach($mostLuvd as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); }
     array_multisort($scores, SORT_DESC, $mostLuvd);
 
-    //$luvs = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_OBJ['crowdluv_uid']);
+
+    //Get the list of talent this user luvs 
+    $mylikes = $CL_model->getTalentsThatFollowerFacebookLikesButNotLuvs($CL_LOGGEDIN_USER_UID);
+
 
 
 
@@ -28,7 +31,7 @@
 
     <!-- Block to show status of contact info -->
     <div class="row">
-        <div class="col-xs-10 col-xs-offset-1 clwhitebg crowdluvsection">
+        <div class="col-xs-11 col-xs-offset-1 clwhitebg crowdluvsection">
             <div class="row">
                 <div class="col-xs-4">
                     <h1 class="inline-block">Mobile</h1>
@@ -74,9 +77,11 @@
 
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1 crowdluvsection">
-          <img src='res/top-heart.png'/>
-          <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">Most Luv'd</h1>
-          <a href="follower_all_talents.php"><span> (See all...)</span></a>
+            <img src='res/top-heart.png'/>
+            <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                My Most Luv'd
+            </h1>
+            <a href="follower_all_talents.php"><span> (See all...)</span></a>
         </div>
     </div>
 
@@ -126,6 +131,64 @@
    
 
   
+<!-- ***  Likes ***  -->
+
+    <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 crowdluvsection">
+            <img src='res/FB-ThumbsUp_50.png'/>
+            <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                My Likes
+            </h1>
+            <a href="follower_all_talents.php"><span> (See all...)</span></a>
+        </div>
+    </div>
+
+
+    <div class="cl-full-width-row crowdluvsection clwhitebg cl-grayborder">
+
+        <div class="cl-talent-listing-card-container-single-row">
+          
+            <?php foreach($mylikes as $cltalentobj){  ?>              
+                
+                <a class="cl-talent-listing-card-square text-left cl_graybackground cl_grayborder " href="talent/<?php echo $cltalentobj['crowdluv_vurl'];?>">     
+                    
+                    <div class="talent-avatar text-center"> 
+                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>"> 
+                        <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
+                    </div>
+                    <div class="card-info text-center">
+                        <img src='res/top-heart.png'/>
+                        <p class="follower-rank">Luv</p>
+                    </div>
+
+                    <div class="text-center extra-info crowdluvsection "> <p><?php //echo $cltalentobj['score'];?> </p>  </div>
+                                                
+                </a> 
+            <?php } ?>
+            
+                <a class="cl-talent-listing-card-square text-left cl_graybackground cl_grayborder " href="follower_all_luvs.php">     
+                    
+                    <div class="talent-avatar text-center"> 
+                        <img src="https://graph.facebook.com/dddddddddddd/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>"> 
+                        <p class="talent-name">  More... </p>
+                    </div>
+                    <div class="heart-rank text-center">
+                        <img src='res/top-heart.png'/>
+                        <p class="follower-rank">See all Likes</p>
+                    </div>
+
+                    <div class="extra-info crowdluvsection"> <p></p>  </div>
+                                                
+                </a> 
+
+        </div>
+
+
+
+    </div>
+   
+
+
 
 
 <?php include(ROOT_PATH . 'inc/footer.php') ?>

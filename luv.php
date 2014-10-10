@@ -20,7 +20,7 @@
     if(!$servlet_testing)   ob_end_clean();
 
     //Redirect to the follower dashboard/ "share luv" page. 
-    header('Location: shareluv.php?newluv=' . $tcnt );
+    header('Location: follower_dashboard.php?newluv=' . $tcnt );
     exit;
 
 ?>

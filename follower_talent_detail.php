@@ -12,17 +12,18 @@
     $score = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']); 
     $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']);
 
-
     //Get the followers settings for the target talent
-    //  First, get the list of talent this user is following, 
-    $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
-    //re-sort the list by how many LuvPoints the fan has for each
-    
+    $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);  
     $targetTalentPreferences = "";
     foreach($ret_tals as &$ret_tal){ if($ret_tal['crowdluv_tid'] == $CL_CUR_TGT_TALENT['crowdluv_tid']) $targetTalentPreferences = $ret_tal;}
     
 
+    //Get the list of luvers for the top luvers luverboard
+    $rankedLuvers = $CL_model->getFollowersWhoLuvTalentSortedByScore($CL_CUR_TGT_TALENT['crowdluv_tid']);
+    //echo "<pre>"; var_dump($rankedLuvers); echo "</pre>";die;
 
+
+    //
 
 ?> 
 
@@ -139,7 +140,40 @@
         <div class="row">
             <div class="col-xs-12 clwhitebg crowdluvsection">
                 <h1 class="cl-textcolor-standout">LuverBoards</h1>
-                <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                <ul class="nav nav-tabs">
+                   <li class="active"><a href="#home" data-toggle="tab">Top Luvers</a></li>
+                   <li><a href="#top-cities" data-toggle="tab">Top Cities</a></li>
+                   <li><a href="#top-luvers-city" data-toggle="tab">Top Luvers (My City)</a></li>
+                </ul>                
+
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade in active" id="home">
+                        <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>
+                            <p>
+                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square&access_token=<?php echo $facebookSession->getToken();?>"> 
+                                <?php echo $rankedLuver['firstname']; ?> 
+                                <?php echo $rankedLuver['score']; ?> 
+
+                            </p>
+                        <?php  if($i++ > 8) break; } ?>
+                   </div>
+                   <div class="tab-pane fade" id="top-cities">
+                      <p>  
+                        Top Cities
+                                <?php include(ROOT_PATH . "inc/print_top_cities.php");?>
+
+
+                      </p>
+                   </div>
+                   <div class="tab-pane fade" id="top-luvers-city">
+                      <p>
+                        Top Luver in my city
+                      </p>
+                   </div>
+                </div>
+
+
+
             </div>
         </div>
 

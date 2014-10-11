@@ -804,7 +804,7 @@ class CrowdLuvModel {
      * @param  [type] $cl_tidt [description]
      * @return [type]          [description]
      */
-    //TODO:  Change name to getFollowerWhoLuvTalent
+    //TODO:  Change name to getFollowersWhoLuvTalent
     public function get_followers_for_talent($cl_tidt) {
 
         try {
@@ -822,6 +822,54 @@ class CrowdLuvModel {
         return $fols;
     }
 
+
+   /**
+     * [get_follower_scores_for_talent DEPRECATED. Use getFollowersWhoLuvTalentSortedByScore(). Returns ar array of Follower objects and their LuvScore for the specified talent]
+     * @param  [type] $cl_tidt [Talent ID]
+     * @return [Array]          [description]
+     */
+    public function get_follower_scores_for_talent($cl_tidt){
+
+        //get a list of all followers for the talent
+        $fols = $this->get_followers_for_talent($cl_tidt);
+        //calculate score for every follower, and store into array using uid as index
+        $scores=array();  //column of the scores, used for the multisort call
+        $folscores=array();
+        foreach($fols as $fol) {
+            $thisfolscore = $this->calculate_follower_score_for_talent($fol['crowdluv_uid'], $cl_tidt);
+            $scores[] = $thisfolscore;
+            $folscores[] = array( 'crowdluv_uid' => $fol['crowdluv_uid'], 'folscore' => $thisfolscore );
+
+        }
+        //sort in descending order by scores, and return that sorted array
+        //arsort($scores);
+        array_multisort($scores, SORT_DESC, $folscores);
+        //var_dump($folscores); exit;
+        return $folscores;
+
+    }
+
+    /**
+     * [getRankedFollowersWhoLuvTalent Returns ar array of Follower objects and their LuvScore for the specified talent]
+     * @param  [type] $cl_tidt [Talent ID]
+     * @return [Array]          [description]
+     */
+    public function getFollowersWhoLuvTalentSortedByScore($cl_tidt){
+
+        //get a list of all followers for the talent
+        $fols = $this->get_followers_for_talent($cl_tidt);
+        //calculate score for every follower, and store into array using uid as index
+        $scores=array();  //column of the scores, used for the multisort call
+        //$folscores=array();
+        foreach($fols as &$fol) {
+             $scores[] = $fol['score'] = $this->calculate_follower_score_for_talent($fol['crowdluv_uid'], $cl_tidt);
+        }
+        //sort in descending order by scores, and return that sorted array
+        array_multisort($scores, SORT_DESC, $fols);
+        //var_dump($folscores); exit;
+        return $fols;
+
+    }
     public function get_followers_by_city_for_talent($cl_tidt, $city, $mileradius){
 
         try {
@@ -949,26 +997,7 @@ class CrowdLuvModel {
 
     }
 
-    public function get_follower_scores_for_talent($cl_tidt){
-
-        //get a list of all follower uids for the talent
-        $fols = $this->get_followers_for_talent($cl_tidt);
-        //calculate score for every follower, and store into array using uid as index
-        $scores=array();  //column of the scores, used for the multisort call
-        $folscores=array();
-        foreach($fols as $fol) {
-            $thisfolscore = $this->calculate_follower_score_for_talent($fol['crowdluv_uid'], $cl_tidt);
-            $scores[] = $thisfolscore;
-            $folscores[] = array( 'crowdluv_uid' => $fol['crowdluv_uid'], 'folscore' => $thisfolscore );
-
-        }
-        //sort in descending order by scores, and return that sorted array
-        //arsort($scores);
-        array_multisort($scores, SORT_DESC, $folscores);
-        //var_dump($folscores); exit;
-        return $folscores;
-
-    }
+ 
 
     public function calculate_follower_rank_for_talent($cl_uidt, $cl_tidt){
        

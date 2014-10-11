@@ -17,6 +17,7 @@
         $scores[] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); 
     }
 
+
     array_multisort($scores, SORT_DESC, $ret_tals);
      
 

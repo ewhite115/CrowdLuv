@@ -728,5 +728,13 @@ background-size: contain;
 
 
 .cl-textcolor-default {
-    color: #383839;}
+    color: #383839;
+}
+
+
+.cl-panel-luverboard {
+    height: 31.75em;
+    overflow: scroll;
+
+
 }

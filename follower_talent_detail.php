@@ -145,8 +145,8 @@
         <br><br>
 
         <!-- ****  LuverBoards ***  -->
-        <div class="row">
-            <div class="col-xs-12 clwhitebg crowdluvsection">
+        <div class="row" >
+            <div class="col-xs-12 clwhitebg crowdluvsection ">
                 <h1 class="cl-textcolor-standout">LuverBoards</h1>
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#home" data-toggle="tab">Top Fans</a></li>
@@ -158,7 +158,7 @@
                 </ul>                
 
                 <div id="myTabContent" class="tab-content">
-                    <div class="tab-pane fade in active" id="home">
+                    <div class="tab-pane fade in active cl-panel-luverboard" id="home">
                         <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan?</h2>
                         <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>
@@ -171,7 +171,7 @@
 
                         <?php  if($i++ > 8) break; } ?>
                    </div>
-                   <div class="tab-pane fade" id="top-cities">
+                   <div class="tab-pane fade cl-panel-luverboard" id="top-cities">
   
                         <h2 class="text-center">Does your city have the most Luv for <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>?</h2>
                         <p class="text-center"><a href="shareluv.php">Share the Luv</a> to increase your City's LuvScore. </p>
@@ -199,7 +199,7 @@
 
 
                    </div>
-                   <div class="tab-pane fade" id="top-luvers-city">
+                   <div class="tab-pane fade cl-panel-luverboard" id="top-luvers-city">
                         <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan in <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>?</h2>
                         <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuversMyCity as $rankedLuver) { ?>

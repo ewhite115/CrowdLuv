@@ -149,6 +149,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
     }   
     //Save the fb login URL in a session var (mainly to be accessible by crowdluv admin app)
     $_SESSION['CL_fb_talentLoginURL'] = $talentLoginURL;
+
   }
 
 
@@ -236,7 +237,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
           //Set (or update) the session var with the array we were able to build this time since we had a valid token
           $_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR;
         }    
-      }catch (FacebookApiException $e) {        
+      } catch (FacebookApiException $e) {        
         cldbgmsg("FacebookAPIException in cl_init.php requesting page info:-------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
         $fb_user_pages = null;
         //we should still be able to proceed, since the rest of the pages do not rely on 

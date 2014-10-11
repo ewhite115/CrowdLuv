@@ -215,8 +215,6 @@ $facebookLikeCategoriesToCreateStubsFor = array (
         $fb_user_pages = $response->getGraphObject()->asArray();
         //echo "<pre>"; var_dump($fb_user_pages); echo "</pre>";
         
-        // TODO:  ?  If the call succeeded, call setExtenedAccessToken()   ?
-        //
         if(sizeof($fb_user_pages['data'])==0){$fb_user_pages=null;}
         else{  
           //Clear the global and session variable for talent array
@@ -280,15 +278,8 @@ $facebookLikeCategoriesToCreateStubsFor = array (
                       $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg->id);
                       $CL_model->setFollower_FacebookLikes_Talent($CL_LOGGEDIN_USER_UID, $cltid, 1);
                   }
-                  
-                  //$CL_LOGGEDIN_TALENTS_ARR[] = $CL_model->get_talent_object_by_tid($cltid);    
               }//foreach
-              //Set (or update) the session var with the array we were able to build this time since we had a valid token
-              //$_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR;
           } //if we got data back fro api call
-
-          //Check to see if there is more data or not
-          //if(! ($request = $response->getRequestForNextPage())) { echo "didnt find more data"; $done=true; }
 
       }catch (FacebookApiException $e) {
         cldbgmsg("FacebookAPIException requesting /me/likes -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 

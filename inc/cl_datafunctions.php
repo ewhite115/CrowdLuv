@@ -74,50 +74,18 @@ class CrowdLuvModel {
         try {
             
             $this->update_follower_setting($cl_fobj[crowdluv_uid], "mobile", $cl_fobj['mobile'] );
-            /*$sql = "update follower set mobile=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $cl_fobj['mobile']);
-            $results->execute();*/
-            
-
-            $this->update_follower_setting($cl_fobj[crowdluv_uid], "email", $cl_fobj['email'] );
-            /*$sql = "update follower set email=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $cl_fobj['email']);
-            $results->execute();*/
-            
-            $this->update_follower_setting($cl_fobj[crowdluv_uid], "firstname", $cl_fobj['firstname'] );
-            /*$sql = "update follower set firstname=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $cl_fobj['firstname']);
-            $results->execute();*/
-            
+            $this->update_follower_setting($cl_fobj[crowdluv_uid], "email", $cl_fobj['email'] ); 
+            $this->update_follower_setting($cl_fobj[crowdluv_uid], "firstname", $cl_fobj['firstname'] ); 
             $this->update_follower_setting($cl_fobj[crowdluv_uid], "lastname", $cl_fobj['lastname'] );
-            /*$sql = "update follower set lastname=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $cl_fobj['lastname']);
-            $results->execute();*/
-
             $this->update_follower_setting($cl_fobj[crowdluv_uid], "allow_cl_email", $cl_fobj['allow_cl_email'] );
-            /*$sql = "update follower set allow_cl_email=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $cl_fobj['allow_cl_email']);
-            $results->execute();*/
-
             $this->update_follower_setting($cl_fobj[crowdluv_uid], "allow_cl_sms", $cl_fobj['allow_cl_sms'] );
-            /*$sql = "update follower set allow_cl_sms=? where crowdluv_uid=" . $cl_fobj['crowdluv_uid'];
-            $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $cl_fobj['allow_cl_sms']);
-            $results->execute();*/
-
-            //var_dump($results); exit;
+ 
             
         } catch (Exception $e) {
             echo "Data could not be retrieved from the database. " . $e;
             return -1;//exit;
         }
 
-        //exit;
     }
 
    /**
@@ -168,8 +136,7 @@ class CrowdLuvModel {
             $results = $this->cldb->query($sql);
             $firstline = $results->fetch(PDO::FETCH_ASSOC);
             if(!$firstline) return 0;
-            //$tid = $firstline['crowdluv_tid'];
-            //echo "uid= (" . $uid . ")";
+             //echo "uid= (" . $uid . ")";
             return $firstline;
         } catch (Exception $e) {
             echo "Data could not be retrieved from the database. " . $e;
@@ -213,8 +180,7 @@ class CrowdLuvModel {
      */
     public function getMobileValidityForFollower($cl_uidt) {
 
-        //TODO:  implement this
-    
+        //TODO:  implement this   
         $follower = $this->get_follower_object_by_uid($cl_uidt);
         
         if($follower['mobile'] == "") return "invalid";
@@ -230,7 +196,6 @@ class CrowdLuvModel {
     public function getEmailValidityForFollower($cl_uidt ) {
 
         //TODO:  implement this
-        
         $follower = $this->get_follower_object_by_uid($cl_uidt);
         
         if($follower['email'] == "") return "invalid";
@@ -421,9 +386,6 @@ class CrowdLuvModel {
      */
     public function get_talent_object_by_tid($cl_tidt){
 
-       //require(ROOT_PATH . "inc/database.php");
-       //global $CL_db;
-
         try {
             $sql = "select * from talent where crowdluv_tid=" . $cl_tidt;
             //echo $sql;
@@ -570,8 +532,8 @@ class CrowdLuvModel {
             $results->bindParam(1, $cl_vurl);
             $results->execute();
             $firstline = $results->fetch(PDO::FETCH_ASSOC);
-             if(!$firstline) return null;
-             $tid = $firstline['crowdluv_tid'];
+            if(!$firstline) return null;
+            $tid = $firstline['crowdluv_tid'];
             
             return $tid;
         } catch (Exception $e) {
@@ -604,36 +566,6 @@ class CrowdLuvModel {
 ****************/
 
 
-
-/*    public function add_follower_to_talent($cl_uidt, $cl_tidt){
-        
-        //Update the "following" table acorindgly
-        try{
-            //Check to see if this follower had previously been following the talent
-            $sql = "select count(*) from follower_luvs_talent where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
-
-            $results = $this->cldb->query($sql);
-            $i = intval($results->fetchColumn(0));
-            if($i >0){ //If yes, just update the "still_following" column
-
-                $sql = "update follower_luvs_talent set still_following=1 where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
-                //echo $sql; 
-                $results = $this->cldb->query($sql);
-
-            } else {  //never previously following, so add a row to the luvs table
-                $sql = "INSERT INTO `crowdluv`.`follower_luvs_talent` (`crowdluv_uid`, `crowdluv_tid`, `still_following`, `follow_date`) 
-                                                            VALUES (" . $cl_uidt . ", " . $cl_tidt . ", 1,                  Now())";
-                //echo $sql; 
-                $results = $this->cldb->query($sql);           
-            }
-
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database." . $e;
-            exit;
-        }
-        
-    }
-*/
 
     /**
      * [setFollowerLuvsTalent Update DB to indicate whether a follower "luvs" a talent.
@@ -842,7 +774,6 @@ class CrowdLuvModel {
 
         }
         //sort in descending order by scores, and return that sorted array
-        //arsort($scores);
         array_multisort($scores, SORT_DESC, $folscores);
         //var_dump($folscores); exit;
         return $folscores;
@@ -1108,9 +1039,6 @@ class CrowdLuvModel {
 
 
     }
-
-
-
 
 
 

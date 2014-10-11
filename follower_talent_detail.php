@@ -23,7 +23,11 @@
     //echo "<pre>"; var_dump($rankedLuvers); echo "</pre>";die;
 
 
-    //
+    //Get the list of top cities for the top cities luverboard
+    $cnt=1;
+    $topcities= $CL_model->get_top_cities_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']);
+    //var_dump($topcities);
+
 
 ?> 
 
@@ -141,29 +145,56 @@
             <div class="col-xs-12 clwhitebg crowdluvsection">
                 <h1 class="cl-textcolor-standout">LuverBoards</h1>
                 <ul class="nav nav-tabs">
-                   <li class="active"><a href="#home" data-toggle="tab">Top Luvers</a></li>
+                   <li class="active"><a href="#home" data-toggle="tab">Top Fans</a></li>
                    <li><a href="#top-cities" data-toggle="tab">Top Cities</a></li>
-                   <li><a href="#top-luvers-city" data-toggle="tab">Top Luvers (My City)</a></li>
+                   <li><a href="#top-luvers-city" data-toggle="tab">Top Fans - My City</a></li>
                 </ul>                
 
                 <div id="myTabContent" class="tab-content">
                     <div class="tab-pane fade in active" id="home">
+                        <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan?</h2>
+                        <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>
                             <p>
                                 <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square&access_token=<?php echo $facebookSession->getToken();?>"> 
-                                <?php echo $rankedLuver['firstname']; ?> 
-                                <?php echo $rankedLuver['score']; ?> 
+                                <?php echo $rankedLuver['firstname']; ?> --- 
+                                <?php echo $rankedLuver['score']; ?> Luvs
 
                             </p>
+
                         <?php  if($i++ > 8) break; } ?>
                    </div>
                    <div class="tab-pane fade" id="top-cities">
-                      <p>  
-                        Top Cities
-                                <?php include(ROOT_PATH . "inc/print_top_cities.php");?>
+  
+                        <h2 class="text-center">Does your city have the most Luv for <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>?</h2>
+                        <p class="text-center"><a href="shareluv.php">Share the Luv</a> to increase your City's LuvScore. </p>
+
+                        <?php foreach($topcities as $row){ ?>
+
+                           <div class="row crowdluvsection ">
+                                <div class="col-xs-2  ">
+                                    <img class="img-responsive" src='res/top-heart.png'>           
+                                    <div style='position:absolute;top:9px;left:25px;color:white;font-size:14px;'><p><b>#<?php echo $cnt++;?></b></p></div>
+                                </div>
+                                <div class="col-xs-6 text-left">
+                                    <p><?php echo $row["location_fbname"];?></p>
+                                    
+                                </div>
+                                <div class="col-xs-4 text-left">
+                                    <p>LuvScore: <?php echo $row["city_score"];?></p>
+                                    <p><?php echo $row['count(location_fbname)'];?> Luvers </p>
+                                </div>
+                                
+                                
+                            </div>
+
+                        <?php }  ?>
 
 
-                      </p>
+
+
+
+
                    </div>
                    <div class="tab-pane fade" id="top-luvers-city">
                       <p>

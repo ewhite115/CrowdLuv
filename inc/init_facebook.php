@@ -46,7 +46,9 @@ $talentFacebookPermissionScope = array(
  */
 $facebookLikeCategoriesToCreateStubsFor = array (
   //'Community',
+  //'Musician/Band',
   'Author'
+
   );
 
 

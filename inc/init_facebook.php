@@ -114,6 +114,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   }  
 
   //We didnt find a previously saved session token, so check to see if this is a new facebook login
+  $isNewSession = false;  // This flag will be used later to conditionally execute code only if it's a 'new' session
   if ( !isset( $facebookSession ) || $facebookSession === null ) {
     try {
       $facebookSession = $facebookLoginHelper->getSessionFromRedirect();
@@ -125,6 +126,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
           header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
           die(); 
         }
+        $newSession = true;
       }
     } catch( FacebookRequestException $ex ) {
       echo "FacebookRequestException getting session in init_facebook";
@@ -161,7 +163,8 @@ $facebookLikeCategoriesToCreateStubsFor = array (
    */
   if ($facebookSession) {  // Proceed thinking you have a logged in user who's authenticated.
       //echo "we have a session";
-      cldbgmsg("Active Facebook session with token<br>" . $facebookSession->getToken());// var_dump($e);
+      cldbgmsg("Active Facebook session with token<br>" . $facebookSession->getToken());
+      //cldbgmsg("Active Facebook session <br>" . $facebookSession);
 
       // save the facebook session token to persistent session storage 
       $_SESSION['fb_token'] = $facebookSession->getToken();
@@ -178,6 +181,8 @@ $facebookLikeCategoriesToCreateStubsFor = array (
 
       //Check to see if this fb user exists in CL db.... Set a global variable containing the crowdluv_uid
       $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"] = $CL_model->get_crowdluv_uid_by_fb_uid($fb_user);
+      //TODO:  make the call to /api/me on every "new" session, check against our existing info,
+              //and later prompt user for updates if anything has changed?
       //if this is new user to CrowdLuv.. 
       if($CL_LOGGEDIN_USER_UID==0){          
           //..request profile info from facebook and create a stub entry based on available info
@@ -254,7 +259,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
    *   add those pages to CL db (as new talent) if not already
    *   add an entry in db indicating this user "likes" that page/talent 
    */
-  if($facebookSession){
+  if($facebookSession and $isNewSession){
     //We may need to make multiple requests to get all the likes.
     //  Loop making api call ..  
     $done=false;

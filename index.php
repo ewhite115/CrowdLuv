@@ -80,7 +80,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
           <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
           <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>">
           <p2 class="cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
-          <p class="cl-textcolor-default">Manage Your CrowdLuv Profile</p>                            
+          <p class="cl-textcolor-default">Manage Your CrowdLuv Profile and who you follow</p>                            
           <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']){ ?>
             <p class="cl-textcolor-default">You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
 

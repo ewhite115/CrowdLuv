@@ -170,8 +170,8 @@
                             </p>
 
                         <?php  if($i++ > 8) break; } ?>
-                   </div>
-                   <div class="tab-pane fade cl-panel-luverboard" id="top-cities">
+                    </div>
+                    <div class="tab-pane fade cl-panel-luverboard" id="top-cities">
   
                         <h2 class="text-center">Does your city have the most Luv for <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>?</h2>
                         <p class="text-center"><a href="shareluv.php">Share the Luv</a> to increase your City's LuvScore. </p>

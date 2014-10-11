@@ -12,21 +12,25 @@
     $score = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']); 
     $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']);
 
-    //Get the followers settings for the target talent
+    //Get the follower's settings for the target talent
     $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);  
     $targetTalentPreferences = "";
-    foreach($ret_tals as &$ret_tal){ if($ret_tal['crowdluv_tid'] == $CL_CUR_TGT_TALENT['crowdluv_tid']) $targetTalentPreferences = $ret_tal;}
-    
+    foreach($ret_tals as &$ret_tal){ if($ret_tal['crowdluv_tid'] == $CL_CUR_TGT_TALENT['crowdluv_tid']) $targetTalentPreferences = $ret_tal;}   
 
     //Get the list of luvers for the top luvers luverboard
     $rankedLuvers = $CL_model->getFollowersWhoLuvTalentSortedByScore($CL_CUR_TGT_TALENT['crowdluv_tid']);
     //echo "<pre>"; var_dump($rankedLuvers); echo "</pre>";die;
 
-
     //Get the list of top cities for the top cities luverboard
     $cnt=1;
     $topcities= $CL_model->get_top_cities_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']);
     //var_dump($topcities);
+    //Get My city's rank.
+    $myCityRank = $CL_model->calculate_city_rank_for_talent($CL_LOGGEDIN_USER_OBJ['location_fb_id'], $CL_CUR_TGT_TALENT['crowdluv_tid']);
+
+
+    //Get the sorted/ranked list of luver in my city
+    $rankedLuversMyCity = $CL_model->getFollowersWhoLuvTalentInCitySortedByScore($CL_CUR_TGT_TALENT['crowdluv_tid'], $CL_LOGGEDIN_USER_OBJ['location_fbname'], 5);
 
 
 ?> 
@@ -90,11 +94,10 @@
             <h1 class="follower-rank">Your Town's Rank</h1>
             <img src='res/top-heart.png'/>     
             <p>
-                <?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?> out of <?php echo count($CL_model->get_followers_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']));?> fans on CrowdLuv
+                <?php if($myCityRank['tie_count'] > 0 ) echo "Tied for";  ?> 
+                #<?php echo $myCityRank['rank']; ?> out of <?php echo count($topcities);?> 
             </p>
 
-
-            <p>(<?php echo $score; ?> LuvPoints)</p>
         </div>
         <hr>
 
@@ -141,13 +144,17 @@
         </div>
         <br><br>
 
+        <!-- ****  LuverBoards ***  -->
         <div class="row">
             <div class="col-xs-12 clwhitebg crowdluvsection">
                 <h1 class="cl-textcolor-standout">LuverBoards</h1>
                 <ul class="nav nav-tabs">
-                   <li class="active"><a href="#home" data-toggle="tab">Top Fans</a></li>
-                   <li><a href="#top-cities" data-toggle="tab">Top Cities</a></li>
-                   <li><a href="#top-luvers-city" data-toggle="tab">Top Fans - My City</a></li>
+                    <li class="active"><a href="#home" data-toggle="tab">Top Fans</a></li>
+                    <li><a href="#top-cities" data-toggle="tab">Top Cities</a></li>
+                    <?php  //Only show the "Top Luver My City" tab if the user actually has a valid city
+                    if($CL_LOGGEDIN_USER_OBJ['location_fb_id']){ ?>
+                        <li><a href="#top-luvers-city" data-toggle="tab">Top Fans - My City</a></li>
+                    <?php } ?>
                 </ul>                
 
                 <div id="myTabContent" class="tab-content">
@@ -191,15 +198,20 @@
                         <?php }  ?>
 
 
-
-
-
-
                    </div>
                    <div class="tab-pane fade" id="top-luvers-city">
-                      <p>
-                        Top Luver in my city
-                      </p>
+                        <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan in <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>?</h2>
+                        <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
+                        <?php $i=0; foreach($rankedLuversMyCity as $rankedLuver) { ?>
+                            <p>
+                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square&access_token=<?php echo $facebookSession->getToken();?>"> 
+                                <?php echo $rankedLuver['firstname']; ?> --- 
+                                <?php echo $rankedLuver['score']; ?> Luvs
+
+                            </p>
+
+                        <?php  if($i++ > 8) break; } ?>
+ 
                    </div>
                 </div>
 

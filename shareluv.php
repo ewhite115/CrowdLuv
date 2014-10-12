@@ -12,12 +12,8 @@
     //re-sort the list by how many LuvPoints the fan has for each
     $scores=array();
     foreach($ret_tals as $ret_tal){ 
-        //$ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); 
-        //$scores[] = $ret_tal['score'];
         $scores[] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); 
     }
-
-
     array_multisort($scores, SORT_DESC, $ret_tals);
      
 
@@ -51,8 +47,11 @@
                 foreach($ret_tals as $cltalentobj){ 
                     $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']);
             ?>
-                <!-- Share Talent Card -->
-                <div class="  crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder"> 
+                <!-- Share Talent Card 
+                     data-crowdluv-tid attribute is added so that twitter callback handler can determine the crowdluv_tid being shared
+                     This attribute must be on the parent div of the twitter share button                      
+                      -->
+                <div data-crowdluv-tid="<?php echo $cltalentobj['crowdluv_tid'];?>" class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder"> 
                 
                     <div class="talent-avatar text-center"> 
                         <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
@@ -79,14 +78,18 @@
                         </div>
                         -->
 
-
+                        <!--Facebook and Twitter Share buttons -->
                         <a href="#"><img style="width:50px;" src="res/facebook-share-button.png" onclick="doFacebookShareDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')"> </a>
                         <a href="#"><img style="width:50px;" src="res/facebook-send-button.jpg" onclick="doFacebookSendDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')"> </a>
-                        <br>
+                        <a href="https://twitter.com/share" class="twitter-share-button" 
 
-                        <a  href="https://twitter.com/share" class="twitter-share-button" data-text="Want <?php echo $cltalentobj["fb_page_name"];?> in our area? Luv them here!" data-url="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];}
-                          else {echo $cltalentobj["crowdluv_vurl"];} ?>" data-count="none">Tweet</a>
+                            data-text="I'm following <?php echo $cltalentobj["fb_page_name"];?> on CrowdLuv. " 
+                            data-url="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];}
+                                                                        else {echo $cltalentobj["crowdluv_vurl"];} ?>" 
+                            data-count="none">Tweet</a>
+                        <!--   
                         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                        -->
 
 
                     </div>
@@ -111,17 +114,30 @@
 <script type="text/javascript">
     
 
-var page_like_or_unlike_callback = function(url, html_element) {
-  console.log("page_like_or_unlike_callback");
-  console.log(url);
-  console.log(html_element);
-}
+    // Load the twitter widgets script file asynchronously
+    window.twttr = (function (d,s,id) {
+      var t, js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return; js=d.createElement(s); js.id=id;
+      js.src="https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+      return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f) } });
+    }(document, "script", "twitter-wjs"));
 
-    $(document).ready(function(){
+    
 
-
-
-
+    // When the twitter widgets have finished loading, register callback for tweet event
+    twttr.ready(function (twttr) {
+        twttr.events.bind('tweet', function ( event ) {
+            if ( event ) {
+                console.log( 'Tweet Callback invoked. event:' ); console.log(event);
+                //event will have a member called target to identify which tweet button was clicked
+                //We store an attribute in the parent div called "data-crowdluv-tid" to tie back
+                //to which talent was being shared by the user    
+                crowdluv_tid = event.target.offsetParent.getAttribute("data-crowdluv-tid");
+                console.log("calculated crowdluv_tid to be: " + crowdluv_tid);
+                recordFollowerShareCompletion("twitter-tweet-landingpage", <?php echo $CL_LOGGEDIN_USER_UID;?>, crowdluv_tid);
+            }
+        });
     });
 
 
@@ -141,28 +157,25 @@ var page_like_or_unlike_callback = function(url, html_element) {
                     console.log(data);
                     //For each of the friends, add their picture to the slide-down for the talent
                     if(data.length==0){ 
-                        $("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append("Facebook friends who like <?php echo $ret_tal['fb_page_name'];?><br>None. "); 
+                        //$("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append("Facebook friends who like <?php echo $ret_tal['fb_page_name'];?><br>None. "); 
                     }
                     else{ 
-                        $("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append("Facebook friends who like <?php echo $ret_tal['fb_page_name'];?>. Invite them to LUV <?php echo $ret_tal['fb_page_name'];?>!");
+                        //$("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append("Facebook friends who like <?php echo $ret_tal['fb_page_name'];?>. Invite them to LUV <?php echo $ret_tal['fb_page_name'];?>!");
                     }
                     for(var i=0;i<data.length;i++){
-                        $("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
+                        //$("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
                     }
                     
                 }
         ); //end of fb.api
         <?php } ?>
 
-        FB.Event.subscribe('edge.create', page_like_or_unlike_callback);
-        FB.Event.subscribe('edge.remove', page_like_or_unlike_callback);
-
-
 
     }); //end of on() trigger for fbuserdataloaded
     
 
-
+    //Launches the Facebook Share dialog for a talent.
+    //If completed, makes a call to record the share
     function doFacebookShareDialog(vurl, cl_uidt, cl_tidt){
 
         FB.ui({
@@ -182,13 +195,13 @@ var page_like_or_unlike_callback = function(url, html_element) {
                 console.log("Share completed");
                 recordFollowerShareCompletion("facebook-share-landingpage", cl_uidt, cl_tidt);
 
-
-
             }
         });
 
     }
 
+    //Launches the Facebook Share dialog for a talent.
+    //If completed, makes a call to record the share
     function doFacebookSendDialog(vurl, cl_uidt, cl_tidt){
 
         FB.ui({

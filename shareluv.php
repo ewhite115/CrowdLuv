@@ -26,24 +26,28 @@
  
 
     <div class="row">
-        <div class="col-ms-8 crowdluvsection">
-            <h1>Share the Luv</h1>
+        <div class="col-xs-8 col-xs-offset-2 crowdluvsection clwhitebg">
+            <h1 class="text-center">Share the Luv!</h1>
+            <h2>Why?</h2>
             <p>
                 The more Luv your favorite acts have in your area, the sooner they will come. Invite your friends and 
                 share events and news to get Luvs, and your rank can qualify you for rewards and prizes! 
             </p>
+
         </div>
-        <div class="hidden-xs col-ms-4">
-            <input type="text" value="Search for talent"></input>
-        </div>
+         
+        
     </div>
 
 
 
-
+    <!--  *****   Sharing Invites to Luv Talent  -->
     <div class="row">    
-        <div class="col-xs-12">
-            <?php  //Display a row for each talent
+        <div class="col-xs-12 crowdluvsection">
+            <h1>Who Do Your Friends Luv?</h1>
+            <p> Do your friends follow these acts? If so, share an invitation to Luv them. You'll get Luvs for sharing an invitation via Facebook or Twitter, and bonus Luvs for anyone who acepts your invitation.  You can send an invitation once a week for each act and 2 acts per week, so pick your favorites!</p>
+            <?php 
+                //Display a "card" / panel for each talent
                 foreach($ret_tals as $cltalentobj){ 
                     $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']);
             ?>
@@ -57,10 +61,28 @@
              
                     <div class="card-info">
 
-                        <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>" 
+                        <!--
+                        <div class="fb-share-button" 
+                            data-href="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>" 
                             data-width="80" 
                             data-type="button">.
                         </div>
+                        -->
+                        <!-- <br>
+                        <div class="fb-like" 
+                            data-href="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>" 
+                            data-width="60" 
+                            data-layout="button" 
+                            data-action="like" 
+                            data-show-faces="false" 
+                            data-share="true">
+                        </div>
+                        -->
+
+
+                        <a href="#"><img style="width:50px;" src="res/facebook-share-button.png" onclick="doFacebookShareDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')"> </a>
+                        <a href="#"><img style="width:50px;" src="res/facebook-send-button.jpg" onclick="doFacebookSendDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')"> </a>
+                        <br>
 
                         <a  href="https://twitter.com/share" class="twitter-share-button" data-text="Want <?php echo $cltalentobj["fb_page_name"];?> in our area? Luv them here!" data-url="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];}
                           else {echo $cltalentobj["crowdluv_vurl"];} ?>" data-count="none">Tweet</a>
@@ -88,6 +110,20 @@
 
 <script type="text/javascript">
     
+
+var page_like_or_unlike_callback = function(url, html_element) {
+  console.log("page_like_or_unlike_callback");
+  console.log(url);
+  console.log(html_element);
+}
+
+    $(document).ready(function(){
+
+
+
+
+    });
+
 
    //Once the facebook api finished loading and we've loaded the user's data, do a call to fb
     $(document).on("fbUserDataLoaded", function(){
@@ -118,10 +154,64 @@
         ); //end of fb.api
         <?php } ?>
 
+        FB.Event.subscribe('edge.create', page_like_or_unlike_callback);
+        FB.Event.subscribe('edge.remove', page_like_or_unlike_callback);
+
 
 
     }); //end of on() trigger for fbuserdataloaded
     
+
+
+    function doFacebookShareDialog(vurl, cl_uidt, cl_tidt){
+
+        FB.ui({
+            method: 'share',
+            href: '<?php echo CLADDR;?>talent/' + vurl,
+            display: 'popup'
+            },
+            function(response) {
+            console.log("callback from fb share dialog:")
+            console.log(response);
+            if (! response ) {
+                console.log("Share window closed");
+            } else if (response && response.error_code) {
+                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
+                else console.log("other facebook error:" + response.error_message);                
+            } else {
+                console.log("Share completed");
+                recordFollowerShareCompletion("facebook-share-landingpage", cl_uidt, cl_tidt);
+
+
+
+            }
+        });
+
+    }
+
+    function doFacebookSendDialog(vurl, cl_uidt, cl_tidt){
+
+        FB.ui({
+            method: 'send',
+            link: '<?php echo CLADDR;?>talent/' + vurl,
+            },
+            function(response) {
+            console.log("callback from fb share dialog:")
+            if (! response ) {
+                console.log("Share window closed");
+            } else if (response && response.error_code) {
+                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
+                else console.log("other facebook error:" + response.error_message);                
+            } else {
+                console.log("Share completed");
+                recordFollowerShareCompletion("facebook-send-landingpage", cl_uidt, cl_tidt);
+
+            }
+        });
+
+    }
+
+
 
 </script>
 

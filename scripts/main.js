@@ -232,8 +232,6 @@ function update_talent_landingpage_vurl(vurl, handler){
 
   var qopts = {
         vurl: vurl
-        //prefname: prefname, 
-        //prefval: prefval
   };
   console.log(qopts);
 
@@ -243,7 +241,29 @@ function update_talent_landingpage_vurl(vurl, handler){
 
 }
 
+/**
+ * [recordFollowerShareCompletion makes an ajax call to the server to record the fact that a follower has completed a share ]
+ * @param  {[type]} type   [description]
+ * @param  {[type]} cl_uid [description]
+ * @param  {[type]} cl_tid [description]
+ * @return {[type]}        [description]
+ */
+function recordFollowerShareCompletion(shareType, crowdluv_uid, crowdluv_tid, handler){
 
+  console.log("recordFollowerShareCompleted called:" + shareType + "-" + crowdluv_uid + ":" + crowdluv_tid);
+
+  var qopts = {
+        shareType: shareType,
+        crowdluv_uid: crowdluv_uid,
+        crowdluv_tid: crowdluv_tid
+  };
+  //console.log(qopts);
+  resl = $.getJSON('ajax-record-follower-share-completion.php', qopts, handler);
+
+  console.log("json call resl="); console.log(resl);
+
+
+}
 
 
 

@@ -1151,6 +1151,49 @@ class CrowdLuvModel {
 
 
 
+    //Shares
+
+
+    /**
+     * [recordFollowerShareCompletion makes an ajax call to the server to record the fact that a follower has completed a share ]
+     * @param  {[String]} shareType   
+     *                  [Identifies the type of share th user completed
+     *                      facebook-share-landingpage:  User shared the talent's CrowdLuv landing page (ie from the "Share the Luv" page) on their facebook timeline
+     *                      facebook-send-landingpage:  User shared the talent's CrowdLuv landing page (ie from the "Share the Luv" page) in a private message to one or more friends
+     *                      twitter-tweet-landingpage:  User tweeted the talent's CrowdLuv landing page (ie from the "Share the Luv" page) 
+     *                      ]
+     * @param  [type] $cluidt [description]
+     * @param  [type] $cltidt               [description]
+     * @return [type]                       [description]
+     */
+    public function recordFollowerShareCompletion($shareType, $cl_uidt, $cl_tidt){
+
+
+        $allowed_shareTypes = ['facebook-share-landingpage', 'facebook-send-landingpage', 'twitter-tweet-landingpage'];
+        if(! in_array($shareType, $allowed_shareTypes)) {return "invalid shareType"; }
+
+        try{
+
+            $sql = "INSERT INTO `crowdluv`.`share_record` (`crowdluv_uid`, `crowdluv_tid`, `share_type`) 
+                                                   VALUES (" . $cl_uidt . ", " . $cl_tidt . ", '" . $shareType . "')";
+            //echo $sql; die;
+            $results = $this->cldb->query($sql);           
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database." . $e;
+            exit;
+        }
+        return "success";
+                
+
+    }
+
+
+
+
+
+
+
 
 
 

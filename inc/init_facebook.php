@@ -301,4 +301,6 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   }//if fbUser
 
 
-
+//Clear the response object so it doesnt cause problems for ajax files which use the same 
+//variable name
+$response = array();

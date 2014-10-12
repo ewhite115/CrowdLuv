@@ -22,7 +22,7 @@
  
 
     <div class="row">
-        <div class="col-xs-8 col-xs-offset-2 crowdluvsection clwhitebg">
+        <div class="col-xs-10 col-xs-offset-1 crowdluvsection clwhitebg">
             <h1 class="text-center">Share the Luv!</h1>
             <h2>Why?</h2>
             <p>
@@ -35,10 +35,10 @@
         
     </div>
 
-
+<br>
 
     <!--  *****   Sharing Invites to Luv Talent  -->
-    <div class="row">    
+    <div class="row clwhitebg">    
         <div class="col-xs-12 crowdluvsection">
             <h1>Who Do Your Friends Luv?</h1>
             <p> Do your friends follow these acts? If so, share an invitation to Luv them. You'll get Luvs for sharing an invitation via Facebook or Twitter, and bonus Luvs for anyone who acepts your invitation.  You can send an invitation once a week for each act and 2 acts per week, so pick your favorites!</p>
@@ -51,14 +51,14 @@
                      data-crowdluv-tid attribute is added so that twitter callback handler can determine the crowdluv_tid being shared
                      This attribute must be on the parent div of the twitter share button                      
                       -->
-                <div data-crowdluv-tid="<?php echo $cltalentobj['crowdluv_tid'];?>" class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder"> 
+                <div data-crowdluv-tid="<?php echo $cltalentobj['crowdluv_tid'];?>" class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder cl_darkgraybackground"> 
                 
                     <div class="talent-avatar text-center"> 
                         <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
                         <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
                     </div>
              
-                    <div class="card-info">
+                    <div class="card-info text-center">
 
                         <!--
                         <div class="fb-share-button" 
@@ -85,11 +85,15 @@
 
                             data-text="I'm following <?php echo $cltalentobj["fb_page_name"];?> on CrowdLuv. " 
                             data-url="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];}
-                                                                        else {echo $cltalentobj["crowdluv_vurl"];} ?>" 
+                                                                        else {echo $cltalentobj["crowdluv_vurl"];} ?>?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>" 
                             data-count="none">Tweet</a>
                         <!--   
                         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
                         -->
+                        <p>
+                            <img style="width: 1.25em;" src="res/top-heart.png">
+                             Get 10 Luvs!
+                        </p>
 
 
                     </div>
@@ -180,7 +184,7 @@
 
         FB.ui({
             method: 'share',
-            href: '<?php echo CLADDR;?>talent/' + vurl,
+            href: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>",
             display: 'popup'
             },
             function(response) {
@@ -206,7 +210,7 @@
 
         FB.ui({
             method: 'send',
-            link: '<?php echo CLADDR;?>talent/' + vurl,
+            link: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>"
             },
             function(response) {
             console.log("callback from fb share dialog:")

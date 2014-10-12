@@ -507,8 +507,8 @@ h1.cl-major-heading{
 
 .cl-talent-share-listing-card-square {
     margin-right: 0;
-    width: 25em;
-    height: 10em;
+    width: 18em;
+    height: 7em;
 
 }
 .cl-talent-share-listing-card-square .talent-avatar {
@@ -516,10 +516,15 @@ h1.cl-major-heading{
 
 }
 .cl-talent-share-listing-card-square .talent-avatar img {
-    width:75%;  
+    width:85%;  
 }
-.cl-talent-listing-card-square .card-info {
-    width:65%;
+.cl-talent-share-listing-card-square .card-info {
+    width:70%;
+     
+}
+.cl-talent-share-listing-card-square .card-info img {
+    padding: 0;
+    padding-bottom:  .25em ;
      
 }
 

@@ -1,4 +1,4 @@
-  <?php
+<?php
 
   require  ROOT_PATH . 'vendor/autoload.php';
   use Facebook\FacebookSession;
@@ -118,7 +118,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   if ( !isset( $facebookSession ) || $facebookSession === null ) {
     try {
       $facebookSession = $facebookLoginHelper->getSessionFromRedirect();
-      echo "facebooksession:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
+      //echo "facebooksession:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
       //If this was in fact a newly-logged-in session, get facebook Permissions, check for minimums
       if($facebookSession){
         if(!checkFacebookPermissions($facebookSession, $talentFacebookPermissionScope)){
@@ -143,7 +143,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
 
   //If we dont have a facebook session, generate a login URL 
   if(! $facebookSession){
-    echo " no fb session: generating url";
+    cldbgmsg(" no fb session: generating url");
     //Get the login URL - 
     $talentLoginURL = $facebookLoginHelper->getLoginUrl($talentFacebookPermissionScope);
     //if user previously declined, set rerequest flag to true

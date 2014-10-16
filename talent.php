@@ -22,25 +22,33 @@
 	    $app_data="Empty";
 	    if(array_key_exists("app_data", $data)) $app_data = $data["app_data"];
 	}
-	//Otherwise -- we are on the crowdluv website. Print page header/banner, 
-	//   and check that a crowdluv_tid has been passed in
-	include(ROOT_PATH . 'inc/header.php'); 
-	include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
-
+	//Otherwise -- we are on the crowdluv website. 
+	
+	
 	//Get the landing page settings for this talent
 	$tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_CUR_TGT_TALENT['crowdluv_tid']);   //var_dump($tlpgsettings); exit;
-    //Set the URL for the image that will be used on the page
-    if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT['fb_pid'] . "/picture?type=large&access_token=" . $facebookSession->getToken();
+    //Set the URL for the image that will be used on the page and in the og: meta tags
+    //if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT['fb_pid'] . "/picture?type=large&access_token=" . $facebookSession->getToken();
+    if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT['fb_pid'] . "/picture?type=large";
     //else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default")  $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
  	else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = CLADDR . 'crowdluvdata/talent/' . $CL_CUR_TGT_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';
+
+
+
+	// Print page header/banner (this must come after we got the lanidng page 
+	// 	 settings so that the og:tags in the head will be set properly)
+	// and check that a crowdluv_tid has been passed in
+	include(ROOT_PATH . 'inc/header.php'); 
+	include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
 
 
 ?>
 
 	
 
-	<div class="talent_landingpage_hero"  style="background-image: url('<?php echo $tlpimg;?>');"> 	</div> 
+	<div class="talent_landingpage_hero"  
+		style="background-image: url('<?php echo $tlpimg; if($tlpgsettings['image'] == "facebookprofile") echo "&access_token=" . $facebookSession->getToken();;?>');"> 	</div> 
 	
 	<div class="row crowdluvsection text-center">
 		<div class="col-xs-12">

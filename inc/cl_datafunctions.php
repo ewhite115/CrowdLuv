@@ -931,7 +931,8 @@ class CrowdLuvModel {
 
     public function calculate_follower_score_for_talent($cl_uidt, $cl_tidt){
 
-      try {
+        //Get the followers preferences for the talent
+        try {
             $sql = "SELECT follower.*, follower_luvs_talent.* FROM follower join follower_luvs_talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid where follower.crowdluv_uid=? and follower_luvs_talent.crowdluv_tid=?";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1,$cl_uidt);
@@ -941,18 +942,158 @@ class CrowdLuvModel {
         } catch (Exception $e) {
             echo "Data could not be retrieved from the database. " . $e;
             exit;
-        }
-        
+        }    
         $data = $results->fetchAll(PDO::FETCH_ASSOC);
         $score=0;
         //var_dump($data);
+    
+        //Calculate how many points follower gets based on their settings for the talent
         $score= $data[0]['allow_email'] * 50 + $data[0]['allow_sms'] * 100 + $data[0]['will_travel_time'] / 2;
 
+        //Retrieve any shares the follower has done for the talent
+        try {
+            $sql = "SELECT * FROM share_record where crowdluv_uid=? and crowdluv_tid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1,$cl_uidt);
+            $results->bindParam(2,$cl_tidt);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        //Loop through any shares found, and add points to the score accordingly
+        foreach($data as $shareRecord){
+            $eligibleLuvPointsResult = $this->calculateLuvPointsEligibilityForShareRecord($shareRecord);
+            //echo "eligibleLuvPoinstResult = "; var_dump($eligibleLuvPointsResult);echo "<br>";
+            $score += $eligibleLuvPointsResult['eligibleLuvPoints'];            
+        }
 
         return $score;
 
+    }
+
+
+    /**
+     * [calculateLuvPointsForShareRecord Determines how many points a share is eligible for, or when the share would next be eligible for points
+     *                                         this can be for an existing share record or checking eligibility/points for a potential new share]
+     * @param  [type] $share_record [A share_record  (array with keys corresponding to the data-definition of a share_record as defined in CL database schema)]
+     * @return [Array]               [An Array with the following keys:
+     *                                  eligibleLuvPoints:  how many Luv Points this share is eligible for
+     *                                  nextEligibleTimestamp: a timestamp indicating when the user would next be eligible for points for the share in question
+     *                                      ]
+     */
+    public function calculateLuvPointsEligibilityForShareRecord($shareRecord){
+
+        //echo "<pre>***Calculating luvpoint eligibility fr share:"; var_dump($shareRecord);
+        //echo "datetimenow:" . date("Y-m-d G:i:s", time());
+        //echo "</pre>";      
+
+        //Establish default return values
+        $result = null;
+        $result['eligibleLuvPoints'] = 0;
+        $result['nextEligibleTimestamp'] = date("Y-m-d G:i:s", time()); //default to current time
+
+        //Calculation for sharing talent's landing page via social media options            
+        $socialMediaTalentLandingPageSharingTypes = ['facebook-share-landingpage', 'facebook-send-landingpage', 'twitter-tweet-landingpage'];
+        if(in_array($shareRecord['share_type'], $socialMediaTalentLandingPageSharingTypes)){
+            
+            //echo "calculating eligibility for a social media talent-landingpage share";
+
+            $timeframeForEligibilityToShareTalentLandingPagesViaSocialMedia_Days = 7;
+            $numberOfSharesPerTalentEligiblePerTimeframe = 1;
+            $totalNumberOfSharesEligiblePerTimeframe = 6;
+            
+            // Check if the user had previously shared this talent's landingpage via 
+            // social media within n days of this record (or propsed record). 
+            // if so, it is not eligible
+            // Retrieve list of similar share types in the past n days ordered by timestamp (most recent first)
+            try {
+                $sql = "SELECT * FROM share_record 
+                        WHERE crowdluv_uid=? 
+                            and crowdluv_tid=? 
+                            and timestamp 
+                                BETWEEN DATE_SUB('" . $shareRecord['timestamp'] . "', INTERVAL " . $timeframeForEligibilityToShareTalentLandingPagesViaSocialMedia_Days . " DAY) 
+                                and     DATE_SUB('" . $shareRecord['timestamp'] . "', INTERVAL 1 SECOND)  
+                            and share_type = '" . $shareRecord['share_type'] . "' 
+                        ORDER BY timestamp DESC"; 
+                /*$sql = "SELECT * FROM share_record 
+                        WHERE crowdluv_uid=? 
+                            and crowdluv_tid=? 
+                            and share_type = '" . $shareRecord['share_type'] . "' 
+                            and timestamp BETWEEN '" . strtotime('-7 days', $shareRecord['timestamp']) . "' 
+                            and '" . strtotime('-1 second', $shareRecord['timestamp']) . "'   
+                        ORDER BY timestamp DESC"; 
+*/
+                //echo $sql . "<br>"; //die;
+                $results = $this->cldb->prepare($sql);
+                $results->bindParam(1,$shareRecord['crowdluv_uid']);
+                $results->bindParam(2,$shareRecord['crowdluv_tid']);
+                $results->execute();
+
+            } catch (Exception $e) {
+                echo "Data could not be retrieved from the database. " . $e;
+                exit;
+            }    
+            $data = $results->fetchAll(PDO::FETCH_ASSOC); 
+            //echo "db query result:"; var_dump($data);echo "<br>";//die;
+            //If we got more than m results, then the next eligibility for this 
+            //share type is n days from the (total - m) recent one
+            if(sizeof($data) >= $numberOfSharesPerTalentEligiblePerTimeframe){               
+                //echo "Found an ineligible***"; var_dump($result);
+                //echo "timestamp: " . $data['0']['timestamp'];            
+                $result['nextEligibleTimestamp'] = date('Y-m-d G:i:s', strtotime($data[$numberOfSharesPerTalentEligiblePerTimeframe - 1]['timestamp'] . " +" . $timeframeForEligibilityToShareTalentLandingPagesViaSocialMedia_Days . " days"));  
+                //$result['nextEligibleTimestamp'] = strtotime("+" .  $timeframeForEligibilityToShareTalentLandingPagesViaSocialMedia_Days . " days", $data[$numberOfSharesPerTalentEligiblePerTimeframe - 1]['timestamp']);  
+                return $result; 
+            }
+
+            //Check how many times the follower had shared any talent's landingpage in the
+            //previous n days. If >= the max number allowed for the timeframe, then not eligible
+            
+            // Retrieve list of any previous social-media-talent-landingpage shares in the 
+            // previous n days,  ordered by timestamp (most recent first)
+            try {
+                //construct query string
+                $sql = "SELECT * FROM share_record 
+                        WHERE crowdluv_uid=? 
+                            and timestamp BETWEEN DATE_SUB('" . $shareRecord['timestamp'] . "', INTERVAL " . $timeframeForEligibilityToShareTalentLandingPagesViaSocialMedia_Days . " DAY) and DATE_SUB('" . $shareRecord['timestamp'] . "', INTERVAL 1 SECOND)  
+                            and share_type in (";
+                foreach($socialMediaTalentLandingPageSharingTypes as $s){ $sql = $sql . "'" . $s . "', ";}
+                $sql = $sql . " 'garbageentrytodealwithlastcomma') ORDER BY timestamp DESC";
+                //echo $sql . "<br>"; //die;
+                $results = $this->cldb->prepare($sql);
+                $results->bindParam(1,$shareRecord['crowdluv_uid']);
+                $results->execute();
+
+            } catch (Exception $e) {
+                echo "Data could not be retrieved from the database. " . $e;
+                exit;
+            }    
+            $data = $results->fetchAll(PDO::FETCH_ASSOC); 
+            //echo "db query result:"; var_dump($data);echo "<br>";//die;
+            //If we got more than $totalNumberOfSharesEligiblePerTimeframe results, then the next eligibility for this 
+            //share type is n days from the (total - m) recent one
+            if(sizeof($data) >= $totalNumberOfSharesEligiblePerTimeframe){               
+                //echo "Found an ineligible***"; var_dump($result);
+                //echo "timestamp: " . $data['0']['timestamp'];
+                
+                $result['nextEligibleTimestamp'] = date('Y-m-d G:i:s', strtotime($data[$totalNumberOfSharesEligiblePerTimeframe - 1]['timestamp'] . " +" . $timeframeForEligibilityToShareTalentLandingPagesViaSocialMedia_Days . " days"));  
+                //$result['nextEligibleTimestamp'] = strtotime("+" . $timeframeForEligibilityToShareTalentLandingPagesViaSocialMedia_Days . " days",                                      $data[$totalNumberOfSharesEligiblePerTimeframe - 1]['timestamp'] );           
+                
+                return $result; 
+            }
+
+            
+            $result['eligibleLuvPoints'] = 10;
+
+        }
+
+
+        return $result;
 
     }
+
 
 
     public function calculate_follower_rank_for_talent($cl_uidt, $cl_tidt){

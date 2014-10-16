@@ -442,6 +442,20 @@ h1.cl-major-heading{
     /*padding-left:8.333%;*/
     
 }
+
+
+.cl-vscroll-card-container {
+    overflow:scroll;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    max-height:14em;
+    text-align: center;
+    padding: 0 1%;
+
+
+}
+
+
 .cl-talent-listing-card-container-single-row {
     white-space: nowrap;
     overflow-x: scroll;
@@ -477,6 +491,7 @@ h1.cl-major-heading{
 
 .cl-talent-listing-card-square .talent-avatar .talent-name {
     white-space: normal;  
+    font-size: .75em;
 }
 
 
@@ -508,7 +523,7 @@ h1.cl-major-heading{
 .cl-talent-share-listing-card-square {
     margin-right: 0;
     width: 18em;
-    height: 7em;
+    height: 6.57em;
 
 }
 .cl-talent-share-listing-card-square .talent-avatar {
@@ -736,7 +751,10 @@ background-size: contain;
     color: #383839;
 }
 
+.cl-text-muted {
+    color: gray;
 
+}
 .cl-panel-luverboard {
     height: 31.75em;
     overflow: scroll;

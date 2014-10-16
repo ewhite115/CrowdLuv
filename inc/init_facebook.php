@@ -126,7 +126,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
           header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
           die(); 
         }
-        $newSession = true;
+        $isNewSession = true;
       }
     } catch( FacebookRequestException $ex ) {
       echo "FacebookRequestException getting session in init_facebook";
@@ -273,8 +273,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
           //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
           
           if(isset($fb_user_likes['data']) && sizeof($fb_user_likes['data']) > 0) {  
-              //Clear the global and session variable for talent array
-              //$_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR = "";
+              
               foreach ($fb_user_likes['data'] as $fbupg) {
                   //...See if it already exists as a talent in the CL DB
                   $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg->id);
@@ -283,8 +282,12 @@ $facebookLikeCategoriesToCreateStubsFor = array (
                       cldbgmsg("Found new facebook like page to add: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->category); 
                       $CL_model->create_new_cl_talent_record_from_facebook_user_like($fbupg);
                       $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg->id);
-                      $CL_model->setFollower_FacebookLikes_Talent($CL_LOGGEDIN_USER_UID, $cltid, 1);
+                      //$CL_model->setFollower_FacebookLikes_Talent($CL_LOGGEDIN_USER_UID, $cltid, 1);
                   }
+                  //Make sure DB is updated to reflect that this user facebook-likes the talent
+                  if($cltid) $CL_model->setFollower_FacebookLikes_Talent($CL_LOGGEDIN_USER_UID, $cltid, 1); 
+
+
               }//foreach
           } //if we got data back fro api call
 

@@ -62,7 +62,7 @@
 
     <div class="row">
         <div class="col-ms-8 crowdluvsection">
-            <h1>Details</h1>
+            <h1></h1>
         </div>
         
     </div>

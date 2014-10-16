@@ -31,4 +31,4 @@
 	define("GOOGLE_MAPS_APIKEY", "AIzaSyBc6n2vRhj6szWhvDeTtzBNY1kiDAyJMuo");
 
 
-
+	date_default_timezone_set('America/New_York');

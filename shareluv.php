@@ -1,5 +1,23 @@
 <?php 
 
+
+    function getNextShareTimeString($nextEligibleShareTimestamp){
+        $shareAgainTime="";
+        
+        $timeDiff = (new DateTime())->diff(new DateTime($nextEligibleShareTimestamp));
+        
+        if($timeDiff->d == 1) return "1 day";
+        else if($timeDiff->d > 1) return $timeDiff->d . " days";
+        else if($timeDiff->h ==1 ) return  "1 hour";
+        else if($timeDiff->h > 1) return $timeDiff->h . " hours";
+        else if($timeDiff->i ==1 ) return  "1 minute";
+        else if($timeDiff->i > 1) return $timeDiff->i . " minutes";
+        else if($timeDiff->s ==1 ) return  "1 second";
+        else if($timeDiff->s > 1) return $timeDiff->s . " seconds";
+
+    }
+
+
     $pageTitle = "CrowdLuv";
     $CL_SITE_SECTION = "follower";
     require_once("inc/init_config.php");
@@ -15,7 +33,25 @@
         $scores[] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); 
     }
     array_multisort($scores, SORT_DESC, $ret_tals);
-     
+    
+
+    //calculate the eligibility for landing-page sharing 
+    foreach($ret_tals as &$ret_tal){
+
+        $nowTimestamp = date("Y-m-d G:i:s", time());
+        $potentialShareRecord = [ "crowdluv_uid" => $CL_LOGGEDIN_USER_UID, 'crowdluv_tid' => $ret_tal['crowdluv_tid'], 'timestamp' => $nowTimestamp  ];
+        
+        $potentialShareRecord['share_type'] = "facebook-share-landingpage";
+        $ret_tal['facebook_share_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
+        
+        $potentialShareRecord['share_type'] = "facebook-send-landingpage";
+        $ret_tal['facebook_send_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
+        
+        $potentialShareRecord['share_type'] = "twitter-tweet-landingpage";
+        $ret_tal['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
+
+    }
+
 
 ?> 
 
@@ -42,11 +78,14 @@
         <div class="col-xs-12 crowdluvsection">
             <h1>Who Do Your Friends Luv?</h1>
             <p> Do your friends follow these acts? If so, share an invitation to Luv them. You'll get Luvs for sharing an invitation via Facebook or Twitter, and bonus Luvs for anyone who acepts your invitation.  You can send an invitation once a week for each act and 2 acts per week, so pick your favorites!</p>
+            <div class="cl-vscroll-card-container text-justified">
+
             <?php 
                 //Display a "card" / panel for each talent
                 foreach($ret_tals as $cltalentobj){ 
                     $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']);
             ?>
+
                 <!-- Share Talent Card 
                      data-crowdluv-tid attribute is added so that twitter callback handler can determine the crowdluv_tid being shared
                      This attribute must be on the parent div of the twitter share button                      
@@ -58,7 +97,7 @@
                         <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
                     </div>
              
-                    <div class="card-info text-center">
+                    <div class="card-info ">
 
                         <!--
                         <div class="fb-share-button" 
@@ -79,21 +118,91 @@
                         -->
 
                         <!--Facebook and Twitter Share buttons -->
-                        <a href="#"><img style="width:50px;" src="res/facebook-share-button.png" onclick="doFacebookShareDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')"> </a>
-                        <a href="#"><img style="width:50px;" src="res/facebook-send-button.jpg" onclick="doFacebookSendDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')"> </a>
-                        <a href="https://twitter.com/share" class="twitter-share-button" 
+                        <!-- Facebook share -->
+                        <p2>
+                        
+                            <!--enabled button -->
+                            <a href="#"> 
+                                <img <?php if($cltalentobj['facebook_share_landingpage_eligibility']['eligibleLuvPoints'] == 0) echo "hidden"; ?> 
+                                    style="width:50px;" 
+                                    src="res/facebook-share-button.png" 
+                                    onclick="doFacebookShareDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')">
+                            </a>
+                            <!--disabled button-->
+                            <img <?php if($cltalentobj['facebook_share_landingpage_eligibility']['eligibleLuvPoints'] > 0) echo "hidden"; ?> 
+                                style="width:50px;" 
+                                src="res/facebook-share-button-gray.png"> 
+                            <!-- Luvs available or time until next share -->
+                            <span id="lbl-facebook-share-status-<?= $cltalentobj['crowdluv_tid'];?>">
+                            <?php if($cltalentobj['facebook_share_landingpage_eligibility']['eligibleLuvPoints'] > 0){ ?>
+                                <img style="width: 1.25em;" src="res/top-heart.png">
+                                Get <?php echo $cltalentobj['facebook_share_landingpage_eligibility']['eligibleLuvPoints'];?> Luvs!
+                            <?php } else{ ?>
+                                <span class="cl-text-muted">
+                                    <img style="width: 1.25em;" src="res/top-heart-gray.png">
+                                    Share again in <?= getNextShareTimeString($cltalentobj['facebook_share_landingpage_eligibility']['nextEligibleTimestamp']); ?>
+                                </span>
+                            <?php } ?>
+                        </span>
 
-                            data-text="I'm following <?php echo $cltalentobj["fb_page_name"];?> on CrowdLuv. " 
-                            data-url="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];}
-                                                                        else {echo $cltalentobj["crowdluv_vurl"];} ?>?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>" 
-                            data-count="none">Tweet</a>
-                        <!--   
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-                        -->
-                        <p>
-                            <img style="width: 1.25em;" src="res/top-heart.png">
-                             Get 10 Luvs!
-                        </p>
+                        </p2>
+
+                        <!-- Facebook send button -->
+                        <p2>
+                            <!--enabled -->
+                            <a href="#">
+                                <img <?php if($cltalentobj['facebook_send_landingpage_eligibility']['eligibleLuvPoints'] == 0) echo "hidden"; ?>  style="width:50px;" src="res/facebook-send-button.jpg" onclick="doFacebookSendDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')"> 
+                            </a>
+                            <!--disabled-->
+                            <img <?php if($cltalentobj['facebook_send_landingpage_eligibility']['eligibleLuvPoints'] > 0) echo "hidden"; ?> 
+                                style="width:50px;" 
+                                src="res/facebook-send-button-gray.png"> 
+
+                            <!-- Luvs available or time until next share available -->
+                            <span id="lbl-facebook-send-status-<?= $cltalentobj['crowdluv_tid'];?>">
+                            <?php if($cltalentobj['facebook_send_landingpage_eligibility']['eligibleLuvPoints'] > 0){ ?>
+                                <img style="width: 1.25em;" src="res/top-heart.png">
+                                Get <?php echo $cltalentobj['facebook_send_landingpage_eligibility']['eligibleLuvPoints'];?> Luvs!
+                            <?php } else{ ?>
+                                
+                                <img style="width: 1.25em;" src="res/top-heart-gray.png">
+                                <span class="cl-text-muted">Share again in <?= (new DateTime())->diff(new DateTime($cltalentobj['facebook_send_landingpage_eligibility']['nextEligibleTimestamp']))->d;?> days</span>
+                            <?php } ?>
+                            </span>
+
+                        </p2>
+
+                        <!--Twitter tweet button -->
+                        <p2>
+                            <!--enabled twitter tweet button-->
+                            <?php if($cltalentobj['twitter_tweet_landingpage_eligibility']['eligibleLuvPoints'] > 0) { ?>
+                                <a 
+                                    href="https://twitter.com/share" class="twitter-share-button" 
+                                    data-text="I'm following <?php echo $cltalentobj["fb_page_name"];?> on CrowdLuv. " 
+                                    data-url="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];}
+                                                                                else {echo $cltalentobj["crowdluv_vurl"];} ?>?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>" 
+                                    data-count="none">Tweet</a>
+                                <!--   
+                                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                                -->
+                            <?php } ?>
+
+                            <!-- Disabled twitter tweet button -->
+                            <img <?php if($cltalentobj['twitter_tweet_landingpage_eligibility']['eligibleLuvPoints'] > 0) echo "hidden"; ?> 
+                                style="width:50px;" 
+                                src="res/twitter-tweet-button-gray.png"> 
+
+                            <!-- Luvs available or time until next share available -->
+                            <span id="lbl-twitter-tweet-status-<?= $cltalentobj['crowdluv_tid'];?>">
+                            <?php if($cltalentobj['twitter_tweet_landingpage_eligibility']['eligibleLuvPoints'] > 0){ ?>
+                                <img style="width: 1.25em;" src="res/top-heart.png">
+                                Get <?php echo $cltalentobj['twitter_tweet_landingpage_eligibility']['eligibleLuvPoints'];?> Luvs!
+                            <?php } else{ ?>
+                                <img style="width: 1.25em;" src="res/top-heart-gray.png">
+                                <span class="cl-text-muted">Share again in <?= (new DateTime())->diff(new DateTime($cltalentobj['twitter_tweet_landingpage_eligibility']['nextEligibleTimestamp']))->d;?> days</span>
+                            <?php } ?>
+
+                        </p2>
 
 
                     </div>
@@ -104,9 +213,9 @@
                     </div>
                                 
                 </div>
-                
-                
+                  
             <?php } //end of the for loop for each talent ?>
+            </div>
 
         </div>        
     </div>
@@ -140,9 +249,64 @@
                 crowdluv_tid = event.target.offsetParent.getAttribute("data-crowdluv-tid");
                 console.log("calculated crowdluv_tid to be: " + crowdluv_tid);
                 recordFollowerShareCompletion("twitter-tweet-landingpage", <?php echo $CL_LOGGEDIN_USER_UID;?>, crowdluv_tid);
+                $("#lbl-twitter-tweet-status-" + crowdluv_tid).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!")
             }
         });
     });
+
+
+    //Launches the Facebook Share dialog for a talent.
+    //If completed, makes a call to record the share
+    function doFacebookShareDialog(vurl, cl_uidt, cl_tidt){
+
+        FB.ui({
+            method: 'share',
+            href: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>",
+            display: 'popup'
+            },
+            function(response) {
+            console.log("callback from fb share dialog:")
+            console.log(response);
+            if (! response ) {
+                console.log("Share window closed");
+            } else if (response && response.error_code) {
+                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
+                else console.log("other facebook error:" + response.error_message);                
+            } else {
+                console.log("Share completed");
+                recordFollowerShareCompletion("facebook-share-landingpage", cl_uidt, cl_tidt);
+
+                $("#lbl-facebook-share-status-" + cl_tidt).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!")
+
+            }
+        });
+
+    }
+
+    //Launches the Facebook Share dialog for a talent.
+    //If completed, makes a call to record the share
+    function doFacebookSendDialog(vurl, cl_uidt, cl_tidt){
+
+        FB.ui({
+            method: 'send',
+            link: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>"
+            },
+            function(response) {
+            console.log("callback from fb share dialog:")
+            if (! response ) {
+                console.log("Share window closed");
+            } else if (response && response.error_code) {
+                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
+                else console.log("other facebook error:" + response.error_message);                
+            } else {
+                console.log("Share completed");
+                recordFollowerShareCompletion("facebook-send-landingpage", cl_uidt, cl_tidt);
+                $("#lbl-facebook-send-status-" + cl_tidt).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!")
+
+            }
+        });
+
+    }
 
 
    //Once the facebook api finished loading and we've loaded the user's data, do a call to fb
@@ -177,57 +341,6 @@
 
     }); //end of on() trigger for fbuserdataloaded
     
-
-    //Launches the Facebook Share dialog for a talent.
-    //If completed, makes a call to record the share
-    function doFacebookShareDialog(vurl, cl_uidt, cl_tidt){
-
-        FB.ui({
-            method: 'share',
-            href: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>",
-            display: 'popup'
-            },
-            function(response) {
-            console.log("callback from fb share dialog:")
-            console.log(response);
-            if (! response ) {
-                console.log("Share window closed");
-            } else if (response && response.error_code) {
-                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
-                else console.log("other facebook error:" + response.error_message);                
-            } else {
-                console.log("Share completed");
-                recordFollowerShareCompletion("facebook-share-landingpage", cl_uidt, cl_tidt);
-
-            }
-        });
-
-    }
-
-    //Launches the Facebook Share dialog for a talent.
-    //If completed, makes a call to record the share
-    function doFacebookSendDialog(vurl, cl_uidt, cl_tidt){
-
-        FB.ui({
-            method: 'send',
-            link: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>"
-            },
-            function(response) {
-            console.log("callback from fb share dialog:")
-            if (! response ) {
-                console.log("Share window closed");
-            } else if (response && response.error_code) {
-                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
-                else console.log("other facebook error:" + response.error_message);                
-            } else {
-                console.log("Share completed");
-                recordFollowerShareCompletion("facebook-send-landingpage", cl_uidt, cl_tidt);
-
-            }
-        });
-
-    }
-
 
 
 </script>

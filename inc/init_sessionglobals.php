@@ -18,9 +18,10 @@
   	cldbgmsg("Found session value for cl loggedin tals arr");
   	$CL_LOGGEDIN_TALENTS_ARR = $_SESSION['CL_LOGGEDIN_TALENTS_ARR'];
   }
+  */
+ 
   //If the logged in user is managing a talent; set a session and global Obj of that talent info (get latest data from DB)
   if(isset($_SESSION['CL_ACTIVE_MANAGED_TALENT'])) {
   	cldbgmsg("Found session value for cl active mgd tal");
   	$CL_ACTIVE_MANAGED_TALENT = $_SESSION['CL_ACTIVE_MANAGED_TALENT'] = $CL_model->get_talent_object_by_tid($_SESSION['CL_ACTIVE_MANAGED_TALENT']['crowdluv_tid']);
   }
-*/

@@ -108,10 +108,11 @@
 		            return false;
 		          } //end if
 		          else {// The person cancelled the login dialog 
+		          	console.log("user didnt authorize");
 		          	//TODO:  do something if the user declined the permissions?
 		          }//end else
 		      }, 
-		      {scope: "<?php echo CL_FB_PERMISSION_SCOPE_STRING; ?>"} 
+		      {scope: "<?php echo CL_FB_PERMISSION_SCOPE_STRING_JS_SDK; ?>"} 
 		    ); //end of fb.login() call
 		}); //end of .click() handler
 	});

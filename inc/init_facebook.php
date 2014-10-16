@@ -23,13 +23,15 @@
   }
 
 
-$followerFacebookPermissionScope = array(
+//TODO:  figure out how we intially ask user//followers for only perms 
+//     we need and not manage_pages
+/*$followerFacebookPermissionScope = array(
    'scope' => 'email',
    'user_location',
    'user_birthday',
    'user_relationships'
+    );*/
 
-    );
 $talentFacebookPermissionScope = array(
    'scope' => 'email',
    'user_friends',

@@ -20,8 +20,12 @@
 	//define("FB_APP_SECRET","24a9bbdc678e3ffbf8ce8e506f995251");	
 	define("CL_FB_APP_SECRET", $_SERVER['CL_FB_APP_SECRET']);	
 	
-//	define("CL_FB_PERMISSION_SCOPE_STRING", "email,user_location,user_birthday,user_relationships");
+	//This string is used when calling the FB.login in the facebook JS SDK
+	//   eg  from the talent landing page
+	define("CL_FB_PERMISSION_SCOPE_STRING_JS_SDK", "email,user_likes,user_friends,user_location,user_birthday,user_relationships");
 
+	//This is used for when calling from php sdk
+	//    ??  TODO  figure out of it still uses this?
 	define("CL_FB_PERMISSION_SCOPE_STRING", "'email', 'user_location', 'user_birthday', 'user_relationships'");
 
 

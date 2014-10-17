@@ -25,7 +25,7 @@
 	//Otherwise -- we are on the crowdluv website. 
 	
 	
-	//Get the landing page settings for this talent
+	//Get the landing page settings for this talent  (do this before printing header)
 	$tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_CUR_TGT_TALENT['crowdluv_tid']);   //var_dump($tlpgsettings); exit;
     //Set the URL for the image that will be used on the page and in the og: meta tags
     //if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT['fb_pid'] . "/picture?type=large&access_token=" . $facebookSession->getToken();
@@ -34,13 +34,15 @@
  	else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = CLADDR . 'crowdluvdata/talent/' . $CL_CUR_TGT_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';
 
-
-
 	// Print page header/banner (this must come after we got the lanidng page 
 	// 	 settings so that the og:tags in the head will be set properly)
-	// and check that a crowdluv_tid has been passed in
 	include(ROOT_PATH . 'inc/header.php'); 
+	// and check that a crowdluv_tid has been passed in
 	include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
+
+
+	//See if the user has arrived from a referral/share, and if so, save the referrer's user id 
+	if(isset($_GET['ref_uid'])) $ref_uid = $_GET['ref_uid']; else $ref_uid="";
 
 
 ?>
@@ -104,7 +106,7 @@
 		    FB.login(function(response) {
 		        if (response.authResponse) {
 		            console.log("User authorized - redirecting to luv.php");
-		            window.open('<?php echo BASE_URL;?>luv.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"];?>', "_top").focus();
+		            window.open('<?php echo BASE_URL;?>luv.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"] . "&ref_uid=" . $ref_uid;?>', "_top").focus();
 		            return false;
 		          } //end if
 		          else {// The person cancelled the login dialog 

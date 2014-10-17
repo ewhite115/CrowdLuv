@@ -580,7 +580,7 @@ class CrowdLuvModel {
             
             //Call this method to creat a follower -> talent entry
             //   (will do nothing if it already exists)
-            $this->addFollowerLuvsTalentEntry($cl_uidt, $cl_tidt);
+            $this->createFollowerLuvsTalentEntry($cl_uidt, $cl_tidt);
             //update the 'still_following' column
             $sql = "update follower_luvs_talent set still_following=" . $stillLuvs . " where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
             //echo $sql; 
@@ -606,7 +606,7 @@ class CrowdLuvModel {
         try{
             //Call this method to creat a follower -> talent entry
             //   (this will do nothing if it already exists)
-            $this->addFollowerLuvsTalentEntry($cl_uidt, $cl_tidt);
+            $this->createFollowerLuvsTalentEntry($cl_uidt, $cl_tidt);
             //update the 'likes_on_facebook' column
             $sql = "update follower_luvs_talent set likes_on_facebook=" . $stillLikes . " where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
             //echo $sql; 
@@ -620,7 +620,7 @@ class CrowdLuvModel {
     }
 
     /**
-     * [addFollowerLuvsTalentEntry Creates an entry in the follower_luvs_talent table. 
+     * [createFollowerLuvsTalentEntry Creates an entry in the follower_luvs_talent table. 
      * If there is already an entry, this function does nothing. The 'still_following' 
      * and 'likes_on_facebook' default to 0, so it is up to the calling function to 
      * set those to '1' accordingly to indicate whether the follower intially 'luvs' the
@@ -629,7 +629,7 @@ class CrowdLuvModel {
      * @param [type] $cl_uidt [description]
      * @param [type] $cl_tidt [description]
      */
-    private function addFollowerLuvsTalentEntry($cl_uidt, $cl_tidt){
+    private function createFollowerLuvsTalentEntry($cl_uidt, $cl_tidt){
         
         try{
             //Check to see if this follower had previously been following the talent
@@ -651,6 +651,9 @@ class CrowdLuvModel {
         }
         
     }
+
+
+
 
 
     public function update_follower_preferences_for_talent($cl_uidt, $cl_tidt, $prefname, $prefval){
@@ -928,8 +931,15 @@ class CrowdLuvModel {
         return $citystats; 
     }
     
-
+    /**
+     * [calculate_follower_score_for_talent Calculates a follower's "Score" / luvpoints for a given talent, looking at various factors including preferences, shares, cnversions]
+     * @param  [type] $cl_uidt [description]
+     * @param  [type] $cl_tidt [description]
+     * @return [type]          [description]
+     */
     public function calculate_follower_score_for_talent($cl_uidt, $cl_tidt){
+
+        $score=0;
 
         //Get the followers preferences for the talent
         try {
@@ -943,8 +953,7 @@ class CrowdLuvModel {
             echo "Data could not be retrieved from the database. " . $e;
             exit;
         }    
-        $data = $results->fetchAll(PDO::FETCH_ASSOC);
-        $score=0;
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);        
         //var_dump($data);
     
         //Calculate how many points follower gets based on their settings for the talent
@@ -954,8 +963,8 @@ class CrowdLuvModel {
         try {
             $sql = "SELECT * FROM share_record where crowdluv_uid=? and crowdluv_tid=?";
             $results = $this->cldb->prepare($sql);
-            $results->bindParam(1,$cl_uidt);
-            $results->bindParam(2,$cl_tidt);
+            $results->bindParam(1, $cl_uidt);
+            $results->bindParam(2, $cl_tidt);
             $results->execute();
 
         } catch (Exception $e) {
@@ -968,6 +977,27 @@ class CrowdLuvModel {
             $eligibleLuvPointsResult = $this->calculateLuvPointsEligibilityForShareRecord($shareRecord);
             //echo "eligibleLuvPoinstResult = "; var_dump($eligibleLuvPointsResult);echo "<br>";
             $score += $eligibleLuvPointsResult['eligibleLuvPoints'];            
+        }
+
+
+        //Retrieve any shares the follower has done for the talent
+        try {
+            $sql = "SELECT * FROM share_referral_conversion where referrer_crowdluv_uid=? and crowdluv_tid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_uidt);
+            $results->bindParam(2, $cl_tidt);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        //Loop through any shares found, and add points to the score accordingly
+        foreach($data as $shareRecord){
+            //$eligibleLuvPointsResult = $this->calculateLuvPointsEligibilityForShareRecord($shareRecord);
+            //echo "eligibleLuvPoinstResult = "; var_dump($eligibleLuvPointsResult);echo "<br>";
+            $score += 50;            
         }
 
         return $score;
@@ -1330,7 +1360,36 @@ class CrowdLuvModel {
     }
 
 
+    /**
+     * [recordTalentShareReferralConversion  Makes a record of a talent share conversion (eg,  when somebody luvs a talent as a result of a share/referral from an existing user)]
+     * @param  [type] $ref_uid [crowdluv uid of referee]
+     * @param  [type] $cl_uidt [crodluv_uid of the referee]
+     * @param  [type] $cl_tidt [crowdluv tid of the talent in question]
+     * @return [type]          [0 if this is a duplicate conversion or other error;  1 on success]
+     */
+    public function recordTalentShareReferralConversion($ref_uid, $cl_uidt, $cl_tidt){
 
+        //sdd a row to the share_referral_conversion table to record this conversion.
+        //   Having those 3 columns form a primary key in DB means only one 
+        //    record will be created per referrer/referee/talent combination..
+        
+        try{
+
+            $sql = "INSERT INTO `crowdluv`.`share_referral_conversion` (`referrer_crowdluv_uid`, `referee_crowdluv_uid`, `crowdluv_tid`, `timestamp`) 
+                                                           VALUES    (" . $ref_uid .         ", " . $cl_uidt . ", " . $cl_tidt . ",      Now())";
+            //echo $sql; 
+            $results = $this->cldb->query($sql);           
+
+        } catch (Exception $e) {
+                        
+            //echo "<pre>"; var_dump($e);echo "</pre>";
+            if($e->errorInfo[0] = "23000") return 0;
+            echo "Data could not be retrieved from the database." . $e;
+            exit;
+        }
+        return 1;
+
+    }
 
 
 

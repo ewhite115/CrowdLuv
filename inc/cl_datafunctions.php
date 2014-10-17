@@ -811,8 +811,7 @@ class CrowdLuvModel {
 
             $sql = "SELECT follower.* , follower_luvs_talent.*  
                     FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid 
-                    where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 and follower.location_fbname=? 
-                    LIMIT 0, 30 ";
+                    where talent.crowdluv_tid=? and follower_luvs_talent.still_following=1 and follower.location_fbname=?";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1,$cl_tidt);
             $results->bindParam(2,$city);
@@ -849,6 +848,38 @@ class CrowdLuvModel {
 
     }
 
+    /**
+     * [getFollowersWhoFacebookLikeButNotLuvTalent Returns an array of talents that the specified user "Likes" on facebook but does not currently "Luv"]
+     * @param  [type] $cl_uidt [Crowdluv user ID of the user]
+     * @return [type]          [Array of talent objects]
+     */
+    public function getFollowersWhoFacebookLikeButNotLuvTalent($cl_tidt) {
+        
+        try {
+            $sql = "SELECT follower_luvs_talent.*, follower.* FROM follower join follower_luvs_talent join talent 
+            on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid 
+            and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid 
+            where talent.crowdluv_tid=? 
+            and follower_luvs_talent.likes_on_facebook=1 
+            and follower_luvs_talent.still_following=0
+            and follower.deactivated=0";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1,$cl_tidt);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }
+        
+        $fols = $results->fetchAll(PDO::FETCH_ASSOC);
+        // foreach($tals as &$tal){ 
+        //     $tal['score'] = $this->calculate_follower_score_for_talent($cl_uidt, $tal['crowdluv_tid']); 
+        // }
+
+        //var_dump($matches);
+
+        return $fols;
+    }
 
 
    /**
@@ -861,8 +892,8 @@ class CrowdLuvModel {
     public function get_city_stats_for_talent($cl_tidt, $city, $mileradius){
 
         $citystats = array();
-        $citystats['followercount']=0;
-        $citystats['female']=0;
+        $citystats['followercount'] = 0;
+        $citystats['female'] = 0;
         $citystats['male']=0;
         $citystats['relationship']=0;
         $citystats['single']=0;
@@ -911,20 +942,28 @@ class CrowdLuvModel {
             $willing_travel_time_sum += $fol["will_travel_time"];
 
         }
-
-        $citystats["avg_willing_travel_time"]= $willing_travel_time_sum / $citystats["followercount"];
+       
+        if($citystats["followercount"] > 0) $citystats["avg_willing_travel_time"]= $willing_travel_time_sum / $citystats["followercount"];
+        else $citystats["avg_willing_travel_time"] = 0;
        
         //For now, the city's score will be computed by a simple point system with
         //fixed weightings
         $cityscore =0;
         
-
         //For now, system-wide weightings :
         $cityscore +=  0.5 * $citystats['followercount'];
         $cityscore +=  0.5 * $citystats['allowed_email'];
         $cityscore +=  1.0 * $citystats['allowed_sms'];
         $cityscore +=  0.01 * $citystats['followercount'] * $citystats['avg_willing_travel_time'];
 
+        //add 25 points per user who facebook-likes (but not luvs) the atlent
+        $folsWhoFBLike = $this->getFollowersWhoFacebookLikeButNotLuvTalent($cl_tidt);
+        foreach($folsWhoFBLike as $fol){
+            //echo "folfblo:" . $fol['location_fbname']  . " city: " . $city . "<br>";
+            if($fol['location_fbname'] == $city) $cityscore += .25 ;
+
+        }
+        
 
         $citystats["city_score"] = $cityscore;
 
@@ -943,7 +982,11 @@ class CrowdLuvModel {
 
         //Get the followers preferences for the talent
         try {
-            $sql = "SELECT follower.*, follower_luvs_talent.* FROM follower join follower_luvs_talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid where follower.crowdluv_uid=? and follower_luvs_talent.crowdluv_tid=?";
+            $sql = "SELECT follower.*, follower_luvs_talent.* 
+                    FROM follower join follower_luvs_talent 
+                    on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid 
+                    where follower.crowdluv_uid=? 
+                    and follower_luvs_talent.crowdluv_tid=?";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1,$cl_uidt);
             $results->bindParam(2,$cl_tidt);
@@ -956,8 +999,17 @@ class CrowdLuvModel {
         $data = $results->fetchAll(PDO::FETCH_ASSOC);        
         //var_dump($data);
     
-        //Calculate how many points follower gets based on their settings for the talent
-        $score= $data[0]['allow_email'] * 50 + $data[0]['allow_sms'] * 100 + $data[0]['will_travel_time'] / 2;
+        //if there was no record returned, the follower doesnt follow talent in any way
+        //  so return 0
+        if(sizeof($data) == 0) return 0;
+
+        //If the follower fb likes the talent, +50 luvpoints
+        if($data[0]['likes_on_facebook']) $score += 50;
+        //If they 'luv' the talent, Calculate how many points follower gets based on their settings for the talent
+        if($data[0]['still_following']){
+            $score= $data[0]['allow_email'] * 50 + $data[0]['allow_sms'] * 100 + $data[0]['will_travel_time'] / 2;
+        }
+
 
         //Retrieve any shares the follower has done for the talent
         try {
@@ -1164,8 +1216,18 @@ class CrowdLuvModel {
     private function get_top_cities_for_talent_by_count($cl_tidt){
 
         try {
-            $sql = "select location_fbname, count(location_fbname), location_fb_id from (SELECT follower.location_fbname, follower.location_fb_id FROM (follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
-                where talent.crowdluv_tid=" . $cl_tidt . " and follower.deactivated=0 and follower_luvs_talent.still_following=1) as joined group by location_fbname order by count(location_fbname) desc LIMIT 0, 50";
+            $sql = "SELECT location_fbname, count(location_fbname), location_fb_id 
+                    from 
+                        (SELECT follower.location_fbname, follower.location_fb_id 
+                         FROM (follower join follower_luvs_talent join talent 
+                         on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid 
+                         and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
+                        where talent.crowdluv_tid=" . $cl_tidt . " 
+                        and follower.deactivated=0 
+                        ) 
+                        as joined 
+                    GROUP BY location_fbname 
+                    order by count(location_fbname) desc";
             
             $results = $this->cldb->query($sql);
 
@@ -1218,10 +1280,13 @@ class CrowdLuvModel {
         $topcities = $this->get_top_cities_for_talent($cl_tidt);
         //var_dump($folscores);exit;
         
-        //get score for the city in question
+        //get score for the city in question, or 
+        //  return 0 if the city in question has no following for the talent
+        $this_city_score = 0;
         foreach($topcities as $tcity){
             if($tcity['location_fb_id'] == $fblocid ) { $this_city_score = $tcity['city_score']; break;}
         }
+        if($this_city_score == 0) return 0;
                 
         $rank = 1;
         $tie_count= -1;

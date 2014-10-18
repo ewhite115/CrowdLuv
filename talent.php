@@ -50,7 +50,7 @@
 	
 
 	<div class="talent_landingpage_hero"  
-		style="background-image: url('<?php echo $tlpimg; if($tlpgsettings['image'] == "facebookprofile") echo "&access_token=" . $facebookSession->getToken();;?>');"> 	</div> 
+		style="background-image: url('<?php echo $tlpimg; if($tlpgsettings['image'] == "facebookprofile" && isset($CL_LOGGEDIN_USER_UID)) echo "&access_token=" . $facebookSession->getToken();?>');"> 	</div> 
 	
 	<div class="row crowdluvsection text-center">
 		<div class="col-xs-12">
@@ -58,7 +58,7 @@
 			<a href="#" id="fbtab_cometomytown">
 				<img src="../res/yescometomytown.jpg">
 			</a><br><br>
-			<p>	The more people near you who click, the sooner <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> will come.</p><p> So, Share this button now on your timeline, in a group, via email, or in a private message</p>
+			
 		</div>
 	</div>
 

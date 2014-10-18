@@ -971,16 +971,16 @@ class CrowdLuvModel {
     }
     
     /**
-     * [calculate_follower_score_for_talent Calculates a follower's "Score" / luvpoints for a given talent, looking at various factors including preferences, shares, cnversions]
+     * [getFollowerPreferencesForTalent Returns an array reprsenting a join 
+     *                                     of the follower and follower_luvs_talent table 
+     *                                     for the specified follower and talent]
      * @param  [type] $cl_uidt [description]
      * @param  [type] $cl_tidt [description]
      * @return [type]          [description]
      */
-    public function calculate_follower_score_for_talent($cl_uidt, $cl_tidt){
+    public function getFollowerPreferencesForTalent($cl_uidt, $cl_tidt){
 
-        $score=0;
-
-        //Get the followers preferences for the talent
+      //Get the followers preferences for the talent
         try {
             $sql = "SELECT follower.*, follower_luvs_talent.* 
                     FROM follower join follower_luvs_talent 
@@ -998,20 +998,14 @@ class CrowdLuvModel {
         }    
         $data = $results->fetchAll(PDO::FETCH_ASSOC);        
         //var_dump($data);
-    
-        //if there was no record returned, the follower doesnt follow talent in any way
-        //  so return 0
-        if(sizeof($data) == 0) return 0;
+        if(sizeof($data)==0) return;
+        return $data[0];
 
-        //If the follower fb likes the talent, +50 luvpoints
-        if($data[0]['likes_on_facebook']) $score += 50;
-        //If they 'luv' the talent, Calculate how many points follower gets based on their settings for the talent
-        if($data[0]['still_following']){
-            $score= $data[0]['allow_email'] * 50 + $data[0]['allow_sms'] * 100 + $data[0]['will_travel_time'] / 2;
-        }
+    }
 
 
-        //Retrieve any shares the follower has done for the talent
+    private function getFollowerSharesForTalent($cl_uidt, $cl_tidt){
+
         try {
             $sql = "SELECT * FROM share_record where crowdluv_uid=? and crowdluv_tid=?";
             $results = $this->cldb->prepare($sql);
@@ -1024,6 +1018,35 @@ class CrowdLuvModel {
             exit;
         }    
         $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        return $data;
+    }
+
+
+    /**
+     * [calculate_follower_score_for_talent Calculates a follower's "Score" / luvpoints for a given talent, looking at various factors including preferences, shares, cnversions]
+     * @param  [type] $cl_uidt [description]
+     * @param  [type] $cl_tidt [description]
+     * @return [type]          [description]
+     */
+    public function calculate_follower_score_for_talent($cl_uidt, $cl_tidt){
+
+        $score=0;
+
+        //Get the followers preferences for the talent
+        $data = $this->getFollowerPreferencesForTalent($cl_uidt, $cl_tidt);    
+        //if there was no record returned, the follower doesnt follow talent in any way
+        //  so return 0
+        if(sizeof($data) == 0) return 0;
+
+        //If the follower fb likes the talent, +50 luvpoints
+        if($data['likes_on_facebook']) $score += 50;
+        //If they 'luv' the talent, Calculate how many points follower gets based on their settings for the talent
+        if($data['still_following']){
+            $score= $data['allow_email'] * 50 + $data['allow_sms'] * 100 + $data['will_travel_time'] / 2;
+        }
+
+        //Retrieve any shares the follower has done for the talent
+        $data = $this->getFollowerSharesForTalent($cl_uidt, $cl_tidt);
         //Loop through any shares found, and add points to the score accordingly
         foreach($data as $shareRecord){
             $eligibleLuvPointsResult = $this->calculateLuvPointsEligibilityForShareRecord($shareRecord);
@@ -1032,7 +1055,7 @@ class CrowdLuvModel {
         }
 
 
-        //Retrieve any shares the follower has done for the talent
+        //Retrieve any sjare conversions the follower has for the talent
         try {
             $sql = "SELECT * FROM share_referral_conversion where referrer_crowdluv_uid=? and crowdluv_tid=?";
             $results = $this->cldb->prepare($sql);
@@ -1107,7 +1130,7 @@ class CrowdLuvModel {
                             and timestamp BETWEEN '" . strtotime('-7 days', $shareRecord['timestamp']) . "' 
                             and '" . strtotime('-1 second', $shareRecord['timestamp']) . "'   
                         ORDER BY timestamp DESC"; 
-*/
+                */
                 //echo $sql . "<br>"; //die;
                 $results = $this->cldb->prepare($sql);
                 $results->bindParam(1,$shareRecord['crowdluv_uid']);
@@ -1177,23 +1200,42 @@ class CrowdLuvModel {
     }
 
 
-
+    /**
+     * [calculate_follower_rank_for_talent Calculates and returns a follower's 
+     *                 numeric rank (including # of ties) and rank title for a specified talent]
+     * @param  [type] $cl_uidt [CrowdLuv UID of follower]
+     * @param  [type] $cl_tidt [CrowdLuv TID of talent]
+     * @return [type]          [Array with keys: rank, tie_count, and rank_title, badges
+     *                                rankTitle is a string:
+     *                                "Spectator": follower doesnt luv or fblike talent
+     *                                "Follower": FB-Likes but doesnt Luv
+     *                                "Luver":  Luvs, bottom 20%
+     *                                "Enthusiast": 
+     *                                
+     *                                badges is an array of badges the follower has earned for the talent
+     *                                "Supporter": Luvs and has shared
+     *                                
+     *                                 ]
+     */
     public function calculate_follower_rank_for_talent($cl_uidt, $cl_tidt){
        
-        $folscores = $this->get_follower_scores_for_talent($cl_tidt);
-
-        //var_dump($folscores);exit;
-        $this_followers_score = $this->calculate_follower_score_for_talent($cl_uidt, $cl_tidt);//$folscores[array_search($cl_uidt, $folscores[0])];
-        
+        //echo "Calculating follower rank: " . $cl_uidt . ":" . $cl_tidt . "<br>";
         $rank = 1;
+        $rankTitle="Spectator";
         $tie_count= -1;
         $last_score = -1;
+        $badges = array();
+
+        //Get the list of followers for the talent and their scores
+        $folscores = $this->get_follower_scores_for_talent($cl_tidt);
+        //var_dump($folscores);exit;
+        //Get score for this talent
+        $this_followers_score = $this->calculate_follower_score_for_talent($cl_uidt, $cl_tidt);//$folscores[array_search($cl_uidt, $folscores[0])];
         
-        //loop to figure out what 'rank' this follower sits at, taking ties into account
+        //loop to figure out what numeric 'rank' this follower sits at, taking ties into account
         foreach($folscores as $folscore){
             if($folscore['folscore'] == $this_followers_score ) break;
             $rank++;
-
         }
     
         // loop again to determine how many followers have the same score as this follower
@@ -1201,8 +1243,35 @@ class CrowdLuvModel {
             if($folscore['folscore'] == $this_followers_score) $tie_count++;
         }
 
-        //return 2 values:  their rank, and how many others they are tied with
-        return array('rank' => $rank, 'tie_count' => $tie_count);
+        //Determine the rank name/title 
+        $followerPrefs = $this->getFollowerPreferencesForTalent($cl_uidt, $cl_tidt);
+        //TODO: Detemrine if the talent has placed follower in inner circle
+        
+        if( sizeof($followerPrefs)==0 || (! $followerPrefs['still_following'] && ! $followerPrefs['likes_on_facebook'])) $rankTitle="Spectator";
+        else if (! $followerPrefs['still_following'] && $followerPrefs['likes_on_facebook']) $rankTitle="Follower";
+        else if ($followerPrefs['still_following'] ){
+            //It's a luver, so determine what % they are at
+            //   (numeric rank / luver count) * 100
+            $followerPercentile = 100 * ( (sizeof($folscores) - ($rank - 1)) / sizeof($folscores));
+            //echo "calculated follower rank percentile: " . $followerPercentile;
+            if($followerPercentile > 90) $rankTitle = "VIP";
+            else if($followerPercentile > 80) $rankTitle = "SuperFan";
+            else if($followerPercentile > 70) $rankTitle = "Fanatic";
+            else if($followerPercentile > 50) $rankTitle = "Junkie";
+            else if($followerPercentile > 30) $rankTitle = "Fanboy";
+            else if($followerPercentile > 20) $rankTitle = "Groupie";
+            else $rankTitle = "Luver";
+        }
+
+        //See if they've earned the supporter badge  (at least one share)
+        if(sizeof($this->getFollowerSharesForTalent($cl_uidt, $cl_tidt)) >0 ) $badges[] = "Supporter";
+        
+
+        //return values:  their rank, and how many others they are tied with
+        return array('rank' => $rank, 
+                     'tie_count' => $tie_count, 
+                     'rank_title' => $rankTitle,
+                     'badges' => $badges);
 
     }
 
@@ -1253,7 +1322,7 @@ class CrowdLuvModel {
 
         //Get the list of top cities for the talent, sorted by # of followers
         $topcities = $this->get_top_cities_for_talent_by_count($cl_tidt);
-
+        if(sizeof($topcities)==0) return;
         //make a copy of the array along with the score for each city, and prep it 
         //to be sorted by those scores
         //$topc_byscore = array();       
@@ -1278,6 +1347,7 @@ class CrowdLuvModel {
     public function calculate_city_rank_for_talent($fblocid, $cl_tidt){
 
         $topcities = $this->get_top_cities_for_talent($cl_tidt);
+        if(sizeof($topcities)==0) return 0;
         //var_dump($folscores);exit;
         
         //get score for the city in question, or 

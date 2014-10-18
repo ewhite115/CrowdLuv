@@ -121,35 +121,56 @@
         <!-- ****  Fan Rank -->
         <div class="heart-rank text-center" onclick="rank_clickhandler()">
             <h1 class="follower-rank">Your Rank</h1>
-            <img src='res/top-heart.png'/>     
+            <div class="text-center" style="
+                height: 2.7em;
+                background-image: url('res/top-heart.png');
+                background-position:  center top;
+                background-repeat: no-repeat;
+                color:black;
+                padding-top: .75em;
+                ">
+                <!-- <img src='res/top-heart.png'/>    -->
+                <h2>*<?= $rank['rank_title'];?>*</h2>
+            </div>
             <p>
                 <?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?> out of <?php echo count($CL_model->get_followers_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']));?> fans on CrowdLuv
+                
             </p>
 
             <p>(<?php echo $score; ?> LuvPoints)</p>
+
+            <?php if(sizeof($rank['badges']) > 0) { ?><h2>Your Badges:</h2> <?php } ?>
+            <p>
+                <?php foreach($rank['badges'] as $badge){ ?>
+                    **<?= $badge; ?>** 
+                <?php } ?>
+            </p>
+
         </div>
 
         <hr>
 
-        <!-- ****  Town Rank -->
+        <!-- ****  Town Rank ***  -->
         <div class="heart-rank text-center" onclick="rank_clickhandler()">
             <h1 class="follower-rank">Your Town's Rank</h1>
             <img src='res/top-heart.png'/>     
             <p>
                 <?php if($myCityRank['tie_count'] > 0 ) echo "Tied for";  ?> 
                 #<?php echo $myCityRank['rank']; ?> out of <?php echo count($topcities);?> 
+
             </p>
 
         </div>
         <hr>
 
-        <!--  **** Sharing -->
+        <!--  **** Share The Luv  -->
         <div onclick="share_clickhandler()">
             <h1>Share The Luv</h1>
             <img width="25" src="res/facebook-icon-circle.png">
             <img width="25" src="res/twitterCircle_0.png">
+            <p>Help <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> out to increase your rank and build Luv for your area. </p>
                         
-            <p id="<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans"></p>
+            
         </div>
                
         
@@ -191,6 +212,9 @@
         <div class="col-xs-12 clwhitebg crowdluvsection ">
                 <h1 class="cl-textcolor-standout">Share the Luv</h1>
 
+
+
+                <p id="<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans"></p>
 
 
 
@@ -327,46 +351,7 @@
                 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                
 
 
 
@@ -375,6 +360,8 @@
 
 
         </div>
+
+
         </div>
 
 

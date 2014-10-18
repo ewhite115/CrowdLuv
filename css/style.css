@@ -654,7 +654,7 @@ input[type="submit"], button {
     margin: 0px -15px 10px -15px;
     height: 225px; 
     background-color: #f0eeed;
-    background-image:; url('../crowdluvdata/talent_landingpage_images/default.jpg');
+    background-image: url('../crowdluvdata/talent_landingpage_images/default.jpg');
     background-position:  center top;
     background-repeat: no-repeat;
     background-size: auto 225px;  /* Fixed height for all viewscreens, set the width accordingly */

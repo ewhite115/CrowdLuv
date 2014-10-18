@@ -21,48 +21,52 @@
     require_once("inc/init_config.php");
     include(ROOT_PATH . 'inc/header.php');
 
-    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
+    //include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
     include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
 
-    
-    $score = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']); 
-    $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']);
-
-    //Get the follower's settings for the target talent
-    $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);  
+    //Set default values to be used when there is no loggd-in user
     $targetTalentPreferences = "";
-    foreach($ret_tals as &$ret_tal){ if($ret_tal['crowdluv_tid'] == $CL_CUR_TGT_TALENT['crowdluv_tid']) $targetTalentPreferences = $ret_tal;}   
+    $rank['rank_title'] = "Spectator";
 
+    //Get talent info
     //Get the list of luvers for the top luvers luverboard
     $rankedLuvers = $CL_model->getFollowersWhoLuvTalentSortedByScore($CL_CUR_TGT_TALENT['crowdluv_tid']);
     //echo "<pre>"; var_dump($rankedLuvers); echo "</pre>";die;
-
     //Get the list of top cities for the top cities luverboard
     $cnt=1;
     $topcities= $CL_model->get_top_cities_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']);
     //var_dump($topcities);
-    //Get My city's rank.
-    $myCityRank = $CL_model->calculate_city_rank_for_talent($CL_LOGGEDIN_USER_OBJ['location_fb_id'], $CL_CUR_TGT_TALENT['crowdluv_tid']);
-
-
-    //Get the sorted/ranked list of luver in my city
-    $rankedLuversMyCity = $CL_model->getFollowersWhoLuvTalentInCitySortedByScore($CL_CUR_TGT_TALENT['crowdluv_tid'], $CL_LOGGEDIN_USER_OBJ['location_fbname'], 5);
-
-
-    //Sharing
-    $nowTimestamp = date("Y-m-d G:i:s", time());
-    $potentialShareRecord = [ "crowdluv_uid" => $CL_LOGGEDIN_USER_UID, 'crowdluv_tid' => $CL_CUR_TGT_TALENT['crowdluv_tid'], 'timestamp' => $nowTimestamp  ];
     
-    $potentialShareRecord['share_type'] = "facebook-share-landingpage";
-    $CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
-    
-    $potentialShareRecord['share_type'] = "facebook-send-landingpage";
-    $CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
-    
-    $potentialShareRecord['share_type'] = "twitter-tweet-landingpage";
-    $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
 
+    //If there's a logged-in follower, get additional info about the talent for the follower
+    if(isset($CL_LOGGEDIN_USER_UID)){
+        $score = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']); 
+        $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']);
 
+        //Get the follower's settings for the target talent
+        $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);  
+        foreach($ret_tals as &$ret_tal){ if($ret_tal['crowdluv_tid'] == $CL_CUR_TGT_TALENT['crowdluv_tid']) $targetTalentPreferences = $ret_tal;}   
+
+        //Get My city's rank.
+        $myCityRank = $CL_model->calculate_city_rank_for_talent($CL_LOGGEDIN_USER_OBJ['location_fb_id'], $CL_CUR_TGT_TALENT['crowdluv_tid']);
+
+        //Get the sorted/ranked list of luver in my city
+        $rankedLuversMyCity = $CL_model->getFollowersWhoLuvTalentInCitySortedByScore($CL_CUR_TGT_TALENT['crowdluv_tid'], $CL_LOGGEDIN_USER_OBJ['location_fbname'], 5);
+
+        //Sharing
+        $nowTimestamp = date("Y-m-d G:i:s", time());
+        $potentialShareRecord = [ "crowdluv_uid" => $CL_LOGGEDIN_USER_UID, 'crowdluv_tid' => $CL_CUR_TGT_TALENT['crowdluv_tid'], 'timestamp' => $nowTimestamp  ];
+        
+        $potentialShareRecord['share_type'] = "facebook-share-landingpage";
+        $CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
+        
+        $potentialShareRecord['share_type'] = "facebook-send-landingpage";
+        $CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
+        
+        $potentialShareRecord['share_type'] = "twitter-tweet-landingpage";
+        $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
+
+    }
 
 
 
@@ -106,21 +110,37 @@
 <div class="fluid-row">
 
     <div class="col-xs-12 col-sm-4 clwhitebg crowdluvsection text-center">
-        <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large&access_token=<?php echo $facebookSession->getToken();?>">
-        <h1><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
-       
+        <?php if(! $targetTalentPreferences) { ?> 
+            <h1 class="cl-textcolor-standout">Do you <u>Luv</u> <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>?</h1>               
+        <?php } ?>            
+        <?php if($targetTalentPreferences) { ?>
+            <h1><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
+        <?php } ?>            
+        <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
+         
 
         <!-- **** Preferences or call-to-action -->
-        <button class="cl-button-standout" name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"];?>)">
-            Your Preferences for <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>
-        </button>                      
-        
+        <?php if($targetTalentPreferences) { ?>
+            <button class="cl-button-standout" name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"];?>)">
+                Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?>
+            </button>                      
+        <?php } ?>
+
+        <?php if(! $targetTalentPreferences) { ?>
+            <button class="cl-button-standout" onclick="loginAndLuvTalent(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?> , '');"> 
+              <h1>Yes! </h1>  Sign-up / Sign-In and Luv us on CrowdLuv 
+            </button>
+            <p>Receive our most important updates.</p>
+            <p>Get perks for establishing yourself as a top fan. </p>
+            
+        <?php } ?>
+
         <hr>
 
 
         <!-- ****  Fan Rank -->
         <div class="heart-rank text-center" onclick="rank_clickhandler()">
-            <h1 class="follower-rank">Your Rank</h1>
+            <h1 class="follower-rank">Your Fan Rank</h1>
             <div class="text-center" style="
                 height: 2.7em;
                 background-image: url('res/top-heart.png');
@@ -132,19 +152,25 @@
                 <!-- <img src='res/top-heart.png'/>    -->
                 <h2>*<?= $rank['rank_title'];?>*</h2>
             </div>
-            <p>
-                <?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?> out of <?php echo count($CL_model->get_followers_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']));?> fans on CrowdLuv
-                
-            </p>
+            <?php if( $targetTalentPreferences) { ?>
+                <p>
+                    <?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?> out of <?php echo count($CL_model->get_followers_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']));?> fans on CrowdLuv    
+                </p>
+                <p>(<?php echo $score; ?> LuvPoints)</p>
+                <?php if(sizeof($rank['badges']) > 0) { ?><h2>Your Badges:</h2> <?php } ?>
+                <p>
+                    <?php foreach($rank['badges'] as $badge){ ?>
+                        **<?= $badge; ?>** 
+                    <?php } ?>
+                </p>
 
-            <p>(<?php echo $score; ?> LuvPoints)</p>
+            <?php } ?>
+            <!-- Fan rank call-to-action -->
+            <?php if(! $targetTalentPreferences) { ?>
+                <p class="cl-textcolor-standout">Still just a spectator or follower? </p>
+                <p>Sign in to increase your fan-rank and get perks</p>                 
 
-            <?php if(sizeof($rank['badges']) > 0) { ?><h2>Your Badges:</h2> <?php } ?>
-            <p>
-                <?php foreach($rank['badges'] as $badge){ ?>
-                    **<?= $badge; ?>** 
-                <?php } ?>
-            </p>
+            <?php } ?>
 
         </div>
 
@@ -153,12 +179,32 @@
         <!-- ****  Town Rank ***  -->
         <div class="heart-rank text-center" onclick="rank_clickhandler()">
             <h1 class="follower-rank">Your Town's Rank</h1>
-            <img src='res/top-heart.png'/>     
-            <p>
-                <?php if($myCityRank['tie_count'] > 0 ) echo "Tied for";  ?> 
-                #<?php echo $myCityRank['rank']; ?> out of <?php echo count($topcities);?> 
+            <div class="text-center" style="
+                height: 2.7em;
+                background-image: url('res/top-heart.png');
+                background-position:  center top;
+                background-repeat: no-repeat;
+                color:black;
+                padding-top: .75em;
+                ">
+                <!-- <img src='res/top-heart.png'/>     -->
+                <?php if(! $targetTalentPreferences) echo "?"; ?>    
+                <?php if( $targetTalentPreferences)  echo $myCityRank['rank']; ?>
+            </div>
+            <?php if( $targetTalentPreferences) { ?>
+                <p>
+                    <?php if($myCityRank['tie_count'] > 0 ) echo "Tied for";  ?> 
+                    #<?php echo $myCityRank['rank']; ?> out of <?php echo count($topcities);?> 
 
-            </p>
+                </p>
+            <?php } ?>
+            <!-- Town Rank call-to-action -->
+            <?php if(! $targetTalentPreferences) { ?>
+                <p>Want us in <span class="cl-textcolor-standout">your</span> town? </p>
+                <p>Show us your town has the most Luv</p>                 
+            <?php } ?>
+
+
 
         </div>
         <hr>
@@ -168,7 +214,7 @@
             <h1>Share The Luv</h1>
             <img width="25" src="res/facebook-icon-circle.png">
             <img width="25" src="res/twitterCircle_0.png">
-            <p>Help <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> out to increase your rank and build Luv for your area. </p>
+            <p>Help us out to increase your rank and build Luv for your town. </p>
                         
             
         </div>
@@ -221,7 +267,7 @@
 
 
 
-
+                <?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>
                 <!-- Share Talent Card 
                      data-crowdluv-tid attribute is added so that twitter callback handler can determine the crowdluv_tid being shared
                      This attribute must be on the parent div of the twitter share button                      
@@ -349,7 +395,7 @@
                     </div>
                                 
                 </div>
-
+                <?php } ?>
 
                 
 
@@ -371,10 +417,10 @@
             <div class="col-xs-12 clwhitebg crowdluvsection ">
                 <h1 class="cl-textcolor-standout">LuverBoards</h1>
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#home" data-toggle="tab">Top Fans</a></li>
-                    <li><a href="#top-cities" data-toggle="tab">Top Cities</a></li>
-                    <?php  //Only show the "Top Luver My City" tab if the user actually has a valid city
-                    if($CL_LOGGEDIN_USER_OBJ['location_fb_id']){ ?>
+                    <li class="active"><a href="#home" data-toggle="tab">Our Top Fans</a></li>
+                    <li><a href="#top-cities" data-toggle="tab">Our Top Cities</a></li>
+                    <?php  //Only show the "Top Luver My City" tab if there is a logged-in user with a valid city
+                    if(isset($CL_LOGGEDIN_USER_UID) &&  $CL_LOGGEDIN_USER_OBJ['location_fb_id']){ ?>
                         <li><a href="#top-luvers-city" data-toggle="tab">Top Fans - My City</a></li>
                     <?php } ?>
                 </ul>                
@@ -385,7 +431,7 @@
                         <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>
                             <p>
-                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square&access_token=<?php echo $facebookSession->getToken();?>"> 
+                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square<?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>&access_token=<?php echo $facebookSession->getToken();}?>"> 
                                 <?php echo $rankedLuver['firstname']; ?> --- 
                                 <?php echo $rankedLuver['score']; ?> Luvs
 

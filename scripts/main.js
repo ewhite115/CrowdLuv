@@ -180,11 +180,32 @@ $(document).ready(function() {
 
 //CrowdLuv Javascript Functions called by various pages
 
+
+function loginAndLuvTalent(cl_tidt, ref_uid) {
+        console.log("loginandluvtalent called:" + cl_tidt);
+        
+        FB.login(function(response) {
+            if (response.authResponse) {
+                console.log("User authorized - redirecting to luv.php");
+                window.open('<?php echo BASE_URL;?>luv.php?crowdluv_tid=' + cl_tidt + '&ref_uid=' + ref_uid, "_top").focus();
+                return false;
+              } //end if
+              else {// The person cancelled the login dialog 
+                console.log("user didnt authorize");
+                //TODO:  do something if the user declined the permissions?
+              }//end else
+          },
+          {scope: "<?php echo CL_FB_PERMISSION_SCOPE_STRING_JS_SDK; ?>"}
+        ); //end of fb.login() call
+}
+
+
+
 //this function makes an ajax call to  ajax_updatefollowersetting.php to change a setting for a user
 function update_follower_setting(prefname, prefval){
     console.log("contact pre change handler called:" + prefname + ", " + prefval);
 
-    var qopts = { 
+    var qopts = {
         prefname: prefname,
         prefval: prefval
      };

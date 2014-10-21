@@ -5,7 +5,7 @@
 	require_once("inc/cl_init.php");
 	
 
-	$pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
+	if(isset($CL_CUR_TGT_TALENT)) $pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
 	
 	//Check for the object that fb passes into tabs to determine if we are being loaded
 	//as a facebook tab - if so, decode the passed in object and use it to set 

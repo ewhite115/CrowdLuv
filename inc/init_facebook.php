@@ -305,7 +305,29 @@ $facebookLikeCategoriesToCreateStubsFor = array (
 
   }//if fbUser
 
-
-//Clear the response object so it doesnt cause problems for ajax files which use the same 
-//variable name
+//Clear the 'response' object created above so that it doesnt cause problems for 
+//  ajax files which use the same variable name
 $response = array();
+
+
+
+//Check for the object that fb passes into tabs to determine if we are being loaded
+//as a facebook tab - if so, decode the passed in object and use it to set 
+//the target talent object
+if(isset($_REQUEST["signed_request"])) {
+    $CL_INSIDE_FACEBOOK_TAB = true;
+    $signed_request = $_REQUEST["signed_request"];
+    list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
+    $data = json_decode(base64_decode(strtr($payload, '-_', '+/')), true);
+     
+    $talentpageid = $data["page"]["id"]; 
+    //$cl_tobj = $CL_model->get_talent_object_by_tid( $CL_model->get_crowdluv_tid_by_fb_pid($talentpageid)  );
+    $CL_CUR_TGT_TALENT = $CL_model->get_talent_object_by_tid( $CL_model->get_crowdluv_tid_by_fb_pid($talentpageid));
+    //$app_data is any information that was passed in the query string for the app_data param
+    $app_data="Empty";
+    if(array_key_exists("app_data", $data)) $app_data = $data["app_data"];
+} else{
+  //Otherwise -- we are on the crowdluv website. 
+  $CL_INSIDE_FACEBOOK_TAB = false;
+
+}

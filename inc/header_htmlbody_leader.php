@@ -10,8 +10,10 @@
 
 <div class="CL_fullpagewrapper">
 
+
 <!-- *** New-User Modal *** Modal pane containing an intro video about CL. Hidden by default. 
   If JS detects the user has not authorized CL on FB, it will show this dialog -->
+<?php if(! $CL_INSIDE_FACEBOOK_TAB) {   //Dont show this when inside the facebook tab ?>
 <div id="CL_newuser_introvideo_modal" class="text-center">
     <h1 class="cl-textcolor-standout">Welcome to CrowdLuv</h1>
       <!-- For video hosted on CL env
@@ -36,7 +38,7 @@
       </a>
     </p>
 </div>
-
+<?php } ?>
 
 
 <?php  // add the correct section header here

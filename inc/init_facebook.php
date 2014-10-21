@@ -4,7 +4,7 @@
   use Facebook\FacebookSession;
   use Facebook\FacebookRequest;
   use Facebook\FacebookRedirectLoginHelper;
-  use Facebook\FacebookJavascriptLoginHelper;
+  use Facebook\FacebookJavaScriptLoginHelper;
 
   //var_dump($_SESSION);
 
@@ -99,7 +99,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   FacebookSession::setDefaultApplication( CL_FB_APP_ID, CL_FB_APP_SECRET);
   
   $facebookLoginHelper = new FacebookRedirectLoginHelper(CLADDR);
-  $facebookJavascriptLoginHelper = new FacebookJavascriptLoginHelper();
+  $facebookJavascriptLoginHelper = new FacebookJavaScriptLoginHelper();
 
   $facebookSession= null;
   // see if we've previously saved a facebook session token

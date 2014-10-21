@@ -4,6 +4,8 @@
   use Facebook\FacebookSession;
   use Facebook\FacebookRequest;
   use Facebook\FacebookRedirectLoginHelper;
+  use Facebook\FacebookJavascriptLoginHelper;
+
   //var_dump($_SESSION);
 
 
@@ -97,6 +99,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   FacebookSession::setDefaultApplication( CL_FB_APP_ID, CL_FB_APP_SECRET);
   
   $facebookLoginHelper = new FacebookRedirectLoginHelper(CLADDR);
+  $facebookJavascriptLoginHelper = new FacebookJavascriptLoginHelper();
 
   $facebookSession= null;
   // see if we've previously saved a facebook session token
@@ -115,12 +118,18 @@ $facebookLikeCategoriesToCreateStubsFor = array (
     }
   }  
 
-  //We didnt find a previously saved session token, so check to see if this is a new facebook login
+  //We didnt find a previously saved session token, so check to see if this is a new 
+  //facebook login from a redirect
   $isNewSession = false;  // This flag will be used later to conditionally execute code only if it's a 'new' session
   if ( !isset( $facebookSession ) || $facebookSession === null ) {
     try {
+      //Check for a new sessions coming from a redirect
       $facebookSession = $facebookLoginHelper->getSessionFromRedirect();
-      //echo "facebooksession:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
+      //echo "facebooksession from redirect:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
+      //If no new session from redirect, see if there is a new session set on the client side 
+      //  facebook javascript SDK
+      $facebookSession = $facebookJavascriptLoginHelper->getSession();
+      //echo "facebooksession from javascript:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
       //If this was in fact a newly-logged-in session, get facebook Permissions, check for minimums
       if($facebookSession){
         if(!checkFacebookPermissions($facebookSession, $talentFacebookPermissionScope)){
@@ -143,7 +152,8 @@ $facebookLikeCategoriesToCreateStubsFor = array (
     
   }   
 
-  //If we dont have a facebook session, generate a login URL 
+
+  //If we dont have a facebook session, generate a login URL that can be used where needed
   if(! $facebookSession){
     cldbgmsg(" no fb session: generating url");
     //Get the login URL - 

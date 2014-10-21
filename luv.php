@@ -9,7 +9,10 @@
     require_once("inc/init_config.php");
     include(ROOT_PATH . 'inc/header.php'); 
 
-    if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}
+    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
+    include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
+
+    //if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}
     
 
     //Record that the follower luvs the talent

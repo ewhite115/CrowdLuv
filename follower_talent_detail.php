@@ -95,8 +95,7 @@
 
 
 
-
-
+    <!--  Page Title/Header -->
     <div class="row">
         <div class="col-ms-8 crowdluvsection">
             <h1></h1>
@@ -111,7 +110,9 @@
 
     <div class="col-xs-12 col-sm-4 clwhitebg crowdluvsection text-center">
         <?php if(! $targetTalentPreferences) { ?> 
-            <h1 class="cl-textcolor-standout">Do you <u>Luv</u> <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>?</h1>               
+            <h1 class="cl-textcolor-standout">
+                <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>
+            </h1>               
         <?php } ?>            
         <?php if($targetTalentPreferences) { ?>
             <h1><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
@@ -127,6 +128,7 @@
         <?php } ?>
 
         <?php if(! $targetTalentPreferences) { ?>
+            <h1><u>Luv</u> us?</h1>
             <button class="cl-button-standout" onclick="loginAndLuvTalent(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?> , '');"> 
               <h1>Yes! </h1>  Sign-up / Sign-In and Luv us on CrowdLuv 
             </button>
@@ -224,21 +226,48 @@
     </div>
 
 
+
     <div class="col-xs-12 col-sm-6 col-sm-offset-1 ">
+    
+        <!-- **  Activity *** -->
         <div class="row">
             <div class="col-xs-12 clwhitebg crowdluvsection">
                 <h1 class="cl-textcolor-standout">Activity</h1>
-                    <br><br><br><br><br>
+                <hr>
+                <div id="cl-talent-activity-panel" class="cl-vscroll-panel cl-panel-short-height">
+                    recent activity will go here.        
+                </div>
+
             </div>
         </div>
-        <br><br>
+        <br>
+
+        <!-- **  Upcoming Events *** -->
+        <div class="row">
+            <div class="col-xs-12 clwhitebg crowdluvsection">
+                <h1 class="cl-textcolor-standout">Upcoming Events</h1>
+                <hr>
+                <div id="cl-talent-upcoming-events-panel" class="cl-vscroll-panel cl-panel-short-height">
+                    Loading events...
+                
+                </div>
+                <div>
+                    <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-event').show(); return false; ">
+                        Add Event...
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        <br>
+
 
         
         <!-- Preferences   -->
         <div id="div-preferences" class="row" hidden>
         <div class="col-xs-12 clwhitebg crowdluvsection ">
             <h1 class="cl-textcolor-standout">Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
-            <div class="cl_darkgraybackground" id="cltoptsrow<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+            <div class="cl_darkgraybackground cl-vscroll-panel cl-panel-medium-height" id="cltoptsrow<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
                 <p> Allow SMS contact?: 
                     <span <?php if(!$targetTalentPreferences['allow_sms']) echo " hidden " ?> class="p_allow_sms_yes" style="color:green"><strong><b>Yes</b></strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $targetTalentPreferences['crowdluv_tid'];?>, "allow_sms", "0");'>Stop</a>)</span>
                     <span <?php if( $targetTalentPreferences['allow_sms']) echo " hidden " ?> class="p_allow_sms_no" style="color:red"><strong>No</strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $targetTalentPreferences['crowdluv_tid'];?>, "allow_sms", "1");'>Start</a>)</span>                                  
@@ -254,6 +283,9 @@
         </div>
         </div>
 
+
+
+        <!--  ****  Sharing Options *****  -->
         <div id="div-sharing" class="row" hidden>
         <div class="col-xs-12 clwhitebg crowdluvsection ">
                 <h1 class="cl-textcolor-standout">Share the Luv</h1>
@@ -261,10 +293,6 @@
 
 
                 <p id="<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans"></p>
-
-
-
-
 
 
                 <?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>
@@ -402,9 +430,6 @@
 
 
 
-
-
-
         </div>
 
 
@@ -415,7 +440,7 @@
         <!-- ****  LuverBoards ***  -->
         <div id="div-luverboards" class="row" >
             <div class="col-xs-12 clwhitebg crowdluvsection ">
-                <h1 class="cl-textcolor-standout">LuverBoards</h1>
+                <h1 class="cl-textcolor-standout">LuverBoards - Top Fans & Cities</h1>
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#home" data-toggle="tab">Our Top Fans</a></li>
                     <li><a href="#top-cities" data-toggle="tab">Our Top Cities</a></li>
@@ -426,7 +451,7 @@
                 </ul>                
 
                 <div id="myTabContent" class="tab-content">
-                    <div class="tab-pane fade in active cl-panel-luverboard" id="home">
+                    <div class="tab-pane fade in active cl-vscroll-panel cl-panel-medium-height" id="home">
                         <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan?</h2>
                         <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>
@@ -439,7 +464,7 @@
 
                         <?php  if($i++ > 8) break; } ?>
                     </div>
-                    <div class="tab-pane fade cl-panel-luverboard" id="top-cities">
+                    <div class="tab-pane fade cl-vscroll-panel cl-panel-medium-height" id="top-cities">
   
                         <h2 class="text-center">Does your city have the most Luv for <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>?</h2>
                         <p class="text-center"><a href="shareluv.php">Share the Luv</a> to increase your City's LuvScore. </p>
@@ -467,7 +492,7 @@
 
 
                    </div>
-                   <div class="tab-pane fade cl-panel-luverboard" id="top-luvers-city">
+                   <div class="tab-pane fade cl-vscroll-panel  cl-panel-medium-height" id="top-luvers-city">
                         <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan in <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>?</h2>
                         <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuversMyCity as $rankedLuver) { ?>
@@ -483,26 +508,27 @@
                    </div>
                 </div>
 
-
-
             </div>
         </div>
 
     </div>
 
 
-
 </div>
 
+       
+<br><br>
 
 
 
 
-        
-        <br><br>
+<?php include(ROOT_PATH . 'inc/partial_create_new_event_modal.php'); ?>
+
+
 
 <script type="text/javascript">
     
+
     function stopfollowingclickhandler(crowdluv_tid){
         console.log("entering stopfollowingclickhandler, crowdluv_tid=" + crowdluv_tid);
         contact_preference_change_handler(crowdluv_tid, "still_following", "0")
@@ -574,11 +600,60 @@
 
     }
 
+    function reloadUpcomingEvents(){
+
+        console.log("dsfsa");
+
+        $.post( "ajax_handle_post.php", "ajaxPostType=getUpcomingEventsForTalent&related_crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>",
+            function(response, status, xhr){
+
+                console.log("ajax_handle_post for getting upcomin events:");
+                console.log(response);
+
+                if(response.result == "Validation Failed"){
+                    
+                    $('#cl-talent-upcoming-events-panel').text("Error loading events:" + response.validation_error);
+                  
+                }
+                else{
+                    if(response.events.length > 0) $('#cl-talent-upcoming-events-panel').text("");
+                    else if(response.events.length == 0) $('#cl-talent-upcoming-events-panel').text("No upcoming events");
+                    //display the events in the panel
+                    for( i=0; i < response.events.length; i++){
+                        
+                        $('#cl-talent-upcoming-events-panel').append(
+                            "<p2 class='cl-upcoming-event-list-event-block'>" + response.events[i].start_date + "  --  " 
+                                + "<span class='fwb'>" + response.events[i].title + "</span> -- " +  response.events[i].location_string + "</p2>");
+
+                    }
+
+                }
+                
+            }, "json")
+            .done(function(response){
+
+            })
+            .fail(function(response){
+                console.log("fail");
+                console.log(response);
+
+            })
+            .always(function(response){
+
+            });
+
+
+    }
+
     $(document).ready(function(){  
         $(".txt_will_travel_time").change(function(){
             //console.log("inside txtwilltraveeltime handler. cltid=" + $(this).data('crowdluv_tid') + ", " + $(this).val());
             contact_preference_change_handler($(this).data('crowdluv_tid'), "will_travel_time", $(this).val());
         });
+
+        reloadUpcomingEvents();
+
+
 
         <?php 
         //if the flag was passed in indicating that this is the first talent the user has Luv'ed, 
@@ -597,52 +672,17 @@
         
         <?php } ?>
         
-
-
     });
-
-    //Once the facebook api finished loading and we've loaded the user's data, do a call to fb
-    $(document).on("fbUserDataLoaded", function(){
-
-        //do a facebook FQL query to find out which of their friends also like the talent's facebook page
-                  
-        FB.api(
-                {   
-                method: 'fql.query',
-                //query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=661469737211316 AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
-                query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?> AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
-                }, 
-                function(data) {
-                    console.log("in handler for call to get friends who like the talent:");           
-                    console.log(data);
-                    //For each of the friends, add their picture to the slide-down for the talent
-                    if(data.length==0){ 
-                        $("#<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans").append("None of your Facebook friends like <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>... Share a post on your wall and invite your friends to show some Luv?<br>"); 
-                    }
-                    else{ 
-                        $("#<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans").append("Some of your Facebook friends already like <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>... So, invite them to LUV <?php echo $ret_tal['fb_page_name'];?>! The more Luv <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?> has, the sooner they will come to your area<br>");
-                    }
-                    for(var i=0;i<data.length;i++){
-                        $("#<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
-                    }
-                    //
-                }
-        ); //end of fb.api
-    
-
-
-    }); //end of on() trigger for fbuserdataloaded
-
 
 </script>
 
 
 
-
-
-
+<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>
 <script type="text/javascript">
-    
+    //Scripts for handling sharing of talent landing page via social media
+    //TODO:    move this into a separate file and make it generic so that it's 
+    //  not duplicated between the talent profile and share luv pages
 
     // Load the twitter widgets script file asynchronously
     window.twttr = (function (d,s,id) {
@@ -726,41 +766,42 @@
     }
 
 
-   //Once the facebook api finished loading and we've loaded the user's data, do a call to fb
+
+    //Once the facebook api finished loading and we've loaded the user's data, do a call to fb
     $(document).on("fbUserDataLoaded", function(){
 
-        //for each of the talents this user is following, do a facebook FQL query to find out which of their friends also like the talent's facebook page
-        <?php foreach($ret_tals as $ret_tal){ ?>             
+        //do a facebook FQL query to find out which of their friends also like the talent's facebook page
+                  
         FB.api(
                 {   
                 method: 'fql.query',
                 //query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=661469737211316 AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
-                query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=<?php echo $ret_tal['fb_pid'];?> AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
+                query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?> AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
                 }, 
                 function(data) {
-                    console.log("Result of FQL call for friends who like <?php echo $ret_tal['fb_page_name']?>" ); 
+                    console.log("in handler for call to get friends who like the talent:");           
                     console.log(data);
                     //For each of the friends, add their picture to the slide-down for the talent
                     if(data.length==0){ 
-                        //$("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append("Facebook friends who like <?php echo $ret_tal['fb_page_name'];?><br>None. "); 
+                        $("#<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans").append("None of your Facebook friends like <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>... Share a post on your wall and invite your friends to show some Luv?<br>"); 
                     }
                     else{ 
-                        //$("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append("Facebook friends who like <?php echo $ret_tal['fb_page_name'];?>. Invite them to LUV <?php echo $ret_tal['fb_page_name'];?>!");
+                        $("#<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans").append("Some of your Facebook friends already like <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>... So, invite them to LUV <?php echo $ret_tal['fb_page_name'];?>! The more Luv <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?> has, the sooner they will come to your area<br>");
                     }
                     for(var i=0;i<data.length;i++){
-                        //$("#<?php echo $ret_tal['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
+                        $("#<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
                     }
-                    
+                    //
                 }
         ); //end of fb.api
-        <?php } ?>
-
-
-    }); //end of on() trigger for fbuserdataloaded
     
 
 
+    }); //end of on() trigger for fbuserdataloaded
+
+    
 </script>
+<?php } ?>
 
 
 

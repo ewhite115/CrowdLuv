@@ -1528,6 +1528,59 @@ class CrowdLuvModel {
 
 
 
+    /*  ********   Events  ************/
+
+    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startDate, $startTime, $duration, $locationString, $moreInfoURL){
+
+        try{
+            //Check to see if this follower had previously been following the talent
+             $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`, `start_date`, `start_time`, `duration`, `location_string`, `more_info_url`) 
+                                            VALUES (    ?,                           ?,                    ?,       ?,      ?,              ?,          ?,              ?,          ? ,             ?)";
+            //echo $sql; 
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_uidt);
+            $results->bindParam(2, $cl_tidt);
+            $results->bindParam(3, $type);
+            $results->bindParam(4, $title);
+            $results->bindParam(5, $description);
+            $results->bindParam(6, $startDate);
+            $results->bindParam(7, $startTime);
+            $results->bindParam(8, $duration);
+            $results->bindParam(9, $locationString);
+            $results->bindParam(10, $moreInfoURL);
+
+            $results->execute();
+            return $results;
+            //$data = $results->fetchAll(PDO::FETCH_ASSOC);
+            //return $data;
+            
+        } catch (Exception $e) {
+            return "Exception creating event." . $e;
+        }
+
+        return false;
+
+    }
+
+
+    public function getUpcomingEventsForTalent($cl_tidt){
+
+        try {
+            $sql = "SELECT * FROM event where related_crowdluv_tid=? and start_date >= CURDATE() ORDER BY start_date";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_tidt);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        return $data;
+
+    }
+
+
 
 
 

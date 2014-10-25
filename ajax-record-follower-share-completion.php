@@ -27,8 +27,6 @@
 
 
 
-
-
 	//Validate input
 	$allowed_shareTypes = ['facebook-share-landingpage', 'facebook-send-landingpage', 'twitter-tweet-landingpage'];
 	if(!isset($_GET['shareType'])) {echo "shareType not set"; exit;}

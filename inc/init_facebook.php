@@ -113,7 +113,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
         $facebookSession = null;
       }
     } catch ( Exception $e ) {
-      // catch any exceptions
+      // catch any exceptions, nullify the session variable if encountered
       $facebookSession = null;
     }
   }  
@@ -139,6 +139,15 @@ $facebookLikeCategoriesToCreateStubsFor = array (
         }
         $isNewSession = true;
       }
+    } catch( Facebook\FacebookAuthorizationException $ex ) {
+      
+      //Auth Code expired, so nullify the facebooksession and delete the stored token
+      
+      echo "FacebookAuthorizationException getting session in init_facebook";
+      //echo "<pre>"; var_dump($ex); echo "</pre>";
+      $facebookSession = null;
+      $_SESSION['fb_token'] = null;
+      //die;
     } catch( FacebookRequestException $ex ) {
       echo "FacebookRequestException getting session in init_facebook";
       echo "<pre>"; var_dump($ex); echo "</pre>";

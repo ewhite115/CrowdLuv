@@ -128,7 +128,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
       //echo "facebooksession from redirect:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
       //If no new session from redirect, see if there is a new session set on the client side 
       //  facebook javascript SDK
-      $facebookSession = $facebookJavascriptLoginHelper->getSession();
+      if($facebookSession === null) $facebookJavascriptLoginHelper->getSession();
       //echo "facebooksession from javascript:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
       //If this was in fact a newly-logged-in session, get facebook Permissions, check for minimums
       if($facebookSession){

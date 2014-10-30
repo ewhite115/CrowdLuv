@@ -113,7 +113,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
         $facebookSession = null;
       }
     } catch ( Exception $e ) {
-      // catch any exceptions
+      // catch any exceptions, nullify the session variable if encountered
       $facebookSession = null;
     }
   }  
@@ -128,7 +128,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
       //echo "facebooksession from redirect:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
       //If no new session from redirect, see if there is a new session set on the client side 
       //  facebook javascript SDK
-      $facebookSession = $facebookJavascriptLoginHelper->getSession();
+      if($facebookSession === null) $facebookJavascriptLoginHelper->getSession();
       //echo "facebooksession from javascript:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
       //If this was in fact a newly-logged-in session, get facebook Permissions, check for minimums
       if($facebookSession){
@@ -139,6 +139,15 @@ $facebookLikeCategoriesToCreateStubsFor = array (
         }
         $isNewSession = true;
       }
+    } catch( Facebook\FacebookAuthorizationException $ex ) {
+      
+      //Auth Code expired, so nullify the facebooksession and delete the stored token
+      
+      echo "FacebookAuthorizationException getting session in init_facebook";
+      //echo "<pre>"; var_dump($ex); echo "</pre>";
+      $facebookSession = null;
+      $_SESSION['fb_token'] = null;
+      //die;
     } catch( FacebookRequestException $ex ) {
       echo "FacebookRequestException getting session in init_facebook";
       echo "<pre>"; var_dump($ex); echo "</pre>";

@@ -300,7 +300,7 @@
                      data-crowdluv-tid attribute is added so that twitter callback handler can determine the crowdluv_tid being shared
                      This attribute must be on the parent div of the twitter share button                      
                       -->
-                <div data-crowdluv-tid="<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>" class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder cl_darkgraybackground"> 
+                <div data-crowdluv-uid="<?php echo $CL_CUR_LOGGEDIN_USER_UID;?>" data-crowdluv-tid="<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>" class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder cl_darkgraybackground"> 
                 
                     <div class="talent-avatar text-center"> 
                         <img src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
@@ -336,7 +336,7 @@
                                 <img <?php if($CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility']['eligibleLuvPoints'] == 0) echo "hidden"; ?> 
                                     style="width:50px;" 
                                     src="res/facebook-share-button.png" 
-                                    onclick="doFacebookShareDialog('<?php if($CL_CUR_TGT_TALENT["crowdluv_vurl"] == ""){ echo $CL_CUR_TGT_TALENT["crowdluv_tid"];} else {echo $CL_CUR_TGT_TALENT["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>')">
+                                    onclick="doFacebookShareDialog_TalentLandingPage('<?php if($CL_CUR_TGT_TALENT["crowdluv_vurl"] == ""){ echo $CL_CUR_TGT_TALENT["crowdluv_tid"];} else {echo $CL_CUR_TGT_TALENT["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>')">
                             </a>
                             <!--disabled button-->
                             <img <?php if($CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility']['eligibleLuvPoints'] > 0) echo "hidden"; ?> 
@@ -361,7 +361,7 @@
                         <p2>
                             <!--enabled -->
                             <a href="#">
-                                <img <?php if($CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility']['eligibleLuvPoints'] == 0) echo "hidden"; ?>  style="width:50px;" src="res/facebook-send-button.jpg" onclick="doFacebookSendDialog('<?php if($CL_CUR_TGT_TALENT["crowdluv_vurl"] == ""){ echo $CL_CUR_TGT_TALENT["crowdluv_tid"];} else {echo $CL_CUR_TGT_TALENT["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>')"> 
+                                <img <?php if($CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility']['eligibleLuvPoints'] == 0) echo "hidden"; ?>  style="width:50px;" src="res/facebook-send-button.jpg" onclick="doFacebookSendDialog_TalentLandingPage('<?php if($CL_CUR_TGT_TALENT["crowdluv_vurl"] == ""){ echo $CL_CUR_TGT_TALENT["crowdluv_tid"];} else {echo $CL_CUR_TGT_TALENT["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>')"> 
                             </a>
                             <!--disabled-->
                             <img <?php if($CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility']['eligibleLuvPoints'] > 0) echo "hidden"; ?> 
@@ -425,10 +425,6 @@
                 </div>
                 <?php } ?>
 
-                
-
-
-
 
         </div>
 
@@ -471,8 +467,8 @@
                 <div class="cl-event-share-widget inline-block">
                     <h2>Share</h2>
                     <p2>Share <span>Get 10 Luvs</span></p2>
-                    <p2>Share <span>Get 10 Luvs</span></p2>
-                    <p2>Share <span>Get 10 Luvs</span></p2>
+                    <!-- Share options will be inserted here -->
+
                 </div>
                 <hr>
                 <div class="cl-event-description">
@@ -497,15 +493,13 @@
         function populateEventPanelDetails(panel, eventObj){
           console.log("Populating " + panel + " with event id " + eventObj.id);
 
-          // var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "June",
-          //   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-
+          //Populate Date, Title, type
           var startDate = new Date(eventObj.start_date);
           $(panel + " .cl-calendar-icon h2").html(getMonthAcronymForDate(startDate));
           $(panel + " .cl-calendar-icon p").html(startDate.getDate());
-
           $(panel + " .cl-event-title-header h1").html(eventObj.title);
           $(panel + " .cl-event-title-header p").html(eventObj.type);
+          //Populate location, URL, cr by
           $(panel + " .cl-event-location").html(eventObj.location_string);
           $(panel + " .cl-event-created-by-user-name").html(eventObj.firstname + " " + eventObj.lastname);
           $(panel + " .cl-event-created-by-user-rank").html("(" + eventObj.created_by_user_rank + ")");
@@ -513,7 +507,36 @@
             $(panel + " .cl-event-more-info-url").html(eventObj.more_info_url);
           }
           else $(panel + " .cl-event-more-info").hide();
+          
+          //Populate sharing widget with share options
+          $(panel + " .cl-event-share-widget").html("");
+          //if user is eligible to share on fb, append the share link and how many luvs
+          $(panel + " .cl-event-share-widget").append(
+                "<p2>" + 
+                    "<img style='width:50px;' src='res/facebook-share-button.png' onclick='doFacebookShareDialog_Event(" + eventObj.id + ", <?= $CL_LOGGEDIN_USER_UID;?>," + eventObj.related_crowdluv_tid  + ")'>" +
+                    "<img style='width: 1.25em;' src='res/top-heart.png'>" +
+                    "+10" + 
+                "</p2>"
+            );
+        
+
+          //if user is eligible to send on fb, append the share link and how many luvs          
+          $(panel + " .cl-event-share-widget").append(
+                "<p2>" + 
+                    "<img style='width:50px;' src='res/facebook-send-button.jpg' onclick='doFacebookSendDialog_Event(" + eventObj.id + ", <?= $CL_LOGGEDIN_USER_UID;?>," + eventObj.related_crowdluv_tid  + ")'>" +
+                    "<img style='width: 1.25em;' src='res/top-heart.png'>" +
+                    "+10" + 
+                "</p2>"
+            );
+
+          //if user is eligible to tweet, append the tweet button/link and how many luvspoints
+          
+          
+          //Populate description
           $(panel + " .cl-event-description p").html(eventObj.description);
+
+
+
 
         }
         </script>
@@ -661,10 +684,7 @@
             $("#panel-event-details").show();
         });        
 
-
-
     }
-
 
 
     function contact_preference_change_handler(crowdluv_tid, prefname, prefval){
@@ -773,7 +793,8 @@
 
         reloadUpcomingEvents();
 
-
+        //if an event ID was passed in the query string, load it in the event details panel
+        if(qsEventID=getQueryVariable("eventID")) { onSelectEvent(qsEventID);  }
 
         <?php 
         //if the flag was passed in indicating that this is the first talent the user has Luv'ed, 
@@ -800,92 +821,6 @@
 
 <?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>
 <script type="text/javascript">
-    //Scripts for handling sharing of talent landing page via social media
-    //TODO:    move this into a separate file and make it generic so that it's 
-    //  not duplicated between the talent profile and share luv pages
-
-    // Load the twitter widgets script file asynchronously
-    window.twttr = (function (d,s,id) {
-      var t, js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return; js=d.createElement(s); js.id=id;
-      js.src="https://platform.twitter.com/widgets.js";
-      fjs.parentNode.insertBefore(js, fjs);
-      return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f) } });
-    }(document, "script", "twitter-wjs"));
-
-    
-
-    // When the twitter widgets have finished loading, register callback for tweet event
-    twttr.ready(function (twttr) {
-        twttr.events.bind('tweet', function ( event ) {
-            if ( event ) {
-                console.log( 'Tweet Callback invoked. event:' ); console.log(event);
-                //event will have a member called target to identify which tweet button was clicked
-                //We store an attribute in the parent div called "data-crowdluv-tid" to tie back
-                //to which talent was being shared by the user    
-                crowdluv_tid = event.target.offsetParent.getAttribute("data-crowdluv-tid");
-                console.log("calculated crowdluv_tid to be: " + crowdluv_tid);
-                recordFollowerShareCompletion("twitter-tweet-landingpage", <?php echo $CL_LOGGEDIN_USER_UID;?>, crowdluv_tid);
-                $("#lbl-twitter-tweet-status-" + crowdluv_tid).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!")
-            }
-        });
-    });
-
-
-    //Launches the Facebook Share dialog for a talent.
-    //If completed, makes a call to record the share
-    function doFacebookShareDialog(vurl, cl_uidt, cl_tidt){
-
-        FB.ui({
-            method: 'share',
-            href: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>",
-            display: 'popup'
-            },
-            function(response) {
-            console.log("callback from fb share dialog:")
-            console.log(response);
-            if (! response ) {
-                console.log("Share window closed");
-            } else if (response && response.error_code) {
-                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
-                else console.log("other facebook error:" + response.error_message);                
-            } else {
-                console.log("Share completed");
-                recordFollowerShareCompletion("facebook-share-landingpage", cl_uidt, cl_tidt);
-
-                $("#lbl-facebook-share-status-" + cl_tidt).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!")
-
-            }
-        });
-
-    }
-
-    //Launches the Facebook Share dialog for a talent.
-    //If completed, makes a call to record the share
-    function doFacebookSendDialog(vurl, cl_uidt, cl_tidt){
-
-        FB.ui({
-            method: 'send',
-            link: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>"
-            },
-            function(response) {
-            console.log("callback from fb share dialog:")
-            if (! response ) {
-                console.log("Share window closed");
-            } else if (response && response.error_code) {
-                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
-                else console.log("other facebook error:" + response.error_message);                
-            } else {
-                console.log("Share completed");
-                recordFollowerShareCompletion("facebook-send-landingpage", cl_uidt, cl_tidt);
-                $("#lbl-facebook-send-status-" + cl_tidt).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!")
-
-            }
-        });
-
-    }
-
-
 
     //Once the facebook api finished loading and we've loaded the user's data, do a call to fb
     $(document).on("fbUserDataLoaded", function(){

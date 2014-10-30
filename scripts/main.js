@@ -6,6 +6,31 @@
 
 
 
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
+
+
+
+
+function getMonthAcronymForDate(dateObj){
+
+  var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "June",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+
+  return monthNames[dateObj.getMonth()];
+
+}
+
+
+
 
 /**
  * YouTube player Object for the video that plays inside the "new user" intro modal
@@ -262,6 +287,143 @@ function update_talent_landingpage_vurl(vurl, handler){
 
 }
 
+
+//Scripts for handling sharing of talent landing page via social media
+
+//Launches the Facebook Share dialog for the url specified
+//If completed, call the provided handler
+function doFacebookShareDialog(url, onSuccessHandler){
+
+    FB.ui({
+        method: 'share',
+        href: url,
+        display: 'popup'
+        },
+        function(response) {
+            console.log("callback from fb share dialog:");
+            console.log(response);
+            if (! response ) {
+                console.log("Share window closed");
+            } else if (response && response.error_code) {
+                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
+                else console.log("other facebook error:" + response.error_message);
+            } else {
+                console.log("Share completed");
+                onSuccessHandler(response);
+            }
+        }
+    );
+}
+
+//Launches the Facebook Send dialog for the url specified
+//If completed, call the provided handler
+function doFacebookSendDialog(url, onSuccessHandler){
+
+    FB.ui({
+        method: 'send',
+        link: url
+        },
+        function(response) {
+            console.log("callback from fb share dialog:");
+            console.log(response);
+            if (! response ) {
+                console.log("Share window closed");
+            } else if (response && response.error_code) {
+                if(response.errorcode==4021) console.log("facebook error 4021 user cancelled share dialog");
+                else console.log("other facebook error:" + response.error_message);
+            } else {
+                console.log("Share completed");
+                onSuccessHandler(response);
+            }
+        }
+
+    );
+}
+
+
+function doFacebookShareDialog_TalentLandingPage(vurl, cl_uidt, cl_tidt){
+
+    doFacebookShareDialog('<?php echo CLADDR;?>talent/' + vurl + '?ref_uid=' + cl_uidt,
+        function(response) {
+            recordFollowerShareCompletion("facebook-share-landingpage", cl_uidt, cl_tidt);
+            $("#lbl-facebook-share-status-" + cl_tidt).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!");
+        }
+    );
+}
+
+
+//Launches the Facebook Send dialog for a talent.
+//If completed, makes a call to record the share
+function doFacebookSendDialog_TalentLandingPage(vurl, cl_uidt, cl_tidt){
+
+    doFacebookSendDialog('<?php echo CLADDR;?>talent/' + vurl + '?ref_uid=' + cl_uidt,
+        function(response) {
+            recordFollowerShareCompletion("facebook-send-landingpage", cl_uidt, cl_tidt);
+            $("#lbl-facebook-send-status-" + cl_tidt).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!");
+        }
+    );
+}
+
+
+function doFacebookShareDialog_Event(eventID, cl_uidt, cl_tidt){
+
+    doFacebookShareDialog('<?php echo CLADDR;?>follower_talent_detail.php?eventID=' + eventId + '?ref_uid=' + cl_uidt,
+        function(response) {
+            //recordEventShareCompletion("facebook-share-landingpage", cl_uidt, cl_tidt);
+            //$("#lbl-facebook-share-status-" + cl_tidt).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!");
+        }
+    );
+}
+
+
+//Launches the Facebook Send dialog for a talent.
+//If completed, makes a call to record the share
+function doFacebookSendDialog_Event(eventID, cl_uidt, cl_tidt){
+
+    doFacebookSendDialog('<?php echo CLADDR;?>follower_talent_detail.php?crowdluv_tid=' + cl_tidt + '&eventID=' + eventID + '&ref_uid=' + cl_uidt,
+        function(response) {
+            //recordEventShareCompletion("facebook-send-landingpage", cl_uidt, cl_tidt);
+            //$("#lbl-facebook-send-status-" + cl_tidt).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!");
+        }
+    );
+}
+
+
+
+// Load the twitter widgets script file asynchronously
+window.twttr = (function (d,s,id) {
+  var t, js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return; js=d.createElement(s); js.id=id;
+  js.src="https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+  return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f);} });
+}(document, "script", "twitter-wjs"));
+
+
+
+// When the twitter widgets have finished loading, register callback for tweet event
+twttr.ready(function (twttr) {
+    twttr.events.bind('tweet', function ( event ) {
+        if ( event ) {
+            console.log( 'Tweet Callback invoked. event:' ); console.log(event);
+            //event will have a member called target to identify which tweet button was clicked
+            //We store an attribute in the parent div called "data-crowdluv-tid" to tie back
+            //to which talent was being shared by the user    
+            crowdluv_tid = event.target.offsetParent.getAttribute("data-crowdluv-tid");
+            crowdluv_uid = event.target.offsetParent.getAttribute("data-crowdluv-uid");
+            console.log("calculated crowdluv_tid to be: " + crowdluv_tid);
+            recordFollowerShareCompletion("twitter-tweet-landingpage", crowdluv_uid, crowdluv_tid);
+            $("#lbl-twitter-tweet-status-" + crowdluv_tid).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!");
+        }
+    });
+});
+
+
+
+
+
+
+
 /**
  * [recordFollowerShareCompletion makes an ajax call to the server to record the fact that a follower has completed a share ]
  * @param  {[type]} type   [description]
@@ -331,14 +493,5 @@ function getEventDetails(eventID, handler){
 }
 
 
-
-function getMonthAcronymForDate(dateObj){
-
-  var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "June",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-
-  return monthNames[dateObj.getMonth()];
-
-}
 
 

@@ -8,6 +8,16 @@ hr {
     margin-bottom:5px;
 
 }
+
+.inline-block{
+    display: inline-block;
+}
+.fwb {
+    font-weight: bold;
+}
+
+
+
 .footer {
     clear:both;  /* had to add this to get the footer to push down below the login boxes on home page*/
     background: #f4f4f4; /* #f0eeed; */
@@ -770,7 +780,7 @@ background-size: contain;
 }
 
 
-.cl-vscroll-panel{
+.cl-panel-vscroll {
 
     overflow:scroll;
 
@@ -784,22 +794,82 @@ background-size: contain;
     height: 8em;
     
 }
-.cl-talent-upcoming-events-panel{
 
 
-}
-#cl-talent-upcoming-events-panel .cl-upcoming-event-list-event-block {
+/* Upcoming Events Panel*/
+
+
+.cl-panel-upcoming-events .cl-block-event-ticker-event {
     border-bottom: 1px dashed;
     border-bottom-color: #e9e9e9
 
+}
+.cl-panel-upcoming-events .cl-block-event-ticker-event:hover {
+    background-color:  #e9eaed;
+    cursor:pointer;
+}
+
+.cl-ticker-event-date  { 
+    width:3em;
+    vertical-align: top;
+    text-align: center;
+}
+    .cl-ticker-event-date h2 {
+        color: darkred;
+
+    }
+
+.cl-ticket-event-title {
+    width:80%;
+}
+
+
+
+.cl-calendar-icon {
+    display: inline-block;
+    vertical-align: top;
+    width: 3em;
+    border: solid darkred 1px;
+    text-align: center;
+}
+.cl-calendar-icon h2 {
+
+    background-color: darkred;
+    color: white;
+
+}
+.cl-vote-widget {
+
+    vertical-align:top;
+}
+
+
+/* Event Detail Display  */
+
+.cl-panel-event .cl-panel-medium-height {
+
     
-}
-#cl-talent-upcoming-events-panel p2:hover {
 
-    /*background-color: #f0eeed;*/
-    background-color:  #e9eaed
 
 }
-.fwb {
-    font-weight: bold;
+.cl-event-title-header {
+    display: inline-block;
+    width: 65%;
+    vertical-align: top;
+
 }
+.cl-event-detail-vote-widget {
+    width:6.5em;
+
+}
+
+.cl-event-key-details {
+
+    width:75%;
+    vertical-align: top;
+}
+.cl-event-share-widget{
+    width:6.5em;
+}
+
+

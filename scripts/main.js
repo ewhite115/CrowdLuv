@@ -289,7 +289,56 @@ function recordFollowerShareCompletion(shareType, crowdluv_uid, crowdluv_tid, ha
 
 
 
+/**
+ * [getEventDetails Makes ajax call to CL API to retrieve details for an event]
+ * @param  {[type]} eventID [description]
+ * @param  {[type]} handler [callback handler]
+ * @return {[type]}         [result]
+ */
+function getEventDetails(eventID, handler){
+
+  console.log("getEventDetails()");
+
+  $.post( "ajax_handle_post.php", "ajaxPostType=getEventDetails&eventID=" + eventID,
+    function(response, status, xhr){
+
+        console.log("ajax_handle_post for getting event details:");
+        console.log(response);
+
+        if(response.result == "Validation Failed"){
+            console.log("Validation failed getting event details");
+            
+        }
+        else{
+            if(response.event.id > 0) handler(response.event);
+
+        }
+        
+    }, "json")
+    .done(function(response){
+
+    })
+    .fail(function(response){
+        console.log("fail");
+        console.log(response);
+
+    })
+    .always(function(response){
+
+    });
 
 
+}
+
+
+
+function getMonthAcronymForDate(dateObj){
+
+  var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "June",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+
+  return monthNames[dateObj.getMonth()];
+
+}
 
 

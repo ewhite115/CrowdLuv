@@ -1581,6 +1581,24 @@ class CrowdLuvModel {
     }
 
 
+    public function getEventDetails($eventID){
+
+        try {
+            $sql = "SELECT follower.firstname, follower.lastname, event.* FROM follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid where id=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $eventID);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+
+        $data[0]['created_by_user_rank'] = $this->calculate_follower_rank_for_talent($data[0]['created_by_crowdluv_uid'], $data[0]['related_crowdluv_tid'])['rank_title'];
+        return $data[0];
+
+    }
 
 
 

@@ -234,7 +234,7 @@
             <div class="col-xs-12 clwhitebg crowdluvsection">
                 <h1 class="cl-textcolor-standout">Activity</h1>
                 <hr>
-                <div id="cl-talent-activity-panel" class="cl-vscroll-panel cl-panel-short-height">
+                <div id="cl-talent-activity-panel" class="cl-panel-vscroll cl-panel-short-height">
                     recent activity will go here.        
                 </div>
 
@@ -247,7 +247,7 @@
             <div class="col-xs-12 clwhitebg crowdluvsection">
                 <h1 class="cl-textcolor-standout">Upcoming Events</h1>
                 <hr>
-                <div id="cl-talent-upcoming-events-panel" class="cl-vscroll-panel cl-panel-short-height">
+                <div class="cl-panel-vscroll cl-panel-short-height cl-panel-upcoming-events">
                     Loading events...
                 
                 </div>
@@ -267,7 +267,7 @@
         <div id="div-preferences" class="row" hidden>
         <div class="col-xs-12 clwhitebg crowdluvsection ">
             <h1 class="cl-textcolor-standout">Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
-            <div class="cl_darkgraybackground cl-vscroll-panel cl-panel-medium-height" id="cltoptsrow<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+            <div class="cl_darkgraybackground cl-panel-vscroll cl-panel-medium-height" id="cltoptsrow<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
                 <p> Allow SMS contact?: 
                     <span <?php if(!$targetTalentPreferences['allow_sms']) echo " hidden " ?> class="p_allow_sms_yes" style="color:green"><strong><b>Yes</b></strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $targetTalentPreferences['crowdluv_tid'];?>, "allow_sms", "0");'>Stop</a>)</span>
                     <span <?php if( $targetTalentPreferences['allow_sms']) echo " hidden " ?> class="p_allow_sms_no" style="color:red"><strong>No</strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $targetTalentPreferences['crowdluv_tid'];?>, "allow_sms", "1");'>Start</a>)</span>                                  
@@ -437,6 +437,94 @@
 
 
 
+        <!-- Event Details   -->
+        <div id="panel-event-details" class="row" hidden>
+        <div class="col-xs-12 clwhitebg crowdluvsection ">
+            <h1 class="cl-textcolor-standout">Event Details</h1>
+            <hr>
+            <div class="cl-panel-vscroll cl-panel-medium-height cl-panel-event">
+                  <div class="cl-calendar-icon">
+                    <h2>Jan</h2>
+                    <p>1</p>
+                  </div>  
+                  <div class="cl-event-title-header inline-block">
+                    <h1>Title of event here</h1>
+                    <p>Type of event listed here</p>
+                  </div>
+                  <div class="cl-vote-widget inline-block">
+                    <img src="res/votearrows/stack-up-off.png">
+                    <h2>Vote</h2>
+                    <img src="res/votearrows/stack-down-off.png">
+                </div>
+                <hr>
+                <div class="cl-event-key-details inline-block">
+                    <p>
+                        <span class="cl-event-location"> </span> 
+                    </p>
+                    <p class="cl-event-more-info">
+                        <span>More Info: </span><span class="cl-event-more-info-url">http://www.mreinfo.com/moreinfo.html</span>
+                    </p>
+                    <p>
+                        <span>Created By:</span> <span class="cl-event-created-by-user-name"> </span> <span class="cl-event-created-by-user-rank"></span>
+                    </p>
+                </div>
+                <div class="cl-event-share-widget inline-block">
+                    <h2>Share</h2>
+                    <p2>Share <span>Get 10 Luvs</span></p2>
+                    <p2>Share <span>Get 10 Luvs</span></p2>
+                    <p2>Share <span>Get 10 Luvs</span></p2>
+                </div>
+                <hr>
+                <div class="cl-event-description">
+                    <h2>Description</h2>
+                    <p> </p>
+                </div>
+
+
+
+            </div>      
+        </div>
+        </div>
+
+        <script>
+        /**
+         * [populateEventPanelDetails  Fills in the detail in an event panel with the values from the event.
+         *                             This will typically be called by the handler of a call to getEventDetails]
+         * @param  {[type]} panel [description]
+         * @param  {[type]} event [description]
+         * @return {[type]}       [description]
+         */
+        function populateEventPanelDetails(panel, eventObj){
+          console.log("Populating " + panel + " with event id " + eventObj.id);
+
+          // var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "June",
+          //   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+
+          var startDate = new Date(eventObj.start_date);
+          $(panel + " .cl-calendar-icon h2").html(getMonthAcronymForDate(startDate));
+          $(panel + " .cl-calendar-icon p").html(startDate.getDate());
+
+          $(panel + " .cl-event-title-header h1").html(eventObj.title);
+          $(panel + " .cl-event-title-header p").html(eventObj.type);
+          $(panel + " .cl-event-location").html(eventObj.location_string);
+          $(panel + " .cl-event-created-by-user-name").html(eventObj.firstname + " " + eventObj.lastname);
+          $(panel + " .cl-event-created-by-user-rank").html("(" + eventObj.created_by_user_rank + ")");
+          if(eventObj.more_info_url !== ""){
+            $(panel + " .cl-event-more-info-url").html(eventObj.more_info_url);
+          }
+          else $(panel + " .cl-event-more-info").hide();
+          $(panel + " .cl-event-description p").html(eventObj.description);
+
+        }
+        </script>
+
+
+
+
+
+
+
+
         <!-- ****  LuverBoards ***  -->
         <div id="div-luverboards" class="row" >
             <div class="col-xs-12 clwhitebg crowdluvsection ">
@@ -451,7 +539,7 @@
                 </ul>                
 
                 <div id="myTabContent" class="tab-content">
-                    <div class="tab-pane fade in active cl-vscroll-panel cl-panel-medium-height" id="home">
+                    <div class="tab-pane fade in active cl-panel-vscroll cl-panel-medium-height" id="home">
                         <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan?</h2>
                         <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>
@@ -464,7 +552,7 @@
 
                         <?php  if($i++ > 8) break; } ?>
                     </div>
-                    <div class="tab-pane fade cl-vscroll-panel cl-panel-medium-height" id="top-cities">
+                    <div class="tab-pane fade cl-panel-vscroll cl-panel-medium-height" id="top-cities">
   
                         <h2 class="text-center">Does your city have the most Luv for <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>?</h2>
                         <p class="text-center"><a href="shareluv.php">Share the Luv</a> to increase your City's LuvScore. </p>
@@ -492,7 +580,7 @@
 
 
                    </div>
-                   <div class="tab-pane fade cl-vscroll-panel  cl-panel-medium-height" id="top-luvers-city">
+                   <div class="tab-pane fade cl-panel-vscroll  cl-panel-medium-height" id="top-luvers-city">
                         <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan in <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>?</h2>
                         <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuversMyCity as $rankedLuver) { ?>
@@ -541,6 +629,7 @@
         $("#div-luverboards").hide();
         $("#div-preferences").show();
         $("#div-sharing").hide();
+        $("#panel-event-details").hide();
 
     }
     function rank_clickhandler(){
@@ -548,15 +637,34 @@
         $("#div-luverboards").show();
         $("#div-preferences").hide();
         $("#div-sharing").hide();
+        $("#panel-event-details").hide();
 
     }
     function share_clickhandler(){
 
         $("#div-luverboards").hide();
         $("#div-preferences").hide();
+        $("#panel-event-details").hide();
         $("#div-sharing").show();
 
     }
+    function onSelectEvent(eventID){
+
+        //Call API to get event details
+        getEventDetails(eventID, function(eventObj){
+            console.log("in callback from getEventDetails");
+            populateEventPanelDetails("#panel-event-details", eventObj);
+
+            $("#div-luverboards").hide();
+            $("#div-preferences").hide();
+            $("#div-sharing").hide();
+            $("#panel-event-details").show();
+        });        
+
+
+
+    }
+
 
 
     function contact_preference_change_handler(crowdluv_tid, prefname, prefval){
@@ -616,14 +724,27 @@
                   
                 }
                 else{
-                    if(response.events.length > 0) $('#cl-talent-upcoming-events-panel').text("");
-                    else if(response.events.length == 0) $('#cl-talent-upcoming-events-panel').text("No upcoming events");
+                    if(response.events.length > 0) $('.cl-panel-upcoming-events').text("");
+                    else if(response.events.length == 0) $('.cl-panel-upcoming-events').text("No upcoming events");
                     //display the events in the panel
                     for( i=0; i < response.events.length; i++){
                         
-                        $('#cl-talent-upcoming-events-panel').append(
-                            "<p2 class='cl-upcoming-event-list-event-block'>" + response.events[i].start_date + "  --  " 
-                                + "<span class='fwb'>" + response.events[i].title + "</span> -- " +  response.events[i].location_string + "</p2>");
+                        $('.cl-panel-upcoming-events').append(
+                            "<div class='cl-block-event-ticker-event' onClick='onSelectEvent(" + response.events[i].id + ")'>" +
+                                "<div class='cl-ticker-event-date inline-block'>" +
+                                    "<h2>" 
+                                        + getMonthAcronymForDate(new Date(response.events[i].start_date)) + 
+                                    "</h2>" +
+                                    "<h1>" + (new Date(response.events[i].start_date)).getDay() + "</h1>" +
+                                "</div>" +
+                                "<div class='cl-ticket-event-title inline-block'>" + 
+                                    "<p class='fwb'>" 
+                                        + response.events[i].title + 
+                                    "</p>"
+                                    + "<p2>" + response.events[i].location_string + "</p2>" +
+                                "</div>" +
+                            "</div>"
+                        );
 
                     }
 
@@ -641,7 +762,6 @@
             .always(function(response){
 
             });
-
 
     }
 

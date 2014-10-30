@@ -72,6 +72,13 @@
 			if(!isset($_POST['related_crowdluv_tid'])) {$validationFailure = "crowdluv_tid not set"; break;}
 
 		break;
+		case 'getEventDetails':
+			if(!isset($_POST['eventID'])) {$validationFailure = "eventID not set"; break;}
+
+		break;
+
+
+
 
 	}
 
@@ -122,6 +129,15 @@
 				$response['events'] = $events;
 
 			break;
+
+			case 'getEventDetails':
+
+				$event = $CL_model->getEventDetails($_POST['eventID']);
+				$response['result'] = "ok";
+				$response['event'] = $event;
+				
+			break;
+
 		}
 	}
 

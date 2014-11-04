@@ -76,17 +76,24 @@
 
         //Sharing
         $nowTimestamp = date("Y-m-d G:i:s", time());
-        $potentialShareRecord = [ "crowdluv_uid" => $CL_LOGGEDIN_USER_UID, 'crowdluv_tid' => $CL_CUR_TGT_TALENT['crowdluv_tid'], 'timestamp' => $nowTimestamp  ];
-        $potentialShareRecord['share_type'] = "crowdluv-talent-landing-page";
+        $potentialShareRecord = [
+                                'shareType' => "crowdluv-talent-landing-page",
+                                'shareDetails' => [
+                                    "crowdluvUID" => $CL_LOGGEDIN_USER_UID, 
+                                    'crowdluvTID' => $CL_CUR_TGT_TALENT['crowdluv_tid']
+                                    ],
+                                'timestamp' => $nowTimestamp  
+                                ];
+
+                
+        $potentialShareRecord['shareMethod'] = "facebook-share";
+        $CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord);
         
-        $potentialShareRecord['share_method'] = "facebook-share";
-        $CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
+        $potentialShareRecord['shareMethod'] = "facebook-send";
+        $CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord);
         
-        $potentialShareRecord['share_method'] = "facebook-send";
-        $CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
-        
-        $potentialShareRecord['share_method'] = "twitter-tweet";
-        $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
+        $potentialShareRecord['shareMethod'] = "twitter-tweet";
+        $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord);
 
     }
 
@@ -418,8 +425,8 @@
             //TODO:  only show if they are eligible for share?
             var eventShareDetails = {
                 eventID: eventObj.id,
-                cl_uidt: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
-                cl_tidt: eventObj.related_crowdluv_tid
+                crowdluvUID: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
+                crowdluvTID: eventObj.related_crowdluv_tid
             };
 
             //Add fb-share widget for the event            
@@ -428,7 +435,7 @@
                                                                     shareMethod: "facebook-share", 
                                                                     //onclickFunctionString: fbShareLandingPageFunctionString,
                                                                     shareDetails: eventShareDetails,
-                                                                    luvPoints: 8,
+                                                                    luvPoints: eventObj.shareEligibility['facebook-share'].eligibleLuvPoints,
                                                                     //nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility']['nextEligibleTimestamp']); ?>",
                                                                     widgetID: "cl-share-widget-facebook-share-event-" + eventObj.id
                                                                     })
@@ -441,7 +448,7 @@
                                                                     shareMethod: "facebook-send", 
                                                                     //onclickFunctionString: fbShareLandingPageFunctionString,
                                                                     shareDetails: eventShareDetails,
-                                                                    luvPoints: 12,
+                                                                    luvPoints: eventObj.shareEligibility['facebook-send'].eligibleLuvPoints,
                                                                     //nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility']['nextEligibleTimestamp']); ?>",
                                                                     widgetID: "cl-share-widget-facebook-send-event-" + eventObj.id
                                                                     })
@@ -453,7 +460,7 @@
                                                     shareType: "crowdluv-event",
                                                     shareMethod: "twitter-tweet",
                                                     shareDetails: eventShareDetails,
-                                                    luvPoints: 4,
+                                                    luvPoints: eventObj.shareEligibility['twitter-tweet'].eligibleLuvPoints,
                                                     //nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility']['nextEligibleTimestamp']);?>"
                                               });
             
@@ -658,7 +665,7 @@
 
     function reloadUpcomingEvents(){
 
-        console.log("dsfsa");
+        //console.log("dsfsa");
 
         $.post( "ajax_handle_post.php", "ajaxPostType=getUpcomingEventsForTalent&related_crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>",
             function(response, status, xhr){
@@ -677,6 +684,16 @@
                     //display the events in the panel
                     for( i=0; i < response.events.length; i++){
                         
+                        //check to see how many luvpoints the user is eligible for to 
+                        //share the event,  if any
+                        var elgLPs = 0;
+                        //console.log("shareElg length: " + response.events[i].shareEligibility.length);
+                        for(var shrMeth in response.events[i].shareEligibility){
+                            console.log("ddddddd");
+                            if(response.events[i].shareEligibility[shrMeth].eligibleLuvPoints > elgLPs) elgLPs = response.events[i].shareEligibility[shrMeth].eligibleLuvPoints;
+                        }
+
+
                         $('.cl-panel-upcoming-events').append(
                             "<div class='cl-block-event-ticker-event' onClick='onSelectEvent(" + response.events[i].id + ")'>" +
                                 "<div class='cl-ticker-event-date inline-block'>" +
@@ -685,11 +702,11 @@
                                     "</h2>" +
                                     "<h1>" + (new Date(response.events[i].start_date)).getDay() + "</h1>" +
                                 "</div>" +
-                                "<div class='cl-ticket-event-title inline-block'>" + 
+                                "<div class='cl-ticker-event-title inline-block'>" + 
                                     "<p class='fwb'>" 
                                         + response.events[i].title + 
-                                    "</p>"
-                                    + "<p2>" + response.events[i].location_string + "</p2>" +
+                                    "</p>" +
+                                    "<p2>" + response.events[i].location_string + "  ---  Share for " + elgLPs +  " LuvPoints!</p2>" +
                                 "</div>" +
                             "</div>"
                         );
@@ -740,8 +757,8 @@
                                         //onclickFunctionString: fbShareLandingPageFunctionString,
                                         shareDetails: {
                                             vurl: vurlOrTID,
-                                            cl_uidt: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
-                                            cl_tidt: '<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>'
+                                            crowdluvUID: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
+                                            crowdluvTID: '<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>'
 
                                         },
                                         luvPoints: <?php echo $CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility']['eligibleLuvPoints'];?>,
@@ -759,8 +776,8 @@
                                         //onclickFunctionString: fbSendLandingPageFunctionString,
                                         shareDetails: {
                                             vurl: vurlOrTID,
-                                            cl_uidt: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
-                                            cl_tidt: '<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>'
+                                            crowdluvUID: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
+                                            crowdluvTID: '<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>'
                                         },
                                         luvPoints: <?php echo $CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility']['eligibleLuvPoints'];?>,
                                         nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility']['nextEligibleTimestamp']); ?>",
@@ -776,8 +793,8 @@
                                                 shareDetails: {
                                                     vurl: vurlOrTID,
                                                     talentName: "<?= $CL_CUR_TGT_TALENT['fb_page_name'];?>",
-                                                    cl_uidt: "<?= $CL_LOGGEDIN_USER_UID;?>",
-                                                    cl_tidt: "<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>"
+                                                    crowdluvUID: "<?= $CL_LOGGEDIN_USER_UID;?>",
+                                                    crowdluvTID: "<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>"
                                                 },
                                                 luvPoints: <?= $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility']['eligibleLuvPoints'];?>,
                                                 nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility']['nextEligibleTimestamp']);?>"

@@ -334,7 +334,7 @@ function buildHTMLWidget_FacebookShare(params) {
                         "facebook-send" : "res/facebook-send-button.jpg",
                         };
   var widgetImagesOff = { "facebook-share" : "res/facebook-share-button-gray.png",
-                        "facebook-send" : "res/facebook-send-button-gray.jpg"
+                        "facebook-send" : "res/facebook-send-button-gray.png"
       };
   var widgetImage = "";
   var pointsOrNextTime = "";
@@ -342,8 +342,8 @@ function buildHTMLWidget_FacebookShare(params) {
 
   //construct the URL based on the shareType and corresponding shareDetails,
   //   and add that url to params
-  if(params.shareType == "crowdluv-talent-landing-page") params.url = '<?php echo CLADDR;?>talent/' + params.shareDetails.vurl + '?ref_uid=' + params.shareDetails.cl_uidt;
-  else if (params.shareType == "crowdluv-event") params.url = "<?php echo CLADDR;?>follower_talent_detail.php?crowdluv_tid=" + params.shareDetails.cl_tidt + '&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.cl_uidt;
+  if(params.shareType == "crowdluv-talent-landing-page") params.url = '<?php echo CLADDR;?>talent/' + params.shareDetails.vurl + '?ref_uid=' + params.shareDetails.crowdluvUID;
+  else if (params.shareType == "crowdluv-event") params.url = "<?php echo CLADDR;?>follower_talent_detail.php?crowdluv_tid=" + params.shareDetails.crowdluvTID + '&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.crowdluvUID;
 
   //select which image to use and what status text to display
   if(params.luvPoints > 0) {
@@ -359,7 +359,8 @@ function buildHTMLWidget_FacebookShare(params) {
 
   //Construct the onclick function
   var paramsJSON = JSON.stringify(params);
-  var onclickString = "doFacebookShareDialog(" + paramsJSON + ");";
+  var onclickString = "";
+  if(params.luvPoints > 0) onclickstring = "doFacebookShareDialog(" + paramsJSON + ");";
 
   //Construct the HTML for the widget
   var widgetHTML =
@@ -418,7 +419,7 @@ function doFacebookShareDialog(params){
               else console.log("other facebook error:" + response.error_message);
           } else {
             console.log("Share completed");
-            recordFollowerShareCompletion(params);
+            recordFollowerShareCompletion(params, function(){});
             $("#" + params.widgetID + " .status").html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Shared!");
           }
       }
@@ -512,7 +513,7 @@ twttr.ready(function (twttr) {
             //console.log("Tweet share: Share Type: " + shareType + ", crowdluv_tid: " + crowdluv_tid);
 
             //If it was a landing page share, record that
-            recordFollowerShareCompletion(shareRecordParams);
+            recordFollowerShareCompletion(shareRecordParams, function(){});
             //Update the status label w/ success message
             $("#lbl-twitter-tweet-status-" + crowdluv_tid).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!");
         }
@@ -522,16 +523,9 @@ twttr.ready(function (twttr) {
 
 /**
  * [recordFollowerShareCompletion makes an ajax call to the server to record the fact that a follower has completed a share ]
- * @param  {[type]} params   [list of parameters as followers:
- *                           shareType:  landing-page, event, etc...
- *                           shareMethod:  facebook-share, facebook-0send, twitter-tweet etc
- *                           shareDetails:  array of values according to the shareType. May include for example:
- *                             cluidt: user id
- *                             cltidt:  talent id
- *                             eventID: event ID
+ * @param  {[type]} params   [array/obj containing a shareRecord (might containt additional params):
  * 
  * ]
- * 
  * @return {[type]}        [description]
  * 
  */
@@ -542,9 +536,10 @@ function recordFollowerShareCompletion(params, callback){
 
   var postData = {
         ajaxPostType: "recordFollowerShareCompletion",
-        shareType: params.shareType,
+        shareRecord: params,
+        /*shareType: params.shareType,
         shareMethod: params.shareMethod,
-        shareDetails: params.shareDetails
+        shareDetails: params.shareDetails*/
   };
 
   $.post( "ajax_handle_post.php", postData,
@@ -557,8 +552,7 @@ function recordFollowerShareCompletion(params, callback){
             console.log("Validation failed on recordFollowerShareCompletion");
         }
         else{
-            if(response.event.id > 0) callback(response.event);
-
+            callback(response);
         }
         
       }, "json"
@@ -578,18 +572,6 @@ function recordFollowerShareCompletion(params, callback){
 
 
 
-
-
-
-
-
-
-
-
-
-
-  console.log("json call resl="); console.log(resl);
-
 }
 
 
@@ -603,6 +585,14 @@ function recordFollowerShareCompletion(params, callback){
 function getEventDetails(eventID, callback){
 
   console.log("getEventDetails()");
+
+  var postData = {
+        ajaxPostType: "getEventDetails",
+        eventID: eventID,
+        
+        
+  };
+
 
   $.post( "ajax_handle_post.php", "ajaxPostType=getEventDetails&eventID=" + eventID,
     function(response, status, xhr){

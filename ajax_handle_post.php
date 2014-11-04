@@ -77,21 +77,21 @@
 
 		break;
 		case 'recordFollowerShareCompletion':
-			$allowed_shareTypes = ['crowdluv-talent-landingpage', 'crowdluv_event'];
-			if(!isset($_GET['shareType'])) { $validationFailure = "shareType not set"; }
-			$shareType = $_GET['shareType'];
-			if(! in_array($shareType, $allowed_shareTypes)) { $validationFailure = "invalid share type"; }
+			//$allowed_shareTypes = ['crowdluv-talent-landingpage', 'crowdluv_event'];
+			if(!isset($_POST['shareRecord'])) { $validationFailure = "shareRecord not set"; break; }
+			$shareType = $_POST['shareRecord']['shareType'];
+			if(! in_array($shareType, CrowdLuvModel::$SHARETYPES)) { $validationFailure = "invalid share type"; break;}
 
-			if(!isset($_GET['shareMethod'])) {$validationFailure = "shareMethod not set"; }
-			if(!isset($_GET['shareDetails'])) { $validationFailure = "shareDetails not set"; }
+			if(!isset($_POST['shareRecord']['shareMethod'])) {$validationFailure = "shareMethod not set"; break; }
+			if(!isset($_POST['shareRecord']['shareDetails'])) { $validationFailure = "shareDetails not set"; break;}
 			else {
-				$shareDetails = $_GET['shareDetails'];
+				$shareDetails = $_POST['shareRecord']['shareDetails'];
 				//TODO:  check for necessary shareDetails based on shareType
-				$cluidt = $shareDetail['cl_uidt'];
-				if($cluidt != $CL_LOGGEDIN_USER_UID) {$validationFailure = "CL User ID doesnt match logged in-user"; }
+				$cluidt = $shareDetails['crowdluvUID'];
+				if($cluidt != $CL_LOGGEDIN_USER_UID) {$validationFailure = "CL User ID doesnt match logged in-user";  break; }
 
 			}
-			$cltidt = $_GET['crowdluv_tid'];
+			//$cltidt = $_GET['crowdluv_tid'];
 
 		break;
 
@@ -104,6 +104,7 @@
 		$response['validation_error'] = $validationFailure;
 
 	}
+
 
 	//Perform Logic	
 	if(! $validationFailure){
@@ -119,7 +120,7 @@
 				$response['crowdluv_uid'] = $CL_LOGGEDIN_USER_UID;
 				$response['crowdluv_tid'] = $cltidt;
 				$response['shareType'] = $shareType;
-			break;
+				break;
 
 			case 'createNewEvent':
 				//echo "<pre>"; var_dump($createNewEventFormData); echo "</pre>";
@@ -136,44 +137,45 @@
 												 $moreInfoURL = $moreInfoURL);
 				$response['result'] = "ok";
 				$response['return'] = $return;	
-			break;
+				break;
 
 			case 'getUpcomingEventsForTalent':
-				$events = $CL_model->getUpcomingEventsForTalent($_POST['related_crowdluv_tid']);
+				
+				$cl_uidt=NULL;
+				if( isset($CL_LOGGEDIN_USER_UID) && $CL_LOGGEDIN_USER_UID ) $cl_uidt = $CL_LOGGEDIN_USER_UID;
+				$events = $CL_model->getUpcomingEventsForTalent($_POST['related_crowdluv_tid'], $cl_uidt);
 				
 				$response['result'] = "ok";
 				$response['events'] = $events;
 
-			break;
+				break;
 
 			case 'getEventDetails':
 
-				$event = $CL_model->getEventDetails($_POST['eventID']);
+				$cl_uidt=NULL;
+				if( isset($CL_LOGGEDIN_USER_UID) && $CL_LOGGEDIN_USER_UID ) $cl_uidt = $CL_LOGGEDIN_USER_UID;
+				$event = $CL_model->getEventDetails($_POST['eventID'], $cl_uidt);
+				
 				$response['result'] = "ok";
 				$response['event'] = $event;
 				
-			break;
+				break;
+
 			case 'recordFollowerShareCompletion':
-				$shareType = $_GET['shareType'];
-				$shareMethod = $_GET['shareMethod'];
-				$shareDetails = $_GET['shareDetails'];
 
-				switch($shareType){
-					case 'crowdluv-talent-landingpage':
-						
-						$result = $CL_model->recordFollowerShareCompletion($shareType, $CL_LOGGEDIN_USER_UID, $cltidt);
-					break;
+				$result = $CL_model->recordFollowerShareCompletion($_POST['shareRecord']);
+				
+				$response['result'] = $result;
 
-				}
-
-
-
-			break;
-
+				break;
 
 
 		}
 	}
+
+
+
+
 
 
 	//clear out the buffer so the browser only receives the json object

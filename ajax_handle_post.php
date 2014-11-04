@@ -76,8 +76,24 @@
 			if(!isset($_POST['eventID'])) {$validationFailure = "eventID not set"; break;}
 
 		break;
+		case 'recordFollowerShareCompletion':
+			$allowed_shareTypes = ['crowdluv-talent-landingpage', 'crowdluv_event'];
+			if(!isset($_GET['shareType'])) { $validationFailure = "shareType not set"; }
+			$shareType = $_GET['shareType'];
+			if(! in_array($shareType, $allowed_shareTypes)) { $validationFailure = "invalid share type"; }
 
+			if(!isset($_GET['shareMethod'])) {$validationFailure = "shareMethod not set"; }
+			if(!isset($_GET['shareDetails'])) { $validationFailure = "shareDetails not set"; }
+			else {
+				$shareDetails = $_GET['shareDetails'];
+				//TODO:  check for necessary shareDetails based on shareType
+				$cluidt = $shareDetail['cl_uidt'];
+				if($cluidt != $CL_LOGGEDIN_USER_UID) {$validationFailure = "CL User ID doesnt match logged in-user"; }
 
+			}
+			$cltidt = $_GET['crowdluv_tid'];
+
+		break;
 
 
 	}
@@ -137,6 +153,24 @@
 				$response['event'] = $event;
 				
 			break;
+			case 'recordFollowerShareCompletion':
+				$shareType = $_GET['shareType'];
+				$shareMethod = $_GET['shareMethod'];
+				$shareDetails = $_GET['shareDetails'];
+
+				switch($shareType){
+					case 'crowdluv-talent-landingpage':
+						
+						$result = $CL_model->recordFollowerShareCompletion($shareType, $CL_LOGGEDIN_USER_UID, $cltidt);
+					break;
+
+				}
+
+
+
+			break;
+
+
 
 		}
 	}

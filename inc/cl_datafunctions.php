@@ -1007,7 +1007,7 @@ class CrowdLuvModel {
     private function getFollowerSharesForTalent($cl_uidt, $cl_tidt){
 
         try {
-            $sql = "SELECT * FROM share_record where crowdluv_uid=? and crowdluv_tid=?";
+            $sql = "SELECT * FROM sharerecord where crowdluv_uid=? and crowdluv_tid=?";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_uidt);
             $results->bindParam(2, $cl_tidt);
@@ -1020,6 +1020,7 @@ class CrowdLuvModel {
         $data = $results->fetchAll(PDO::FETCH_ASSOC);
         return $data;
     }
+
 
 
     /**
@@ -1055,7 +1056,7 @@ class CrowdLuvModel {
         }
 
 
-        //Retrieve any sjare conversions the follower has for the talent
+        //Retrieve any share conversions the follower has for the talent
         try {
             $sql = "SELECT * FROM share_referral_conversion where referrer_crowdluv_uid=? and crowdluv_tid=?";
             $results = $this->cldb->prepare($sql);
@@ -1068,7 +1069,7 @@ class CrowdLuvModel {
             exit;
         }    
         $data = $results->fetchAll(PDO::FETCH_ASSOC);
-        //Loop through any shares found, and add points to the score accordingly
+        //Loop through any share conversions found, and add points to the score accordingly
         foreach($data as $shareRecord){
             //$eligibleLuvPointsResult = $this->calculateLuvPointsEligibilityForShareRecord($shareRecord);
             //echo "eligibleLuvPoinstResult = "; var_dump($eligibleLuvPointsResult);echo "<br>";
@@ -1100,9 +1101,10 @@ class CrowdLuvModel {
         $result['eligibleLuvPoints'] = 0;
         $result['nextEligibleTimestamp'] = date("Y-m-d G:i:s", time()); //default to current time
 
+        $socialMediaSharingMethods = ['facebook-share', 'facebook-send', 'twitter-tweet'];
+
         //Calculation for sharing talent's landing page via social media options            
-        $socialMediaTalentLandingPageSharingTypes = ['facebook-share-landingpage', 'facebook-send-landingpage', 'twitter-tweet-landingpage'];
-        if(in_array($shareRecord['share_type'], $socialMediaTalentLandingPageSharingTypes)){
+        if($shareRecord['share_type'] == 'crowdluv-talent-landing-page'){
             
             //echo "calculating eligibility for a social media talent-landingpage share";
 
@@ -1111,30 +1113,25 @@ class CrowdLuvModel {
             $totalNumberOfSharesEligiblePerTimeframe = 6;
             
             // Check if the user had previously shared this talent's landingpage via 
-            // social media within n days of this record (or propsed record). 
+            // any social media within n days of this record (or propsed record). 
             // if so, it is not eligible
             // Retrieve list of similar share types in the past n days ordered by timestamp (most recent first)
             try {
-                $sql = "SELECT * FROM share_record 
+                $sql = "SELECT * FROM sharerecord 
                         WHERE crowdluv_uid=? 
                             and crowdluv_tid=? 
+                            and share_type=?
                             and timestamp 
                                 BETWEEN DATE_SUB('" . $shareRecord['timestamp'] . "', INTERVAL " . $timeframeForEligibilityToShareTalentLandingPagesViaSocialMedia_Days . " DAY) 
                                 and     DATE_SUB('" . $shareRecord['timestamp'] . "', INTERVAL 1 SECOND)  
-                            and share_type = '" . $shareRecord['share_type'] . "' 
+                            and share_method = '" . $shareRecord['share_method'] . "' 
                         ORDER BY timestamp DESC"; 
-                /*$sql = "SELECT * FROM share_record 
-                        WHERE crowdluv_uid=? 
-                            and crowdluv_tid=? 
-                            and share_type = '" . $shareRecord['share_type'] . "' 
-                            and timestamp BETWEEN '" . strtotime('-7 days', $shareRecord['timestamp']) . "' 
-                            and '" . strtotime('-1 second', $shareRecord['timestamp']) . "'   
-                        ORDER BY timestamp DESC"; 
-                */
-                //echo $sql . "<br>"; //die;
+                
                 $results = $this->cldb->prepare($sql);
                 $results->bindParam(1,$shareRecord['crowdluv_uid']);
                 $results->bindParam(2,$shareRecord['crowdluv_tid']);
+                $results->bindParam(3,$shareRecord['share_type']);
+
                 $results->execute();
 
             } catch (Exception $e) {
@@ -1160,15 +1157,18 @@ class CrowdLuvModel {
             // previous n days,  ordered by timestamp (most recent first)
             try {
                 //construct query string
-                $sql = "SELECT * FROM share_record 
-                        WHERE crowdluv_uid=? 
+                $sql = "SELECT * FROM sharerecord 
+                        WHERE crowdluv_uid=?
+                            and share_type=?
                             and timestamp BETWEEN DATE_SUB('" . $shareRecord['timestamp'] . "', INTERVAL " . $timeframeForEligibilityToShareTalentLandingPagesViaSocialMedia_Days . " DAY) and DATE_SUB('" . $shareRecord['timestamp'] . "', INTERVAL 1 SECOND)  
-                            and share_type in (";
-                foreach($socialMediaTalentLandingPageSharingTypes as $s){ $sql = $sql . "'" . $s . "', ";}
+                            and share_method in (";
+                foreach($socialMediaSharingMethods as $s){ $sql = $sql . "'" . $s . "', ";}
                 $sql = $sql . " 'garbageentrytodealwithlastcomma') ORDER BY timestamp DESC";
                 //echo $sql . "<br>"; //die;
                 $results = $this->cldb->prepare($sql);
                 $results->bindParam(1,$shareRecord['crowdluv_uid']);
+                $results->bindParam(2,$shareRecord['share_type']);
+                
                 $results->execute();
 
             } catch (Exception $e) {
@@ -1193,6 +1193,9 @@ class CrowdLuvModel {
             $result['eligibleLuvPoints'] = 10;
 
         }
+
+
+
 
 
         return $result;
@@ -1480,7 +1483,7 @@ class CrowdLuvModel {
 
         try{
 
-            $sql = "INSERT INTO `crowdluv`.`share_record` (`crowdluv_uid`, `crowdluv_tid`, `share_type`) 
+            $sql = "INSERT INTO `crowdluv`.`sharerecord` (`crowdluv_uid`, `crowdluv_tid`, `share_type`) 
                                                    VALUES (" . $cl_uidt . ", " . $cl_tidt . ", '" . $shareType . "')";
             //echo $sql; die;
             $results = $this->cldb->query($sql);           
@@ -1581,7 +1584,7 @@ class CrowdLuvModel {
     }
 
 
-    public function getEventDetails($eventID){
+    public function getEventDetails($eventID, $cl_uidt = NULL){
 
         try {
             $sql = "SELECT follower.firstname, follower.lastname, event.* FROM follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid where id=?";
@@ -1595,7 +1598,15 @@ class CrowdLuvModel {
         }    
         $data = $results->fetchAll(PDO::FETCH_ASSOC);
 
+        //Add info about the rank of the person who created this
         $data[0]['created_by_user_rank'] = $this->calculate_follower_rank_for_talent($data[0]['created_by_crowdluv_uid'], $data[0]['related_crowdluv_tid'])['rank_title'];
+
+        //If a user was specified (cl_uidt), Add info about the luvpoint 
+        //eligibility for that user to share this event sharing
+        //calculateLuvPointsEligibilityforEventShares($eventID, $cl_uidt)
+        //calculateLuvPointsEligibilityforEventShares('crowdluv-event', {$eventID, $cl_uidt})
+
+
         return $data[0];
 
     }

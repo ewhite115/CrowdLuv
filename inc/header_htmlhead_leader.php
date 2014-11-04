@@ -5,16 +5,31 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8" />
-  <!-- Open Graph and Facebook Meta tags -->
+
+  <!-- Open Graph Meta Tags -->
+  <?php
+    // Default to the following values, but individual pages can change 
+    // these values prior to including the header/leader files    
+
+    // if a target talent is set, default to that talents fb page image 
+    if(isset($CL_CUR_TGT_TALENT['fb_pid'])) {
+      $CL_OG_IMAGE =  "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT["fb_pid"] . "/picture?type=large";
+      if(isset($CL_LOGGEDIN_USER_UID)){ 
+        $CL_OG_IMAGE = $CL_OG_IMAGE . "&access_token=" . $facebookSession->getToken(); 
+      }
+    }
+    //if not target talent specified, default the og image to CL logo
+    else if(! isset($CL_OG_IMAGE) || ! $CL_OG_IMAGE)  $CL_OG_IMAGE = CLADDR . 'res/crowdluv_fbtab_logo_dark.png';
+    //Default the OG description to a generic phrase
+    if(! isset($CL_OG_DESCRIPTION) || ! $CL_OG_DESCRIPTION) $CL_OG_DESCRIPTION = "CrowdLuv lets you decide where your favorite acts should come next";
+  ?>
+
   <meta property="og:site_name" content="CrowdLuv" />
   <meta property="og:title" content="<?php echo $pageTitle;?>" />
   <meta property="fb:app_id" content="<?php echo CL_FB_APP_ID;?>" />
-  <?php if($CL_SITE_SECTION=="landing"){  ?>
-    <!-- Open Graph Meta Tages for Talent Landing Pages -->
-    <meta property="og:description" content="<?php echo $CL_CUR_TGT_TALENT['fb_page_name'] . " wants to know where to visit. Vote for your town"; ?>" />  
-    <meta property="og:image" content="<?php echo $tlpimg; ?>" />      
+  <meta property="og:description" content="<?= $CL_OG_DESCRIPTION;?>"/>
+  <meta property="og:image" content="<?php echo $CL_OG_IMAGE; ?>" />      
 
-  <?php }  ?>
 
   <!-- JQuery -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 

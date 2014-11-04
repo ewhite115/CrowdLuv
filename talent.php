@@ -7,7 +7,6 @@
 
 	if(isset($CL_CUR_TGT_TALENT)) $pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
 	
-
 	
 	
 	//Get the landing page settings for this talent  (do this before printing header)
@@ -18,6 +17,8 @@
     //else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default")  $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
  	else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = CLADDR . 'crowdluvdata/talent/' . $CL_CUR_TGT_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';
+    $CL_OG_IMAGE = $tlpgimg;
+    $CL_OG_DESCRIPTION = $CL_CUR_TGT_TALENT['fb_page_name'] . " wants to know where to visit. Vote for your town"; 
 
 	// Print page header/banner (this must come after we got the lanidng page 
 	// 	 settings so that the og:tags in the head will be set properly)

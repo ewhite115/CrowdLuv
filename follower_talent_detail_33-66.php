@@ -123,225 +123,175 @@
     </a>
 
 
-<br>
-    <!--  Profile Leader -->
 
+    <!--  Page Title/Header -->
     <div class="row">
-    <div class="col-xs-12">
-    <div class="fluid-row">
-        <!-- Leader left side -->
-        <div class="col-xs-12 col-sm-4 clwhitebg crowdluvsection text-center">
-        <!-- Brand Name, Image, and button -->
-            <?php if(! $targetTalentPreferences) { ?> 
-                <h1 class="cl-textcolor-standout">
-                    <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>
-                </h1>               
-            <?php } ?>            
-            <?php if($targetTalentPreferences) { ?>
-                <h1><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
-            <?php } ?>            
-            <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
-             
-
-            <!-- **** Preferences or call-to-action -->
-            <?php if($targetTalentPreferences) { ?>
-                <button class="cl-button-standout" name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"];?>)">
-                    Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?>
-                </button>                      
-            <?php } ?>
-
-            <?php if(! $targetTalentPreferences) { ?>
-                <h1><u>Luv</u> us?</h1>
-                <button class="cl-button-standout" onclick="loginAndLuvTalent(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?> , '');"> 
-                  <h1>Yes! </h1>  Sign-up / Sign-In and Luv us on CrowdLuv 
-                </button>
-                <p>Receive our most important updates.</p>
-                <p>Get perks for establishing yourself as a top fan. </p>
-                
-            <?php } ?>
-
-            
-        </div>
-        <!-- Leader Right side -->
-        <div class="col-xs-12 col-sm-7 col-sm-offset-1 crowdluvsection ">
-
-            <!-- Rank -->
-            <div class="row">
-                <div class="col-xs-5 clwhitebg">
-                    <!-- ****  Fan Rank -->
-                    <div class="heart-rank text-center" onclick="rank_clickhandler()">
-                        <h1 class="follower-rank">Your Fan Rank</h1>
-                        <div class="text-center" style="
-                            height: 2.7em;
-                            background-image: url('res/top-heart.png');
-                            background-position:  center top;
-                            background-repeat: no-repeat;
-                            color:black;
-                            padding-top: .75em;
-                            ">
-                            <!-- <img src='res/top-heart.png'/>    -->
-                            <h2>*<?= $rank['rank_title'];?>*</h2>
-                        </div>
-                        <?php if( $targetTalentPreferences) { ?>
-                            <p>
-                                <?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?> out of <?php echo count($CL_model->get_followers_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']));?> fans     
-                                -- (<?php echo $score; ?> Luvs)</p>
-                            
-
-                        <?php } ?>
-                        <!-- Fan rank call-to-action -->
-                        <?php if(! $targetTalentPreferences) { ?>
-                            <p class="cl-textcolor-standout">Still just a spectator or follower? </p>
-                            <p>Sign in to increase your fan-rank and get perks</p>                 
-
-                        <?php } ?>
-
-                    </div>
-                </div>
-                <div class="col-xs-5 col-xs-offset-2 clwhitebg">
-
-
-                    <!-- ****  Town Rank ***  -->
-                    <div class="heart-rank text-center" onclick="rank_clickhandler()">
-                        <h1 class="follower-rank">Your Town's Rank</h1>
-                        <div class="text-center" style="
-                            height: 2.7em;
-                            background-image: url('res/top-heart.png');
-                            background-position:  center top;
-                            background-repeat: no-repeat;
-                            color:black;
-                            padding-top: .75em;
-                            ">
-                            <!-- <img src='res/top-heart.png'/>     -->
-                            <?php if(! $targetTalentPreferences) echo "?"; ?>    
-                            <?php if( $targetTalentPreferences)  echo $myCityRank['rank']; ?>
-                        </div>
-                        <?php if( $targetTalentPreferences) { ?>
-                            <p>
-                                <?php if($myCityRank['tie_count'] > 0 ) echo "Tied for";  ?> 
-                                #<?php echo $myCityRank['rank']; ?> out of <?php echo count($topcities);?> 
-
-                            </p>
-                        <?php } ?>
-                        <!-- Town Rank call-to-action -->
-                        <?php if(! $targetTalentPreferences) { ?>
-                            <p>Want us in <span class="cl-textcolor-standout">your</span> town? </p>
-                            <p>Show us your town has the most Luv</p>                 
-                        <?php } ?>
-
-
-                    </div>
-                </div>
-            </div>
-            <!--badges -->
-            <div class="row">
-                <div class="col-xs-12 clwhitebg">
-                    <?php if(sizeof($rank['badges']) > 0) { ?><h2>Your Badges:</h2> <?php } ?>
-                    <p>
-                        <?php foreach($rank['badges'] as $badge){ ?>
-                            **<?= $badge; ?>** 
-                        <?php } ?>
-                    </p>                    
-
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-xs-12 clwhitebg">
-
-                   <!--  **** Share The Luv  Left Panel -->
-                    <div onclick="share_clickhandler()">
-                        <h2 class="inline-block" >Show Your Luv</h2>
-                        <img width="25" src="res/facebook-icon-circle.png">
-                        <img width="25" src="res/twitterCircle_0.png">
-                        
-                        <p class="inline-block">Help us out to increase your rank and build Luv for your town. </p> 
-                        
-                        
-                    </div>
-
-                </div>
-            </div>
-
-
-            <!-- **  Activity Ticker *** -->
-            <div class="row">
-                <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 class="cl-textcolor-standout">Activity</h1>
-                    <hr>
-                    <div id="cl-talent-activity-panel" class="cl-panel-vscroll cl-panel-short-height">
-                        recent activity will go here.        
-                    </div>
-
-                </div>
-            </div>
-
+        <div class="col-ms-8 crowdluvsection">
+            <h1> </h1>
         </div>
         
     </div>
-    </div>
-    </div>
-
-
-    <!-- End Page Leader -->
-
-
-    <hr>
 
 
 
-    <!-- Page Content -->
 
+<div class="fluid-row">
 
-    <!-- Default / Overview View -->
-    <div id="talent-profile-view-dashboard" class="fluid-row">
-        <div class="col-xs-12 col-sm-5">
+    <div class="col-xs-12 col-sm-4 clwhitebg crowdluvsection text-center">
+        <?php if(! $targetTalentPreferences) { ?> 
+            <h1 class="cl-textcolor-standout">
+                <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>
+            </h1>               
+        <?php } ?>            
+        <?php if($targetTalentPreferences) { ?>
+            <h1><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
+        <?php } ?>            
+        <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
+         
+
+        <!-- **** Preferences or call-to-action -->
+        <?php if($targetTalentPreferences) { ?>
+            <button class="cl-button-standout" name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"];?>)">
+                Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?>
+            </button>                      
+        <?php } ?>
+
+        <?php if(! $targetTalentPreferences) { ?>
+            <h1><u>Luv</u> us?</h1>
+            <button class="cl-button-standout" onclick="loginAndLuvTalent(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?> , '');"> 
+              <h1>Yes! </h1>  Sign-up / Sign-In and Luv us on CrowdLuv 
+            </button>
+            <p>Receive our most important updates.</p>
+            <p>Get perks for establishing yourself as a top fan. </p>
             
-           <!-- **  Upcoming Events Ticker *** -->
-            <div class="row">
-                <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 class="cl-textcolor-standout">Upcoming Events</h1>
-                    <hr>
-                    <div class="cl-panel-vscroll cl-panel-short-height cl-panel-upcoming-events">
-                        Loading events...
-                    
-                    </div>
-                    <div>
-                        <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-event').show(); return false; ">
-                            Add Event...
-                        </a>
-                    </div>
+        <?php } ?>
 
-                </div>
+        <hr>
+
+
+        <!-- ****  Fan Rank -->
+        <div class="heart-rank text-center" onclick="rank_clickhandler()">
+            <h1 class="follower-rank">Your Fan Rank</h1>
+            <div class="text-center" style="
+                height: 2.7em;
+                background-image: url('res/top-heart.png');
+                background-position:  center top;
+                background-repeat: no-repeat;
+                color:black;
+                padding-top: .75em;
+                ">
+                <!-- <img src='res/top-heart.png'/>    -->
+                <h2>*<?= $rank['rank_title'];?>*</h2>
             </div>
-            
+            <?php if( $targetTalentPreferences) { ?>
+                <p>
+                    <?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?> out of <?php echo count($CL_model->get_followers_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']));?> fans on CrowdLuv    
+                </p>
+                <p>(<?php echo $score; ?> LuvPoints)</p>
+                <?php if(sizeof($rank['badges']) > 0) { ?><h2>Your Badges:</h2> <?php } ?>
+                <p>
+                    <?php foreach($rank['badges'] as $badge){ ?>
+                        **<?= $badge; ?>** 
+                    <?php } ?>
+                </p>
 
-            <!-- **  Questions Ticker *** -->
-            <div class="row">
-                <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 class="cl-textcolor-standout">Questions</h1>
-                    <hr>
-                    <div class="cl-panel-vscroll cl-panel-short-height">
-                        Loading questions...
-                    
-                    </div>
-                    <div>
-                        <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-question').show(); return false; ">
-                            Add Question...
-                        </a>
-                    </div>
+            <?php } ?>
+            <!-- Fan rank call-to-action -->
+            <?php if(! $targetTalentPreferences) { ?>
+                <p class="cl-textcolor-standout">Still just a spectator or follower? </p>
+                <p>Sign in to increase your fan-rank and get perks</p>                 
 
-                </div>
+            <?php } ?>
+
+        </div>
+
+        <hr>
+
+        <!-- ****  Town Rank ***  -->
+        <div class="heart-rank text-center" onclick="rank_clickhandler()">
+            <h1 class="follower-rank">Your Town's Rank</h1>
+            <div class="text-center" style="
+                height: 2.7em;
+                background-image: url('res/top-heart.png');
+                background-position:  center top;
+                background-repeat: no-repeat;
+                color:black;
+                padding-top: .75em;
+                ">
+                <!-- <img src='res/top-heart.png'/>     -->
+                <?php if(! $targetTalentPreferences) echo "?"; ?>    
+                <?php if( $targetTalentPreferences)  echo $myCityRank['rank']; ?>
             </div>
+            <?php if( $targetTalentPreferences) { ?>
+                <p>
+                    <?php if($myCityRank['tie_count'] > 0 ) echo "Tied for";  ?> 
+                    #<?php echo $myCityRank['rank']; ?> out of <?php echo count($topcities);?> 
 
+                </p>
+            <?php } ?>
+            <!-- Town Rank call-to-action -->
+            <?php if(! $targetTalentPreferences) { ?>
+                <p>Want us in <span class="cl-textcolor-standout">your</span> town? </p>
+                <p>Show us your town has the most Luv</p>                 
+            <?php } ?>
 
 
 
         </div>
-        <div class="col-xs-12 col-sm-6 col-sm-offset-1">
+        <hr>
+
+        <!--  **** Share The Luv  Left Panel -->
+        <div onclick="share_clickhandler()">
+            <h1>Share The Luv</h1>
+            <img width="25" src="res/facebook-icon-circle.png">
+            <img width="25" src="res/twitterCircle_0.png">
+            <p>Help us out to increase your rank and build Luv for your town. </p>
+                        
+            
+        </div>
+               
+        
+
+    </div>
 
 
 
+    <div class="col-xs-12 col-sm-6 col-sm-offset-1 ">
+    
+        <!-- **  Activity Ticker *** -->
+        <div class="row">
+            <div class="col-xs-12 clwhitebg crowdluvsection">
+                <h1 class="cl-textcolor-standout">Activity</h1>
+                <hr>
+                <div id="cl-talent-activity-panel" class="cl-panel-vscroll cl-panel-short-height">
+                    recent activity will go here.        
+                </div>
+
+            </div>
+        </div>
+        <br>
+
+        <!-- **  Upcoming Events Ticker *** -->
+        <div class="row">
+            <div class="col-xs-12 clwhitebg crowdluvsection">
+                <h1 class="cl-textcolor-standout">Upcoming Events</h1>
+                <hr>
+                <div class="cl-panel-vscroll cl-panel-short-height cl-panel-upcoming-events">
+                    Loading events...
+                
+                </div>
+                <div>
+                    <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-event').show(); return false; ">
+                        Add Event...
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        <br>
+
+
+        
         <!-- Preferences Panel  -->
         <div id="div-preferences" class="row" hidden>
         <div class="col-xs-12 clwhitebg crowdluvsection ">
@@ -604,29 +554,13 @@
             </div>
         </div>
 
-
-        </div>
     </div>
 
 
+</div>
 
-    <!-- Question Detail View -->
-    <div id="talent-profile-view-question-detail" class="fluid-row hidden">
-
-        <div class="col-xs-12">
-        </div>
-
-
-    </div>
-
-
-
-
-
-
-
-
-
+       
+<br><br>
 
 
 

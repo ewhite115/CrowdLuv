@@ -3,9 +3,9 @@
 
     define("CL_DEBUG_MODE", $_SERVER['CL_DEBUG_MODE']);
 	define("CROWDLUV_ENV", $_SERVER['CL_ENV']);
-	define("BASE_URL",$_SERVER['CL_BASE_URL']);  
+	if(!defined("BASE_URL")) define("BASE_URL",$_SERVER['CL_BASE_URL']);  
 	define("CLADDR", $_SERVER['CL_ADDR'] . BASE_URL);
-	define("ROOT_PATH",$_SERVER["DOCUMENT_ROOT"] . BASE_URL);
+	if(!defined("ROOT_PATH")) define("ROOT_PATH",$_SERVER["DOCUMENT_ROOT"] . BASE_URL);
 
 
 	//define("DB_HOST","localhost");

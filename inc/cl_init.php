@@ -14,26 +14,28 @@
 
 
 
-  
-  require_once("inc/init_config.php"); 
-  require_once("inc/cl_datafunctions.php");
-  require 'vendor/autoload.php';
+  if(!defined("BASE_URL")) define("BASE_URL",$_SERVER['CL_BASE_URL']);  
+  if(!defined("ROOT_PATH")) define("ROOT_PATH",$_SERVER["DOCUMENT_ROOT"] . BASE_URL);
+   
+  require_once(ROOT_PATH . "inc/init_config.php"); 
+  require_once(ROOT_PATH . "inc/cl_datafunctions.php");
+  require ROOT_PATH . 'vendor/autoload.php';
   
 
   //Establish DB connection and global $CL_model object
-  require_once("inc/init_db.php");
+  require_once(ROOT_PATH . "inc/init_db.php");
   //Establish function and global var for debug/diagnostic
-  require_once("inc/init_debug.php");
+  require_once(ROOT_PATH . "inc/init_debug.php");
 
   //Check for existing sessions variables and populate globals accordingly
-  require_once("inc/init_sessionglobals.php");
+  require_once(ROOT_PATH . "inc/init_sessionglobals.php");
 
   //Check for facebook session, create/update globals and DB accordingly
-  require_once("inc/facebook-sdk/facebook.php");
-  require_once("inc/init_facebook.php");
+  require_once(ROOT_PATH . "inc/facebook-sdk/facebook.php");
+  require_once(ROOT_PATH . "inc/init_facebook.php");
 
   //Check for additional parameters on query string and update globals or db accordingly
-  require_once("inc/init_parameters.php");
+  require_once(ROOT_PATH . "inc/init_parameters.php");
   
 
 ?>

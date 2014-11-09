@@ -23,6 +23,31 @@
     require_once("inc/cl_datafunctions.php");
     require_once("inc/cl_init.php");
 
+
+    //Load the Question2Answer Engine and retrieve questios for this brand
+    require_once ROOT_PATH . 'question2answer/qa-include/qa-base.php';
+    require_once QA_INCLUDE_DIR.'qa-app-users.php';
+    require_once QA_INCLUDE_DIR.'qa-app-posts.php';
+    require_once QA_INCLUDE_DIR.'qa-db-selects.php';
+
+    //selspec for searching by tags
+    //$selspec = qa_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords, $tagwords, $handlewords, $handle, $start, $full=false, $count=null);
+    //$selspec = qa_db_search_posts_selectspec($CL_LOGGEDIN_USER_UID, null, null, "crowdluvtid" . $CL_CUR_TGT_TALENT['crowdluv_tid'], null, null, 0, true, 10);
+    //selspec for selecting by tag
+    
+    $selspec = qa_db_tag_recent_qs_selectspec(isset($CL_LOGGEDIN_USER_UID) ? $CL_LOGGEDIN_USER_UID : null, "crowdluvtid" . $CL_CUR_TGT_TALENT['crowdluv_tid'], 0, true, 10);
+    //selspec for all
+    //$selspec = qa_db_qs_selectspec($CL_LOGGEDIN_USER_UID, 'created', 0, null, null, false, true, 10);
+
+    //$talentQuestionList = qa_db_select_with_pending($selspec);
+    $talentQuestionList = qa_db_single_select($selspec);
+    //Add user info of the question submitter for each
+    foreach($talentQuestionList as &$talentQuestion){
+        $talentQuestion['submitterInfo'] = $CL_model->get_follower_object_by_uid($talentQuestion['userid']);
+    }
+    //echo "<pre>"; var_dump($talentQuestionList); echo "</pre>";
+
+
     //construct the page title and OG tag values
     $pageTitle = $CL_CUR_TGT_TALENT['fb_page_name'] . " on CrowdLuv";
 
@@ -31,6 +56,8 @@
         $pageTitle = $CL_CUR_TGT_TALENT['fb_page_name'] . " event on CrowdLuv";
         $CL_OG_DESCRIPTION = $eventDets['title'] . " - " . $eventDets['location_string'] . " - " . $eventDets['start_date'];
     }
+
+
 
     //Proceed to print the html header and body leaders
     include(ROOT_PATH . 'inc/header_htmlhead_leader.php'); 
@@ -48,6 +75,7 @@
     //Set default values to be used when there is no loggd-in user
     $targetTalentPreferences = "";
     $rank['rank_title'] = "Spectator";
+    $rank['badges'] = "";
 
     //Get talent info
     //Get the list of luvers for the top luvers luverboard
@@ -121,6 +149,13 @@
         <p>Make sure CrowdLuv has your current contact info! Click here to confirm/update</p>
     </div>
     </a>
+
+
+
+
+    <?php include(ROOT_PATH . 'inc/partial_create_new_event_modal.php'); ?>
+
+
 
 
 <br>
@@ -238,9 +273,12 @@
                 <div class="col-xs-12 clwhitebg">
                     <?php if(sizeof($rank['badges']) > 0) { ?><h2>Your Badges:</h2> <?php } ?>
                     <p>
-                        <?php foreach($rank['badges'] as $badge){ ?>
+                        <?php 
+                            if($rank['badges']){ 
+                                foreach($rank['badges'] as $badge){ ?>
                             **<?= $badge; ?>** 
-                        <?php } ?>
+                        <?php   }
+                            } ?>
                     </p>                    
 
                 </div>
@@ -289,8 +327,14 @@
     <hr>
 
 
-
     <!-- Page Content -->
+
+
+    <?php if(isset($_GET['questionid'])){ ?>
+        <iframe class="cl-question2answer-embed-question-detail" src="question2answer/index.php?qa=<?=$_GET['questionid'];?>"></iframe>
+    <?php }
+        else { ?>
+
 
 
     <!-- Default / Overview View -->
@@ -300,7 +344,7 @@
            <!-- **  Upcoming Events Ticker *** -->
             <div class="row">
                 <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 class="cl-textcolor-standout">Upcoming Events</h1>
+                    <h1 class="cl-textcolor-standout">Events</h1>
                     <hr>
                     <div class="cl-panel-vscroll cl-panel-short-height cl-panel-upcoming-events">
                         Loading events...
@@ -321,13 +365,33 @@
                 <div class="col-xs-12 clwhitebg crowdluvsection">
                     <h1 class="cl-textcolor-standout">Questions</h1>
                     <hr>
+
                     <div class="cl-panel-vscroll cl-panel-short-height">
-                        Loading questions...
-                    
+                        <?php foreach($talentQuestionList as &$talentQuestion){ ?>
+
+                            <div class='cl-ticker-item-block' onClick="javascript:window.location.href = window.location.href + '&questionid=<?= $talentQuestion['postid']; ?>'">
+                                <div class='cl-ticker-question-score inline-block'>
+                                    <img style="width:2em" src="https://graph.facebook.com/<?= $talentQuestion['submitterInfo']['fb_uid'];?>/picture?type=square<?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>&access_token=<?php echo $facebookSession->getToken();}?>"> 
+                                    
+                                </div>
+                                <div class='cl-ticker-event-title inline-block'>
+                                    <p class='fwb'>
+                                        <?= $talentQuestion['title'] ?>
+                                    </p>
+                                        
+                                </div>
+                                <div class="inline-block">
+                                    <h1> <?= $talentQuestion['netvotes'] ?> </h1>
+                                </div>
+                            </div>
+
+                        <?php } ?>
                     </div>
+
+        
                     <div>
                         <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-question').show(); return false; ">
-                            Add Question...
+                            Ask Question...
                         </a>
                     </div>
 
@@ -608,35 +672,26 @@
         </div>
     </div>
 
-
-
-    <!-- Question Detail View -->
-    <div id="talent-profile-view-question-detail" class="fluid-row hidden">
-
-        <div class="col-xs-12">
-        </div>
-
-
-    </div>
+<?php   //closing brace for outputting overview
+     } ?>
 
 
 
-
-
-
-
-
-
-
-
-
-
-<?php include(ROOT_PATH . 'inc/partial_create_new_event_modal.php'); ?>
 
 
 
 <script type="text/javascript">
     
+    var q2aFrameStyles = "\
+        .qa-header, .qa-sidepanel, .qa-favoriting, .qa-q-view-tags  {display:none;}  \
+        .qa-footer { visibility:hidden;}\
+        .qa-body-wrapper {width:auto;}\
+        ";
+
+    $('.cl-question2answer-embed-question-detail').load( function() {
+        $('.cl-question2answer-embed-question-detail').contents().find("head")
+          .append($("<style type='text/css'>" + q2aFrameStyles + "</style>"));
+    });
 
     function stopfollowingclickhandler(crowdluv_tid){
         console.log("entering stopfollowingclickhandler, crowdluv_tid=" + crowdluv_tid);
@@ -761,7 +816,7 @@
 
 
                         $('.cl-panel-upcoming-events').append(
-                            "<div class='cl-block-event-ticker-event' onClick='onSelectEvent(" + response.events[i].id + ")'>" +
+                            "<div class='cl-ticker-item-block' onClick='onSelectEvent(" + response.events[i].id + ")'>" +
                                 "<div class='cl-ticker-event-date inline-block'>" +
                                     "<h2>" 
                                         + getMonthAcronymForDate(new Date(response.events[i].start_date)) + 
@@ -809,6 +864,7 @@
 
         
        //Load the landing-page sharing widgets into the "share the Lv" panel
+       <?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>
         $("#div-sharing .card-info").html("");
         //add landing-page fbshare widget
         var vurlOrTID = "<?php if($CL_CUR_TGT_TALENT["crowdluv_vurl"] == "")
@@ -867,7 +923,7 @@
                                           });
         
         $("#div-sharing .card-info").append(tweetLandingPageWidgetHTML);
-
+        <?php } ?>
 
 
         <?php 

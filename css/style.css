@@ -796,18 +796,20 @@ background-size: contain;
 }
 
 
-/* Upcoming Events Panel*/
+/* CrowdLuv Ticker Items*/
 
 
-.cl-panel-upcoming-events .cl-block-event-ticker-event {
+.cl-ticker-item-block {
     border-bottom: 1px dashed;
-    border-bottom-color: #e9e9e9
+    border-bottom-color: #e9e9e9;
 
 }
-.cl-panel-upcoming-events .cl-block-event-ticker-event:hover {
+.cl-ticker-item-block:hover {
     background-color:  #e9eaed;
     cursor:pointer;
 }
+
+
 
 .cl-ticker-event-date  { 
     width:3em;
@@ -872,4 +874,15 @@ background-size: contain;
     width:6.5em;
 }
 
+.cl-question2answer-embed-question-detail {
+    width:100%;
+    border:none;
+    height:400px;
 
+}
+
+.cl-question2answer-embed-question-detail .qa-header{
+
+    display:none;
+
+}

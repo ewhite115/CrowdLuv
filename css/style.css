@@ -1,6 +1,7 @@
 
 body{
     background-color: #3b393C;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 hr {
@@ -876,8 +877,8 @@ background-size: contain;
 
 .cl-question2answer-embed-question-detail {
     width:100%;
-    border:none;
-    height:400px;
+    
+    height: 600px;
 
 }
 

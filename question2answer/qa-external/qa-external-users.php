@@ -218,7 +218,7 @@
 		return  [
 					'userid' => $_SESSION["CL_LOGGEDIN_USER_UID"],
 					'publicusername' => $_SESSION["CL_LOGGEDIN_USER_OBJ"]['firstname'] . " " .$_SESSION["CL_LOGGEDIN_USER_OBJ"]['lastname'],
-					'email' => $_SESSION["CL_LOGGEDIN_USER_OBJ"]['email'],
+					//'email' => $_SESSION["CL_LOGGEDIN_USER_OBJ"]['email'],
 					'level' => $level
 
 					];
@@ -436,13 +436,13 @@
 		
 		* You use textual user identifiers that are also shown publicly
 	*/
-		$useridtopublic=array();
+/*		$useridtopublic=array();
 		
 		foreach ($userids as $userid)
 			$useridtopublic[$userid]=$userid;
 		
 		return $useridtopublic;
-	
+*/	
 
 	/*
 		Example 2 - suitable if:
@@ -450,7 +450,7 @@
 		* You use numerical user identifiers
 		* Your database is shared with the Q2A site
 		* Your database has a users table that contains usernames
-		
+*/		
 		$useridtopublic=array();
 		
 		if (count($userids)) {
@@ -461,16 +461,28 @@
 				$escapeduserids[]="'".mysql_real_escape_string($userid, $qa_db_connection)."'";
 			
 			$results=mysql_query(
-				'SELECT username, userid FROM users WHERE userid IN ('.implode(',', $escapeduserids).')',
+				'SELECT firstname, lastname, crowdluv_uid FROM follower WHERE crowdluv_uid IN ('.implode(',', $escapeduserids).')',
 				$qa_db_connection
 			);
+
+			/*$results=mysql_query(
+				'SELECT username, userid FROM users WHERE userid IN ('.implode(',', $escapeduserids).')',
+				$qa_db_connection
+			);*/
 	
+			// while ($result=mysql_fetch_assoc($results))
+			// 	$useridtopublic[$result['userid']]=$result['username'];
+		
 			while ($result=mysql_fetch_assoc($results))
-				$useridtopublic[$result['userid']]=$result['username'];
+				$useridtopublic[$result['crowdluv_uid']]=$result['firstname'];
+
+
 		}
+
+
 		
 		return $useridtopublic;
-	*/
+
 
 	}
 
@@ -564,6 +576,23 @@
 
 	//	By default, show the public username linked to the Q2A profile page for each user
 
+		$qa_db_connection=qa_db_connection();
+		
+		$escapeduserids=array();
+		foreach ($userids as $userid)
+			$escapeduserids[]="'".mysql_real_escape_string($userid, $qa_db_connection)."'";
+
+		//var_dump($escapeduserids);		
+		$results=mysql_query(
+			'SELECT crowdluv_uid, fb_uid FROM follower WHERE crowdluv_uid IN ('.implode(',', $escapeduserids).')',
+			$qa_db_connection
+		);
+
+		while ($result=mysql_fetch_assoc($results))
+			$useridtofbuid[$result['crowdluv_uid']]=$result['fb_uid'];
+
+		//var_dump($useridtofbuid);
+
 		$useridtopublic=qa_get_public_from_userids($userids);
 		
 		$usershtml=array();
@@ -571,10 +600,13 @@
 		foreach ($userids as $userid) {
 			$publicusername=$useridtopublic[$userid];
 			
-			$usershtml[$userid]=htmlspecialchars($publicusername);
-			
-			if ($should_include_link)
-				$usershtml[$userid]='<a href="'.qa_path_html('user/'.$publicusername).'" class="qa-user-link">'.$usershtml[$userid].'</a>';
+			$usershtml[$userid]=
+				"<img style='width:2em;vertical-align:top;' src='https://graph.facebook.com/" . $useridtofbuid[$userid] . "/picture?type=square'> " .  htmlspecialchars($publicusername);
+ 			
+			//if ($should_include_link) $usershtml[$userid]='<a href="'.qa_path_html('user/'.$publicusername).'" class="qa-user-link">'.$usershtml[$userid].'</a>';
+			if ($should_include_link) 
+				$usershtml[$userid]=
+					"<a target='_top' href='" . BASE_URL . "luvers/" . $userid . "' class='qa-user-link'>" . $usershtml[$userid] . "</a>";
 		}
 			
 		return $usershtml;

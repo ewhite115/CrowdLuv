@@ -19,7 +19,7 @@
 	//they dont get returned to the browser and corrupt the json object	
 	$servlet_testing=0;
 	if(!$servlet_testing)	ob_start();
-
+	//echo "output buffeering started";
 	//initializations
 	require_once("inc/cl_datafunctions.php");
 	require_once("inc/cl_init.php");
@@ -94,6 +94,15 @@
 			//$cltidt = $_GET['crowdluv_tid'];
 
 		break;
+		case 'createNewQuestion':
+			//echo "handling createNewQuestion\n"; //die;
+			
+			if(!isset($_POST['created-for-crowdluv-tid'])){ $validationFailure = "tid not set"; break; }
+			if(!isset($_POST['title']) || $_POST['title'] == "") { $validationFailure =  "Please add a title for the question"; break;  }
+			if(!isset($_POST['description']) || $_POST['description'] == "") { $validationFailure =  "Please enter a description for the question"; break;  }			
+
+		break;
+
 
 
 	}
@@ -168,6 +177,38 @@
 				$response['result'] = $result;
 
 				break;
+
+			case 'createNewQuestion':
+				//echo "handling createnewEvent";
+				//echo "Title: " . $title;
+				//$return = qa_post_create($type, $parentpostid, $title, $content, $format, $categoryid, $tags, $userid);
+    			require_once ROOT_PATH . 'question2answer/qa-include/qa-base.php';
+				require_once QA_INCLUDE_DIR.'qa-app-users.php';
+				require_once QA_INCLUDE_DIR.'qa-app-posts.php';
+				echo "calling qapost_create";
+				$return = qa_post_create(
+										'Q', 
+										null, 
+										$_POST['title'], 
+										$_POST['description'], 
+										'', 
+										null, 
+										'crowdluvtid' . $_POST['created-for-crowdluv-tid'], 
+										$CL_LOGGEDIN_USER_UID);
+				echo "complete";
+						/*$return = $CL_model->createEvent($cl_uidt = $CL_LOGGEDIN_USER_UID, 
+												 $cl_tidt = $_POST['created-for-crowdluv-tid'],
+												 $type= $_POST['type'],
+												 $title=$_POST['title'], 
+												 $description=$_POST['description'],
+												 $startDate=$_POST['start-date'],
+												 $startTime=$_POST['start-time'],
+												 $duration=$_POST['duration'],
+												 $locationString=$_POST['location-string'],
+												 $moreInfoURL = $moreInfoURL);*/
+				$response['result'] = "ok";
+				$response['return'] = $return;	
+			break;
 
 
 		}

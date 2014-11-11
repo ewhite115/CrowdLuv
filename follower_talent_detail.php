@@ -154,6 +154,7 @@
 
 
     <?php include(ROOT_PATH . 'inc/partial_create_new_event_modal.php'); ?>
+    <?php include(ROOT_PATH . 'inc/partial_create_question_modal.php'); ?>
 
 
 
@@ -169,11 +170,11 @@
         <!-- Brand Name, Image, and button -->
             <?php if(! $targetTalentPreferences) { ?> 
                 <h1 class="cl-textcolor-standout">
-                    <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>
+                    <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>"><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></a>
                 </h1>               
             <?php } ?>            
             <?php if($targetTalentPreferences) { ?>
-                <h1><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
+                <h1><a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>"><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></a></h1>
             <?php } ?>            
             <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
              
@@ -331,7 +332,7 @@
 
 
     <?php if(isset($_GET['questionid'])){ ?>
-        <iframe class="cl-question2answer-embed-question-detail" src="question2answer/index.php?qa=<?=$_GET['questionid'];?>"></iframe>
+        <iframe class="cl-question2answer-embed-question-detail clwhitebg" src="question2answer/index.php?qa=<?=$_GET['questionid'];?>"></iframe>
     <?php }
         else { ?>
 
@@ -363,7 +364,7 @@
             <!-- **  Questions Ticker *** -->
             <div class="row">
                 <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 class="cl-textcolor-standout">Questions</h1>
+                    <h1 class="cl-textcolor-standout">Fan Questions</h1>
                     <hr>
 
                     <div class="cl-panel-vscroll cl-panel-short-height">
@@ -682,16 +683,87 @@
 
 <script type="text/javascript">
     
-    var q2aFrameStyles = "\
-        .qa-header, .qa-sidepanel, .qa-favoriting, .qa-q-view-tags  {display:none;}  \
-        .qa-footer { visibility:hidden;}\
-        .qa-body-wrapper {width:auto;}\
-        ";
 
+    //Run the following once the question2answer question-detail frame has loaded
     $('.cl-question2answer-embed-question-detail').load( function() {
+        
+        //general styling changes
+        var q2aFrameStyles = "";
+
+        //Hide               header,   sidepanel,   favorite button/star,  tags, 
+        //                  'notify me' checkboxes,  "Email me at this addr" label, email input and privacy notice,                              ,  email privacy notice      
+        //                  asker's points          answerer's points       
+        //                 'ask a followup question' link ,  tags input box
+        q2aFrameStyles +=  ".qa-header, .qa-sidepanel, .qa-favoriting, .qa-q-view-tags, \
+                            input[id*=\"_notify\"], span[id*=\"_email_shown\"],  tbody[id*=\"_email_display\"], \
+                            .qa-q-view-who-points, .qa-a-view-who-points, .qa-a-item-who-points, \
+                            .qa-form-light-button-follow, input#tags {display:none;}";
+
+        //Set the visibility of the footer to hidden  (display:none makes everything disappear)
+        q2aFrameStyles += ".qa-footer { visibility:hidden;}";
+        //
+        q2aFrameStyles += "body { font-family: Helvetica, Arial, sans-serif; background:white; }\
+            a {color: darkred;}\
+            h1 { margin:3px; margin-bottom:3px; margin-bottom: 3px; border-bottom: gray solid 1px; padding-bottom: 7px;}\
+            .qa-body-wrapper {width:auto; background:white; border:none}\
+            .entry-title {   color:darkred; font-weight: bold; font-size: 16px;  margin: .222%; vertical-align:top}\
+            .qa-voting { height:35px; padding: 5px; padding-bottom:15px; background:none; border:none; color:darkgray; }\
+            .qa-q-view-avatar-meta {margin-left:4em; color:darkgray; }\
+            .qa-q-view-meta { margin-top: -40px;}\
+            .qa-a-list {margin-left: 3.5em;}\
+            .qa-a-list-item { border-top: gray solid 1px; }\
+            .qa-a-item-main { width:550px;}\
+            .qa-a-item-meta {color: gray;}\
+            .qa-a-item-selected { border-color: darkred; background: #f4f4f4; }\
+            ";    
+
         $('.cl-question2answer-embed-question-detail').contents().find("head")
           .append($("<style type='text/css'>" + q2aFrameStyles + "</style>"));
+
+        //Hide the label on the question editing form that prompts the user to add tags
+        $('.cl-question2answer-embed-question-detail')
+            .contents()
+            .find("td:contains('Tags - use hyphens to combine words:')")
+            .hide();
+
+        //move the asker's image to the left of the title and add hr after
+        $('.cl-question2answer-embed-question-detail')
+            .contents().find(".qa-q-view-who-data img:first")
+            .prependTo($('.cl-question2answer-embed-question-detail')
+            .contents().find(".entry-title")).append("<hr>");
+
+        //change "vote" to "Luv this question?"
+        $('.cl-question2answer-embed-question-detail')
+            .contents().find(".qa-netvote-count-pad:first").html("Luv this question?");
+
+
+        //move the question vote into the header
+        $('.cl-question2answer-embed-question-detail').contents()
+            .find(".qa-voting:first")
+            .insertAfter(
+                $('.cl-question2answer-embed-question-detail')
+                    .contents().find(".qa-main h1:first"));
+        
+
+        //insert hr after question title
+        // $('.cl-question2answer-embed-question-detail').contents()
+        //     .find(".qa-main h1:first")
+        //     .after("<hr>");
+
+        //move the "asked x minutes ago.." just below the title
+        $('.cl-question2answer-embed-question-detail').contents()
+            .find(".qa-q-view-avatar-meta").append("<BR>").insertAfter($('.cl-question2answer-embed-question-detail')
+                    .contents().find(".qa-main h1:first"));
+        
+        //change the title of the answers section
+        $('.cl-question2answer-embed-question-detail').contents()
+            .find("#a_list_title").append(" - Vote for the best answer or add your own");
+        
+
     });
+
+   
+
 
     function stopfollowingclickhandler(crowdluv_tid){
         console.log("entering stopfollowingclickhandler, crowdluv_tid=" + crowdluv_tid);

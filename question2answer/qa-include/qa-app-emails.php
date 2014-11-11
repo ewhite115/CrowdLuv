@@ -96,7 +96,10 @@
 			$subs['^open']="\n";
 			$subs['^close']="\n";
 		
-			return qa_send_email(array(
+			//EW  11/9/2014 -  hacking core to disable email sending since it doesnt work and i dont want
+			//q2a sending emails independently
+			return true;
+			/*return qa_send_email(array(
 				'fromemail' => qa_opt('from_email'),
 				'fromname' => qa_opt('site_title'),
 				'toemail' => $email,
@@ -104,7 +107,7 @@
 				'subject' => strtr($subject, $subs),
 				'body' => (empty($handle) ? '' : qa_lang_sub('emails/to_handle_prefix', $handle)).strtr($body, $subs),
 				'html' => false,
-			));
+			));*/
 		
 		} else
 			return false;
@@ -150,7 +153,8 @@
 				$mailer->Password=qa_opt('smtp_password');
 			}
 		}
-			
+		
+
 		return $mailer->Send();
 	}
 

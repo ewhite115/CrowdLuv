@@ -569,11 +569,57 @@ function recordFollowerShareCompletion(params, callback){
 
     });
 
+}
+
+
+
+function crowdluvAPIPost(apiPostType, postData, callback){
+
+  console.log("crowdluvAPIPost called:" + apiPostType);
+  
+  //For post types where we pass serialized form data,  manually construct the string
+  if(apiPostType == 'createNewQuestion'){
+    postData = "ajaxPostType=" + apiPostType + "&" + postData;
+  }
+  else{
+    postData['ajaxPostType'] = apiPostType;
+
+  }
+
+
+  console.log(postData);
+
+  $.post( "ajax_handle_post.php", postData,
+      function(response, status, xhr){
+
+        console.log("in repsonse function for crowdluvAPIPost:");
+        console.log(response);
+
+        if(response.result == "Validation Failed"){
+            console.log("Validation failed on crowdluvAPIPost");
+            callback(response, status, xhr);
+        }
+        else{
+            callback(response, status, xhr);
+        }
+        
+      }, "json"
+    )
+    .done(function(response){
+
+    })
+    .fail(function(response){
+        console.log("fail");
+        console.log(response);
+
+    })
+    .always(function(response){
+
+    });
 
 
 
 }
-
 
 
 /**

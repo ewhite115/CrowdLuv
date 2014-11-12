@@ -43,7 +43,6 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         <h2>Show them how much Luv they have in your town. </h2>
       </div>
     
-
  </div>
 
 

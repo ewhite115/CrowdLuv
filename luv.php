@@ -33,7 +33,7 @@
 
     
     //Redirect to the follower dashboard/ "share luv" page. 
-    header('Location: follower_dashboard.php?newluv=' . $tcnt );
+    header('Location: follower_talent_detail.php?crowdluv_tid=' . $CL_CUR_TGT_TALENT['crowdluv_tid'] . '&newluv=' . $tcnt );
     exit;
 
 ?>

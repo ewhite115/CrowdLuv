@@ -130,25 +130,6 @@
 ?> 
 
 
-    <!-- modal to request / confirm contact info if it is the first time user is Luving a talent -->
-    <div id="CL_contactinfo_confirmation_modal" class="text-center crowdluvsection">
-        <h1 class="cl-textcolor-standout">Welcome to CrowdLuv</h1>
-        <p> Please confirm your contact information. </p>
-
-        <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
-        <a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_contactinfo_confirmation_modal').hide();return false;">
-            <p class="cl-button-standout">Confirm</p>
-        </a>
-
-    </div>
-    
-    <!-- small banner at top of page to remind user to update contact info when they follow new luvs
-            This is hidden by default but gets shown if querystring newluv=x is passed  -->
-    <a href="follower_preferences.php">
-    <div class="CL_small_reminder_banner text-center">
-        <p>Make sure CrowdLuv has your current contact info! Click here to confirm/update</p>
-    </div>
-    </a>
 
 
 
@@ -998,22 +979,7 @@
         <?php } ?>
 
 
-        <?php 
-        //if the flag was passed in indicating that this is the first talent the user has Luv'ed, 
-        //  show the modal asking the user to confirm their contact info
-        if(isset($_GET['newluv']) && $_GET['newluv'] == 1) { ?>
-            $('#CL_fullpage_transparentscreen').show();
-            $("#CL_contactinfo_confirmation_modal").show();
-        
-        <?php } ?>
 
-        <?php 
-        //if the flag was passed in indicating that the user has Luv'ed a new talent (but not the first time), 
-        //  show the small reminder banner suggesting the user to confirm their contact info
-        if(isset($_GET['newluv']) && $_GET['newluv'] > 1) { ?>
-            $('.CL_small_reminder_banner').show();
-        
-        <?php } ?>
         
     });
 

@@ -208,10 +208,13 @@ h1.cl-major-heading{
     position:fixed; 
     display: none;
     z-index: 101;
+    overflow: auto;
     
     left:25%;
     width:50%;
-    min-width: 300px;  
+    min-width: 300px;
+    max-width: 36em;  
+    height: 32.25em;
     
     background:#f4f4f4;
     border: 1px solid red;
@@ -219,8 +222,13 @@ h1.cl-major-heading{
 }
 
 .cl-newluvwizard-screen h1, .cl-newluvwizard-screen h2 {
-    margin: 10px;
+    margin: 8px;
 }
+
+.cl-newluvwizard-screen .clwhitebg {
+    padding: 3px 5em;
+}
+
 
 
 .CL_transparentscreen {
@@ -672,7 +680,7 @@ input[type="submit"], button {
     background: radial-gradient(ellipse farthest-corner, rgb(255, 255, 255), rgb(243, 240, 240) 80%, #DEDFE0 90%, white);
     color: #464646;
     -webkit-border-radius: 2px;
-    border-radius: 20px;    
+    border-radius: 4px;    
     font-size: 9px;
    
     padding: .555%;
@@ -776,8 +784,12 @@ background-size: contain;
     background: darkred;
     padding: 10px 10px;
     color: white;
-
 }
+
+.cl-button-standout:hover, .clredbutton {
+    background: red;
+}
+
 
 
 .cl-textcolor-default {

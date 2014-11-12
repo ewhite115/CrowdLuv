@@ -9,7 +9,17 @@
 	require_once("inc/cl_datafunctions.php");
 	require_once("inc/cl_init.php");
 
-	$allowed_prefnames = ['allow_email', 'allow_sms', 'will_travel_distance', 'will_travel_time', 'still_following'];
+	$allowed_prefnames = ['allow_email_major_announcements',
+	 					  'allow_sms_major_announcements', 
+	 					  'allow_email_general_announcements',
+	 					  'allow_sms_general_announcements', 
+	 					  'allow_email_new_event_my_area',
+	 					  'allow_sms_new_event_my_area',
+	 					  'allow_email_new_question',
+	 					  'allow_sms_new_question',  
+	 					  'will_travel_distance', 
+	 					  'will_travel_time', 
+	 					  'still_following'];
 	if(!isset($_GET['crowdluv_tid'])) {echo "crowdluv_tid not set"; exit;}
 	if(!isset($_GET['prefname'])) {echo "preftype not set"; exit;}
 	if(!isset($_GET['prefval'])) {echo "prefval not set"; exit;}

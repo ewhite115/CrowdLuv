@@ -663,7 +663,17 @@ class CrowdLuvModel {
 
     public function update_follower_preferences_for_talent($cl_uidt, $cl_tidt, $prefname, $prefval){
 
-        $allowed_prefnames = ['allow_email', 'allow_sms', 'will_travel_distance', 'will_travel_time', 'still_following'];
+        $allowed_prefnames = ['allow_email_major_announcements',
+                      'allow_sms_major_announcements', 
+                      'allow_email_general_announcements',
+                      'allow_sms_general_announcements', 
+                      'allow_email_new_event_my_area',
+                      'allow_sms_new_event_my_area',
+                      'allow_email_new_question',
+                      'allow_sms_new_question',  
+                      'will_travel_distance', 
+                      'will_travel_time', 
+                      'still_following'];
         if(! in_array($prefname, $allowed_prefnames)) {return 0;}
         if(! isset($prefval) || $prefval == "") {return 0;}
         

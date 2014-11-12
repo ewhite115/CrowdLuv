@@ -58,20 +58,6 @@
     }
 
 
-
-    //Proceed to print the html header and body leaders
-    include(ROOT_PATH . 'inc/header_htmlhead_leader.php'); 
-?>
-
-    </head>
-
-<?php 
-    include(ROOT_PATH . 'inc/header_htmlbody_leader.php'); 
-
-    //This page functions as a 'public' profile for the talent. Therefore We 
-    //  dont require a logged in user - but do require a target talent to be specified
-    include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
-
     //Set default values to be used when there is no loggd-in user
     $targetTalentPreferences = "";
     $rank['rank_title'] = "Spectator";
@@ -125,19 +111,22 @@
 
     }
 
+    //Proceed to print the html header and body leaders
+    include(ROOT_PATH . 'inc/header_htmlhead_leader.php'); 
 
+?>
+    </head>
+<?php 
+    include(ROOT_PATH . 'inc/header_htmlbody_leader.php'); 
+
+    //This page functions as a 'public' profile for the talent. Therefore We 
+    //  dont require a logged in user - but do require a target talent to be specified
+    include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
 
 ?> 
 
-
-
-
-
-
-    <?php include(ROOT_PATH . 'inc/partial_create_new_event_modal.php'); ?>
-    <?php include(ROOT_PATH . 'inc/partial_create_question_modal.php'); ?>
-
-
+<?php include(ROOT_PATH . 'inc/partial_create_new_event_modal.php'); ?>
+<?php include(ROOT_PATH . 'inc/partial_create_question_modal.php'); ?>
 
 
 <br>
@@ -275,8 +264,9 @@
                         <img width="25" src="res/facebook-icon-circle.png">
                         <img width="25" src="res/twitterCircle_0.png">
                         
-                        <p class="inline-block">Help us out to increase your rank and build Luv for your town. </p> 
-                        
+                        <!-- <p class="inline-block">
+                            Help us out to increase your rank and build Luv for your town. </p> 
+                        -->
                         
                     </div>
 
@@ -380,58 +370,45 @@
                 </div>
             </div>
 
-
-
-
         </div>
         <div class="col-xs-12 col-sm-6 col-sm-offset-1">
 
 
-
         <!-- Preferences Panel  -->
         <div id="div-preferences" class="row" hidden>
-        <div class="col-xs-12 clwhitebg crowdluvsection ">
-            <h1 class="cl-textcolor-standout">Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
-            <div class="cl_darkgraybackground cl-panel-vscroll cl-panel-medium-height" id="cltoptsrow<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
-                <p> Allow SMS contact?: 
-                    <span <?php if(!$targetTalentPreferences['allow_sms']) echo " hidden " ?> class="p_allow_sms_yes" style="color:green"><strong><b>Yes</b></strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $targetTalentPreferences['crowdluv_tid'];?>, "allow_sms", "0");'>Stop</a>)</span>
-                    <span <?php if( $targetTalentPreferences['allow_sms']) echo " hidden " ?> class="p_allow_sms_no" style="color:red"><strong>No</strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $targetTalentPreferences['crowdluv_tid'];?>, "allow_sms", "1");'>Start</a>)</span>                                  
-                </p> 
-                <p> Allow Email contact?: 
-                    <p <?php if(!$targetTalentPreferences['allow_email']) echo " hidden " ?> class="p_allow_email_yes" style="color:green"><strong><b>Yes</b></strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $targetTalentPreferences['crowdluv_tid'];?>, "allow_email", "0");'>Stop</a>)</p>
-                    <p <?php if( $targetTalentPreferences['allow_email']) echo " hidden " ?> class="p_allow_email_no" style="color:red"><strong>No</strong> (<a href="#" onclick='contact_preference_change_handler(<?php echo $targetTalentPreferences['crowdluv_tid'];?>, "allow_email", "1");'>Start</a>)</p>
-                </p>
-                    
-                <p> Willing to travel up to <input data-crowdluv_tid="<?php echo $targetTalentPreferences['crowdluv_tid'];?>" class="txt_will_travel_time" type="text" size="3" value="<?php echo $targetTalentPreferences['will_travel_time'];?>" /> minutes to see <?php echo $targetTalentPreferences['fb_page_name'];?> </p>
-                <button type="button" onclick="stopfollowingclickhandler(<?php echo $targetTalentPreferences["crowdluv_tid"];?>)">Stop Following</button>
-            </div>      
+            <div class="col-xs-12 clwhitebg crowdluvsection ">
+                <h1 class="cl-textcolor-standout">Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
+                
+                    <?php include(ROOT_PATH . 'inc/partial_follower_talent_preference_form.php'); ?>
+                    <button onclick='contact_preference_change_handler(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>, "still_following", "0")'>
+                        Stop Following
+                        <?button>
+            </div>
         </div>
-        </div>
-
 
 
         <!--  ****  Sharing Panel *****  -->
         <div id="div-sharing" class="row" hidden>
-        <div class="col-xs-12 clwhitebg crowdluvsection ">
-            <h1 class="cl-textcolor-standout">Share the Luv</h1>
-            <hr>
+            <div class="col-xs-12 clwhitebg crowdluvsection ">
+                <h1 class="cl-textcolor-standout">Share the Luv</h1>
+                <hr>
 
-            <p id="<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans"></p>
+                <p id="<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans"></p>
 
-            <?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>
-            <!-- Share Talent Card 
-                 data-crowdluv-tid attribute is added so that twitter callback handler can determine the crowdluv_tid being shared
-                 This attribute must be on the parent div of the twitter share button                      
-                  -->
-            <div class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder cl_darkgraybackground"> 
-                        
-                <div class="card-info ">
-                    <p> Share Landing Page...</p2>
+                <?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>
+                <!-- Share Talent Card 
+                     data-crowdluv-tid attribute is added so that twitter callback handler can determine the crowdluv_tid being shared
+                     This attribute must be on the parent div of the twitter share button                      
+                      -->
+                <div class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder cl_darkgraybackground"> 
+                            
+                    <div class="card-info ">
+                        <p> Share Landing Page...</p2>
+                    </div>
                 </div>
-            </div>
-            <?php } ?>
+                <?php } ?>
 
-        </div>
+            </div>
 
         </div>
 
@@ -746,12 +723,6 @@
    
 
 
-    function stopfollowingclickhandler(crowdluv_tid){
-        console.log("entering stopfollowingclickhandler, crowdluv_tid=" + crowdluv_tid);
-        contact_preference_change_handler(crowdluv_tid, "still_following", "0")
-
-    }
-
     function btn_moreoptions_clickhandler(crowdluv_tid){
         console.log("entering btn_moreoptions_clickhandler, crowdluv_tid=" + crowdluv_tid);
         //$("#cltoptsrow" + crowdluv_tid).toggle();
@@ -795,47 +766,6 @@
 
     }
 
-
-    function contact_preference_change_handler(crowdluv_tid, prefname, prefval){
-        console.log("contact pre change handler called:" + crowdluv_tid + ", " + prefname + ", " + prefval);
-
-        var qopts = { 
-            crowdluv_tid: crowdluv_tid, 
-            prefname: prefname, 
-            prefval: prefval
-         };
-         console.log(qopts);
-
-        resl = $.getJSON('ajax_updatefollowerprefs_fortalent.php', qopts, function(result) {
-            console.log("entering callback, received unfiltered result:"); console.log(result);
-            //update the display of "Yes/No (Start/Stop)"
-            if(result.prefname == "allow_email" && result.prefval=="0" && result.result=="1"){
-                $("#cltoptsrow" + crowdluv_tid + " .p_allow_email_yes").hide();
-                $("#cltoptsrow" + crowdluv_tid + " .p_allow_email_no").show();
-            }
-            else if(result.prefname == "allow_email" && result.prefval=="1" && result.result=="1"){
-                $("#cltoptsrow" + crowdluv_tid + " .p_allow_email_yes").show();
-                $("#cltoptsrow" + crowdluv_tid + " .p_allow_email_no").hide();
-            }
-            else if(result.prefname == "allow_sms" && result.prefval=="0" && result.result=="1"){
-                $("#cltoptsrow" + crowdluv_tid + " .p_allow_sms_yes").hide();
-                $("#cltoptsrow" + crowdluv_tid + " .p_allow_sms_no").show();
-            }
-            else if(result.prefname == "allow_sms" && result.prefval=="1" && result.result=="1"){
-                $("#cltoptsrow" + crowdluv_tid + " .p_allow_sms_yes").show();
-                $("#cltoptsrow" + crowdluv_tid + " .p_allow_sms_no").hide();
-            }
-            else if(result.prefname == "still_following" && result.result=="1"){
-                 $("#cltrow" + crowdluv_tid).hide(1000);
-                 $("#cltoptsrow" + crowdluv_tid).hide(1000);
-            }
-
-        });
-        console.log("json call resl="); console.log(resl);
-
-
-
-    }
 
     function reloadUpcomingEvents(){
 

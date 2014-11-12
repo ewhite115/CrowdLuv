@@ -51,17 +51,19 @@
 
   <br><br> 
   <div class="clwhitebg">
-  <h1 class="cl-textcolor-standout"> CrowdLuv is the best way to keep up and connect with the acts you Luv</h1>
+  <h1 class="cl-textcolor-standout"> 
+    <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> - powered by CrowdLuv - is the best way to keep up and connect with us
+  </h1>
   
  
   <h1 class="cl-textcolor-subtle-standout">Casual Fan?</h1>
-  <p>We get it!  You don't need your inbox and facebook feed cluttered with <b>every</b> mundane thing.</p>
-  <p>CrowdLuv lets you filter out all the noise and get only the updates that are most important and relevant to <b>you</b>
+  <p>We get it!  You don't need your inbox and facebook feed cluttered with <b>everything</b>.</p>
+  <p>CrowdLuv lets you filter the noise but still get the updates that are most important and relevant to <b>you</b>
   </p>
   
   <h1 class="cl-textcolor-subtle-standout">Super Fan?</h1>
-  <p>Prove it! Connect with your favorite acts, show your Luv, and you could become their #1-Ranked fan.
-    Your rank can qualify you for perks
+  <p>Prove it! Connect with us, show your Luv, help us out to improve your fan ranking.
+    Your rank can qualify you for perks - and we'll come to the towns with the most Luv.
   </p>
   <br>
   <button class="cl-button-standout" onclick="$('#cl-newluvwizard-screen-1').hide();$('#cl-newluvwizard-screen-2').show();return false;">
@@ -79,64 +81,28 @@
     <img src='res/top-heart.png'/>
     <img src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=normal&<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
     <br>
-    <h1>Preferences</h1>
+    <h1>Your Preferences - <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> </h1>
     <div class="clwhitebg">
-    <div class="row">
-      <div class="col-xs-6 text-left">
-        <h2>&nbsp; </h2>
-        <h2>Major Announcements</h2>
-        <h2>General Anouncements</h2>
-        <h2>Events in your Area</h2>
-        <h2>General Events</h2>
-        <h2>Another thing</h2>
-        <h2>Another thing</h2>
-
-
-      </div>
-      <div class="col-xs-3">
-        <h2>(mobile)</h2>
-        <p><input type="checkbox" checked></input></p>
-        <p><input type="checkbox" ></input></p>
-        <p><input type="checkbox" checked></input></p>
-        <p><input type="checkbox"></input></p>
-        <p><input type="checkbox"></input></p>
-        <p><input type="checkbox"></input></p>
-        <p><input type="checkbox"></input></p>
-        
-      </div>
-      <div class="col-xs-3">
-        <h2>(email)</h2>
-        <p><input type="checkbox" checked></input></p>
-        <p><input type="checkbox"></input></p>
-        <p><input type="checkbox" checked></input></p>
-        <p><input type="checkbox"></input></p>
-        <p><input type="checkbox"></input></p>
-        <p><input type="checkbox"></input></p>
-        <p><input type="checkbox"></input></p>
-        
-      </div>
-
+      <?php include(ROOT_PATH . 'inc/partial_follower_talent_preference_form.php'); ?>
+      <br>
+      <button class="cl-button-standout" onclick="$('#cl-newluvwizard-screen-2').hide();$('#cl-newluvwizard-screen-3').show();return false;">
+         Continue  ------&gt;
+      </button>
     </div>
-    <br><br>
-    <button class="cl-button-standout" onclick="$('#cl-newluvwizard-screen-2').hide();$('#cl-newluvwizard-screen-3').show();return false;">
-       Ok!  ------&gt;
-    </button>
-
-  </div>
   
-
 </div>
-
 
 <!-- modal to request / confirm contact info if it is the first time user is Luving a talent -->
 <div id="cl-newluvwizard-screen-3" class="text-center crowdluvsection cl-modal cl-newluvwizard-screen">
     <h1 class="cl-textcolor-standout">Confirm Your Contact Info</h1>
     
-    <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
-    <br><br><br>
-    <button class="cl-button-standout" onclick="$('#CL_fullpage_transparentscreen').hide();$('#cl-newluvwizard-screen-3').hide();return false;">
-        Finish
-    </button>
+    <div class="clwhitebg">
+      <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
+      <br><br>
+      <button class="cl-button-standout" onclick="$('#CL_fullpage_transparentscreen').hide();$('#cl-newluvwizard-screen-3').hide();return false;">
+          Finish
+      </button>
+    </div>
 
 </div>
 

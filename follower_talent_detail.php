@@ -241,7 +241,7 @@
             </div>
             <!--badges -->
             <div class="row">
-                <div class="col-xs-12 clwhitebg">
+                <div class="col-xs-6 clwhitebg">
                     <?php if(sizeof($rank['badges']) > 0) { ?><h2>Your Badges:</h2> <?php } ?>
                     <p>
                         <?php 
@@ -253,12 +253,10 @@
                     </p>                    
 
                 </div>
-            </div>
             
-            <div class="row">
-                <div class="col-xs-12 clwhitebg">
+                <div class="col-xs-6 clwhitebg">
 
-                   <!--  **** Share The Luv  Left Panel -->
+                   <!--  **** Show Your Luv  -->
                     <div onclick="share_clickhandler()">
                         <h2 class="inline-block" >Show Your Luv</h2>
                         <img width="25" src="res/facebook-icon-circle.png">
@@ -382,7 +380,7 @@
                     <?php include(ROOT_PATH . 'inc/partial_follower_talent_preference_form.php'); ?>
                     <button onclick='contact_preference_change_handler(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>, "still_following", "0")'>
                         Stop Following
-                        <?button>
+                    </button>
             </div>
         </div>
 
@@ -464,9 +462,6 @@
 
         <script>
         
-
-
-
         /**
          * [populateEventPanelDetails  Fills in the detail in an event panel with the values from the event.
          *                             This will typically be called by the handler of a call to getEventDetails]
@@ -546,10 +541,6 @@
 
         }
         </script>
-
-
-
-
 
 
 

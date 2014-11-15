@@ -421,24 +421,30 @@
                   <div class="cl-calendar-icon">
                     <h2>Jan</h2>
                     <p>1</p>
-                  </div>  
+                  </div> 
                   <div class="cl-event-title-header inline-block">
                     <h1>Title of event here</h1>
                     <p>Type of event listed here</p>
+                    <div class="cl-event-check-in-now"></div>
                   </div>
                   <div class="cl-vote-widget inline-block">
                     <img src="res/votearrows/stack-up-off.png">
                     <h2>Vote</h2>
                     <img src="res/votearrows/stack-down-off.png">
                 </div>
+
                 <hr>
                 <div class="cl-event-key-details inline-block">
-                    <p>
-                        <span class="cl-event-location"> </span> 
+                    <p class="cl-event-location">
+                        <!-- <span class="cl-event-location"> </span>  -->
+                    </p>
+                    <p class="cl-event-date-time">
+                        
                     </p>
                     <p class="cl-event-more-info">
                         <span>More Info: </span><span class="cl-event-more-info-url">http://www.mreinfo.com/moreinfo.html</span>
                     </p>
+
                     <p>
                         <span>Created By:</span> <span class="cl-event-created-by-user-name"> </span> <span class="cl-event-created-by-user-rank"></span>
                     </p>
@@ -460,88 +466,7 @@
         </div>
         </div>
 
-        <script>
-        
-        /**
-         * [populateEventPanelDetails  Fills in the detail in an event panel with the values from the event.
-         *                             This will typically be called by the handler of a call to getEventDetails]
-         * @param  {[type]} panel [description]
-         * @param  {[type]} event [description]
-         * @return {[type]}       [description]
-         */
-        function populateEventDetailPanel(panel, eventObj){
-            console.log("Populating " + panel + " with event id " + eventObj.id);
-
-            //Populate Date, Title, type
-            var startDate = new Date(eventObj.start_date);
-            $(panel + " .cl-calendar-icon h2").html(getMonthAcronymForDate(startDate));
-            $(panel + " .cl-calendar-icon p").html(startDate.getDate());
-            $(panel + " .cl-event-title-header h1").html(eventObj.title);
-            $(panel + " .cl-event-title-header p").html(eventObj.type);
-            //Populate location, URL, cr by
-            $(panel + " .cl-event-location").html(eventObj.location_string);
-            $(panel + " .cl-event-created-by-user-name").html(eventObj.firstname + " " + eventObj.lastname);
-            $(panel + " .cl-event-created-by-user-rank").html("(" + eventObj.created_by_user_rank + ")");
-            if(eventObj.more_info_url !== ""){
-              $(panel + " .cl-event-more-info-url").html(eventObj.more_info_url);
-            }
-            else $(panel + " .cl-event-more-info").hide();
-            //Clear the event sharing widget section          
-            $(panel + " .cl-event-share-widget").html("<h2>Share This Event</h2>");
-              
-            //Add share widgets
-            //TODO:  only show if they are eligible for share?
-            var eventShareDetails = {
-                eventID: eventObj.id,
-                crowdluvUID: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
-                crowdluvTID: eventObj.related_crowdluv_tid
-            };
-
-            //Add fb-share widget for the event            
-            $(panel + " .cl-event-share-widget").append(buildHTMLWidget_FacebookShare({
-                                                                    shareType: "crowdluv-event",
-                                                                    shareMethod: "facebook-share", 
-                                                                    //onclickFunctionString: fbShareLandingPageFunctionString,
-                                                                    shareDetails: eventShareDetails,
-                                                                    luvPoints: eventObj.shareEligibility['facebook-share'].eligibleLuvPoints,
-                                                                    //nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility']['nextEligibleTimestamp']); ?>",
-                                                                    widgetID: "cl-share-widget-facebook-share-event-" + eventObj.id
-                                                                    })
-            );
-            
-            //Add fb-send widget for the event
-            //TODO:  only show if they are eligible for share?
-            $(panel + " .cl-event-share-widget").append(buildHTMLWidget_FacebookShare({
-                                                                    shareType: "crowdluv-event",
-                                                                    shareMethod: "facebook-send", 
-                                                                    //onclickFunctionString: fbShareLandingPageFunctionString,
-                                                                    shareDetails: eventShareDetails,
-                                                                    luvPoints: eventObj.shareEligibility['facebook-send'].eligibleLuvPoints,
-                                                                    //nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility']['nextEligibleTimestamp']); ?>",
-                                                                    widgetID: "cl-share-widget-facebook-send-event-" + eventObj.id
-                                                                    })
-            );
-
-            //if user is eligible to tweet, append the tweet button/link and how many luvspoints
-           //add twitter tweet widget
-            var tweetWidgetHTML = buildHTMLWidget_TwitterShare({
-                                                    shareType: "crowdluv-event",
-                                                    shareMethod: "twitter-tweet",
-                                                    shareDetails: eventShareDetails,
-                                                    luvPoints: eventObj.shareEligibility['twitter-tweet'].eligibleLuvPoints,
-                                                    //nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility']['nextEligibleTimestamp']);?>"
-                                              });
-            
-            $(panel + " .cl-event-share-widget").append(tweetWidgetHTML);  
-            twttr.widgets.load();        
-
-
-            //Populate description
-            $(panel + " .cl-event-description p").html(eventObj.description);
-
-        }
-        </script>
-
+ 
 
 
 
@@ -632,6 +557,33 @@
 
 <script type="text/javascript">
     
+    
+
+
+    function onClickCheckIn(lat, lng){
+    
+        if (! navigator.geolocation) {
+            alert("Your browser does not support Check-in. You must use a gps-enabled browser");
+        }
+
+        navigator.geolocation.getCurrentPosition(function(position){
+
+            //alert("here");    
+            //Check if the user's location is close enough to the event location
+            var distkm = getDistanceFromLatLonInKm(lat, lng, position.coords.latitude, position.coords.longitude);                
+            //alert(distkm);
+            if(distkm > 1) alert("You must be at the event to check in.");
+            else {
+                alert("checking in..");
+
+            }
+
+        });
+
+
+    }
+
+
 
     //Run the following once the question2answer question-detail frame has loaded
     $('.cl-question2answer-embed-question-detail').load( function() {
@@ -795,13 +747,13 @@
                                     "<h2>" 
                                         + getMonthAcronymForDate(new Date(response.events[i].start_date)) + 
                                     "</h2>" +
-                                    "<h1>" + (new Date(response.events[i].start_date)).getDay() + "</h1>" +
+                                    "<h1>" + (new Date(response.events[i].start_date)).getUTCDate() + "</h1>" +
                                 "</div>" +
                                 "<div class='cl-ticker-event-title inline-block'>" + 
                                     "<p class='fwb'>" 
                                         + response.events[i].title + 
                                     "</p>" +
-                                    "<p2>" + response.events[i].location_string + "  ---  Share for " + elgLPs +  " LuvPoints!</p2>" +
+                                    "<p2>" + response.events[i].name + ", " + response.events[i].state + "  ---  Share for " + elgLPs +  " LuvPoints!</p2>" +
                                 "</div>" +
                             "</div>"
                         );

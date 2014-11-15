@@ -55,7 +55,7 @@
 			if(!isset($_POST['description']) || $_POST['description'] == "") { $validationFailure =  "Please enter a description for the event"; break;  }
 			if(!isset($_POST['start-date']) || $_POST['start-date'] == "") { $validationFailure = "Please specfy a start-date for the event"; break; }
 			//TODO:  if the start date is in the past, dont allow?
-			if(!isset($_POST['start-time']) || $_POST['start-time'] == "") { $validationFailure =  "Please specify a start time"; break; }
+			//if(!isset($_POST['start-time']) || $_POST['start-time'] == "") { $validationFailure =  "Please specify a start time"; break; }
 			if(!isset($_POST['location-venue-name']) || $_POST['location-venue-name'] == "") { $validationFailure =  "Please specify a location for this event"; break; }
 			//Add http:// to the more-info-url is needed, then check if its a seemingly valid URL
 			echo substr($_POST['more-info-url'], 0, 7);
@@ -170,18 +170,20 @@
 
 				}
 
-				$return = $CL_model->createEvent($cl_uidt = $CL_LOGGEDIN_USER_UID, 
+				$return = $CL_model->createEvent($cl_uidt = $CL_LOGGEDIN_USER_UID,
 												 $cl_tidt = $_POST['created-for-crowdluv-tid'],
 												 $type= $_POST['type'],
-												 $title=$_POST['title'], 
+												 $title=$_POST['title'],
 												 $description=$_POST['description'],
 												 $startDate=$_POST['start-date'],
 												 $startTime=$_POST['start-time'],
+												 $_POST['end-date'],
+												 $_POST['end-time'],
 												 $duration=$_POST['duration'],
 												 $clPlaceID,
 												 $moreInfoURL = $moreInfoURL);
 				$response['result'] = "ok";
-				$response['return'] = $return;	
+				$response['return'] = $return;
 				break;
 
 			case 'getUpcomingEventsForTalent':

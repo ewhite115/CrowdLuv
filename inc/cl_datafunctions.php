@@ -1664,12 +1664,14 @@ class CrowdLuvModel {
      * 
      */
 
-    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startDate, $startTime, $duration, $clPlaceID, $moreInfoURL){
+    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startDate, $startTime = null, $endDate = null, $endTime = null, $duration = null, $clPlaceID = null, $moreInfoURL = null){
+
+        if($endDate == null || $endDate == "") $endDate = $startDate;
 
         try{
             //Check to see if this follower had previously been following the talent
-             $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`, `start_date`, `start_time`, `duration`, `crowdluv_placeid`, `more_info_url`) 
-                                            VALUES (    ?,                           ?,                    ?,       ?,      ?,              ?,          ?,              ?,          ? ,             ?)";
+             $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`, `start_date`, `start_time`, `end_date`, `end_time`, `duration`, `crowdluv_placeid`, `more_info_url`) 
+                                            VALUES (    ?,                           ?,                    ?,       ?,      ?,              ?,          ?,            ?,        ?,            ?,          ? ,             ?)";
             //echo $sql; 
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_uidt);
@@ -1679,9 +1681,11 @@ class CrowdLuvModel {
             $results->bindParam(5, $description);
             $results->bindParam(6, $startDate);
             $results->bindParam(7, $startTime);
-            $results->bindParam(8, $duration);
-            $results->bindParam(9, $clPlaceID);
-            $results->bindParam(10, $moreInfoURL);
+            $results->bindParam(8, $endDate);
+            $results->bindParam(9, $endTime);
+            $results->bindParam(10, $duration);
+            $results->bindParam(11, $clPlaceID);
+            $results->bindParam(12, $moreInfoURL);
 
             $results->execute();
             return $results;
@@ -1700,7 +1704,7 @@ class CrowdLuvModel {
     public function getUpcomingEventsForTalent($cl_tidt, $cl_uidt = NULL){
 
         try {
-            $sql = "SELECT * FROM event where related_crowdluv_tid=? and start_date >= CURDATE() ORDER BY start_date";
+            $sql = "SELECT event.*, place.* FROM event JOIN place on event.crowdluv_placeid = place.crowdluv_placeid where related_crowdluv_tid=? and start_date >= CURDATE() ORDER BY start_date";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_tidt);
             $results->execute();
@@ -1725,7 +1729,7 @@ class CrowdLuvModel {
     public function getEventDetails($eventID, $cl_uidt = NULL){
 
         try {
-            $sql = "SELECT follower.firstname, follower.lastname, event.* FROM follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid where id=?";
+            $sql = "SELECT follower.firstname, follower.lastname, event.*, place.* FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) JOIN place on event.crowdluv_placeid = place.crowdluv_placeid where id=?";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $eventID);
             $results->execute();

@@ -20,14 +20,21 @@
                   <option value="release">New Release</option>
                   <option value="other">Other</option>
                 </select><br>
-                <label for="title">Title:</label>
+                <label for="title">Event Name:</label>
                 <input name="title" type="text"><br>
-                <label for="description">Description:</label>
+                <label for="description">Details:</label>
                 <input name="description" type="textarea"><br>
                 <label for="start-date">Start Date:</label>
                 <input name="start-date" type="date"><br>
                 <label for="start-time">Start Time:</label>
                 <input name="start-time" type="time"><br>
+                
+                <label for="start-date">End Date:</label>
+                <input name="end-date" type="date"><br>
+                <label for="end-time">End Time:</label>
+                <input name="start-time" type="time"><br>
+
+
                 <input type="hidden" name="duration" value="1 hour">
  
                 <label for="more-info-url">Website for Event Details</label><br>
@@ -124,6 +131,7 @@
                 }
                 else{
                     $('#CL-form-add-event-status').text("Success!").delay(1000);
+                    reloadUpcomingEvents();
                     $('#CL_fullpage_transparentscreen').hide();
                     $('#CL-modal-add-event').hide();
                     $('#submit-new-event-button').removeAttr('disabled').text('Create Event');

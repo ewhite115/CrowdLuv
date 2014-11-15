@@ -1,6 +1,12 @@
 //Even though this is a JS file, We can have PHP intepreted in order to insert 
 //  some configuration constants into the JS below  (ie  FB App ID)
-// <?php require_once("../inc/init_config.php"); ?>
+/* <?php 
+    require_once("../inc/init_config.php");
+    require_once(ROOT_PATH . "inc/cl_datafunctions.php");
+    require_once(ROOT_PATH . "inc/cl_init.php");
+    
+  ?>
+*/
 
 
 
@@ -33,8 +39,6 @@ $(document).ready(function(){
 
 //Misc Utility functions
 
-
-
 function getQueryVariable(variable)
 {
        var query = window.location.search.substring(1);
@@ -56,6 +60,25 @@ function getMonthAcronymForDate(dateObj){
 
   return monthNames[dateObj.getMonth()];
 
+}
+
+
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1);
+  var a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ;
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180);
 }
 
 
@@ -699,5 +722,105 @@ function getEventDetails(eventID, callback){
 }
 
 
+function isEventToday(eventObj){
+    var startDate = new Date(eventObj.start_date);
+    if((typeof eventObj.end_date === undefined) || eventObj.end_date === "") eventObj.end_date = eventObj.start_date;
+    var endDate = new Date(eventObj.end_date);
+    var today = new Date();
 
+    if(today.getUTCDate() < startDate.getUTCDate()) return false;
+    if(today.getUTCDate() > endDate.getUTCDate()) return false;
+
+    return true;
+
+}
+
+/**
+ * [populateEventPanelDetails  Fills in the detail in an event panel with the values from the event.
+ *                             This will typically be called by the handler of a call to getEventDetails]
+ * @param  {[type]} panel [description]
+ * @param  {[type]} event [description]
+ * @return {[type]}       [description]
+ */
+function populateEventDetailPanel(panel, eventObj){
+    console.log("Populating " + panel + " with event id " + eventObj.id);
+
+    //Populate Date, Title, type
+    var startDate = new Date(eventObj.start_date);
+    var today = new Date();
+    $(panel + " .cl-calendar-icon h2").html(getMonthAcronymForDate(startDate));
+    $(panel + " .cl-calendar-icon p").html(startDate.getUTCDate());
+    if(isEventToday(eventObj)){
+      $(panel + " .cl-event-check-in-now").html("<button onclick='onClickCheckIn(" + eventObj.latitude + ", " +eventObj.longitude + ");' class='cl-button-standout'>Check In Now!</button>");
+    }
+    else $(panel + " .cl-event-check-in-now").html("<p2>Check-In here when this event starts</p2>");
+    $(panel + " .cl-event-title-header h1").html(eventObj.title);
+    $(panel + " .cl-event-title-header p").html(eventObj.type);
+    //Populate location, URL, cr by
+    $(panel + " .cl-event-location").html(
+                                          "<a target='_new' href='http://www.facebook.com/" + eventObj.fb_pid + "'>" +
+                                          eventObj.name +
+                                          "</a><br>" +
+                                          "<span class='cl-text-muted'>" + eventObj.street + ", " + eventObj.city + ", " + eventObj.state + "</span>"
+
+                                          );
+    $(panel + " .cl-event-date-time").html(
+                                          eventObj.start_date + " at " + eventObj.start_time
+                                          );
+    $(panel + " .cl-event-created-by-user-name").html(eventObj.firstname + " " + eventObj.lastname);
+    $(panel + " .cl-event-created-by-user-rank").html("(" + eventObj.created_by_user_rank + ")");
+    if(eventObj.more_info_url !== ""){
+      $(panel + " .cl-event-more-info-url").html(eventObj.more_info_url);
+    }
+    else $(panel + " .cl-event-more-info").hide();
+    //Clear the event sharing widget section          
+    $(panel + " .cl-event-share-widget").html("<h2>Share This Event</h2>");
+      
+    //Add share widgets
+    //TODO:  only show if they are eligible for share?
+    var eventShareDetails = {
+        eventID: eventObj.id,
+        crowdluvUID: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
+        crowdluvTID: eventObj.related_crowdluv_tid
+    };
+
+    //Add fb-share widget for the event            
+    $(panel + " .cl-event-share-widget").append(buildHTMLWidget_FacebookShare({
+                                                            shareType: "crowdluv-event",
+                                                            shareMethod: "facebook-share",
+                                                            shareDetails: eventShareDetails,
+                                                            luvPoints: eventObj.shareEligibility['facebook-share'].eligibleLuvPoints,
+                                                            widgetID: "cl-share-widget-facebook-share-event-" + eventObj.id
+                                                            })
+    );
+    
+    //Add fb-send widget for the event
+    //TODO:  only show if they are eligible for share?
+    $(panel + " .cl-event-share-widget").append(buildHTMLWidget_FacebookShare({
+                                                            shareType: "crowdluv-event",
+                                                            shareMethod: "facebook-send",
+                                                            //onclickFunctionString: fbShareLandingPageFunctionString,
+                                                            shareDetails: eventShareDetails,
+                                                            luvPoints: eventObj.shareEligibility['facebook-send'].eligibleLuvPoints,
+                                                            widgetID: "cl-share-widget-facebook-send-event-" + eventObj.id
+                                                            })
+    );
+
+    //if user is eligible to tweet, append the tweet button/link and how many luvspoints
+   //add twitter tweet widget
+    var tweetWidgetHTML = buildHTMLWidget_TwitterShare({
+                                            shareType: "crowdluv-event",
+                                            shareMethod: "twitter-tweet",
+                                            shareDetails: eventShareDetails,
+                                            luvPoints: eventObj.shareEligibility['twitter-tweet'].eligibleLuvPoints
+                                      });
+    
+    $(panel + " .cl-event-share-widget").append(tweetWidgetHTML);
+    twttr.widgets.load();
+
+
+    //Populate description
+    $(panel + " .cl-event-description p").html(eventObj.description);
+
+}
 

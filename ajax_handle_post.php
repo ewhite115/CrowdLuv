@@ -47,7 +47,7 @@
 			if($cluidt != $CL_LOGGEDIN_USER_UID) {echo "CL User ID doesnt match logged in-user"; exit;}
 		break;
 		case 'createNewEvent':
-			//echo "handling createNewEvent\n"; //die;
+			echo "handling createNewEvent\n"; //die;
 			
 			if(!isset($_POST['created-for-crowdluv-tid'])){ $validationFailure = "tid not set";  }
 			if(!isset($_POST['type']) || $_POST['type'] == "") { $validationFailure =  "type not set"; }
@@ -56,7 +56,7 @@
 			if(!isset($_POST['start-date']) || $_POST['start-date'] == "") { $validationFailure = "Please specfy a start-date for the event"; break; }
 			//TODO:  if the start date is in the past, dont allow?
 			if(!isset($_POST['start-time']) || $_POST['start-time'] == "") { $validationFailure =  "Please specify a start time"; break; }
-			if(!isset($_POST['location-string']) || $_POST['location-string'] == "") { $validationFailure =  "Please specify a location for this event"; break; }
+			if(!isset($_POST['location-venue-name']) || $_POST['location-venue-name'] == "") { $validationFailure =  "Please specify a location for this event"; break; }
 			//Add http:// to the more-info-url is needed, then check if its a seemingly valid URL
 			echo substr($_POST['more-info-url'], 0, 7);
 			$moreInfoURL=""; if( isset($_POST['more-info-url'])) $moreInfoURL = $_POST['more-info-url'];
@@ -64,7 +64,7 @@
 				strncmp($_POST['more-info-url'], "http://", 7 ) != 0 &&
 				strncmp($_POST['more-info-url'], "https://", 8) !=0 ) $moreInfoURL = "http://" . $_POST['more-info-url'];
 			
-			if( (! filter_var($moreInfoURL, FILTER_VALIDATE_URL ))) { $validationFailure =  "Invalid website address"; break; }
+			//if( (! filter_var($moreInfoURL, FILTER_VALIDATE_URL ))) { $validationFailure =  "Invalid website address"; break; }
 
 		break;
 
@@ -133,7 +133,43 @@
 
 			case 'createNewEvent':
 				//echo "<pre>"; var_dump($createNewEventFormData); echo "</pre>";
-				//echo "Title: " . $title;
+				//echo "CreateNewEvent";// " . $title;
+				
+				$clPlaceID= "";
+				//If a Facebook page/place iD was specified, make a call to create a new place for that ID
+				//	(If it already exists, it will just return the existing place)
+				if(isset($_POST['location-fb-pid'])) { 
+					$clPlace = $CL_model->createPlaceFromFacebookPlaceID($_POST['location-fb-pid']);
+					//var_dump($clPlace);
+					$clPlaceID = $clPlace['crowdluv_placeid'];
+
+				}
+				//Otherwise (no facebook place ID specified), make a call to create a new place with the remaining data
+				else{
+
+					if(!isset($_POST['location-street'])) $_POST['location-street'] = "";
+					if(!isset($_POST['location-city'])) $_POST['location-city'] = "";
+					if(!isset($_POST['location-state'])) $_POST['location-state'] = "";
+					if(!isset($_POST['location-country'])) $_POST['location-country'] = "";
+					if(!isset($_POST['location-zip'])) $_POST['location-zip'] = "";
+					if(!isset($_POST['location-latitude'])) $_POST['location-latitude'] = "";
+					if(!isset($_POST['location-longitude'])) $_POST['location-longitude'] = "";
+
+					$clPlace = $CL_model->createPlace(
+									null,
+									$_POST['location-venue-name'],
+									$_POST['location-street'],
+									$_POST['location-city'],
+									$_POST['location-state'],
+									$_POST['location-country'],
+									$_POST['location-zip'],
+									$_POST['location-latitude'],
+									$_POST['location-longitude']
+									);
+					$clPlaceID = $clPlace['crowdluv_placeid'];
+
+				}
+
 				$return = $CL_model->createEvent($cl_uidt = $CL_LOGGEDIN_USER_UID, 
 												 $cl_tidt = $_POST['created-for-crowdluv-tid'],
 												 $type= $_POST['type'],
@@ -142,7 +178,7 @@
 												 $startDate=$_POST['start-date'],
 												 $startTime=$_POST['start-time'],
 												 $duration=$_POST['duration'],
-												 $locationString=$_POST['location-string'],
+												 $clPlaceID,
 												 $moreInfoURL = $moreInfoURL);
 				$response['result'] = "ok";
 				$response['return'] = $return;	

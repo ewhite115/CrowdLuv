@@ -5,16 +5,18 @@
                              the most recent product is the last one in the array
  */
 
+use Facebook\FacebookRequest;
+
 
 class CrowdLuvModel {
 
     private $cldb="";
+    private $facebookSession;
     public static $SHARETYPES = [ 'crowdluv-talent-landing-page', 'crowdluv-event'];
     public static $SHAREMETHODS = [ 'facebook-share', 'facebook-send', 'twitter-tweet' ];
 
     public function setDB($thedbobj){ $this->cldb = $thedbobj;  }
-
-
+    public function setFacebookSession($fbs){$this->facebookSession = $fbs;}
 
 
 
@@ -1662,11 +1664,11 @@ class CrowdLuvModel {
      * 
      */
 
-    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startDate, $startTime, $duration, $locationString, $moreInfoURL){
+    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startDate, $startTime, $duration, $clPlaceID, $moreInfoURL){
 
         try{
             //Check to see if this follower had previously been following the talent
-             $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`, `start_date`, `start_time`, `duration`, `location_string`, `more_info_url`) 
+             $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`, `start_date`, `start_time`, `duration`, `crowdluv_placeid`, `more_info_url`) 
                                             VALUES (    ?,                           ?,                    ?,       ?,      ?,              ?,          ?,              ?,          ? ,             ?)";
             //echo $sql; 
             $results = $this->cldb->prepare($sql);
@@ -1678,7 +1680,7 @@ class CrowdLuvModel {
             $results->bindParam(6, $startDate);
             $results->bindParam(7, $startTime);
             $results->bindParam(8, $duration);
-            $results->bindParam(9, $locationString);
+            $results->bindParam(9, $clPlaceID);
             $results->bindParam(10, $moreInfoURL);
 
             $results->execute();
@@ -1768,6 +1770,143 @@ class CrowdLuvModel {
         return $shareEligibility;
 
     }
+
+
+/**
+ * [createPlace description]
+ * @param  [type] $fbPid     [description]
+ * @param  [type] $name      [description]
+ * @param  [type] $street    [description]
+ * @param  [type] $city      [description]
+ * @param  [type] $state     [description]
+ * @param  [type] $state     [description]
+ * @param  [type] $country   [description]
+ * @param  [type] $zip       [description]
+ * @param  [type] $latitude  [description]
+ * @param  [type] $longitude [description]
+ * @return [Place]            [the newly created or existing place]
+ */
+    public function createPlace($fbPid = null, $name, $street = null, $city = null, $state = null, $country = null, $zip = null, $latitude = null, $longitude = null ){
+
+        //if a facebook pid is specified, check to see if it already exists
+        if(isset($fbPid) && $place = $this->getPlaceFromFacebookPlaceID($fbPid)) return $place;
+
+        try{
+            
+            $latlng = 'POINT(' . $latitude . " " . $longitude . ')';
+            $sql = "INSERT INTO `crowdluv`.`place` (`fb_pid`, `name`, `street`, `city`, `state`, `country`, `zip`, `latitude`, `longitude`, `latitude_longitude`) 
+                                            VALUES (    ?,                           ?,                    ?,       ?,      ?,              ?,          ?,              ?,          ? ,             GeomFromText('" . $latlng . "'))";
+            echo $sql; 
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $fbPid);
+            $results->bindParam(2, $name);
+            $results->bindParam(3, $street);
+            $results->bindParam(4, $city);
+            $results->bindParam(5, $state);
+            $results->bindParam(6, $country);
+            $results->bindParam(7, $zip);
+            $results->bindParam(8, $latitude);
+            $results->bindParam(9, $longitude);
+            //$results->bindParam(10, $latlng);
+            //$results->bindParam(11, $longitude);
+
+            //$latlng = $latitude ."," . $longitude;
+            
+            //$results->bindParam(10, $latlng);
+
+            $results->execute();
+            //return $results;
+            //$data = $results->fetchAll(PDO::FETCH_ASSOC);
+            //return $data;
+            
+        } catch (Exception $e) {
+            return "Exception creating event." . $e;
+        }
+
+        return $this->getPlaceFromCrowdluvPlaceID($this->cldb->lastInsertId());
+
+        //return false;
+
+
+    }
+
+    /**
+     * [createPlaceFromFacebookPlaceID Creates a new place based on a facebook page/place, by calling facebook api to get info]
+     * @param  [type] $fbPid [Page/Place ID on facebook]
+     * @return [Place]        [the newly created or existing place]
+     */
+    public function createPlaceFromFacebookPlaceID($fbPid){
+
+        //check if the place exists already
+        if($place = $this->getPlaceFromFacebookPlaceID($fbPid)) return $place;
+
+        try { 
+            // graph api request for place data
+            $request = new FacebookRequest( $this->facebookSession, 'GET', '/' . $fbPid );
+            $response = $request->execute();
+            // get response
+            $fbPlace = $response->getGraphObject()->asArray();
+            //echo "<pre> Response to facebook graph cal /<placeid> :"; var_dump($fbPlace); echo "</pre>"; die;
+            
+            return $this->createPlace($fbPid, 
+                                $fbPlace['name'],
+                                $fbPlace['location']->street,
+                                $fbPlace['location']->city,
+                                $fbPlace['location']->state,
+                                $fbPlace['location']->country,
+                                $fbPlace['location']->zip,
+                                $fbPlace['location']->latitude,
+                                $fbPlace['location']->longitude
+                );
+            
+          } catch (FacebookApiException $e) {
+            //error_log($e);
+            //cldbgmsg("FacebookAPIException in createPlaceFromFavebookPlaceID requesting place info:  " . $e);// var_dump($e);
+            
+          }                   
+
+
+
+    }
+
+
+    public function getPlaceFromCrowdluvPlaceID($cl_pidt){
+
+        try {
+            $sql = "SELECT * FROM place where crowdluv_placeid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_pidt);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        if(sizeof($data)==0) return 0;
+        return $data[0];
+
+    }
+
+    public function getPlaceFromFacebookPlaceID($fb_pidt){
+
+        try {
+            $sql = "SELECT * FROM place where fb_pid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $fb_pidt);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        if(sizeof($data)==0) return 0;
+        return $data[0];
+            
+    }
+
+
 
 
 } //end CrowdLuvModel

@@ -825,7 +825,7 @@
 
     }
 
-    $(document).ready(function(){  
+    $(document).ready(function(){
         $(".txt_will_travel_time").change(function(){
             //console.log("inside txtwilltraveeltime handler. cltid=" + $(this).data('crowdluv_tid') + ", " + $(this).val());
             contact_preference_change_handler($(this).data('crowdluv_tid'), "will_travel_time", $(this).val());

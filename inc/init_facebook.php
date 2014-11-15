@@ -184,6 +184,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
    */
   if ($facebookSession) {  // Proceed thinking you have a logged in user who's authenticated.
       //echo "we have a session";
+      $CL_model->setFacebookSession($facebookSession);
       cldbgmsg("Active Facebook session with token<br>" . $facebookSession->getToken());
       //cldbgmsg("Active Facebook session <br>" . $facebookSession);
 

@@ -102,6 +102,19 @@
 			if(!isset($_POST['description']) || $_POST['description'] == "") { $validationFailure =  "Please enter a description for the question"; break;  }			
 
 		break;
+		case 'recordEventCheckIn':
+			if(!isset($_POST['eventID'])){ $validationFailure = "eventID not set"; break; }
+			if(!isset($_POST['crowdluvUID']) || $_POST['crowdluvUID'] == "") { $validationFailure =  "crowdluvUID not set"; break;  }
+			if(!isset($_POST['latitude']) || $_POST['latitude'] == "") { $validationFailure =  "latitude not set"; break;  }			
+			if(!isset($_POST['longitude']) || $_POST['longitude'] == "") { $validationFailure =  "longitude not set"; break;  }			
+
+
+		break;
+
+		default:
+		 	$validationFailure =  "Invalid post type";
+
+		break;
 
 
 
@@ -217,7 +230,7 @@
 				break;
 
 			case 'createNewQuestion':
-				//echo "handling createnewEvent";
+				//echo "handling createnewQuestion";
 				//echo "Title: " . $title;
 				//$return = qa_post_create($type, $parentpostid, $title, $content, $format, $categoryid, $tags, $userid);
     			require_once ROOT_PATH . 'question2answer/qa-include/qa-base.php';
@@ -234,18 +247,20 @@
 										'crowdluvtid' . $_POST['created-for-crowdluv-tid'], 
 										$CL_LOGGEDIN_USER_UID);
 				echo "complete";
-						/*$return = $CL_model->createEvent($cl_uidt = $CL_LOGGEDIN_USER_UID, 
-												 $cl_tidt = $_POST['created-for-crowdluv-tid'],
-												 $type= $_POST['type'],
-												 $title=$_POST['title'], 
-												 $description=$_POST['description'],
-												 $startDate=$_POST['start-date'],
-												 $startTime=$_POST['start-time'],
-												 $duration=$_POST['duration'],
-												 $locationString=$_POST['location-string'],
-												 $moreInfoURL = $moreInfoURL);*/
+						
 				$response['result'] = "ok";
 				$response['return'] = $return;	
+			break;
+
+			case 'recordEventCheckIn':
+				$result = $CL_model->recordEventCheckIn($_POST['eventID'],
+														$_POST['crowdluvUID'],
+														$_POST['latitude'],
+														$_POST['longitude']);
+				
+				$response['result'] = $result;
+
+
 			break;
 
 

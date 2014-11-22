@@ -426,6 +426,7 @@
                     <h1>Title of event here</h1>
                     <p>Type of event listed here</p>
                     <div class="cl-event-check-in-now"></div>
+                    <span class="cl-event-check-in-status cl-text-standout"></span>
                   </div>
                   <div class="cl-vote-widget inline-block">
                     <img src="res/votearrows/stack-up-off.png">
@@ -559,26 +560,53 @@
     
     
 
-
-    function onClickCheckIn(lat, lng){
+    function onClickCheckIn(evtID, lat, lng){
     
         if (! navigator.geolocation) {
-            alert("Your browser does not support Check-in. You must use a gps-enabled browser");
+            $(".cl-event-check-in-status").text("Your browser/device does not support Check-in. You must use a gps-enabled browser/device");
+            return;
         }
 
         navigator.geolocation.getCurrentPosition(function(position){
-
-            //alert("here");    
             //Check if the user's location is close enough to the event location
             var distkm = getDistanceFromLatLonInKm(lat, lng, position.coords.latitude, position.coords.longitude);                
-            //alert(distkm);
-            if(distkm > 1) alert("You must be at the event to check in.");
+            if(distkm > 1) $(".cl-event-check-in-status").text("You must be at the event location in order to check in.");
             else {
-                alert("checking in..");
+                $('#cl-event-checkin-button').attr('disabled', 'true');
+                $("#cl-event-checkin-button").text("Checking in ... ");
+                
+                crowdluvAPIPost("recordEventCheckIn", 
+                        {
+                            crowdluvUID: "<?= $CL_LOGGEDIN_USER_UID;?>",
+                            eventID: evtID,
+                            latitude: lat,
+                            longitude: lng
+                        }, 
+                        function(response, status, xhr){ 
+                            console.log("reached callback");
+                            if(response.result=="success") $(".cl-event-check-in-now").text("Checked in");
 
+                        });
+                
             }
 
+        }, function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    $(".cl-event-check-in-status").text("You must allow access to your location");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    $(".cl-event-check-in-status").text("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    $(".cl-event-check-in-status").text("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    $(".cl-event-check-in-status").text("An unknown error occurred.");
+                    break;
+            }
         });
+
 
 
     }

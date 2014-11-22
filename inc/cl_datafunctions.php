@@ -1704,7 +1704,9 @@ class CrowdLuvModel {
     public function getUpcomingEventsForTalent($cl_tidt, $cl_uidt = NULL){
 
         try {
-            $sql = "SELECT event.*, place.* FROM event JOIN place on event.crowdluv_placeid = place.crowdluv_placeid where related_crowdluv_tid=? and start_date >= CURDATE() ORDER BY start_date";
+            $sql = "SELECT event.*, place.* 
+                    FROM event JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where related_crowdluv_tid=? and end_date >= CURDATE() ORDER BY start_date";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_tidt);
             $results->execute();
@@ -1743,10 +1745,11 @@ class CrowdLuvModel {
         //Add info about the rank of the person who created this
         $data[0]['created_by_user_rank'] = $this->calculate_follower_rank_for_talent($data[0]['created_by_crowdluv_uid'], $data[0]['related_crowdluv_tid'])['rank_title'];
 
-        //If a user was specified (cl_uidt), Add info about the luvpoint 
-        //eligibility for that user to share this event sharing
+        //If a user was specified:
+        // Add info about the luvpoint  eligibility for that user to share this event sharing
         if($cl_uidt) $data[0]['shareEligibility'] = $this->getShareEligibilityForEvent($eventID, $cl_uidt, $data[0]['related_crowdluv_tid']);
-        
+        // add info about whether the user has checked in
+        if($cl_uidt) $data[0]['eventCheckInStatus'] = $this->getEventCheckInStatusForFollower($eventID, $cl_uidt);
 
         return $data[0];
 
@@ -1776,20 +1779,20 @@ class CrowdLuvModel {
     }
 
 
-/**
- * [createPlace description]
- * @param  [type] $fbPid     [description]
- * @param  [type] $name      [description]
- * @param  [type] $street    [description]
- * @param  [type] $city      [description]
- * @param  [type] $state     [description]
- * @param  [type] $state     [description]
- * @param  [type] $country   [description]
- * @param  [type] $zip       [description]
- * @param  [type] $latitude  [description]
- * @param  [type] $longitude [description]
- * @return [Place]            [the newly created or existing place]
- */
+    /**
+     * [createPlace description]
+     * @param  [type] $fbPid     [description]
+     * @param  [type] $name      [description]
+     * @param  [type] $street    [description]
+     * @param  [type] $city      [description]
+     * @param  [type] $state     [description]
+     * @param  [type] $state     [description]
+     * @param  [type] $country   [description]
+     * @param  [type] $zip       [description]
+     * @param  [type] $latitude  [description]
+     * @param  [type] $longitude [description]
+     * @return [Place]            [the newly created or existing place]
+     */
     public function createPlace($fbPid = null, $name, $street = null, $city = null, $state = null, $country = null, $zip = null, $latitude = null, $longitude = null ){
 
         //if a facebook pid is specified, check to see if it already exists
@@ -1828,9 +1831,6 @@ class CrowdLuvModel {
         }
 
         return $this->getPlaceFromCrowdluvPlaceID($this->cldb->lastInsertId());
-
-        //return false;
-
 
     }
 
@@ -1873,7 +1873,11 @@ class CrowdLuvModel {
 
     }
 
-
+    /**
+     * [getPlaceFromCrowdluvPlaceID Returns a Place object for the given crowdluv place ID]
+     * @param  [type] $cl_pidt [description]
+     * @return [Place]          [array representing the db row for the place]
+     */
     public function getPlaceFromCrowdluvPlaceID($cl_pidt){
 
         try {
@@ -1911,6 +1915,53 @@ class CrowdLuvModel {
     }
 
 
+
+    public function recordEventCheckIn($eventID, $crowdluvUID, $latitude, $longitude){
+
+
+        //if the user has already checked in at this event.  dont check in again
+        if($this->getEventCheckInStatusForFollower($eventID, $crowdluvUID)) return "Already checked in";
+
+        try{
+            $sql = "INSERT INTO `crowdluv`.`eventcheckin` (`event_id`, `crowdluv_uid`, `latitude`, `longitude`) 
+                                                   VALUES (    ?,           ?,          ?,              ? )";
+            //echo $sql; die;
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1,$eventID);
+            $results->bindParam(2,$crowdluvUID);
+            $results->bindParam(3,$latitude);
+            $results->bindParam(4,$longitude);
+
+            $results->execute();
+
+        } catch (Exception $e) {
+            return "Exception inserting eventcheckin in db: " . $e;
+        
+        }
+        return "success";
+
+    }
+
+
+    public function getEventCheckInStatusForFollower($eventID, $crowdluvUID){
+
+        //check to see if there is an existing check-in
+        try {
+            $sql = "SELECT * FROM eventcheckin where crowdluv_uid=? and event_id = ?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $crowdluvUID);
+            $results->bindParam(2, $eventID);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        if(sizeof($data)==0) return false;
+        return $data[0];
+
+    }
 
 
 } //end CrowdLuvModel

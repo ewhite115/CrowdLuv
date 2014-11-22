@@ -402,7 +402,24 @@ h1.cl-major-heading{
                 padding-right: 5px;
 
             }
-           
+
+            /*make the new user wizard modal basically full-width*/
+           .cl-newluvwizard-screen {
+                
+                top: 50px;
+                left: 2.5%;
+                width:95%;
+                /*min-width: 300px;*/
+                /*max-width: 36em;  */
+                height: 32.25em;
+           }
+           .cl-newluvwizard-screen h1, .cl-newluvwizard-screen h2 {
+                margin: 2px;
+            }
+            .cl-newluvwizard-screen .clwhitebg {
+                padding: 3px 1em;
+            }
+
 
 }   /* end of Under 768px media query */
 
@@ -770,7 +787,7 @@ background-size: contain;
 
 }
 
-.cl-textcolor-standout, .clredtext, a {
+.cl-textcolor-standout, .cl-text-standout, .clredtext, a {
     color:darkred;
 }
 

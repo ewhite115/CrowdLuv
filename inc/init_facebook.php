@@ -105,15 +105,18 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   // see if we've previously saved a facebook session token
   if ( isset( $_SESSION ) && isset( $_SESSION['fb_token'] ) ) {
     // create new fb session object from saved access_token
+    cldbgmsg("Found fb_token in session");
     $facebookSession = new FacebookSession( $_SESSION['fb_token'] );
     
     // validate the access_token to make sure it's still valid
     try {
       if ( !$facebookSession->validate() ) {
+        cldbgmsg("fb_token in session no longer valid");
         $facebookSession = null;
       }
     } catch ( Exception $e ) {
       // catch any exceptions, nullify the session variable if encountered
+      cldbgmsg("Exception validating fb_token found in session" . $e);
       $facebookSession = null;
     }
   }  
@@ -124,11 +127,17 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   if ( !isset( $facebookSession ) || $facebookSession === null ) {
     try {
       //Check for a new sessions coming from a redirect
+      cldbgmsg("Checking for new facebook session from redirect");
       $facebookSession = $facebookLoginHelper->getSessionFromRedirect();
       //echo "facebooksession from redirect:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
+      if($facebookSession) cldbgmsg("Found new facebook session from redirect");
       //If no new session from redirect, see if there is a new session set on the client side 
       //  facebook javascript SDK
-      if($facebookSession === null) $facebookJavascriptLoginHelper->getSession();
+      if($facebookSession === null) {
+          cldbgmsg("checking for new facebook session from javascript SDK");
+          $facebookJavascriptLoginHelper->getSession();
+          if($facebookSession) cldbgmsg("Found new facebook session from Javascript SDK");
+      }
       //echo "facebooksession from javascript:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
       //If this was in fact a newly-logged-in session, get facebook Permissions, check for minimums
       if($facebookSession){
@@ -142,7 +151,6 @@ $facebookLikeCategoriesToCreateStubsFor = array (
     } catch( Facebook\FacebookAuthorizationException $ex ) {
       
       //Auth Code expired, so nullify the facebooksession and delete the stored token
-      
       echo "FacebookAuthorizationException getting session in init_facebook";
       //echo "<pre>"; var_dump($ex); echo "</pre>";
       $facebookSession = null;

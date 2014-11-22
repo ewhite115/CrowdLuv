@@ -626,7 +626,6 @@ function recordFollowerShareCompletion(params, callback){
 function crowdluvAPIPost(apiPostType, postData, callback){
 
   console.log("crowdluvAPIPost called:" + apiPostType);
-  
   //For post types where we pass serialized form data,  manually construct the string
   if(apiPostType == 'createNewQuestion'){
     postData = "ajaxPostType=" + apiPostType + "&" + postData;
@@ -635,14 +634,13 @@ function crowdluvAPIPost(apiPostType, postData, callback){
     postData['ajaxPostType'] = apiPostType;
 
   }
-
-
   console.log(postData);
 
+  //Make the AJX post to the crowdluv api
   $.post( "ajax_handle_post.php", postData,
       function(response, status, xhr){
 
-        console.log("in repsonse function for crowdluvAPIPost:");
+        console.log("in response function for crowdluvAPIPost:");
         console.log(response);
 
         if(response.result == "Validation Failed"){
@@ -728,9 +726,11 @@ function isEventToday(eventObj){
     var endDate = new Date(eventObj.end_date);
     var today = new Date();
 
-    if(today.getUTCDate() < startDate.getUTCDate()) return false;
-    if(today.getUTCDate() > endDate.getUTCDate()) return false;
-
+    //if(today.getUTCDate() < startDate.getUTCDate()) return false;
+    //if(today.getUTCDate() > endDate.getUTCDate()) return false;
+    if(today < startDate) return false;
+    if(today > endDate) return false;
+        
     return true;
 
 }
@@ -751,7 +751,8 @@ function populateEventDetailPanel(panel, eventObj){
     $(panel + " .cl-calendar-icon h2").html(getMonthAcronymForDate(startDate));
     $(panel + " .cl-calendar-icon p").html(startDate.getUTCDate());
     if(isEventToday(eventObj)){
-      $(panel + " .cl-event-check-in-now").html("<button onclick='onClickCheckIn(" + eventObj.latitude + ", " +eventObj.longitude + ");' class='cl-button-standout'>Check In Now!</button>");
+      if(! eventObj.eventCheckInStatus) $(panel + " .cl-event-check-in-now").html("<button id='cl-event-checkin-button' onclick='onClickCheckIn(" + eventObj.id + ", " + eventObj.latitude + ", " +eventObj.longitude + ");' class='cl-button-standout'>Check In Now!</button>");
+      else $(panel + " .cl-event-check-in-now").html("<p2>You checked in to this event " + eventObj.eventCheckInStatus.timestamp + " </p2>");
     }
     else $(panel + " .cl-event-check-in-now").html("<p2>Check-In here when this event starts</p2>");
     $(panel + " .cl-event-title-header h1").html(eventObj.title);
@@ -780,7 +781,7 @@ function populateEventDetailPanel(panel, eventObj){
     //TODO:  only show if they are eligible for share?
     var eventShareDetails = {
         eventID: eventObj.id,
-        crowdluvUID: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
+        crowdluvUID: '<?php if(isset($CL_LOGGEDIN_USER_UID)) echo $CL_LOGGEDIN_USER_UID;?>',
         crowdluvTID: eventObj.related_crowdluv_tid
     };
 

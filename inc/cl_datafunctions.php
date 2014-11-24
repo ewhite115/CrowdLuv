@@ -7,7 +7,7 @@
 
 use Facebook\FacebookRequest;
 
-
+if(!class_exists('CrowdLuvModel')){ 
 class CrowdLuvModel {
 
     private $cldb="";
@@ -2007,11 +2007,12 @@ class CrowdLuvModel {
 
 } //end CrowdLuvModel
 
-
+}
 
     
 
-
+if(!function_exists('vincentyGreatCircleDistance'))
+{
 
 /*
  * Stole this from online, might use this for calc distance
@@ -2037,7 +2038,7 @@ function vincentyGreatCircleDistance(
 }
 
 
-
+}
 
 
 ?>

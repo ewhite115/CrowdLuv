@@ -19,7 +19,7 @@
    
   require_once(ROOT_PATH . "inc/init_config.php"); 
   require_once(ROOT_PATH . "inc/cl_datafunctions.php");
-  require ROOT_PATH . 'vendor/autoload.php';
+  require_once(ROOT_PATH . 'vendor/autoload.php');
   
 
   //Establish DB connection and global $CL_model object

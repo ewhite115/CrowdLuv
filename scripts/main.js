@@ -410,12 +410,12 @@ function buildHTMLWidget_FacebookShare(params) {
   //Construct the onclick function
   var paramsJSON = JSON.stringify(params);
   var onclickString = "";
-  if(params.luvPoints > 0) onclickstring = "doFacebookShareDialog(" + paramsJSON + ");";
+  if(params.luvPoints > 0) onclickString = "doFacebookShareDialog(" + paramsJSON + ");";
 
   //Construct the HTML for the widget
   var widgetHTML =
       "<p2 id=\"" + params.widgetID + "\">" +
-          "<img style=\"width:50px;\" src=\"" + widgetImage + "\"" +
+          "<img style=\"width:50px;\" src=\"" + widgetImage + "\" " +
               //"onclick=\"" + params.onclickFunctionString + "\">" +
               "onclick=\'" + onclickString + "\'>" +
           "<span class=\"status\">" +

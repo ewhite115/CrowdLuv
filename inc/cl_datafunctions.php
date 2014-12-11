@@ -1663,15 +1663,16 @@ class CrowdLuvModel {
      *
      * 
      */
+    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startTime, $endTime = null, $clPlaceID = null, $moreInfoURL = null, $fbEventID = null){
 
-    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startDate, $startTime = null, $endDate = null, $endTime = null, $duration = null, $clPlaceID = null, $moreInfoURL = null){
+        if($endTime == null || $endTime == "") $endTime = $startTime;
+        if($startTime == $endTime) $isDateOnly = true;
 
-        if($endDate == null || $endDate == "") $endDate = $startDate;
 
         try{
             //Check to see if this follower had previously been following the talent
-             $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`, `start_date`, `start_time`, `end_date`, `end_time`, `duration`, `crowdluv_placeid`, `more_info_url`) 
-                                            VALUES (    ?,                           ?,                    ?,       ?,      ?,              ?,          ?,            ?,        ?,            ?,          ? ,             ?)";
+             $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`,  `start_time`, `end_time`, `is_date_only`, `crowdluv_placeid`, `more_info_url`, `fb_event_id`) 
+                                            VALUES (         ?,                           ?,              ?,       ?,          ?,               ?,           ?,            ?,              ? ,               ?,             ?       )";
             //echo $sql; 
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_uidt);
@@ -1679,18 +1680,15 @@ class CrowdLuvModel {
             $results->bindParam(3, $type);
             $results->bindParam(4, $title);
             $results->bindParam(5, $description);
-            $results->bindParam(6, $startDate);
-            $results->bindParam(7, $startTime);
-            $results->bindParam(8, $endDate);
-            $results->bindParam(9, $endTime);
-            $results->bindParam(10, $duration);
-            $results->bindParam(11, $clPlaceID);
-            $results->bindParam(12, $moreInfoURL);
+            $results->bindParam(6, $startTime);
+            $results->bindParam(7, $endTime);
+            $results->bindParam(8, $isDateOnly);
+            $results->bindParam(9, $clPlaceID);
+            $results->bindParam(10, $moreInfoURL);
+            $results->bindParam(11, $fbEventID);
 
             $results->execute();
             return $results;
-            //$data = $results->fetchAll(PDO::FETCH_ASSOC);
-            //return $data;
             
         } catch (Exception $e) {
             return "Exception creating event." . $e;
@@ -1701,12 +1699,53 @@ class CrowdLuvModel {
     }
 
 
+
+
+    // public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startDate, $startTime = null, $endDate = null, $endTime = null, $duration = null, $clPlaceID = null, $moreInfoURL = null){
+
+    //     if($endDate == null || $endDate == "") { $endDate = $startDate; $is_date_only = true;}
+
+    //     try{
+    //         //Check to see if this follower had previously been following the talent
+    //          $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`, `start_date`, `start_time`, `end_date`, `end_time`, `duration`, `crowdluv_placeid`, `more_info_url`) 
+    //                                         VALUES (    ?,                           ?,                    ?,       ?,      ?,              ?,          ?,            ?,        ?,            ?,          ? ,             ?)";
+    //         //echo $sql; 
+    //         $results = $this->cldb->prepare($sql);
+    //         $results->bindParam(1, $cl_uidt);
+    //         $results->bindParam(2, $cl_tidt);
+    //         $results->bindParam(3, $type);
+    //         $results->bindParam(4, $title);
+    //         $results->bindParam(5, $description);
+    //         $results->bindParam(6, $startDate);
+    //         $results->bindParam(7, $startTime);
+    //         $results->bindParam(8, $endDate);
+    //         $results->bindParam(9, $endTime);
+    //         $results->bindParam(10, $duration);
+    //         $results->bindParam(11, $clPlaceID);
+    //         $results->bindParam(12, $moreInfoURL);
+
+    //         $results->execute();
+    //         return $results;
+    //         //$data = $results->fetchAll(PDO::FETCH_ASSOC);
+    //         //return $data;
+            
+    //     } catch (Exception $e) {
+    //         return "Exception creating event." . $e;
+    //     }
+
+    //     return false;
+
+    // }
+
+
+
+
     public function getUpcomingEventsForTalent($cl_tidt, $cl_uidt = NULL){
 
         try {
             $sql = "SELECT event.*, place.* 
                     FROM event JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
-                    where related_crowdluv_tid=? and end_date >= CURDATE() ORDER BY start_date";
+                    where related_crowdluv_tid=? and end_time >= NOW() ORDER BY start_time";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_tidt);
             $results->execute();
@@ -1731,7 +1770,9 @@ class CrowdLuvModel {
     public function getEventDetails($eventID, $cl_uidt = NULL){
 
         try {
-            $sql = "SELECT follower.firstname, follower.lastname, event.*, place.* FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) JOIN place on event.crowdluv_placeid = place.crowdluv_placeid where id=?";
+            $sql = "SELECT follower.firstname, follower.lastname, event.*, place.* 
+                    FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where id=?";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $eventID);
             $results->execute();

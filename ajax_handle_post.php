@@ -168,6 +168,7 @@
 					if(!isset($_POST['location-latitude'])) $_POST['location-latitude'] = "";
 					if(!isset($_POST['location-longitude'])) $_POST['location-longitude'] = "";
 
+
 					$clPlace = $CL_model->createPlace(
 									null,
 									$_POST['location-venue-name'],
@@ -188,13 +189,12 @@
 												 $type= $_POST['type'],
 												 $title=$_POST['title'],
 												 $description=$_POST['description'],
-												 $startDate=$_POST['start-date'],
-												 $startTime=$_POST['start-time'],
-												 $_POST['end-date'],
-												 $_POST['end-time'],
-												 $duration=$_POST['duration'],
+												 $startTime= $_POST['start-date'] . " " . $startTime=$_POST['start-time'],
+												 $endTime= $_POST['end-date'] . " " . $_POST['end-time'],
+												 //$isDateOnly= null, 
 												 $clPlaceID,
-												 $moreInfoURL = $moreInfoURL);
+												 $moreInfoURL = $moreInfoURL,
+												 $fbEventID= null);
 				$response['result'] = "ok";
 				$response['return'] = $return;
 				break;

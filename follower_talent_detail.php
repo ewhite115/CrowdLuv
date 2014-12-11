@@ -773,9 +773,9 @@
                             "<div class='cl-ticker-item-block' onClick='onSelectEvent(" + response.events[i].id + ")'>" +
                                 "<div class='cl-ticker-event-date inline-block'>" +
                                     "<h2>" 
-                                        + getMonthAcronymForDate(new Date(response.events[i].start_date)) + 
+                                        + getMonthAcronymForDate(new Date(response.events[i].start_time)) + 
                                     "</h2>" +
-                                    "<h1>" + (new Date(response.events[i].start_date)).getUTCDate() + "</h1>" +
+                                    "<h1>" + (new Date(response.events[i].start_time)).getUTCDate() + "</h1>" +
                                 "</div>" +
                                 "<div class='cl-ticker-event-title inline-block'>" + 
                                     "<p class='fwb'>" 

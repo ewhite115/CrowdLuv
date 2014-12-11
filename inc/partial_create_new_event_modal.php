@@ -32,7 +32,7 @@
                 <label for="start-date">End Date:</label>
                 <input name="end-date" type="date"><br>
                 <label for="end-time">End Time:</label>
-                <input name="start-time" type="time"><br>
+                <input name="end-time" type="time"><br>
 
 
                 <input type="hidden" name="duration" value="1 hour">

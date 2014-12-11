@@ -721,9 +721,9 @@ function getEventDetails(eventID, callback){
 
 
 function isEventToday(eventObj){
-    var startDate = new Date(eventObj.start_date);
-    if((typeof eventObj.end_date === undefined) || eventObj.end_date === "") eventObj.end_date = eventObj.start_date;
-    var endDate = new Date(eventObj.end_date);
+    var startDate = new Date(eventObj.start_time);
+    if((typeof eventObj.end_time === undefined) || eventObj.end_time === "") eventObj.end_time = eventObj.start_time;
+    var endDate = new Date(eventObj.end_time);
     var today = new Date();
 
     //if(today.getUTCDate() < startDate.getUTCDate()) return false;
@@ -746,7 +746,7 @@ function populateEventDetailPanel(panel, eventObj){
     console.log("Populating " + panel + " with event id " + eventObj.id);
 
     //Populate Date, Title, type
-    var startDate = new Date(eventObj.start_date);
+    var startDate = new Date(eventObj.start_time);
     var today = new Date();
     $(panel + " .cl-calendar-icon h2").html(getMonthAcronymForDate(startDate));
     $(panel + " .cl-calendar-icon p").html(startDate.getUTCDate());
@@ -766,7 +766,7 @@ function populateEventDetailPanel(panel, eventObj){
 
                                           );
     $(panel + " .cl-event-date-time").html(
-                                          eventObj.start_date + " at " + eventObj.start_time
+                                          eventObj.start_time
                                           );
     $(panel + " .cl-event-created-by-user-name").html(eventObj.firstname + " " + eventObj.lastname);
     $(panel + " .cl-event-created-by-user-rank").html("(" + eventObj.created_by_user_rank + ")");

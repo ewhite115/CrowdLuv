@@ -1,5 +1,26 @@
 <?php
 
+
+function utf8_encode_deep(&$input) {
+	if (is_string($input)) {
+		$input = utf8_encode($input);
+	} else if (is_array($input)) {
+		foreach ($input as &$value) {
+			utf8_encode_deep($value);
+		}
+		
+		unset($value);
+	} else if (is_object($input)) {
+		$vars = array_keys(get_object_vars($input));
+		
+		foreach ($vars as $var) {
+			utf8_encode_deep($input->$var);
+		}
+	}
+}
+
+
+
 	/**
 	 * [recordFollowerShareCompletion makes an ajax call to the server to record the fact that a follower has completed a share ]
 	 * @param  {[String]} shareType   
@@ -18,6 +39,7 @@
 	//start output buffering in order to intercept debug messages so 
 	//they dont get returned to the browser and corrupt the json object	
 	$servlet_testing=0;
+	$obcontents="";
 	if(!$servlet_testing)	ob_start();
 	//echo "output buffeering started";
 	//initializations
@@ -200,13 +222,15 @@
 				break;
 
 			case 'getUpcomingEventsForTalent':
-				
+				//echo "fdddddd";
 				$cl_uidt=NULL;
 				if( isset($CL_LOGGEDIN_USER_UID) && $CL_LOGGEDIN_USER_UID ) $cl_uidt = $CL_LOGGEDIN_USER_UID;
 				$events = $CL_model->getUpcomingEventsForTalent($_POST['related_crowdluv_tid'], $cl_uidt);
 				
+				//var_dump($events);
 				$response['result'] = "ok";
 				$response['events'] = $events;
+
 
 				break;
 
@@ -278,8 +302,10 @@
 	//include those buffered outputs as a field in the response that it can be viewed
 	//in browser console / debugger
 	$response['obcontents'] = $obcontents;
-	//return the response to the client
+	//return the response to the client. to work on mamp, make sure it is encoded utf8
+	utf8_encode_deep($response);
 	echo json_encode($response);
+	//echo json_last_error_msg();
 
 
 ?>

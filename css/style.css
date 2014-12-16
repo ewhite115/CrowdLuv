@@ -205,16 +205,16 @@ h1.cl-major-heading{
 }
 
 .cl-newluvwizard-screen {
-    position:fixed; 
+    
     display: none;
-    z-index: 101;
+    position:relative; 
+
     overflow: auto;
     
-    left:25%;
-    width:50%;
+    width:65%;
     min-width: 300px;
-    max-width: 36em;  
-    height: 32.25em;
+
+    margin: 0 auto;
     
     background:#f4f4f4;
     border: 1px solid red;
@@ -406,12 +406,9 @@ h1.cl-major-heading{
             /*make the new user wizard modal basically full-width*/
            .cl-newluvwizard-screen {
                 
-                top: 50px;
-                left: 2.5%;
+                margin-top: 50px;
                 width:95%;
-                /*min-width: 300px;*/
-                /*max-width: 36em;  */
-                height: 32.25em;
+              
            }
            .cl-newluvwizard-screen h1, .cl-newluvwizard-screen h2 {
                 margin: 2px;

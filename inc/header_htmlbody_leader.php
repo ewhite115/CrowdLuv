@@ -41,13 +41,35 @@
 <?php } ?>
 
 
+
+<!-- small banner at top of page to remind user to update contact info when they follow new luvs
+        This is hidden by default but gets shown if querystring newluv=x is passed  -->
+<a href="follower_preferences.php">
+<div class="CL_small_reminder_banner text-center">
+    <p>Make sure CrowdLuv has your current contact info! Click here to confirm/update</p>
+</div>
+</a>
+
+
+<?php  // add the correct section header here
+  if($CL_SITE_SECTION == "landing") {include(ROOT_PATH . "inc/header_sitesection_banner_landing.php");}
+  else if($CL_SITE_SECTION == "home") {include(ROOT_PATH . "inc/header_sitesection_banner_home.php");}
+  else if($CL_SITE_SECTION == "talent") {include(ROOT_PATH . "inc/header_sitesection_banner_talent.php");}
+  else if($CL_SITE_SECTION == "follower") {include(ROOT_PATH . "inc/header_sitesection_banner_follower.php");}
+?>
+
+
+
+
+<!-- New Luv Wizard - Intro Screen  -->
 <?php if(isset($CL_LOGGEDIN_USER_OBJ)) { ?>
-  <!-- New Luv Wizard - Intro Screen  -->
-  <div id="cl-newluvwizard-screen-1" class="text-center crowdluvsection cl-modal cl-newluvwizard-screen">
+
+<div class="container">
+  <div id="cl-newluvwizard-screen-1" class="text-center crowdluvsection cl-newluvwizard-screen">
     
-    <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>">
+    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>">
     <img src='res/top-heart.png'/>
-    <img src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=normal&<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
+    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=normal&<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
 
     <br><br> 
     <div class="clwhitebg">
@@ -66,7 +88,8 @@
       Your rank can qualify you for perks - and we'll come to the towns with the most Luv.
     </p>
     <br>
-    <button class="cl-button-standout" onclick="$('#cl-newluvwizard-screen-1').hide();$('#cl-newluvwizard-screen-2').show();return false;">
+    <button class="cl-button-standout" 
+              onclick="$('#cl-newluvwizard-screen-1').hide();$('#cl-newluvwizard-screen-2').show();return false;">
       OK!  -->
     </button>
     </div>
@@ -76,16 +99,17 @@
   </div>
 
   <!-- New-Luv Wizard screen 2- gather contact preferences for the talent the first time user Luvs a talent -->
-  <div id="cl-newluvwizard-screen-2" class="text-center crowdluvsection cl-modal cl-newluvwizard-screen">
-      <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>">
+  <div id="cl-newluvwizard-screen-2" class="text-center crowdluvsection cl-newluvwizard-screen">
+      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>">
       <img src='res/top-heart.png'/>
-      <img src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=normal&<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
+      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=normal&<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
       <br>
       <h1>Your Preferences - <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> </h1>
       <div class="clwhitebg">
         <?php include(ROOT_PATH . 'inc/partial_follower_talent_preference_form.php'); ?>
         <br>
-        <button class="cl-button-standout" onclick="$('#cl-newluvwizard-screen-2').hide();$('#cl-newluvwizard-screen-3').show();return false;">
+        <button class="cl-button-standout" 
+                  onclick="$('#cl-newluvwizard-screen-2').hide();$('#cl-newluvwizard-screen-3').show();return false;">
            Continue  ------&gt;
         </button>
       </div>
@@ -93,38 +117,25 @@
   </div>
 
   <!-- New-Luv Wizard screen 3-  confirm contact info if it is the first time user is Luving a talent -->
-  <div id="cl-newluvwizard-screen-3" class="text-center crowdluvsection cl-modal cl-newluvwizard-screen">
+  <div id="cl-newluvwizard-screen-3" class="text-center crowdluvsection cl-newluvwizard-screen">
       <h1 class="cl-textcolor-standout">Confirm Your Contact Info</h1>
       
       <div class="clwhitebg">
         <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
         <br><br>
-        <button class="cl-button-standout" onclick="$('#CL_fullpage_transparentscreen').hide();$('#cl-newluvwizard-screen-3').hide();return false;">
+        <button class="cl-button-standout" 
+                  onclick="$('#CL_fullpage_transparentscreen').hide();$('#cl-newluvwizard-screen-3').hide();$('#content').show();return false;">
             Finish
         </button>
       </div>
 
   </div>
+</div>
 
 <?php } ?>
 
 
-<!-- small banner at top of page to remind user to update contact info when they follow new luvs
-        This is hidden by default but gets shown if querystring newluv=x is passed  -->
-<a href="follower_preferences.php">
-<div class="CL_small_reminder_banner text-center">
-    <p>Make sure CrowdLuv has your current contact info! Click here to confirm/update</p>
-</div>
-</a>
 
-
-
-<?php  // add the correct section header here
-  if($CL_SITE_SECTION == "landing") {include(ROOT_PATH . "inc/header_sitesection_banner_landing.php");}
-  else if($CL_SITE_SECTION == "home") {include(ROOT_PATH . "inc/header_sitesection_banner_home.php");}
-  else if($CL_SITE_SECTION == "talent") {include(ROOT_PATH . "inc/header_sitesection_banner_talent.php");}
-  else if($CL_SITE_SECTION == "follower") {include(ROOT_PATH . "inc/header_sitesection_banner_follower.php");}
-?>
 
 <div class="container" id="content">
  

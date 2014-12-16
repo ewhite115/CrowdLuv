@@ -21,15 +21,16 @@ $(document).ready(function(){
         //if the flag was passed in indicating that this is the first talent the user has Luv'ed, 
         //  show the modal asking the user to confirm their contact info
         if(getQueryVariable('newluv') == 1) {
-            $('#CL_fullpage_transparentscreen').show();
+            $('#content').hide();
+            // $('#CL_fullpage_transparentscreen').show();
             //$("#CL_contactinfo_confirmation_modal").show();
             $("#cl-newluvwizard-screen-1").show();
         }
         //if the flag was passed in indicating that the user has Luv'ed a new talent (but not the first time), 
         //  show the small reminder banner suggesting the user to confirm their contact info
         if(getQueryVariable('newluv') > 1) {
-            //$('.CL_small_reminder_banner').show();
-            $('#CL_fullpage_transparentscreen').show();
+            $('#content').hide();
+            // $('#CL_fullpage_transparentscreen').show();
             $("#cl-newluvwizard-screen-2").show();
 
         }

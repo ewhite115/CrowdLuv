@@ -74,16 +74,19 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         
             
     <div class="row">       
+        
         <a href="follower_dashboard.php">
         <div class="col-xs-6 col-sm-3 text-center ">
+        
           <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
           <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>">
-          <p2 class="cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
-          <p class="cl-textcolor-default">Manage Your CrowdLuv Profile and who you follow</p>                            
+          <p2 class= "cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
+          <p class= "cl-textcolor-default">Manage Your CrowdLuv Profile and who you follow</p>                            
           <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']){ ?>
             <p class="cl-textcolor-default">You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
 
           <?php }  ?>
+        
         </div>
         </a> 
 
@@ -95,14 +98,20 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
           <br><br>
         </div>
         </a>
-
         
-        <div class="col-xs-12 col-sm-6 text-left center-block">
+        <!-- this div fixes the links above not working on small-width layout -->
+        <div class="clearfix"></div>
+
+        <div class="col-xs-12 col-sm-6 text-left center-block ">
+
           <h1 class="cl-textcolor-standout text-left">Activity </h1>
           
           <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p>
           <br><br>
         </div>
+
+
+
 
     </div>              
                   

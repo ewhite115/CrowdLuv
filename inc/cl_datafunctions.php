@@ -1075,6 +1075,29 @@ class CrowdLuvModel {
             $score += 50;            
         }
 
+
+        //Retrieve any event check-ins the follower has for the talent
+        try {
+            $sql = "SELECT * FROM eventcheckin join event on eventcheckin.event_id = event.id
+                    where eventcheckin.crowdluv_uid=? and event.related_crowdluv_tid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_uidt);
+            $results->bindParam(2, $cl_tidt);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        //Loop through any share conversions found, and add points to the score accordingly
+        foreach($data as $checkinRecord){
+            $score += 500;            
+        }
+        
+
+
+
         return $score;
 
     }

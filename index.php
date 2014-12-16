@@ -100,7 +100,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         </a>
         
         <!-- this div fixes the links above not working on small-width layout -->
-        <div class="clearfix"></div>
+        <div class="clearfix visible-xs-inline"></div>
 
         <div class="col-xs-12 col-sm-6 text-left center-block ">
 

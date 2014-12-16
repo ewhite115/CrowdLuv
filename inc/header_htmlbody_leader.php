@@ -64,7 +64,7 @@
 <!-- New Luv Wizard - Intro Screen  -->
 <?php if(isset($CL_LOGGEDIN_USER_OBJ)) { ?>
 
-<div class="container">
+
   <div id="cl-newluvwizard-screen-1" class="text-center crowdluvsection cl-newluvwizard-screen">
     
     <img style="width:7em;" src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>">
@@ -130,7 +130,7 @@
       </div>
 
   </div>
-</div>
+
 
 <?php } ?>
 

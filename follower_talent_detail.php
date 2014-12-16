@@ -54,7 +54,7 @@
     if(isset($_GET['eventID'])) {
         $eventDets = $CL_model->getEventDetails($_GET['eventID']);
         $pageTitle = $CL_CUR_TGT_TALENT['fb_page_name'] . " event on CrowdLuv";
-        $CL_OG_DESCRIPTION = $eventDets['title'] . " - " . $eventDets['location_string'] . " - " . $eventDets['start_date'];
+        $CL_OG_DESCRIPTION = $eventDets['title'] . " - " . $eventDets['name'] . " - " . $eventDets['start_time'];
     }
 
 

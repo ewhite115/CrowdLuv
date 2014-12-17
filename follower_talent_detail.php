@@ -163,8 +163,8 @@
                         Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?>
                     </button>                      
                 </a>
-                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=showyourlove">
-                    <button class="cl-button-standout-narrow" name="btn_showyourlove" id="btn_showyourlove" >
+                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=showyourluv">
+                    <button class="cl-button-standout-narrow" name="btn_showyourluv" id="btn_showyourluv" >
                         Show Your Luv
                     </button>                      
                 </a>
@@ -406,7 +406,7 @@
         </div>
 
     <?php }
-    else if($profileSubPage == "showyourlove"){ ?>
+    else if($profileSubPage == "showyourluv"){ ?>
       
         <!--  ****  Sharing Panel *****  -->
         <div id="div-sharing" class="fluid-row" >
@@ -727,7 +727,7 @@
 
    
 
-
+/*
     function btn_moreoptions_clickhandler(crowdluv_tid){
         console.log("entering btn_moreoptions_clickhandler, crowdluv_tid=" + crowdluv_tid);
         //$("#cltoptsrow" + crowdluv_tid).toggle();
@@ -737,7 +737,8 @@
         $("#panel-event-details").hide();
 
     }
-    function rank_clickhandler(){
+*/
+/*    function rank_clickhandler(){
 
         $("#div-luverboards").show();
         $("#div-preferences").hide();
@@ -745,6 +746,8 @@
         $("#panel-event-details").hide();
 
     }
+*/
+/*
     function share_clickhandler(){
 
         $("#div-luverboards").hide();
@@ -756,11 +759,9 @@
         $("#div-sharing").show();
 
     }
+*/
     function onSelectEvent(eventID){
-
         window.location.href = window.location.href + "&p=event&eventID=" + eventID;
-
-
     }
 
 
@@ -847,14 +848,12 @@
                 console.log("in callback from getEventDetails");
                 populateEventDetailPanel("#panel-event-details", eventObj);
 
-            });        
-
-            
+            });          
         }
 
         
        //Load the landing-page sharing widgets into the "share the Lv" panel
-       <?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>
+       <?php if(isset($CL_LOGGEDIN_USER_UID) && $profileSubPage == "showyourluv"){ ?>
         $("#div-sharing .card-info").html("");
         //add landing-page fbshare widget
         var vurlOrTID = "<?php if($CL_CUR_TGT_TALENT["crowdluv_vurl"] == "")
@@ -924,7 +923,7 @@
 
 
 
-<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>
+<?php if(isset($CL_LOGGEDIN_USER_UID) && $profileSubPage == "showyourluv"){ ?>
 <script type="text/javascript">
 
     //Once the facebook api finished loading and we've loaded the user's data, do a call to fb

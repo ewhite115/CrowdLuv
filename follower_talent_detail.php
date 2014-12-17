@@ -24,6 +24,14 @@
     require_once("inc/cl_init.php");
 
 
+
+
+    //Determine which brand profile subpage is being requested
+    $profileSubPage = "main";  //default
+    if(isset($_GET['p'])) $profileSubPage = $_GET['p'];
+
+
+
     //Load the Question2Answer Engine and retrieve questios for this brand
     require_once ROOT_PATH . 'question2answer/qa-include/qa-base.php';
     require_once QA_INCLUDE_DIR.'qa-app-users.php';
@@ -111,6 +119,7 @@
 
     }
 
+
     //Proceed to print the html header and body leaders
     include(ROOT_PATH . 'inc/header_htmlhead_leader.php'); 
 
@@ -137,23 +146,39 @@
     <div class="fluid-row">
         <!-- Leader left side -->
         <div class="col-xs-12 col-sm-4 clwhitebg crowdluvsection text-center">
-        <!-- Brand Name, Image, and button -->
-            <?php if(! $targetTalentPreferences) { ?> 
-                <h1 class="cl-textcolor-standout">
-                    <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>"><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></a>
-                </h1>               
-            <?php } ?>            
-            <?php if($targetTalentPreferences) { ?>
-                <h1><a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>"><?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?></a></h1>
-            <?php } ?>            
-            <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
-             
+            
+            <!-- Brand Name, Image, and button -->
+            <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+            <h1 class="cl-textcolor-standout">
+                <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>
+            </h1>               
+
+            <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">             
+            </a>
 
             <!-- **** Preferences or call-to-action -->
             <?php if($targetTalentPreferences) { ?>
-                <button class="cl-button-standout" name="btn_moreoptions" id="btn_moreoptions" onclick="btn_moreoptions_clickhandler(<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"];?>)">
-                    Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?>
-                </button>                      
+                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=preferences">
+                    <button class="cl-button-standout" name="btn_moreoptions" id="btn_moreoptions" >
+                        Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?>
+                    </button>                      
+                </a>
+                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=showyourlove">
+                    <button class="cl-button-standout-narrow" name="btn_showyourlove" id="btn_showyourlove" >
+                        Show Your Luv
+                    </button>                      
+                </a>
+                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=events">
+                    <button class="cl-button-standout-narrow" name="btn_events" id="btn_events" >
+                        Events
+                    </button>                      
+                </a>
+                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=questions">
+                    <button class="cl-button-standout-narrow" name="btn_questions" id="btn_questions" >
+                        Fan Q&A
+                    </button>                      
+                </a>
+
             <?php } ?>
 
             <?php if(! $targetTalentPreferences) { ?>
@@ -168,11 +193,12 @@
 
             
         </div>
-        <!-- Leader Right side -->
-        <div class="col-xs-12 col-sm-7 col-sm-offset-1 crowdluvsection ">
+        <!-- Leader Right side. Hide for pages other than main for small screen -->
+        
+        <div class="col-xs-12 <?php if($profileSubPage != "main") echo "hidden-xs"; ?> col-sm-7 col-sm-offset-1 crowdluvsection ">
 
             <!-- Rank -->
-            <div class="row">
+            <div class="fluid-row clearfix">
                 <div class="col-xs-5 clwhitebg">
                     <!-- ****  Fan Rank -->
                     <div class="heart-rank text-center" onclick="rank_clickhandler()">
@@ -204,7 +230,7 @@
 
                     </div>
                 </div>
-                <div class="col-xs-5 col-xs-offset-2 clwhitebg">
+                <div class="col-xs-5 col-xs-offset-2 clwhitebg ">
 
 
                     <!-- ****  Town Rank ***  -->
@@ -240,8 +266,8 @@
                 </div>
             </div>
             <!--badges -->
-            <div class="row">
-                <div class="col-xs-6 clwhitebg">
+            <div class="fluid-row ">
+                <div class="col-xs-6 clwhitebg clearfix">
                     <?php if(sizeof($rank['badges']) > 0) { ?><h2>Your Badges:</h2> <?php } ?>
                     <p>
                         <?php 
@@ -273,7 +299,7 @@
 
 
             <!-- **  Activity Ticker *** -->
-            <div class="row">
+            <div class="fluid-row">
                 <div class="col-xs-12 clwhitebg crowdluvsection">
                     <h1 class="cl-textcolor-standout">Activity</h1>
                     <hr>
@@ -285,6 +311,7 @@
             </div>
 
         </div>
+
         
     </div>
     </div>
@@ -296,125 +323,19 @@
 
     <hr>
 
-
     <!-- Page Content -->
 
 
-    <?php if(isset($_GET['questionid'])){ ?>
+    <?php 
+    if(isset($_GET['questionid'])){ ?>
         <iframe class="cl-question2answer-embed-question-detail clwhitebg" src="question2answer/index.php?qa=<?=$_GET['questionid'];?>"></iframe>
     <?php }
-        else { ?>
-
-
-
-    <!-- Default / Overview View -->
-    <div id="talent-profile-view-dashboard" class="fluid-row">
-        <div class="col-xs-12 col-sm-5">
-            
-           <!-- **  Upcoming Events Ticker *** -->
-            <div class="row">
-                <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 class="cl-textcolor-standout">Events</h1>
-                    <hr>
-                    <div class="cl-panel-vscroll cl-panel-short-height cl-panel-upcoming-events">
-                        Loading events...
-                    
-                    </div>
-                    <div>
-                        <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-event').show(); return false; ">
-                            Add Event...
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-            
-
-            <!-- **  Questions Ticker *** -->
-            <div class="row">
-                <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 class="cl-textcolor-standout">Fan Questions</h1>
-                    <hr>
-
-                    <div class="cl-panel-vscroll cl-panel-short-height">
-                        <?php foreach($talentQuestionList as &$talentQuestion){ ?>
-
-                            <div class='cl-ticker-item-block' onClick="javascript:window.location.href = window.location.href + '&questionid=<?= $talentQuestion['postid']; ?>'">
-                                <div class='cl-ticker-question-score inline-block'>
-                                    <img style="width:2em" src="https://graph.facebook.com/<?= $talentQuestion['submitterInfo']['fb_uid'];?>/picture?type=square<?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>&access_token=<?php echo $facebookSession->getToken();}?>"> 
-                                    
-                                </div>
-                                <div class='cl-ticker-event-title inline-block'>
-                                    <p class='fwb'>
-                                        <?= $talentQuestion['title'] ?>
-                                    </p>
-                                        
-                                </div>
-                                <div class="inline-block">
-                                    <h1> <?= $talentQuestion['netvotes'] ?> </h1>
-                                </div>
-                            </div>
-
-                        <?php } ?>
-                    </div>
-
-        
-                    <div>
-                        <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-question').show(); return false; ">
-                            Ask Question...
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-        <div class="col-xs-12 col-sm-6 col-sm-offset-1">
-
-
-        <!-- Preferences Panel  -->
-        <div id="div-preferences" class="row" hidden>
-            <div class="col-xs-12 clwhitebg crowdluvsection ">
-                <h1 class="cl-textcolor-standout">Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
-                
-                    <?php include(ROOT_PATH . 'inc/partial_follower_talent_preference_form.php'); ?>
-                    <button onclick='contact_preference_change_handler(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>, "still_following", "0")'>
-                        Stop Following
-                    </button>
-            </div>
-        </div>
-
-
-        <!--  ****  Sharing Panel *****  -->
-        <div id="div-sharing" class="row" hidden>
-            <div class="col-xs-12 clwhitebg crowdluvsection ">
-                <h1 class="cl-textcolor-standout">Share the Luv</h1>
-                <hr>
-
-                <p id="<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans"></p>
-
-                <?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>
-                <!-- Share Talent Card 
-                     data-crowdluv-tid attribute is added so that twitter callback handler can determine the crowdluv_tid being shared
-                     This attribute must be on the parent div of the twitter share button                      
-                      -->
-                <div class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder cl_darkgraybackground"> 
-                            
-                    <div class="card-info ">
-                        <p> Share Landing Page...</p2>
-                    </div>
-                </div>
-                <?php } ?>
-
-            </div>
-
-        </div>
-
+    else if(isset($_GET['eventID'])){ ?>      
 
 
         <!-- Event Detail Panel   -->
-        <div id="panel-event-details" class="row" hidden>
-        <div class="col-xs-12 clwhitebg crowdluvsection ">
+        <div id="panel-event-details" class="row" >
+        <div class="col-xs-12 col-sm-6 clwhitebg crowdluvsection ">
             <h1 class="cl-textcolor-standout">Event Details</h1>
             <hr>
             <div class="cl-panel-vscroll cl-panel-medium-height cl-panel-event">
@@ -467,7 +388,120 @@
         </div>
         </div>
 
- 
+    <?php }
+
+    else if($profileSubPage == "preferences"){ ?>
+      
+
+       <!-- Preferences Panel  -->
+        <div id="div-preferences" class="fluid-row">
+            <div class="col-xs-12 col-sm-6 clwhitebg crowdluvsection ">
+                <h1 class="cl-textcolor-standout">Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
+                
+                    <?php include(ROOT_PATH . 'inc/partial_follower_talent_preference_form.php'); ?>
+                    <button onclick='contact_preference_change_handler(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>, "still_following", "0")'>
+                        Stop Following
+                    </button>
+            </div>
+        </div>
+
+    <?php }
+    else if($profileSubPage == "showyourlove"){ ?>
+      
+        <!--  ****  Sharing Panel *****  -->
+        <div id="div-sharing" class="fluid-row" >
+            <div class="col-xs-12 col-sm-6 clwhitebg crowdluvsection ">
+                <h1 class="cl-textcolor-standout">Show your Luv</h1>
+                <hr>
+
+                <p id="<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans"></p>
+
+                <?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>
+                <!-- Share Talent Card 
+                     data-crowdluv-tid attribute is added so that twitter callback handler can determine the crowdluv_tid being shared
+                     This attribute must be on the parent div of the twitter share button                      
+                      -->
+                <div class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder cl_darkgraybackground"> 
+                            
+                    <div class="card-info ">
+                        <p> Share Landing Page...</p2>
+                    </div>
+                </div>
+                <?php } ?>
+
+            </div>
+
+        </div>
+
+    <?php }    
+
+  
+
+   else if($profileSubPage == "main"){ ?>
+         
+    <!-- Default / Overview View -->
+    <div id="talent-profile-view-dashboard" class="fluid-row">
+        <div class="col-xs-12 col-sm-5">
+            
+           <!-- **  Upcoming Events Ticker *** -->
+            <div class="row">
+                <div class="col-xs-12 clwhitebg crowdluvsection">
+                    <h1 class="cl-textcolor-standout">Events</h1>
+                    <hr>
+                    <div class="cl-panel-vscroll cl-panel-short-height cl-panel-upcoming-events">
+                        Loading events...
+                    
+                    </div>
+                    <div>
+                        <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-event').show(); return false; ">
+                            Add Event...
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            
+
+            <!-- **  Questions Ticker *** -->
+            <div class="row">
+                <div class="col-xs-12 clwhitebg crowdluvsection">
+                    <h1 class="cl-textcolor-standout">Fan Questions</h1>
+                    <hr>
+
+                    <div class="cl-panel-vscroll cl-panel-short-height">
+                        <?php foreach($talentQuestionList as &$talentQuestion){ ?>
+
+                            <div class='cl-ticker-item-block' onClick="javascript:window.location.href = window.location.href + '&p=questions&questionid=<?= $talentQuestion['postid']; ?>'">
+                                <div class='cl-ticker-question-score inline-block'>
+                                    <img style="width:2em" src="https://graph.facebook.com/<?= $talentQuestion['submitterInfo']['fb_uid'];?>/picture?type=square<?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>&access_token=<?php echo $facebookSession->getToken();}?>"> 
+                                    
+                                </div>
+                                <div class='cl-ticker-event-title inline-block'>
+                                    <p class='fwb'>
+                                        <?= $talentQuestion['title'] ?>
+                                    </p>
+                                        
+                                </div>
+                                <div class="inline-block">
+                                    <h1> <?= $talentQuestion['netvotes'] ?> </h1>
+                                </div>
+                            </div>
+
+                        <?php } ?>
+                    </div>
+
+        
+                    <div>
+                        <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-question').show(); return false; ">
+                            Ask Question...
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="col-xs-12 col-sm-6 col-sm-offset-1">
 
 
 
@@ -487,7 +521,7 @@
                 <div id="myTabContent" class="tab-content">
                     <div class="tab-pane fade in active cl-panel-vscroll cl-panel-medium-height" id="home">
                         <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan?</h2>
-                        <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
+                        <p class="text-center">Learn how to <a href="shareluv.php">Show your Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>
                             <p>
                                 <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square<?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>&access_token=<?php echo $facebookSession->getToken();}?>"> 
@@ -501,7 +535,7 @@
                     <div class="tab-pane fade cl-panel-vscroll cl-panel-medium-height" id="top-cities">
   
                         <h2 class="text-center">Does your city have the most Luv for <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>?</h2>
-                        <p class="text-center"><a href="shareluv.php">Share the Luv</a> to increase your City's LuvScore. </p>
+                        <p class="text-center"><a href="shareluv.php">Show your Luv</a> to increase your City's LuvScore. </p>
 
                         <?php foreach($topcities as $row){ ?>
 
@@ -527,7 +561,7 @@
                    </div>
                    <div class="tab-pane fade cl-panel-vscroll  cl-panel-medium-height" id="top-luvers-city">
                         <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan in <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>?</h2>
-                        <p class="text-center">Learn how to <a href="shareluv.php">Share the Luv</a> to increase your LuvScore. VIP's can earn perks</p>
+                        <p class="text-center">Learn how to <a href="shareluv.php">Show your Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuversMyCity as $rankedLuver) { ?>
                             <p>
                                 <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square&access_token=<?php echo $facebookSession->getToken();?>"> 
@@ -724,16 +758,8 @@
     }
     function onSelectEvent(eventID){
 
-        //Call API to get event details
-        getEventDetails(eventID, function(eventObj){
-            console.log("in callback from getEventDetails");
-            populateEventDetailPanel("#panel-event-details", eventObj);
+        window.location.href = window.location.href + "&p=event&eventID=" + eventID;
 
-            $("#div-luverboards").hide();
-            $("#div-preferences").hide();
-            $("#div-sharing").hide();
-            $("#panel-event-details").show();
-        });        
 
     }
 
@@ -770,10 +796,11 @@
 
 
                         $('.cl-panel-upcoming-events').append(
-                            "<div class='cl-ticker-item-block' onClick='onSelectEvent(" + response.events[i].id + ")'>" +
+                            "<div class='cl-ticker-item-block'" + 
+                                    "onClick='javascript: onSelectEvent(" + response.events[i].id + ")'>" +
                                 "<div class='cl-ticker-event-date inline-block'>" +
-                                    "<h2>" 
-                                        + getMonthAcronymForDate(new Date(response.events[i].start_time)) + 
+                                    "<h2>" +
+                                        getMonthAcronymForDate(new Date(response.events[i].start_time)) + 
                                     "</h2>" +
                                     "<h1>" + (new Date(response.events[i].start_time)).getUTCDate() + "</h1>" +
                                 "</div>" +
@@ -814,7 +841,16 @@
         //Load events into the 'upcoming events' ticker
         reloadUpcomingEvents();
         //if an event ID was passed in the query string, load it in the event details panel
-        if(qsEventID=getQueryVariable("eventID")) { onSelectEvent(qsEventID);  }
+        if(qsEventID=getQueryVariable("eventID")) { 
+            //Call API to get event details
+            getEventDetails(qsEventID, function(eventObj){
+                console.log("in callback from getEventDetails");
+                populateEventDetailPanel("#panel-event-details", eventObj);
+
+            });        
+
+            
+        }
 
         
        //Load the landing-page sharing widgets into the "share the Lv" panel

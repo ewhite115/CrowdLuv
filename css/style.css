@@ -799,7 +799,7 @@ background-size: contain;
     color: white;
 }
 
-.cl-button-standout:hover, .clredbutton {
+.cl-button-standout:hover, .cl-button-standout-narrow:hover, .clredbutton {
     background: red;
 }
 

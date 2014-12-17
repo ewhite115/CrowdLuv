@@ -5,7 +5,7 @@
 
 <!-- ***  Modal for adding an question -->
 <div hidden id="CL-modal-add-question" class="CL_modal text-center crowdluvsection">
-    <h1 class="cl-textcolor-standout">Ask a <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> Question</h1>
+    <h1 class="cl-textcolor-standout">Ask a question about <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> </h1>
 
 
 

@@ -50,7 +50,7 @@ $talentFacebookPermissionScope = array(
  */
 $facebookLikeCategoriesToCreateStubsFor = array (
   //'Community',
-  //'Musician/Band',
+  'Musician/band',
   'Author'
 
   );
@@ -294,7 +294,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
     //  Loop making api call ..  
     $done=false;
     //Create the initial request object for retrieving user's likes
-    $request = new FacebookRequest( $facebookSession, 'GET', '/me/likes?limit=100' );
+    $request = new FacebookRequest( $facebookSession, 'GET', '/me/likes?fields=id,name,category,link&limit=100' );
     do{  
       try{          
           $response = $request->execute();
@@ -308,11 +308,11 @@ $facebookLikeCategoriesToCreateStubsFor = array (
                   //...See if it already exists as a talent in the CL DB
                   $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg->id);
                   //If not, and it's in an "enabled" category, add it
-                  if(! $cltid && (in_array($fbupg->category, $facebookLikeCategoriesToCreateStubsFor))) {          
+                  if(! $cltid && (in_array($fbupg->category, $facebookLikeCategoriesToCreateStubsFor))) {
                       cldbgmsg("Found new facebook like page to add: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->category); 
                       $CL_model->create_new_cl_talent_record_from_facebook_user_like($fbupg);
                       $cltid = $CL_model->get_crowdluv_tid_by_fb_pid($fbupg->id);
-                      //$CL_model->setFollower_FacebookLikes_Talent($CL_LOGGEDIN_USER_UID, $cltid, 1);
+                      
                   }
                   //Make sure DB is updated to reflect that this user facebook-likes the talent
                   if($cltid) $CL_model->setFollower_FacebookLikes_Talent($CL_LOGGEDIN_USER_UID, $cltid, 1); 

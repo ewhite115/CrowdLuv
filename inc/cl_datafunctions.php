@@ -250,6 +250,13 @@ class CrowdLuvModel {
 
 
 
+    private function getVURLFromFacebookLink($fbLink){
+
+        return substr($fbLink, strlen("https://www.facebook.com/"));
+
+
+    }
+
     public function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
         //pass in json object of the page
         //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
@@ -277,14 +284,11 @@ class CrowdLuvModel {
             return -1;
         }
 
-        
-
     }
-
 
     public function create_new_cl_talent_record_from_facebook_user_like($talent_fbpp){
         //pass in json object of the page
-        //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
+        echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
         if(!$talent_fbpp) return 0;
                 
         $new_cl_tid = "";
@@ -301,19 +305,24 @@ class CrowdLuvModel {
             $results->execute();            
             $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id);
 
-            //Default the vanity URL to the sanitized version of their facebook page name
-            $this->update_talent_landingpage_vurl($new_cl_tid, htmlspecialchars($talent_fbpp->name));
             $this->setDefautValuesForNewTalent($new_cl_tid);
-
+            //Default the vanity URL to the sanitized version of their facebook page name
+            //$this->update_talent_landingpage_vurl($new_cl_tid, htmlspecialchars($talent_fbpp->name));
+            //$tmp = $this->update_talent_landingpage_vurl($new_cl_tid, $this->getVURLFromFacebookLink($talent_fbpp->link));
+            //echo "<pre>"; var_dump($tmp);  echo "</pre>"; 
+            
+            // Update the crowdluv_vurl to match that of the facebook page. bypass sanitization since it should alreayd be sanitized for fb.
+            // TODO:  deal with the case where the vurl is already taken
+            // TODO:  deal with  /pages/.../####
+            $this->update_talent_setting($new_cl_tid, "crowdluv_vurl", $this->getVURLFromFacebookLink($talent_fbpp->link));
 
             //$results = $CL_db->query($sql);
         } catch (Exception $e) {
-            echo "Failed inserting into talent table from create_new_cl_tlent_record_from_facebook_user_like" . $e->getMessage();
+            echo "Failed inserting into talent table from create_new_cl_talent_record_from_facebook_user_like" . $e->getMessage();
             die;
             return -1;
         }
 
-        
 
     }
 
@@ -323,6 +332,7 @@ class CrowdLuvModel {
         //Default the vanity URL to the sanitized version of their facebook page name
         $fbPageName = $this->get_talent_object_by_tid($new_cl_tid)['fb_page_name']; 
         $this->update_talent_landingpage_vurl($new_cl_tid, htmlspecialchars($fbPageName));
+        
         
         //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
         $this->update_talent_landingpage_message($new_cl_tid, "Want me in your town? Let me know so I can come to the towns with the most Luv");
@@ -445,6 +455,7 @@ class CrowdLuvModel {
         $cl_vurl = preg_replace('/[^a-z0-9 -]+/', '', $cl_vurl);
         $cl_vurl = str_replace(' ', '-', $cl_vurl);
         $cl_vurl = trim($cl_vurl, '-');
+        //echo "Sanitized URL:" . $cl_vurl;
 
         //Default response values
         $response['result'] = 0;
@@ -454,7 +465,7 @@ class CrowdLuvModel {
 
         //Check validity of sanitized URL
         if($cl_vurl == "") {$response['description'] = "URL can not be empty"; return $response;}
-        if(strlen($cl_vurl) > 50) {$response['description'] = "URL can not be over 50 characters"; return $response;}
+        if(strlen($cl_vurl) > 100) {$response['description'] = "URL can not be over 50 characters"; return $response;}
 
         //TODO  Check if the vurl is already in use
         

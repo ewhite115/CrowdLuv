@@ -1,5 +1,5 @@
 <?php 
-  use Facebook\FacebookRequest;
+    use Facebook\FacebookRequest;
 
 
     function getNextShareTimeString($nextEligibleShareTimestamp){
@@ -72,6 +72,32 @@
           } 
           //Create a new request object and start over if there are more likes
       } while (($response) && $request = $response->getRequestForNextPage());
+
+
+    }
+
+
+    //Retrieve and load events from bit if the trigger was specified in qs
+    if(isset($_GET['cmd']) && $_GET['cmd'] == "bitevt"){
+
+        $bitEvents = json_decode(file_get_contents("http://api.bandsintown.com/artists/placeholder/events.json?api_version=2.0&artist_id=fbid_" . $CL_CUR_TGT_TALENT['fb_pid'] . "&app_id=crowdluv"));
+        echo "<pre>"; var_dump($bitEvents); echo "</pre>"; //die;
+ 
+        if(isset($bitEvents) && sizeof($bitEvents) > 0) {  
+              
+            foreach ($bitEvents as $evt) {
+                //...See if the event already exists in the CL DB
+                $evtid = $CL_model->getEventIDFromBandsInTownEventID($evt->id);
+                //If not, add it
+                if(! $evtid ) {
+                    cldbgmsg("Found new bandsintown event to add: " . $evt->id . ":" . $evt->title . ":" . $evt->datetime); 
+                    $CL_model->createEventFromBandsInTownEvent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid'], $evt);
+                    //$cltid = $CL_model->getEventDetails($fbupg->id);
+                     
+                }
+               
+            }//foreach
+        } //if we got data back fro api call
 
 
     }

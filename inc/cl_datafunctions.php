@@ -1773,6 +1773,43 @@ class CrowdLuvModel {
                 
     }
 
+    public function createEventFromBandsInTownEvent($cl_uidt, $cl_tidt, $bitEvent){
+
+        $clPlace = null;
+        $clPlaceID = 0;
+        //If the bit event has a venue specified -
+        if(isset($bitEvent->venue)) {
+
+            //TODO  Look for an existing venue at the same or close lat/lng, or create new
+            
+            //if(! ($clPlace = $this->getPlaceFromFacebookPlaceID($bitEvent->venue->id)))
+                //$clPlace = $this->createPlaceFromFacebookPlaceID($bitEvent->venue->id);
+
+
+        }
+        //If there is no venue specified, leave place set to 0  / no location
+        if($clPlace != null) $clPlaceID = $clPlace['crowdluv_placeid'];
+
+
+        if(! isset($bitEvent->end_time)) $bitEvent->end_time = "";
+        if(! isset($bitEvent->description)) $bitEvent->description = "";
+
+        //Now add/create the event
+        /*
+        $return = $this->createEvent($cl_uidt,
+                                     $cl_tidt,
+                                         'other',
+                                         $bitEvent->name,
+                                         $bitEvent->description,
+                                         $bitEvent->start_time,
+                                         $bitEvent->end_time,
+                                         //$isDateOnly= null, 
+                                         $clPlaceID,
+                                         $moreInfoURL = "",
+                                         $bitEvent->id);
+        */
+                
+    }
 
 
     // public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startDate, $startTime = null, $endDate = null, $endTime = null, $duration = null, $clPlaceID = null, $moreInfoURL = null){
@@ -1898,6 +1935,23 @@ class CrowdLuvModel {
 
         try {
             $sql = "select id from event where fb_event_id=" . $fbEventID;
+            $results = $this->cldb->query($sql);
+            $firstline = $results->fetch(PDO::FETCH_ASSOC);
+            if(!$firstline) return 0;
+             //echo "uid= (" . $uid . ")";
+            return $firstline['id'];
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;//exit;
+        }
+
+    }
+
+    public function getEventIDFromBandsInTownEventID($bitEventID){
+
+
+        try {
+            $sql = "select id from event where bit_event_id=" . $bitEventID;
             $results = $this->cldb->query($sql);
             $firstline = $results->fetch(PDO::FETCH_ASSOC);
             if(!$firstline) return 0;

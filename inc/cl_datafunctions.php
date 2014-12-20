@@ -288,7 +288,7 @@ class CrowdLuvModel {
 
     public function create_new_cl_talent_record_from_facebook_user_like($talent_fbpp){
         //pass in json object of the page
-        echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
+        //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
         if(!$talent_fbpp) return 0;
                 
         $new_cl_tid = "";
@@ -1707,7 +1707,7 @@ class CrowdLuvModel {
             //Check to see if this follower had previously been following the talent
              $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`,  `start_time`, `end_time`, `is_date_only`, `crowdluv_placeid`, `more_info_url`, `fb_event_id`) 
                                             VALUES (         ?,                           ?,              ?,       ?,          ?,               ?,           ?,            ?,              ? ,               ?,             ?       )";
-            //echo $sql; 
+            //echo $sql; return true;
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_uidt);
             $results->bindParam(2, $cl_tidt);
@@ -1732,6 +1732,46 @@ class CrowdLuvModel {
 
     }
 
+    public function createEventFromFacebookEvent($cl_uidt, $cl_tidt, $fbEvent){
+
+        $clPlace = null;
+        $clPlaceID = 0;
+        //If the fb event has a venue specified -
+        if(isset($fbEvent->venue)) {
+
+            //  if it has an id -- look up or create it in cl db
+            if(isset($fbEvent->venue->id)){
+            
+                if(! ($clPlace = $this->getPlaceFromFacebookPlaceID($fbEvent->venue->id)))
+                    $clPlace = $this->createPlaceFromFacebookPlaceID($fbEvent->venue->id);
+
+            }
+            //If there is a venue specified but no ID ..
+              //.TODO...  for now, just let it stay as 0  / no location specified
+
+        }
+        //If there is no venue specified, leave place set to 0  / no location
+        if($clPlace != null) $clPlaceID = $clPlace['crowdluv_placeid'];
+
+
+        if(! isset($fbEvent->end_time)) $fbEvent->end_time = "";
+        if(! isset($fbEvent->description)) $fbEvent->description = "";
+
+        //Now add/create the event
+        $return = $this->createEvent($cl_uidt,
+                                     $cl_tidt,
+                                         'other',
+                                         $fbEvent->name,
+                                         $fbEvent->description,
+                                         $fbEvent->start_time,
+                                         $fbEvent->end_time,
+                                         //$isDateOnly= null, 
+                                         $clPlaceID,
+                                         $moreInfoURL = "",
+                                         $fbEvent->id);
+
+                
+    }
 
 
 
@@ -1777,18 +1817,36 @@ class CrowdLuvModel {
     public function getUpcomingEventsForTalent($cl_tidt, $cl_uidt = NULL){
 
         try {
-            $sql = "SELECT event.*, place.* 
-                    FROM event JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
-                    where related_crowdluv_tid=? and end_time >= NOW() ORDER BY start_time";
+            /*$sql = "(SELECT event.*, place.* 
+                    FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where related_crowdluv_tid=? and end_time >= NOW() ORDER BY start_time DESC)
+                    union all
+                    (SELECT event.*, place.* 
+                    FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where related_crowdluv_tid=? and end_time < NOW() ORDER BY start_time DESC)";
+                    //where related_crowdluv_tid=? and end_time >= NOW() ORDER BY start_time";*/
+            /*$sql = "SELECT event.*, place.* 
+                    FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where related_crowdluv_tid=?  
+                    ORDER BY CASE WHEN end_time >= NOW() THEN end_time < NOW() END DESC";*/
+                    $sql = "SELECT event.*, place.* 
+                    FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where related_crowdluv_tid=?
+                    ORDER BY (CASE WHEN end_time < NOW() THEN 1 ELSE 0 END) ASC, 
+                             (CASE WHEN end_time < NOW() then end_time END) desc,
+                             (CASE WHEN end_time > NOW() then end_time END) asc";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_tidt);
+            //$results->bindParam(2, $cl_tidt);
             $results->execute();
+
 
         } catch (Exception $e) {
             echo "Data could not be retrieved from the database. " . $e;
             exit;
         }    
         $data = $results->fetchAll(PDO::FETCH_ASSOC);
+
 
         if($cl_uidt){
             foreach($data as &$d){
@@ -1800,12 +1858,17 @@ class CrowdLuvModel {
 
     }
 
-
+    /**
+     * [getEventDetails description]
+     * @param  [type] $eventID [description]
+     * @param  [type] $cl_uidt [CrowdLuv User - if specified, will return details on the luvpoint eligibility for that user to share]
+     * @return [type]          [description]
+     */
     public function getEventDetails($eventID, $cl_uidt = NULL){
 
         try {
             $sql = "SELECT follower.firstname, follower.lastname, event.*, place.* 
-                    FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
                     where id=?";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $eventID);
@@ -1816,8 +1879,9 @@ class CrowdLuvModel {
             exit;
         }    
         $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        if(!isset($data[0])) return 0;
 
-        //Add info about the rank of the person who created this
+        //Add info about the rank of the person who created this event
         $data[0]['created_by_user_rank'] = $this->calculate_follower_rank_for_talent($data[0]['created_by_crowdluv_uid'], $data[0]['related_crowdluv_tid'])['rank_title'];
 
         //If a user was specified:
@@ -1827,6 +1891,22 @@ class CrowdLuvModel {
         if($cl_uidt) $data[0]['eventCheckInStatus'] = $this->getEventCheckInStatusForFollower($eventID, $cl_uidt);
 
         return $data[0];
+
+    }
+
+    public function getEventIDFromFacebookEventID($fbEventID){
+
+        try {
+            $sql = "select id from event where fb_event_id=" . $fbEventID;
+            $results = $this->cldb->query($sql);
+            $firstline = $results->fetch(PDO::FETCH_ASSOC);
+            if(!$firstline) return 0;
+             //echo "uid= (" . $uid . ")";
+            return $firstline['id'];
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;//exit;
+        }
 
     }
 
@@ -1878,7 +1958,7 @@ class CrowdLuvModel {
             $latlng = 'POINT(' . $latitude . " " . $longitude . ')';
             $sql = "INSERT INTO `crowdluv`.`place` (`fb_pid`, `name`, `street`, `city`, `state`, `country`, `zip`, `latitude`, `longitude`, `latitude_longitude`) 
                                             VALUES (    ?,                           ?,                    ?,       ?,      ?,              ?,          ?,              ?,          ? ,             GeomFromText('" . $latlng . "'))";
-            echo $sql; 
+            //echo $sql; 
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $fbPid);
             $results->bindParam(2, $name);
@@ -1927,6 +2007,13 @@ class CrowdLuvModel {
             $fbPlace = $response->getGraphObject()->asArray();
             //echo "<pre> Response to facebook graph cal /<placeid> :"; var_dump($fbPlace); echo "</pre>"; die;
             
+           if(! isset($fbPlace['location']->street)) $fbPlace['location']->street = "";
+           if(! isset($fbPlace['location']->city)) $fbPlace['location']->city = "";
+           if(! isset($fbPlace['location']->state)) $fbPlace['location']->state = "";
+           if(! isset($fbPlace['location']->country)) $fbPlace['location']->country = "";
+           if(! isset($fbPlace['location']->zip)) $fbPlace['location']->zip = "";
+
+
             return $this->createPlace($fbPid, 
                                 $fbPlace['name'],
                                 $fbPlace['location']->street,

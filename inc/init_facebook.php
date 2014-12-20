@@ -328,10 +328,10 @@ $facebookLikeCategoriesToCreateStubsFor = array (
         //  fb_user_likes, and should continue to use the talent array in the session var
       } 
       //Create a new request object and start over if there are more likes
-  } while (($response) && $request = $response->getRequestForNextPage());
+    } while (($response) && $request = $response->getRequestForNextPage());
 
 
-  }//if fbUser
+  }//if fbsession and isnewsession
 
 //Clear the 'response' object created above so that it doesnt cause problems for 
 //  ajax files which use the same variable name

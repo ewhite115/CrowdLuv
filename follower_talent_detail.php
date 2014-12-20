@@ -1,4 +1,6 @@
 <?php 
+  use Facebook\FacebookRequest;
+
 
     function getNextShareTimeString($nextEligibleShareTimestamp){
         $shareAgainTime="";
@@ -29,6 +31,50 @@
     //Determine which brand profile subpage is being requested
     $profileSubPage = "main";  //default
     if(isset($_GET['p'])) $profileSubPage = $_GET['p'];
+
+
+    //Retrieve and load events from fb if the trigger was specified in qs
+    if(isset($_GET['cmd']) && $_GET['cmd'] == "fbevt"){
+
+       //We may need to make multiple requests to get all the events.
+        //  Loop making api call ..  
+        $done=false;
+        //Create the initial request object for retrieving the events
+        $request = new FacebookRequest( $facebookSession, 'GET', '/' . $CL_CUR_TGT_TALENT['fb_pid'] . '/events?since=1356998400&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
+        do{  
+          try{          
+              $response = $request->execute();
+              // get response
+              $fb_user_likes = $response->getGraphObject()->asArray();
+              //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
+              
+              if(isset($fb_user_likes['data']) && sizeof($fb_user_likes['data']) > 0) {  
+                  
+                  foreach ($fb_user_likes['data'] as $fbupg) {
+                      //...See if the event already exists in the CL DB
+                      $cltid = $CL_model->getEventIDFromFacebookEventID($fbupg->id);
+                      //If not, add it
+                      if(! $cltid ) {
+                          cldbgmsg("Found new facebook event to add: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->start_time); 
+                          $CL_model->createEventFromFacebookEvent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid'], $fbupg);
+                          //$cltid = $CL_model->getEventDetails($fbupg->id);
+                          
+                      }
+                    
+                  }//foreach
+              } //if we got data back fro api call
+
+          }catch (FacebookApiException $e) {
+            cldbgmsg("FacebookAPIException requesting /me/likes -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+            $fb_user_likes = null;
+            //we should still be able to proceed, since the rest of the pages do not rely on 
+            //  fb_user_likes, and should continue to use the talent array in the session var
+          } 
+          //Create a new request object and start over if there are more likes
+      } while (($response) && $request = $response->getRequestForNextPage());
+
+
+    }
 
 
 
@@ -158,9 +204,14 @@
 
             <!-- **** Preferences or call-to-action -->
             <?php if($targetTalentPreferences) { ?>
+                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+                    <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
+                        Overview
+                    </button>                      
+                </a>
                 <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=preferences">
-                    <button class="cl-button-standout" name="btn_moreoptions" id="btn_moreoptions" >
-                        Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?>
+                    <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
+                        Your Preferences 
                     </button>                      
                 </a>
                 <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=showyourluv">
@@ -334,8 +385,8 @@
 
 
         <!-- Event Detail Panel   -->
-        <div id="panel-event-details" class="row" >
-        <div class="col-xs-12 col-sm-6 clwhitebg crowdluvsection ">
+        <div id="panel-event-details" class="fluid-row" >
+        <div class="col-xs-12  clwhitebg crowdluvsection ">
             <h1 class="cl-textcolor-standout">Event Details</h1>
             <hr>
             <div class="cl-panel-vscroll cl-panel-medium-height cl-panel-event">
@@ -395,7 +446,7 @@
 
        <!-- Preferences Panel  -->
         <div id="div-preferences" class="fluid-row">
-            <div class="col-xs-12 col-sm-6 clwhitebg crowdluvsection ">
+            <div class="col-xs-12  clwhitebg crowdluvsection ">
                 <h1 class="cl-textcolor-standout">Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
                 
                     <?php include(ROOT_PATH . 'inc/partial_follower_talent_preference_form.php'); ?>
@@ -410,7 +461,7 @@
       
         <!--  ****  Sharing Panel *****  -->
         <div id="div-sharing" class="fluid-row" >
-            <div class="col-xs-12 col-sm-6 clwhitebg crowdluvsection ">
+            <div class="col-xs-12  clwhitebg crowdluvsection ">
                 <h1 class="cl-textcolor-standout">Show your Luv</h1>
                 <hr>
 
@@ -611,7 +662,7 @@
                 
                 crowdluvAPIPost("recordEventCheckIn", 
                         {
-                            crowdluvUID: "<?= $CL_LOGGEDIN_USER_UID;?>",
+                            crowdluvUID: "<?php if(isset($CL_LOGGEDIN_USER_UID)) echo $CL_LOGGEDIN_USER_UID;?>",
                             eventID: evtID,
                             latitude: lat,
                             longitude: lng
@@ -784,6 +835,7 @@
                     if(response.events.length > 0) $('.cl-panel-upcoming-events').text("");
                     else if(response.events.length == 0) $('.cl-panel-upcoming-events').text("No upcoming events");
                     //display the events in the panel
+                    var pastEvtFlag = 0;
                     for( i=0; i < response.events.length; i++){
                         
                         //check to see how many luvpoints the user is eligible for to 
@@ -795,15 +847,33 @@
                             if(response.events[i].shareEligibility[shrMeth].eligibleLuvPoints > elgLPs) elgLPs = response.events[i].shareEligibility[shrMeth].eligibleLuvPoints;
                         }
 
+                        var t = response.events[i].start_time.split(/[- :]/);
+                        var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+                        t = response.events[i].end_time.split(/[- :]/);
+                        var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 
+                        //Insert a divider between upciming events and past events
+                        if(endDate < new Date() && ! pastEvtFlag++ )
+                            $('.cl-panel-upcoming-events').append(
+                                "<div class='cl-ticker-item-block' style='background:lightgray'" + 
+                                    "<div class='cl-ticker-event-title inline-block'>" + 
+                                        "<p class='fwb'>" 
+                                            + "Past Events" + 
+                                        "</p>" +
+                                    "</div>" +
+                                "</div>"
+                            );
+
+
+                        //Insert a ticker row for the event
                         $('.cl-panel-upcoming-events').append(
                             "<div class='cl-ticker-item-block'" + 
                                     "onClick='javascript: onSelectEvent(" + response.events[i].id + ")'>" +
                                 "<div class='cl-ticker-event-date inline-block'>" +
                                     "<h2>" +
-                                        getMonthAcronymForDate(new Date(response.events[i].start_time)) + 
+                                        getMonthAcronymForDate(startDate) + 
                                     "</h2>" +
-                                    "<h1>" + (new Date(response.events[i].start_time)).getUTCDate() + "</h1>" +
+                                    "<h1>" + startDate.getUTCDate() + "</h1>" +
                                 "</div>" +
                                 "<div class='cl-ticker-event-title inline-block'>" + 
                                     "<p class='fwb'>" 

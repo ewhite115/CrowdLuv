@@ -394,7 +394,7 @@ function buildHTMLWidget_FacebookShare(params) {
   //construct the URL based on the shareType and corresponding shareDetails,
   //   and add that url to params
   if(params.shareType == "crowdluv-talent-landing-page") params.url = '<?php echo CLADDR;?>talent/' + params.shareDetails.vurl + '?ref_uid=' + params.shareDetails.crowdluvUID;
-  else if (params.shareType == "crowdluv-event") params.url = "<?php echo CLADDR;?>follower_talent_detail.php?crowdluv_tid=" + params.shareDetails.crowdluvTID + '&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.crowdluvUID;
+  else if (params.shareType == "crowdluv-event") params.url = "<?php echo CLADDR;?>follower_talent_detail.php?crowdluv_tid=" + params.shareDetails.crowdluvTID + '&p=event&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.crowdluvUID;
 
   //select which image to use and what status text to display
   if(params.luvPoints > 0) {
@@ -722,9 +722,14 @@ function getEventDetails(eventID, callback){
 
 
 function isEventToday(eventObj){
-    var startDate = new Date(eventObj.start_time);
+
+    var t = eventObj.start_time.split(/[- :]/);
+    var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+    //var startDate = new Date(eventObj.start_time);
     if((typeof eventObj.end_time === undefined) || eventObj.end_time === "") eventObj.end_time = eventObj.start_time;
-    var endDate = new Date(eventObj.end_time);
+    t = eventObj.end_time.split(/[- :]/);
+    var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+    //var endDate = new Date(eventObj.end_time);
     var today = new Date();
 
     //if(today.getUTCDate() < startDate.getUTCDate()) return false;
@@ -747,7 +752,10 @@ function populateEventDetailPanel(panel, eventObj){
     console.log("Populating " + panel + " with event id " + eventObj.id);
 
     //Populate Date, Title, type
-    var startDate = new Date(eventObj.start_time);
+    var t = eventObj.start_time.split(/[- :]/);
+    var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+    //var startDate = new Date(eventObj.start_time);
+    
     var today = new Date();
     $(panel + " .cl-calendar-icon h2").html(getMonthAcronymForDate(startDate));
     $(panel + " .cl-calendar-icon p").html(startDate.getUTCDate());
@@ -778,7 +786,9 @@ function populateEventDetailPanel(panel, eventObj){
     //Clear the event sharing widget section          
     $(panel + " .cl-event-share-widget").html("<h2>Share This Event</h2>");
       
-    //Add share widgets
+
+    //<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>
+    //If we have a logged-in user, Add share widgets
     //TODO:  only show if they are eligible for share?
     var eventShareDetails = {
         eventID: eventObj.id,
@@ -819,7 +829,12 @@ function populateEventDetailPanel(panel, eventObj){
     
     $(panel + " .cl-event-share-widget").append(tweetWidgetHTML);
     twttr.widgets.load();
-
+    /*
+    <?php }
+    else { ?>
+    */
+    $(panel + " .cl-event-share-widget").append("Log in to share this event");
+    /*<?php } ?> */
 
     //Populate description
     $(panel + " .cl-event-description p").html(eventObj.description);

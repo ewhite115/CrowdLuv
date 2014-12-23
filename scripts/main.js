@@ -758,7 +758,7 @@ function populateEventDetailPanel(panel, eventObj){
     
     var today = new Date();
     $(panel + " .cl-calendar-icon h2").html(getMonthAcronymForDate(startDate));
-    $(panel + " .cl-calendar-icon p").html(startDate.getUTCDate());
+    $(panel + " .cl-calendar-icon p").html(startDate.getDate());
     if(isEventToday(eventObj)){
       if(! eventObj.eventCheckInStatus) $(panel + " .cl-event-check-in-now").html("<button id='cl-event-checkin-button' onclick='onClickCheckIn(" + eventObj.id + ", " + eventObj.latitude + ", " +eventObj.longitude + ");' class='cl-button-standout'>Check In Now!</button>");
       else $(panel + " .cl-event-check-in-now").html("<p2>You checked in to this event " + eventObj.eventCheckInStatus.timestamp + " </p2>");

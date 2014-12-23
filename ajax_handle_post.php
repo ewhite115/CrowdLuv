@@ -216,7 +216,8 @@ function utf8_encode_deep(&$input) {
 												 //$isDateOnly= null, 
 												 $clPlaceID,
 												 $moreInfoURL = $moreInfoURL,
-												 $fbEventID= null);
+												 $fbEventID= null,
+												 $bitEventID = null);
 				$response['result'] = "ok";
 				$response['return'] = $return;
 				break;

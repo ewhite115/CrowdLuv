@@ -181,13 +181,13 @@
 
                 
         $potentialShareRecord['shareMethod'] = "facebook-share";
-        $CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord);
+        $CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord, true);
         
         $potentialShareRecord['shareMethod'] = "facebook-send";
-        $CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord);
+        $CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord, true);
         
         $potentialShareRecord['shareMethod'] = "twitter-tweet";
-        $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord);
+        $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord, true);
 
     }
 
@@ -933,6 +933,9 @@
 
 
                         //Insert a ticker row for the event
+                        shrElgStr = "";
+                        if (elgLPs) shrElgStr = " --- <img style=\"width: 1.25em;\" src=\"res/top-heart.png\">" +  "+ " + elgLPs + " - Share for " + elgLPs +  " LuvPoints!";
+
                         $('.cl-panel-upcoming-events').append(
                             "<div class='cl-ticker-item-block'" + 
                                     "onClick='javascript: onSelectEvent(" + response.events[i].id + ")'>" +
@@ -946,7 +949,7 @@
                                     "<p class='fwb'>" 
                                         + response.events[i].title + 
                                     "</p>" +
-                                    "<p2>" + response.events[i].name + ", " + response.events[i].state + "  ---  Share for " + elgLPs +  " LuvPoints!</p2>" +
+                                    "<p2>" + response.events[i].name + ", " + response.events[i].state + shrElgStr + "</p2>" +
                                 "</div>" +
                             "</div>"
                         );

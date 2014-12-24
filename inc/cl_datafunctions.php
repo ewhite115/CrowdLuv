@@ -1091,7 +1091,7 @@ class CrowdLuvModel {
         $data = $this->getFollowerSharesForTalent($cl_uidt, $cl_tidt);
         //Loop through any shares found, and add points to the score accordingly
         foreach($data as $shareRecord){
-            $eligibleLuvPointsResult = $this->calculateEligibilityForShareRecord($shareRecord);
+            $eligibleLuvPointsResult = $this->calculateEligibilityForShareRecord($shareRecord, false);
             //echo "eligibleLuvPoinstResult = "; var_dump($eligibleLuvPointsResult);echo "<br>";
             $score += $eligibleLuvPointsResult['eligibleLuvPoints'];            
         }
@@ -1517,16 +1517,17 @@ class CrowdLuvModel {
     /**
      * [calculateEligibilityForShareRecord Determines how many points a share is eligible for, or when the share would next be eligible for points
      *                                         this can be for an existing share record or checking eligibility/points for a potential new share]
-     * @param  [type] $share_record [A share_record  
+     * @param  [type] $shareRecord [A share_record  
      *                              (array with keys corresponding to the data-definition 
      *                              of a share_record as defined in CL database schema)
      *                              ]
+     * @param  [boolean] $isNew     [false if this is to calculate points for an existing record. true if it is to caluclate eligible points for a new share  
      * @return [Array]               [An Array with the following keys:
      *                                  eligibleLuvPoints:  how many Luv Points this share is eligible for
      *                                  nextEligibleTimestamp: a timestamp indicating when the user would next be eligible for points for the share in question
      *                                      ]
      */
-    public function calculateEligibilityForShareRecord($shareRecord){
+    public function calculateEligibilityForShareRecord($shareRecord, $isNew){
 
         //echo "<pre>***Calculating luvpoint eligibility fr share:"; var_dump($shareRecord);
         //echo "datetimenow:" . date("Y-m-d G:i:s", time());
@@ -1623,7 +1624,6 @@ class CrowdLuvModel {
                
                 return $result; 
             }
-
             
             $result['eligibleLuvPoints'] = 11;
 
@@ -1632,15 +1632,32 @@ class CrowdLuvModel {
 
         if($shareRecord['shareType'] == 'crowdluv-event'){
 
+            $clEvent = $this->getBasicEventDetails($shareRecord['shareDetails']['eventID'], NULL);
+            $clUser = $this->get_follower_object_by_uid($shareRecord['shareDetails']['crowdluvUID']);
+            //echo "<pre>"; var_dump($clEvent); echo "</pre>";
 
-            // Future story:  Only allowed to share each event once via each shareMethod - 
-            //  So check if there is a previous sharRecord for this event 
-            //  via the same shareMethod
             
+            //If the event is in the past,  not eligible for new share
+            $endTime = $clEvent['end_time'];
+            if($isNew && strtotime($endTime) < time() ){
+                $result['eligibleLuvPoints'] = 0;
+                return $result;
+            }
+
+            // TODO:  Only allowed to share each event once via each shareMethod - 
+            //  So check if there is a previous shareRecord for this event 
+            //  via the same shareMethod
+                          
 
 
-            //Future story:  Only eligible for sharing if it is in your area or if it
-            //   is of general interest (ie new release)
+            // If the event has a location specified, no points for users outside that area
+            if($isNew && $clEvent['crowdluv_placeid'] && abs($clUser['latitude'] - 
+                $clEvent['latitude']) > 1.5 || abs($clUser['longitude'] - $clEvent['longitude']) > 1.5) {
+                
+                $result['eligibleLuvPoints'] = 0;
+                return $result;
+
+            }
 
 
             switch($shareRecord['shareMethod']){
@@ -1923,16 +1940,9 @@ class CrowdLuvModel {
     }
 
 
+    private function getBasicEventDetails($eventID, $cl_uidt = NULL){
 
-
-    /**
-     * [getEventDetails description]
-     * @param  [type] $eventID [description]
-     * @param  [type] $cl_uidt [CrowdLuv User - if specified, will return details on the luvpoint eligibility for that user to share]
-     * @return [type]          [description]
-     */
-    public function getEventDetails($eventID, $cl_uidt = NULL){
-
+        
         try {
             $sql = "SELECT follower.firstname, follower.lastname, event.*, place.* 
                     FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
@@ -1946,18 +1956,47 @@ class CrowdLuvModel {
             exit;
         }    
         $data = $results->fetchAll(PDO::FETCH_ASSOC);
-        if(!isset($data[0])) return 0;
+        if(!isset($data[0])) return null;
+        else return $data[0];
+
+    }
+
+    /**
+     * [getEventDetails Returns an object with misc details about an event, its location, the user that created it, and its sharing eligibility for a specified user]
+     * @param  [type] $eventID [description]
+     * @param  [type] $cl_uidt [CrowdLuv User - if specified, will return details on the luvpoint eligibility for that user to share]
+     * @return [type]          [description]
+     */
+    public function getEventDetails($eventID, $cl_uidt = NULL){
+
+        /*        
+        try {
+            $sql = "SELECT follower.firstname, follower.lastname, event.*, place.* 
+                    FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where id=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $eventID);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        */
+        $clEvent = $this->getBasicEventDetails($eventID, $cl_uidt );
+        if(! $clEvent) return 0;
 
         //Add info about the rank of the person who created this event
-        $data[0]['created_by_user_rank'] = $this->calculate_follower_rank_for_talent($data[0]['created_by_crowdluv_uid'], $data[0]['related_crowdluv_tid'])['rank_title'];
+        $clEvent['created_by_user_rank'] = $this->calculate_follower_rank_for_talent($clEvent['created_by_crowdluv_uid'], $clEvent['related_crowdluv_tid'])['rank_title'];
 
         //If a user was specified:
         // Add info about the luvpoint  eligibility for that user to share this event sharing
-        if($cl_uidt) $data[0]['shareEligibility'] = $this->getShareEligibilityForEvent($eventID, $cl_uidt, $data[0]['related_crowdluv_tid']);
+        if($cl_uidt) $clEvent['shareEligibility'] = $this->getShareEligibilityForEvent($eventID, $cl_uidt, $clEvent['related_crowdluv_tid'], true);
         // add info about whether the user has checked in
-        if($cl_uidt) $data[0]['eventCheckInStatus'] = $this->getEventCheckInStatusForFollower($eventID, $cl_uidt);
+        if($cl_uidt) $clEvent['eventCheckInStatus'] = $this->getEventCheckInStatusForFollower($eventID, $cl_uidt);
 
-        return $data[0];
+        return $clEvent;
 
     }
 
@@ -2036,7 +2075,7 @@ class CrowdLuvModel {
 
         if($cl_uidt){
             foreach($data as &$d){
-                $d['shareEligibility'] = $this->getShareEligibilityForEvent($d['id'], $cl_uidt, $data[0]['related_crowdluv_tid']);
+                $d['shareEligibility'] = $this->getShareEligibilityForEvent($d['id'], $cl_uidt, $data[0]['related_crowdluv_tid'], true);
             }
         }
 
@@ -2044,7 +2083,7 @@ class CrowdLuvModel {
 
     }
 
-    private function getShareEligibilityForEvent($eventID, $cl_uidt, $cl_tidt){
+    private function getShareEligibilityForEvent($eventID, $cl_uidt, $cl_tidt, $isNew){
 
         $shareEligibility = Array();
 
@@ -2059,7 +2098,7 @@ class CrowdLuvModel {
                                     'eventID' => $eventID
                                   ]
             );
-            $shareEligibility[$shrMeth] = $this->calculateEligibilityForShareRecord($shrRec);
+            $shareEligibility[$shrMeth] = $this->calculateEligibilityForShareRecord($shrRec, $isNew);
             
         }
         return $shareEligibility;

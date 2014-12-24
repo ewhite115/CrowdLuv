@@ -819,7 +819,7 @@ function populateEventDetailPanel(panel, eventObj){
     );
 
     //if user is eligible to tweet, append the tweet button/link and how many luvspoints
-   //add twitter tweet widget
+    //add twitter tweet widget
     var tweetWidgetHTML = buildHTMLWidget_TwitterShare({
                                             shareType: "crowdluv-event",
                                             shareMethod: "twitter-tweet",

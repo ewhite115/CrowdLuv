@@ -30,7 +30,28 @@ class CrowdLuvModel {
     ********************/
 
 
+    public function ReloadFollowerPlacesFromFacebook(){
 
+       try {
+            $sql = "SELECT * FROM follower";
+            $results = $this->cldb->prepare($sql);
+            //$results->bindParam(1,$cl_tidt);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database." . $e;
+            return -1;
+        }
+        
+        $fols = $results->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($fols);
+        foreach($fols as $fol){
+            $clPlace = $this->createPlaceFromFacebookPlaceID($fol['location_fb_id']);
+            $this->update_follower_setting($fol['crowdluv_uid'], 'crowdluv_placeid', $clPlace['crowdluv_placeid']);
+        }
+                
+        return true;
+
+    }
 
 
     public function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup) {
@@ -41,13 +62,21 @@ class CrowdLuvModel {
             //Update this line to insert any/all values from the user profile into db
             $f = $follower_fbup;
             //var_dump($f);exit;       
-            $fblocid="0"; $fblocname="Unspecified"; if(isset($f['location'])) {$fblocid=$f['location']->id; $fblocname=$f['location']->name;}
+            $fblocid="0"; $fblocname="Unspecified"; $clPlaceID= 0;
+            if(isset($f['location'])) {
+                $fblocid=$f['location']->id; 
+                $fblocname=$f['location']->name;
+                //Create this place in CL db if not already
+                $clPlaceID = $this->createPlaceFromFacebookPlaceID($fblocid);
+
+
+            }
             $fbemail="Unspecified"; if(isset($f['email'])) $fbemail=$f['email'];
             $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
             date_default_timezone_set('America/New_York');
             $fbbdate="1900-01-01"; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
-            $sql = "INSERT INTO follower (fb_uid,        location_fb_id,     location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
-                                  VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
+            $sql = "INSERT INTO follower (fb_uid,                location_fb_id,     crowluv_placeid,   location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
+                                  VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $clPlaceID . "', '"  . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
             //echo $sql;// exit;
             $results = $this->cldb->query($sql);
             //var_dump($results); exit;
@@ -95,7 +124,7 @@ class CrowdLuvModel {
      */
     public function update_follower_setting($cl_uidt, $prefname, $prefval){
         
-        $allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms', 'deactivated'];
+        $allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms', 'deactivated', 'crowdluv_placeid'];
         if(! in_array($prefname, $allowed_prefnames)) {return 0;}
         if(! isset($prefval) || $prefval == "") {return 0;}
 
@@ -126,7 +155,9 @@ class CrowdLuvModel {
     public function get_follower_object_by_uid($cl_uidt){
 
         try {
-            $sql = "select * from follower where crowdluv_uid=" . $cl_uidt . " LIMIT 0, 30 ";
+            $sql = "SELECT * 
+                    from follower join place on follower.crowdluv_placeid = place.crowdluv_placeid 
+                    where crowdluv_uid=" . $cl_uidt . " LIMIT 0, 30 ";
             $results = $this->cldb->query($sql);
             $firstline = $results->fetch(PDO::FETCH_ASSOC);
             if(!$firstline) return 0;
@@ -1893,45 +1924,6 @@ class CrowdLuvModel {
 
 
 
-    public function getUpcomingEventsForTalent($cl_tidt, $cl_uidt = NULL){
-
-        try {
-            /*$sql = "(SELECT event.*, place.* 
-                    FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
-                    where related_crowdluv_tid=? and end_time >= NOW() ORDER BY start_time DESC)
-                    union all
-                    (SELECT event.*, place.* 
-                    FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
-                    where related_crowdluv_tid=? and end_time < NOW() ORDER BY start_time DESC)";
-                    //where related_crowdluv_tid=? and end_time >= NOW() ORDER BY start_time";*/
-                     $sql = "SELECT event.*, place.* 
-                    FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
-                    where related_crowdluv_tid=?
-                    ORDER BY (CASE WHEN end_time < NOW() THEN 1 ELSE 0 END) ASC, 
-                             (CASE WHEN end_time < NOW() then end_time END) desc,
-                             (CASE WHEN end_time > NOW() then end_time END) asc";
-            $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $cl_tidt);
-            //$results->bindParam(2, $cl_tidt);
-            $results->execute();
-
-
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            exit;
-        }    
-        $data = $results->fetchAll(PDO::FETCH_ASSOC);
-
-
-        if($cl_uidt){
-            foreach($data as &$d){
-                $d['shareEligibility'] = $this->getShareEligibilityForEvent($d['id'], $cl_uidt, $data[0]['related_crowdluv_tid']);
-            }
-        }
-
-        return $data;
-
-    }
 
     /**
      * [getEventDetails description]
@@ -2002,6 +1994,55 @@ class CrowdLuvModel {
 
     }
 
+    public function getUpcomingEventsForTalent($cl_tidt, $cl_uidt = NULL){
+
+        //If a user is specified, get their location so that we can query /sort for events near them
+        $fol = null;
+        if($cl_uidt){
+            $fol = $this->get_follower_object_by_uid($cl_uidt);
+
+        }
+
+        try {
+            /*$sql = "(SELECT event.*, place.* 
+                    FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where related_crowdluv_tid=? and end_time >= NOW() ORDER BY start_time DESC)
+                    union all
+                    (SELECT event.*, place.* 
+                    FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where related_crowdluv_tid=? and end_time < NOW() ORDER BY start_time DESC)";
+                    //where related_crowdluv_tid=? and end_time >= NOW() ORDER BY start_time";*/
+                    $sql = "SELECT event.*, place.* ";
+                    if($fol) $sql = $sql . ", (case when longitude between " . $fol['longitude'] . " - 1.5 and " . $fol['longitude'] . " + 1.5 and latitude between " . $fol['latitude'] . " - 1.5 and " . $fol['latitude'] . " + 1.5 then 1 else 0 end) as near_me ";
+                    $sql = $sql . 
+                    "FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    where related_crowdluv_tid=?
+                    ORDER BY (CASE WHEN end_time < NOW() THEN 1 ELSE 0 END) ASC, 
+                    near_me DESC, 
+                    (CASE WHEN end_time < NOW() then end_time END) desc,
+                             (CASE WHEN end_time > NOW() then end_time END) asc";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, $cl_tidt);
+            //$results->bindParam(2, $cl_tidt);
+            $results->execute();
+
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+
+
+        if($cl_uidt){
+            foreach($data as &$d){
+                $d['shareEligibility'] = $this->getShareEligibilityForEvent($d['id'], $cl_uidt, $data[0]['related_crowdluv_tid']);
+            }
+        }
+
+        return $data;
+
+    }
 
     private function getShareEligibilityForEvent($eventID, $cl_uidt, $cl_tidt){
 
@@ -2041,7 +2082,7 @@ class CrowdLuvModel {
  */
 
     /**
-     * [createPlace description]
+     * [createPlace Adds an entry to the database for a place with the properties provided]
      * @param  [type] $fbPid     [description]
      * @param  [type] $name      [description]
      * @param  [type] $street    [description]
@@ -2103,6 +2144,7 @@ class CrowdLuvModel {
      */
     public function createPlaceFromFacebookPlaceID($fbPid){
 
+        if($fbPid <1) return 0;
         //check if the place exists already
         if($place = $this->getPlaceFromFacebookPlaceID($fbPid)) return $place;
 

@@ -33,6 +33,7 @@
     if(isset($_GET['p'])) $profileSubPage = $_GET['p'];
 
 
+
     //Retrieve and load events from fb if the trigger was specified in qs
     if(isset($_GET['cmd']) && $_GET['cmd'] == "fbevt"){
 
@@ -857,6 +858,21 @@
                     else if(response.events.length == 0) $('.cl-panel-upcoming-events').text("No upcoming events");
                     //display the events in the panel
                     var pastEvtFlag = 0;
+                    var nearMeComplete=0;
+
+
+                    //Insert a heading ffor "Near you"
+                    if(response.events.length > 0)
+                    $('.cl-panel-upcoming-events').append(
+                        "<div class='cl-ticker-item-block' style='background:lightgray'>" + 
+                            "<div class='cl-ticker-event-title inline-block'>" + 
+                                "<p class='fwb'>" 
+                                    + "Upcoming Events Near You" + 
+                                "</p>" +
+                            "</div>" +
+                        "</div>"
+                    );
+
                     for( i=0; i < response.events.length; i++){
                         
                         //check to see how many luvpoints the user is eligible for to 
@@ -868,15 +884,41 @@
                             if(response.events[i].shareEligibility[shrMeth].eligibleLuvPoints > elgLPs) elgLPs = response.events[i].shareEligibility[shrMeth].eligibleLuvPoints;
                         }
 
+                        //If there were no events near the user, insert a message mentioning that
+                        if(i==0 && response.events[i].near_me == 0 )
+                            $('.cl-panel-upcoming-events').append(
+                                "<div class='cl-ticker-item-block'> " + 
+                                    "<div class='cl-ticker-event-title inline-block'>" + 
+                                        "<p class='fwb'>" 
+                                            + "No Upcoming Events near you" + 
+                                        "</p>" +
+                                    "</div>" +
+                                "</div>"
+                            );
+
+
+                        //insert a heading for upcoming
+                        if(response.events[i].near_me == 0 && ! nearMeComplete++ )
+                            $('.cl-panel-upcoming-events').append(
+                                "<div class='cl-ticker-item-block' style='background:lightgray'>" + 
+                                    "<div class='cl-ticker-event-title inline-block'>" + 
+                                        "<p class='fwb'>" 
+                                            + "Upcoming Events" + 
+                                        "</p>" +
+                                    "</div>" +
+                                "</div>"
+                            );
+
+
                         var t = response.events[i].start_time.split(/[- :]/);
                         var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
                         t = response.events[i].end_time.split(/[- :]/);
                         var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 
-                        //Insert a divider between upciming events and past events
+                        //Insert a divider between upcoming events and past events
                         if(endDate < new Date() && ! pastEvtFlag++ )
                             $('.cl-panel-upcoming-events').append(
-                                "<div class='cl-ticker-item-block' style='background:lightgray'" + 
+                                "<div class='cl-ticker-item-block' style='background:lightgray'>" + 
                                     "<div class='cl-ticker-event-title inline-block'>" + 
                                         "<p class='fwb'>" 
                                             + "Past Events" + 

@@ -1,3 +1,10 @@
+<?php
+
+    if(isset($_GET['cmd']) && $_GET['cmd'] == "reloaduserfacebookplaces"){ $CL_model->ReloadFollowerPlacesFromFacebook();}
+
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>

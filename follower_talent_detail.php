@@ -54,6 +54,7 @@
                   foreach ($fb_user_likes['data'] as $fbupg) {
                       //...See if the event already exists in the CL DB
                       $cltid = $CL_model->getEventIDFromFacebookEventID($fbupg->id);
+                      cldbgmsg("Looked for fb event id " . $fbupg->id . " and found cl event id " . $cltid);
                       //If not, add it
                       if(! $cltid ) {
                           cldbgmsg("Found new facebook event to add: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->start_time); 
@@ -88,7 +89,10 @@
               
             foreach ($bitEvents as $evt) {
                 //...See if the BIT event already exists in the CL DB
+                
                 $evtid = $CL_model->getEventIDFromBandsInTownEventID($evt->id);
+                cldbgmsg("Looked for bit event id " . $evt->id . " and found cl event id " . $evtid);
+
                 //If not, add it
                 if(! $evtid ) {
                     cldbgmsg("Found new bandsintown event to add: " . $evt->id . ":" . $evt->title . ":" . $evt->datetime); 

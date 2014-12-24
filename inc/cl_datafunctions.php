@@ -1849,7 +1849,7 @@ class CrowdLuvModel {
             $sql = "SELECT event.*, place.* 
                     FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
                     where event.related_crowdluv_tid=?
-                    and DATE(event.start_time) = ? 
+                    and DATE(event.start_time) = ?
                     and place.city = ?";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_tidt);
@@ -1866,7 +1866,7 @@ class CrowdLuvModel {
         //If we found an existing event -  update it to reflect this BIT event ID
         if(isset($data[0]) && isset($data[0]['id']) && $data[0]['id']) {
             
-            cldbgmsg("Updating existing event with BIT ID");
+            cldbgmsg("Updating existing event " . $data[0]['id'] . " with BIT ID " . $bitEvent->id);
 
             try{
                 $sql = "update event set bit_event_id=" . $bitEvent->id . " where id=" . $data[0]['id'];
@@ -2254,12 +2254,19 @@ class CrowdLuvModel {
     public function getPlaceFromBandsInTownVenueObject($bitVenue){
 
         try {
+
             $sql = "SELECT * FROM place 
-                    where latitude between " . ($bitVenue->latitude - .5) . " and " . ($bitVenue->latitude + .5) . 
-                   " and longitude between " . ($bitVenue->longitude - .5) . " and " . ($bitVenue->longitude + .5) . 
-                   " and name like '%?%'";
+                    where latitude between ? and ?  
+                    and longitude between ? and ?  
+                    and name like ?";
+
             $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $bitVenue->name);
+
+            $results->bindValue(1, ($bitVenue->latitude - 0.5));
+            $results->bindValue(2, $bitVenue->latitude + 0.5);
+            $results->bindValue(3, $bitVenue->longitude - 0.5);
+            $results->bindValue(4, $bitVenue->longitude + 0.5);
+            $results->bindValue(5, "%" . $bitVenue->name . "%");
             
             $results->execute();
 
@@ -2270,7 +2277,7 @@ class CrowdLuvModel {
         $data = $results->fetchAll(PDO::FETCH_ASSOC);
         if(sizeof($data)==0) return 0;
         else{
-            echo "<pre>"; var_dump($data); echo "</pre>";
+            //echo "<pre>"; var_dump($data); echo "</pre>";
             return $data[0];
         }
             

@@ -1,6 +1,6 @@
 <?php
 
-    if(isset($_GET['cmd']) && $_GET['cmd'] == "reloaduserfacebookplaces"){ $CL_model->ReloadFollowerPlacesFromFacebook();}
+    if(isset($_GET['cmd']) && $_GET['cmd'] == "reloadfollowerplacesfromfacebook"){ $CL_model->ReloadFollowerPlacesFromFacebook();}
 
 ?>
 

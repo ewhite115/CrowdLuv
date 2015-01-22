@@ -413,9 +413,9 @@
         <!-- Event Detail Panel   -->
         <div id="panel-event-details" class="fluid-row" >
         <div class="col-xs-12  clwhitebg crowdluvsection ">
-            <h1 class="cl-textcolor-standout">Event Details</h1>
-            <hr>
-            <div class="cl-panel-vscroll cl-panel-medium-height cl-panel-event">
+            
+            
+            <div class=" cl-panel-event">
                   <div class="cl-calendar-icon">
                     <h2>Jan</h2>
                     <p>1</p>
@@ -423,14 +423,24 @@
                   <div class="cl-event-title-header inline-block">
                     <h1>Title of event here</h1>
                     <p>Type of event listed here</p>
-                    <div class="cl-event-check-in-now"></div>
-                    <span class="cl-event-check-in-status cl-text-standout"></span>
+                    
                   </div>
                   <div class="cl-vote-widget inline-block">
                     <img src="res/votearrows/stack-up-off.png">
                     <h2>Vote</h2>
                     <img src="res/votearrows/stack-down-off.png">
                 </div>
+
+                <hr>
+                <div class="cl-event-share-widget inline-block">
+                    <h2>Share</h2>
+                    <p2>Share <span>Get 10 Luvs</span></p2>
+                    <!-- Share options will be inserted here -->
+                </div>
+
+                <div class="cl-event-check-in-now inline-block"></div>
+                <span class="cl-event-check-in-status cl-text-standout"></span>
+    
 
                 <hr>
                 <div class="cl-event-key-details inline-block">
@@ -447,12 +457,6 @@
                     <p>
                         <span>Created By:</span> <span class="cl-event-created-by-user-name"> </span> <span class="cl-event-created-by-user-rank"></span>
                     </p>
-                </div>
-                <div class="cl-event-share-widget inline-block">
-                    <h2>Share</h2>
-                    <p2>Share <span>Get 10 Luvs</span></p2>
-                    <!-- Share options will be inserted here -->
-
                 </div>
                 <hr>
                 <div class="cl-event-description">
@@ -523,16 +527,14 @@
            <!-- **  Upcoming Events Ticker *** -->
             <div class="row">
                 <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 class="cl-textcolor-standout">Events</h1>
+                    <h1 style="display:inline-block;" class="cl-textcolor-standout">Events</h1>
+                    <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-event').show(); return false; ">
+                        <button > Add Event. </button>
+                    </a>
                     <hr>
-                    <div class="cl-panel-vscroll cl-panel-short-height cl-panel-upcoming-events">
+                    <div class="cl-panel-vscroll cl-panel-medium-height cl-panel-upcoming-events">
                         Loading events...
                     
-                    </div>
-                    <div>
-                        <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-event').show(); return false; ">
-                            Add Event...
-                        </a>
                     </div>
 
                 </div>
@@ -542,10 +544,13 @@
             <!-- **  Questions Ticker *** -->
             <div class="row">
                 <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 class="cl-textcolor-standout">Fan Questions</h1>
+                    <h1 style="display:inline-block;" class="cl-textcolor-standout">Fan Questions</h1>
+                     <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-question').show(); return false; ">
+                            <button>Ask Question</button>
+                        </a>
                     <hr>
 
-                    <div class="cl-panel-vscroll cl-panel-short-height">
+                    <div class="cl-panel-vscroll cl-panel-medium-height">
                         <?php foreach($talentQuestionList as &$talentQuestion){ ?>
 
                             <div class='cl-ticker-item-block' onClick="javascript:window.location.href = window.location.href + '&p=questions&questionid=<?= $talentQuestion['postid']; ?>'">
@@ -568,12 +573,6 @@
                     </div>
 
         
-                    <div>
-                        <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-question').show(); return false; ">
-                            Ask Question...
-                        </a>
-                    </div>
-
                 </div>
             </div>
 
@@ -596,7 +595,7 @@
                 </ul>                
 
                 <div id="myTabContent" class="tab-content">
-                    <div class="tab-pane fade in active cl-panel-vscroll cl-panel-medium-height" id="home">
+                    <div class="tab-pane fade in active cl-panel-vscroll cl-panel-tall-height" id="home">
                         <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan?</h2>
                         <p class="text-center">Learn how to <a href="shareluv.php">Show your Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>

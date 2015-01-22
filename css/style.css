@@ -40,8 +40,8 @@ hr {
 
 
 .CL_fullpagewrapper {
-    width: 90%;
-    max-width:900px;
+    width: 97%;
+    max-width:1200px;
     min-width:300px;
     background:#f4f4f4; /*#f0eeed;*/
     margin-left:auto;
@@ -213,6 +213,7 @@ h1.cl-major-heading{
     
     width:65%;
     min-width: 300px;
+    max-width: 45em;
 
     margin: 0 auto;
     
@@ -280,7 +281,7 @@ h1.cl-major-heading{
 
 
 /* At under 768px,   */
-@media screen and (max-width: 768px){
+@media screen and (max-width: 1200px){
 
             /*change to the dark "mobile" header */
             .cl_site_section_header {
@@ -462,8 +463,8 @@ h1.cl-major-heading{
 #CL_landingpage_jumbotron {
     
     min-height:250px;
-    margin-bottom: 2.77%;    /* ~ 25px  */
-   /* width:100%; /* padding: 2%; */
+    margin-bottom: .8em;  
+   
     padding-top:2%;
     background-image: url("../res/concert-audience-stock1214.jpg");
     background-repeat: no-repeat;
@@ -824,8 +825,12 @@ background-size: contain;
 
 }
 
-.cl-panel-medium-height {
+.cl-panel-tall-height {
     height: 20.75em;
+    
+}
+.cl-panel-medium-height {
+    height: 14em;
     
 }
 .cl-panel-short-height {

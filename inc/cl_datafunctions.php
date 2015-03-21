@@ -1752,8 +1752,8 @@ class CrowdLuvModel {
 
 
         try{
-            //Check to see if this follower had previously been following the talent
-             $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`,  `start_time`, `end_time`, `is_date_only`, `crowdluv_placeid`, `more_info_url`, `fb_event_id`, `bit_event_id`) 
+            
+            $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`,  `start_time`, `end_time`, `is_date_only`, `crowdluv_placeid`, `more_info_url`, `fb_event_id`, `bit_event_id`) 
                                             VALUES (         ?,                           ?,              ?,       ?,          ?,               ?,           ?,            ?,              ? ,               ?,             ?           , ?         )";
             //echo $sql; return true;
             $results = $this->cldb->prepare($sql);
@@ -1779,7 +1779,7 @@ class CrowdLuvModel {
         }
 
         //Return the id of the newly created event
-        $this->cldb->lastInsertId();
+        return $this->cldb->lastInsertId();
 
     }
 

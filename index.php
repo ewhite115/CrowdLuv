@@ -75,7 +75,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
             
     <div class="row">       
         
-        <a href="follower_dashboard.php">
+        <a href="follower_myluvs.php">
         <div class="col-xs-6 col-sm-3 text-center ">
         
           <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
@@ -92,7 +92,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 
         <a href='shareluv.php'> 
         <div class="col-xs-6 col-sm-3 text-center">
-          <h1 class="cl-textcolor-standout">Share the Luv </h1>
+          <h1 class="cl-textcolor-standout">Show Your Luv </h1>
           <img src="res/top-heart.png">
           <p class="cl-textcolor-default">Build Luv. Become the #1 fan</p>
           <br><br>
@@ -104,7 +104,9 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 
         <div class="col-xs-12 col-sm-6 text-left center-block ">
 
-          <h1 class="cl-textcolor-standout text-left">Activity </h1>
+          <h1 class="cl-textcolor-standout text-left">
+            <a href="follower_dashboard.php">Activity </a>
+          </h1>
           
           <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p>
           <br><br>

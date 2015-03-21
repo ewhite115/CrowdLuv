@@ -549,12 +549,13 @@ h1.cl-major-heading{
 
 
 .cl-vscroll-card-container {
-    overflow:scroll;
+    /*overflow:scroll;
     overflow-y:scroll;
     overflow-x:hidden;
-    max-height:14em;
-    text-align: center;
+    *//*max-height:14em;*/
+    /*text-align: center;*/
     padding: 0 1%;
+    margin: 0 2.333%;
 
 
 }
@@ -571,35 +572,40 @@ h1.cl-major-heading{
     
 }
 
-.cl-talent-listing-card-square {
+.cl-talent-listing-card {
+    
+    width: 22em;
+    height: 6.25em;
     margin-right: .6em;
+    margin-bottom: .6em;
+
     display: inline-block;
     vertical-align: top;
     position:relative;
 
-    width: 12em;
-    height: 8.3em;
-
+    
 }
 
-.cl-talent-listing-card-square .talent-avatar {
-    width:50%;
-    height:60%;
+.cl-talent-listing-card .talent-avatar {
+    /*width:50%;
+    height:60%;*/
     display: inline-block;
-    margin-right: 5px;
+    /*margin-right: 5px;*/
 
 }
-.cl-talent-listing-card-square .talent-avatar img {
-    width:75%;  
+.cl-talent-listing-card .talent-avatar img {
+    /*width:75%;  */
+    height: 6.25em;
 }
 
-.cl-talent-listing-card-square .talent-avatar .talent-name {
+.cl-talent-listing-card .talent-name {
     white-space: normal;  
-    font-size: .75em;
+    font-size: 1em;
+    font-weight: bold;
 }
 
 
-.cl-talent-listing-card-square .card-info {
+.cl-talent-listing-card .card-info {
     width:45%;
     height:60%;
     display: inline-block;
@@ -607,14 +613,14 @@ h1.cl-major-heading{
 
     
 }
-.cl-talent-listing-card-square .card-info img {
+.cl-talent-listing-card .card-info img {
     /*width:50%;*/
     padding: .8em 0;
 
 }
 
 
-.cl-talent-listing-card-square .extra-info {
+.cl-talent-listing-card .extra-info {
     
     text-decoration: none;
     position: absolute;

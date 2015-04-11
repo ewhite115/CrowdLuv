@@ -459,6 +459,27 @@ class CrowdLuvModel {
     }
 
 
+    public function getAllTalents(){
+
+        try {
+            $sql = "SELECT * FROM talent";
+            $results = $this->cldb->prepare($sql);
+            //$results->bindParam(1,$cl_uidt);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }
+        
+        $tals = $results->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($tals);
+
+        return $tals;
+
+    }
+
+
+
 /**
  *
  *
@@ -1745,6 +1766,22 @@ class CrowdLuvModel {
      *
      * 
      */
+        
+    /**
+     * [createEvent description]
+     * @param  [type] $cl_uidt     [description]
+     * @param  [type] $cl_tidt     [description]
+     * @param  [type] $type        [description]
+     * @param  [type] $title       [description]
+     * @param  [type] $description [description]
+     * @param  [type] $startTime   [description]
+     * @param  [type] $endTime     [description]
+     * @param  [type] $clPlaceID   [description]
+     * @param  [type] $moreInfoURL [description]
+     * @param  [type] $fbEventID   [description]
+     * @param  [type] $bitEventID  [description]
+     * @return [type]              [Crowdluv Event-ID of the newly created event]
+     */
     public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startTime, $endTime = null, $clPlaceID = null, $moreInfoURL = null, $fbEventID = null, $bitEventID = null){
 
         if($endTime == null || $endTime == "") $endTime = $startTime;
@@ -1780,92 +1817,297 @@ class CrowdLuvModel {
 
         //Return the id of the newly created event
         return $this->cldb->lastInsertId();
-
     }
 
     /**
-     * [createEventFromFacebookEvent description]
+     * [updateEventValues Updates DB values for event according to specified values passed]
+     * @param  [type] $clEventID [ID of the event to update]
+     * @param  [type] $values    [Array with a set of key-value pairs of new values to be updated]
+     * @return [type]            [description]
+     */
+    public function updateEventValues($clEventID, $values){
+
+        $allowed_keys = [ 'fb_event_id',
+                          'bit_event_id', 
+                          'created_by_crowdluv_id',
+                          'related_crowdluv_tid', 
+                          'type',
+                          'title',
+                          'description',
+                          'crowdluv_placeid',  
+                          'start_time', 
+                          'end_time', 
+                          'is_date_only', 
+                          'more_info_url'];
+
+        //if(! in_array($prefname, $allowed_prefnames)) {return 0;}
+        //if(! isset($values) || $values == "") {return 0;}
+        
+        try {
+
+            $sql = "UPDATE event SET ";
+            $first= true;
+            foreach($values as $key => &$value){
+                if(! $first)  $sql = $sql . ", ";
+
+                $sql = $sql . $key . " = :" . $key ;
+                $first = false;
+            }
+            $sql = $sql . " where id=" . $clEventID;
+            //echo $sql; //exit;
+
+            $results = $this->cldb->prepare($sql);
+
+            foreach($values as $key => &$value){
+                    
+                $results->bindParam(":" . $key, $value);
+                //$results->bindParam(2, $startDate);
+                //$results->bindParam(3, $bitEvent->venue->city);
+                //echo $sql;
+                
+            }
+
+            $results->execute();  
+            
+            //$this->cldb->query($sql);
+            return 1;   
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return 0;
+        }
+
+    } //updateEventValues
+
+
+    public function importEventsForAllTalent($facebookSession, $sinceTimestamp = 1356998400){
+
+        set_time_limit(0);
+        $tals = $this->getAllTalents();
+
+        foreach($tals as $tal){
+
+            $this->importEventsForTalent($tal['crowdluv_tid'], $tal['fb_pid'], $facebookSession, $sinceTimestamp);
+
+        }
+
+    }
+
+
+    public function importEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp = 1356998400){
+
+        //We may need to make multiple FB API requests to retrieve all the events.
+        //  Loop making api call ..  
+        $done=false;
+        //Create the initial request object for retrieving the events
+        $request = new FacebookRequest( $facebookSession, 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
+        $response = null;
+        do{  
+            try{          
+              $response = $request->execute();
+              // get response
+              $fb_events = $response->getGraphObject()->asArray();
+              //echo "<pre>"; var_dump($fb_events); echo "</pre>"; die;
+              
+              //If we got any events back..
+              if(isset($fb_events['data']) && sizeof($fb_events['data']) > 0) {  
+                  
+                    foreach ($fb_events['data'] as $fbupg) {
+
+                      cldbgmsg("Found facebook event to add/update: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->start_time); 
+                      $this->importFacebookEvent($cl_tidt, $fbupg);
+                      
+                    }//foreach
+                } //if we got data back from api call
+
+            }catch (Facebook\FacebookAuthorizationException $e){
+                cldbgmsg("FacebookAuthorizationException requesting events for " . $cl_tidt . " -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+
+            }catch (FacebookApiException $e) {
+                cldbgmsg("FacebookAPIException requesting events -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+                $fb_events = null;
+            } 
+            catch (Exception $e) {
+                cldbgmsg("Exception requesting events -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+                $fb_events = null;
+            } 
+          //Create a new request object and start over if there are more likes
+        } while (($response) && $request = $response->getRequestForNextPage());
+
+
+
+        $bitEvents = json_decode(file_get_contents("http://api.bandsintown.com/artists/placeholder/events.json?api_version=2.0&artist_id=fbid_" . $fb_pidt . "&app_id=crowdluv"));
+        //echo "<pre>"; var_dump($bitEvents); echo "</pre>"; //die;
+ 
+        if(isset($bitEvents) && sizeof($bitEvents) > 0) {  
+              
+            foreach ($bitEvents as $evt) {
+                
+                cldbgmsg("Found bandsintown event to add/import: " . $evt->id . ":" . $evt->title . ":" . $evt->datetime); 
+                $this->importBandsInTownEvent($cl_tidt, $evt);
+                           
+            }//foreach
+        } //if we got data back from api call
+
+
+
+
+    }
+
+
+
+    /**
+     * [importFacebookEvent  Imports a new event into CL db (or updates an existing event) based on a facebook event]
      * @param  [type] $cl_uidt [description]
      * @param  [type] $cl_tidt [description]
      * @param  [type] $fbEvent [description]
      * @return [int]          [CrowdLuv Event ID of the event]
      */
-    public function createEventFromFacebookEvent($cl_uidt, $cl_tidt, $fbEvent){
+    public function importFacebookEvent($cl_tidt, $fbEvent){
 
-        $clEvent = null;
+        //Clean up non-existent values within the FB event JSON into empty strings so that
+        //they dont cause errors elsewhere
+        if(! isset($fbEvent->end_time)) $fbEvent->end_time = $fbEvent->start_time;
+        if(! isset($fbEvent->description)) $fbEvent->description = "";
 
-        //Check if an event with this fb ID already exists; Return if so.
-        $clEvent = $this->getEventIDFromFacebookEventID($fbEvent->id);
-        if($clEvent) return $clEvent;
-
-        
-        //TODO:  Check if an event on the same day / ~same location already exists
-        //  If it's a BIT event, just update the existing event with the fb event ID
-        
-
-        //Didnt find an existing event, so proceed with adding..
-
+        //First,  see if the fb event has a venue specified -
         $clPlace = null;
         $clPlaceID = 0;
-        //If the fb event has a venue specified -
         if(isset($fbEvent->venue)) {
-
-            //  if it has an id -- look up or create it in cl db
+            //  If yes, and the fb venue has an id -- look up or create it in cl db
             if(isset($fbEvent->venue->id)){
             
-                //TODO:  check if there is an existing Place that is probably the 
-                //    same venue   (ie it may have been created via BIT import)
                 if(! ($clPlace = $this->getPlaceFromFacebookPlaceID($fbEvent->venue->id)))
                     $clPlace = $this->createPlaceFromFacebookPlaceID($fbEvent->venue->id);
 
-            }
-            //If there is a venue specified but no facebook ID ..
-            // TODO:  look up or create place based on the available details
-            // for now, just let it stay as 0  / no location specified
+                //TODO:  check if there is an existing Place that doesnt 
+                //      have an FB venue ID but is probably the same venue 
+                //      (ie it may have been created via a previous import or BIT import)
 
+            } else{
+                // There is a venue specified, but it doesnt have a facebook placeID ..
+                // TODO:  look up or create place based on the available details
+                // for now, just let it stay as 0  (no location specified)
+            }
         }
         //If there is no venue specified, leave place set to 0  / no location
         if($clPlace != null) $clPlaceID = $clPlace['crowdluv_placeid'];
 
 
-        if(! isset($fbEvent->end_time)) $fbEvent->end_time = "";
-        if(! isset($fbEvent->description)) $fbEvent->description = "";
+        //Check if an event with this fb ID already exists
+        $clEventID = null;
+        $clEventID = $this->getEventIDFromFacebookEventID($fbEvent->id);
+        //If found, update the event with the current values from the fb event.
+        if($clEventID){
 
-        //Now add/create the event
-        $return = $this->createEvent($cl_uidt,
-                                     $cl_tidt,
-                                         'other',
+            $this->updateEventValues($clEventID,
+                                        [
+                                        'title' => $fbEvent->name,
+                                        'description' => $fbEvent->description,
+                                        'start_time' => $fbEvent->start_time,
+                                        'end_time' => $fbEvent->end_time
+                                        ]
+                                             );
+            //Update the location / venue as well  
+            if($clPlaceID) $this->updateEventValues($clEventID, ['crowdluv_placeid' => $clPlaceID]);
+            
+            return $clEventID;
+
+        } //if cl event found with same fb id
+
+
+        //Look for any existing event for this talent imported from BIT on the 
+        // same day and ~same location 
+        $clEventID = null;
+        if($clPlace != null && $clPlace['latitude'] != null && $clPlace['longitude'] != null) {
+            try {
+
+                $sql = "SELECT event.*, place.* " .
+                "FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                where related_crowdluv_tid=? 
+                    and bit_event_id IS NOT NULL
+                    and longitude between " . $clPlace['longitude'] . " - 1.5 and " . $clPlace['longitude'] . " + 1.5 
+                    and latitude between " .  $clPlace['latitude'] . " - 1.5 and " . $clPlace['latitude'] . " + 1.5  
+                    and start_time BETWEEN 
+                        DATE_SUB(CAST('" . $fbEvent->start_time  . "' as DATETIME), INTERVAL 12 HOUR) 
+                        and DATE_ADD(CAST('" . $fbEvent->start_time  . "' as DATETIME), INTERVAL 12 HOUR) 
+                    ";
+
+                //echo $sql; //exit;
+                $results = $this->cldb->prepare($sql);
+                $results->bindParam(1, $cl_tidt);
+                
+                $results->execute();
+
+            } catch (Exception $e) {
+                echo "Data could not be retrieved from the database. " . $e;
+                exit;
+            }    
+            $nearbyBITEvents = $results->fetchAll(PDO::FETCH_ASSOC);
+            if(isset($nearbyBITEvents) && sizeof($nearbyBITEvents) > 0) $clEventID = $nearbyBITEvents[0]['id'];
+        }
+
+        //If a nearby BIT event was found ...
+        if($clEventID){
+            
+            //  1) set/update the FB ID on that event
+            $this->updateEventValues($clEventID, ['fb_event_id' => $fbEvent->id]);
+
+            //  2)  if we previously found a fb venue specified, set the CL event to that place
+            if($clPlaceID) $this->updateEventValues($clEventID, ['crowdluv_placeid' => $clPlaceID]);
+
+            return $clEventID;
+
+        }
+
+        
+        //Didnt find an existing event, so proceed with adding as new..
+        
+        $clEventID = $this->createEvent(0,         //created by 0 for system-generated
+                                     $cl_tidt,  
+                                         'other',   //event type
                                          $fbEvent->name,
                                          $fbEvent->description,
                                          $fbEvent->start_time,
                                          $fbEvent->end_time,
-                                         //$isDateOnly= null, 
                                          $clPlaceID,
                                          $moreInfoURL = "",
                                          $fbEvent->id,
                                          null);
 
-        return $return;
+        return $clEventID;
                 
     }
 
-    public function createEventFromBandsInTownEvent($cl_uidt, $cl_tidt, $bitEvent){
+    public function importBandsInTownEvent($cl_tidt, $bitEvent){
 
+        //Initialize default values
+        if(! isset($bitEvent->end_time)) $bitEvent->end_time = $bitEvent->datetime;
+        if(! isset($bitEvent->description)) $bitEvent->description = "";
         $clEventID = null;
         $clPlace = null;
         $clPlaceID = 0;
 
-        //Look for an existing event with same BIT event ID.. if found, return
-        $clEventID = $this->getEventIDFromBandsInTownEventID($bitEvent->id);
-        if($clEventID) return $clEventID;
 
+        //Look for an existing crowdluv place that appears to be the same at that specified in the bit event
+        if(isset($bitEvent->venue)) {
 
-        //Look for an existing event on the same date and city
+            //Look for an existing venue at the same or close lat/lng, or create new
+            $clPlace = $this->getPlaceFromBandsInTownVenueObject($bitEvent->venue);
+            $clPlaceID = $clPlace['crowdluv_placeid'];
+            cldbgmsg("Found existing place for BIT venue:" . $bitEvent->venue->name);
+            
+        }
+        
+
+ 
+        //Look for an existing event with an FB ID, on the same date and city
         $startDate = substr($bitEvent->datetime, 0, strpos($bitEvent->datetime, 'T'));
         try {
             $sql = "SELECT event.*, place.* 
-                    FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    FROM event left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
                     where event.related_crowdluv_tid=?
+                    and fb_event_id IS NOT NULL
                     and DATE(event.start_time) = ?
                     and place.city = ?";
             $results = $this->cldb->prepare($sql);
@@ -1895,40 +2137,52 @@ class CrowdLuvModel {
                 exit;
             }
 
-            return $data[0]['id'];
+            //return $data[0]['id'];
         }
 
-        //If the bit event has a venue specified -
-        if(isset($bitEvent->venue)) {
 
-            //Look for an existing venue at the same or close lat/lng, or create new
-            if(! ($clPlace = $this->getPlaceFromBandsInTownVenueObject($bitEvent->venue))){
-                cldbgmsg("Didnt find existing place for venue, create new:" . $bitEvent->venue->name);
-                $clPlace = $this->createPlaceFromBandsInTownVenueObject($bitEvent->venue);
-            }
-            else{
-                cldbgmsg("Found existing place for BIT venue:" . $bitEvent->venue->name);
-            }
+
+       //Look for an existing event with same BIT event ID..
+        $clEventID = $this->getEventIDFromBandsInTownEventID($bitEvent->id);
+        //if we found an existing event with this bit id ...
+        if($clEventID){
+
+            //Update basic values in the CL db with current info from BIT
+            $this->updateEventValues($clEventID,
+                                        [
+                                        'title' => $bitEvent->title,
+                                        'description' => $bitEvent->description,
+                                        'start_time' => $bitEvent->datetime,
+                                        'end_time' => $bitEvent->end_time,
+                                        ]  );
+
+            //If there is an fb location associated with the event, leave it as-is
+            //TODO:  if the place associated with this event is not an fb place, then  update the location / venue details
+            //if($clPlaceID) $this->updateEventValues($clEventID, ['crowdluv_placeid' => $clPlaceID]);
+                            
+            return $clEventID;
 
         }
-        //If there is no venue specified, leave place set to 0  / no location
-        if($clPlace != null) $clPlaceID = $clPlace['crowdluv_placeid'];
 
 
-        if(! isset($bitEvent->end_time)) $bitEvent->end_time = "";
-        if(! isset($bitEvent->description)) $bitEvent->description = "";
 
-        //Now add/create the event
-        cldbgmsg("Calling CreateEvent()");
+
+        //If we havent found an existing place to this point, create a new one
+        if(! $clPlaceID) {
+            cldbgmsg("Didnt find existing place for venue, create new:" . $bitEvent->venue->name);
+            $clPlace = $this->createPlaceFromBandsInTownVenueObject($bitEvent->venue);
+            $clPlaceID = $clPlace['crowdluv_placeid'];
+        }
         
-        $return = $this->createEvent($cl_uidt,
+        //add/create the event
+        cldbgmsg("Calling CreateEvent() for bit import");
+        $return = $this->createEvent(0,
                                      $cl_tidt,
                                          'performance',
                                          $bitEvent->title,
                                          $bitEvent->description,
                                          $bitEvent->datetime,
                                          $bitEvent->end_time,
-                                         //$isDateOnly= null, 
                                          $clPlaceID,
                                          $bitEvent->facebook_rsvp_url,
                                          null,
@@ -1969,21 +2223,6 @@ class CrowdLuvModel {
      */
     public function getEventDetails($eventID, $cl_uidt = NULL){
 
-        /*        
-        try {
-            $sql = "SELECT follower.firstname, follower.lastname, event.*, place.* 
-                    FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
-                    where id=?";
-            $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $eventID);
-            $results->execute();
-
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            exit;
-        }    
-        $data = $results->fetchAll(PDO::FETCH_ASSOC);
-        */
         $clEvent = $this->getBasicEventDetails($eventID, $cl_uidt );
         if(! $clEvent) return 0;
 
@@ -2051,15 +2290,30 @@ class CrowdLuvModel {
                     FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
                     where related_crowdluv_tid=? and end_time < NOW() ORDER BY start_time DESC)";
                     //where related_crowdluv_tid=? and end_time >= NOW() ORDER BY start_time";*/
-                    $sql = "SELECT event.*, place.* ";
+                    
+                    // $sql = "SELECT event.*, place.* ";
+                    // if($fol) $sql = $sql . ", (case when longitude between " . $fol['longitude'] . " - 1.5 and " . $fol['longitude'] . " + 1.5 and latitude between " . $fol['latitude'] . " - 1.5 and " . $fol['latitude'] . " + 1.5 then 1 else 0 end) as near_me ";
+                    // $sql = $sql . 
+                    // "FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    // where related_crowdluv_tid=?
+                    // ORDER BY (CASE WHEN end_time < NOW() THEN 1 ELSE 0 END) ASC, 
+                    // near_me DESC, 
+                    // (CASE WHEN end_time < NOW() then end_time END) desc,
+                    //          (CASE WHEN end_time > NOW() then end_time END) asc";
+                    //          
+                    
+                   $sql = "SELECT event.*, place.* ";
                     if($fol) $sql = $sql . ", (case when longitude between " . $fol['longitude'] . " - 1.5 and " . $fol['longitude'] . " + 1.5 and latitude between " . $fol['latitude'] . " - 1.5 and " . $fol['latitude'] . " + 1.5 then 1 else 0 end) as near_me ";
                     $sql = $sql . 
                     "FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
                     where related_crowdluv_tid=?
-                    ORDER BY (CASE WHEN end_time < NOW() THEN 1 ELSE 0 END) ASC, 
-                    near_me DESC, 
-                    (CASE WHEN end_time < NOW() then end_time END) desc,
-                             (CASE WHEN end_time > NOW() then end_time END) asc";
+                    ORDER BY (CASE  WHEN end_time > NOW() and near_me = 1 THEN 0
+                                    WHEN end_time > NOW() and near_me = 0 then 1
+                                    WHEN end_time < NOW() then 2 END ) ASC,
+                             (CASE  WHEN end_time < NOW() then end_time END) desc,
+                             (CASE  WHEN end_time > NOW() then end_time END) asc";
+
+
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_tidt);
             //$results->bindParam(2, $cl_tidt);
@@ -2405,6 +2659,13 @@ function vincentyGreatCircleDistance(
 
 
 }
+
+
+
+
+
+
+
 
 
 ?>

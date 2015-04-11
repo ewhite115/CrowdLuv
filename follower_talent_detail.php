@@ -33,54 +33,67 @@
     if(isset($_GET['p'])) $profileSubPage = $_GET['p'];
 
 
+    if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_all_thisbrand"){
+        $CL_model->importEventsForTalent($CL_CUR_TGT_TALENT['crowdluv_tid'] , $CL_CUR_TGT_TALENT['fb_pid'], $facebookSession);
+    }
 
-    //Retrieve and load events from fb if the trigger was specified in qs
-    if(isset($_GET['cmd']) && $_GET['cmd'] == "fbevt"){
+   if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_sincenow_allbrands"){
+        $CL_model->importEventsForAllTalent($facebookSession, time());
+    }
 
-       //We may need to make multiple requests to get all the events.
+    if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_since_p1_allbrands"){
+        $CL_model->importEventsForAllTalent($facebookSession, time() - (4 * 60 * 60));
+    }
+
+    if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_since_p2_allbrands"){
+        $CL_model->importEventsForAllTalent($facebookSession, time() - (7 * 24 * 60 * 60));
+    }
+
+    if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_all_allbrands"){
+        $CL_model->importEventsForAllTalent($facebookSession);
+    }
+
+/*
+    //If the query string includes the command/trigger cmd=fbevt,
+    //  Retrieve and import events from fb for this brand
+    if(isset($_GET['cmd']) && ($_GET['cmd'] == "fbevt" || $_GET['cmd'] == "evts")){
+
+        //We may need to make multiple FB API requests to retrieve all the events.
         //  Loop making api call ..  
         $done=false;
         //Create the initial request object for retrieving the events
         $request = new FacebookRequest( $facebookSession, 'GET', '/' . $CL_CUR_TGT_TALENT['fb_pid'] . '/events?since=1356998400&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
         do{  
-          try{          
+            try{          
               $response = $request->execute();
               // get response
-              $fb_user_likes = $response->getGraphObject()->asArray();
-              //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
+              $fb_events = $response->getGraphObject()->asArray();
+              //echo "<pre>"; var_dump($fb_events); echo "</pre>"; die;
               
-              if(isset($fb_user_likes['data']) && sizeof($fb_user_likes['data']) > 0) {  
+              //If we got any events back..
+              if(isset($fb_events['data']) && sizeof($fb_events['data']) > 0) {  
                   
-                  foreach ($fb_user_likes['data'] as $fbupg) {
-                      //...See if the event already exists in the CL DB
-                      $cltid = $CL_model->getEventIDFromFacebookEventID($fbupg->id);
-                      cldbgmsg("Looked for fb event id " . $fbupg->id . " and found cl event id " . $cltid);
-                      //If not, add it
-                      if(! $cltid ) {
-                          cldbgmsg("Found new facebook event to add: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->start_time); 
-                          $CL_model->createEventFromFacebookEvent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid'], $fbupg);
-                          //$cltid = $CL_model->getEventDetails($fbupg->id);
-                          
-                      }
-                    
-                  }//foreach
-              } //if we got data back fro api call
+                    foreach ($fb_events['data'] as $fbupg) {
 
-          }catch (FacebookApiException $e) {
-            cldbgmsg("FacebookAPIException requesting /me/likes -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
-            $fb_user_likes = null;
-            //we should still be able to proceed, since the rest of the pages do not rely on 
-            //  fb_user_likes, and should continue to use the talent array in the session var
+                      cldbgmsg("Found facebook event to add/update: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->start_time); 
+                      $CL_model->importFacebookEvent($CL_CUR_TGT_TALENT['crowdluv_tid'], $fbupg);
+                      
+                    }//foreach
+                } //if we got data back from api call
+
+            }catch (FacebookApiException $e) {
+            cldbgmsg("FacebookAPIException requesting events -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+            $fb_events = null;
           } 
           //Create a new request object and start over if there are more likes
       } while (($response) && $request = $response->getRequestForNextPage());
 
 
     }
-
-
+*/
+/*
     //Retrieve and load events from BandsInTown if the trigger was specified in qs
-    if(isset($_GET['cmd']) && $_GET['cmd'] == "bitevt"){
+    if(isset($_GET['cmd']) && ($_GET['cmd'] == "bitevt" || $_GET['cmd'] == "evts")){
 
         $bitEvents = json_decode(file_get_contents("http://api.bandsintown.com/artists/placeholder/events.json?api_version=2.0&artist_id=fbid_" . $CL_CUR_TGT_TALENT['fb_pid'] . "&app_id=crowdluv"));
         //echo "<pre>"; var_dump($bitEvents); echo "</pre>"; //die;
@@ -88,21 +101,15 @@
         if(isset($bitEvents) && sizeof($bitEvents) > 0) {  
               
             foreach ($bitEvents as $evt) {
-                //...See if the BIT event already exists in the CL DB
                 
-                $evtid = $CL_model->getEventIDFromBandsInTownEventID($evt->id);
-                cldbgmsg("Looked for bit event id " . $evt->id . " and found cl event id " . $evtid);
-
-                //If not, add it
-                if(! $evtid ) {
-                    cldbgmsg("Found new bandsintown event to add: " . $evt->id . ":" . $evt->title . ":" . $evt->datetime); 
-                    $CL_model->createEventFromBandsInTownEvent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid'], $evt);
-                }               
+                cldbgmsg("Found bandsintown event to add/import: " . $evt->id . ":" . $evt->title . ":" . $evt->datetime); 
+                $CL_model->importBandsInTownEvent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid'], $evt);
+                           
             }//foreach
         } //if we got data back from api call
     }
 
-
+*/
 
     //Load the Question2Answer Engine and retrieve questios for this brand
     require_once ROOT_PATH . 'question2answer/qa-include/qa-base.php';
@@ -524,7 +531,7 @@
     <div id="talent-profile-view-dashboard" class="fluid-row">
         <div class="col-xs-12 col-sm-5">
             
-           <!-- **  Upcoming Events Ticker *** -->
+            <!-- **  Upcoming Events Ticker *** -->
             <div class="row">
                 <div class="col-xs-12 clwhitebg crowdluvsection">
                     <h1 style="display:inline-block;" class="cl-textcolor-standout">Events</h1>
@@ -864,7 +871,7 @@
                     var nearMeComplete=0;
 
 
-                    //Insert a heading ffor "Near you"
+                    //Insert a heading for "Near you"
                     if(response.events.length > 0)
                     $('.cl-panel-upcoming-events').append(
                         "<div class='cl-ticker-item-block' style='background:lightgray'>" + 
@@ -876,6 +883,7 @@
                         "</div>"
                     );
 
+                    //Insert the events,  addings headers in the appropriate places
                     for( i=0; i < response.events.length; i++){
                         
                         //check to see how many luvpoints the user is eligible for to 
@@ -887,21 +895,26 @@
                             if(response.events[i].shareEligibility[shrMeth].eligibleLuvPoints > elgLPs) elgLPs = response.events[i].shareEligibility[shrMeth].eligibleLuvPoints;
                         }
 
-                        //If there were no events near the user, insert a message mentioning that
-                        if(i==0 && response.events[i].near_me == 0 )
+                        var t = response.events[i].start_time.split(/[- :]/);
+                        var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+                        t = response.events[i].end_time.split(/[- :]/);
+                        var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+
+                        //If there were no upcoming events near the user, insert a message mentioning that
+                        if(i==0 && (response.events[i].near_me == 0 || endDate < new Date()))
                             $('.cl-panel-upcoming-events').append(
                                 "<div class='cl-ticker-item-block'> " + 
                                     "<div class='cl-ticker-event-title inline-block'>" + 
-                                        "<p class='fwb'>" 
-                                            + "No Upcoming Events near you" + 
+                                        "<p >" 
+                                            + "&nbsp; No Upcoming Events near you" + 
                                         "</p>" +
                                     "</div>" +
                                 "</div>"
                             );
 
 
-                        //insert a heading for upcoming
-                        if(response.events[i].near_me == 0 && ! nearMeComplete++ )
+                        //If there were no upcoming events or when we arrive at upcoming-not-near-me events, insert a heading
+                        if( (i==0 && (endDate < new Date())) || response.events[i].near_me == 0 && ! nearMeComplete++ )
                             $('.cl-panel-upcoming-events').append(
                                 "<div class='cl-ticker-item-block' style='background:lightgray'>" + 
                                     "<div class='cl-ticker-event-title inline-block'>" + 
@@ -912,11 +925,18 @@
                                 "</div>"
                             );
 
+                        //If there were no upcoming events, insert a message mentioning that
+                        if(i==0 && (endDate < new Date()))
+                            $('.cl-panel-upcoming-events').append(
+                                "<div class='cl-ticker-item-block'> " + 
+                                    "<div class='cl-ticker-event-title inline-block'>" + 
+                                        "<p >" 
+                                            + "&nbsp; No Upcoming Events" + 
+                                        "</p>" +
+                                    "</div>" +
+                                "</div>"
+                            );
 
-                        var t = response.events[i].start_time.split(/[- :]/);
-                        var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
-                        t = response.events[i].end_time.split(/[- :]/);
-                        var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 
                         //Insert a divider between upcoming events and past events
                         if(endDate < new Date() && ! pastEvtFlag++ )

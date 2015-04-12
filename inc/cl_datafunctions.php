@@ -2128,7 +2128,7 @@ class CrowdLuvModel {
             cldbgmsg("Updating existing event " . $data[0]['id'] . " with BIT ID " . $bitEvent->id);
 
             try{
-                $sql = "update event set bit_event_id=" . $bitEvent->id . " where id=" . $data[0]['id'];
+                $sql = "update event set bit_event_id=" . $bitEvent->id . ", type='performance' where id=" . $data[0]['id'];
                 //echo $sql; 
                 $results = $this->cldb->query($sql);
 
@@ -2150,6 +2150,7 @@ class CrowdLuvModel {
             //Update basic values in the CL db with current info from BIT
             $this->updateEventValues($clEventID,
                                         [
+                                        'type' => 'performance',
                                         'title' => $bitEvent->title,
                                         'description' => $bitEvent->description,
                                         'start_time' => $bitEvent->datetime,
@@ -2199,7 +2200,7 @@ class CrowdLuvModel {
         
         try {
             $sql = "SELECT follower.firstname, follower.lastname, event.*, place.* 
-                    FROM (follower join event on follower.crowdluv_uid = event.created_by_crowdluv_uid) left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                    FROM (follower join event) left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
                     where id=?";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $eventID);
@@ -2307,9 +2308,11 @@ class CrowdLuvModel {
                     $sql = $sql . 
                     "FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
                     where related_crowdluv_tid=?
-                    ORDER BY (CASE  WHEN end_time > NOW() and near_me = 1 THEN 0
-                                    WHEN end_time > NOW() and near_me = 0 then 1
-                                    WHEN end_time < NOW() then 2 END ) ASC,
+                    ORDER BY (CASE  WHEN end_time > DATE_SUB(NOW(), INTERVAL 3 Month) and type = 'significant_release' THEN 0
+                                    WHEN end_time > NOW() and near_me = 1 THEN 1
+                                    WHEN end_time > NOW() and near_me = 0 then 2
+                                    WHEN end_time < NOW() then 3 END ) ASC,
+
                              (CASE  WHEN end_time < NOW() then end_time END) desc,
                              (CASE  WHEN end_time > NOW() then end_time END) asc";
 

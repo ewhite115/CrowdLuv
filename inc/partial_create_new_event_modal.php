@@ -17,7 +17,8 @@
                 <label for="type">Type:</label>
                 <select name="type">
                   <option value="performance">Performance/Appearance</option>
-                  <option value="release">New Release</option>
+                  <option value="significant_release">Significant New Release or Content</option>
+                  <option value="minor_release">Minor Release or Content</option>
                   <option value="other">Other</option>
                 </select><br>
                 <label for="title">Event Name:</label>

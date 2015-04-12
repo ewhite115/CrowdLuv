@@ -53,63 +53,7 @@
         $CL_model->importEventsForAllTalent($facebookSession);
     }
 
-/*
-    //If the query string includes the command/trigger cmd=fbevt,
-    //  Retrieve and import events from fb for this brand
-    if(isset($_GET['cmd']) && ($_GET['cmd'] == "fbevt" || $_GET['cmd'] == "evts")){
 
-        //We may need to make multiple FB API requests to retrieve all the events.
-        //  Loop making api call ..  
-        $done=false;
-        //Create the initial request object for retrieving the events
-        $request = new FacebookRequest( $facebookSession, 'GET', '/' . $CL_CUR_TGT_TALENT['fb_pid'] . '/events?since=1356998400&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
-        do{  
-            try{          
-              $response = $request->execute();
-              // get response
-              $fb_events = $response->getGraphObject()->asArray();
-              //echo "<pre>"; var_dump($fb_events); echo "</pre>"; die;
-              
-              //If we got any events back..
-              if(isset($fb_events['data']) && sizeof($fb_events['data']) > 0) {  
-                  
-                    foreach ($fb_events['data'] as $fbupg) {
-
-                      cldbgmsg("Found facebook event to add/update: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->start_time); 
-                      $CL_model->importFacebookEvent($CL_CUR_TGT_TALENT['crowdluv_tid'], $fbupg);
-                      
-                    }//foreach
-                } //if we got data back from api call
-
-            }catch (FacebookApiException $e) {
-            cldbgmsg("FacebookAPIException requesting events -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
-            $fb_events = null;
-          } 
-          //Create a new request object and start over if there are more likes
-      } while (($response) && $request = $response->getRequestForNextPage());
-
-
-    }
-*/
-/*
-    //Retrieve and load events from BandsInTown if the trigger was specified in qs
-    if(isset($_GET['cmd']) && ($_GET['cmd'] == "bitevt" || $_GET['cmd'] == "evts")){
-
-        $bitEvents = json_decode(file_get_contents("http://api.bandsintown.com/artists/placeholder/events.json?api_version=2.0&artist_id=fbid_" . $CL_CUR_TGT_TALENT['fb_pid'] . "&app_id=crowdluv"));
-        //echo "<pre>"; var_dump($bitEvents); echo "</pre>"; //die;
- 
-        if(isset($bitEvents) && sizeof($bitEvents) > 0) {  
-              
-            foreach ($bitEvents as $evt) {
-                
-                cldbgmsg("Found bandsintown event to add/import: " . $evt->id . ":" . $evt->title . ":" . $evt->datetime); 
-                $CL_model->importBandsInTownEvent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid'], $evt);
-                           
-            }//foreach
-        } //if we got data back from api call
-    }
-
-*/
 
     //Load the Question2Answer Engine and retrieve questios for this brand
     require_once ROOT_PATH . 'question2answer/qa-include/qa-base.php';
@@ -139,9 +83,11 @@
     $pageTitle = $CL_CUR_TGT_TALENT['fb_page_name'] . " on CrowdLuv";
 
     if(isset($_GET['eventID'])) {
-        $eventDets = $CL_model->getEventDetails($_GET['eventID']);
+
+        $eventDets = $CL_model->getEventDetails($_GET['eventID'], isset($CL_LOGGEDIN_USER_OBJ['crowdluv_uid']) ? $CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] : null );
         $pageTitle = $CL_CUR_TGT_TALENT['fb_page_name'] . " event on CrowdLuv";
         $CL_OG_DESCRIPTION = $eventDets['title'] . " - " . $eventDets['name'] . " - " . $eventDets['start_time'];
+        //echo "<pre>"; var_dump($eventDets); echo "</pre>"; 
     }
 
 
@@ -422,54 +368,96 @@
         <div class="col-xs-12  clwhitebg crowdluvsection ">
             
             
-            <div class=" cl-panel-event">
-                  <div class="cl-calendar-icon">
-                    <h2>Jan</h2>
+            <div class="cl-panel-event">
+                <!-- Event Header -->
+                <div class="cl-calendar-icon">
+                    <h2><?= $eventDets['start_time'];?></h2>
                     <p>1</p>
-                  </div> 
-                  <div class="cl-event-title-header inline-block">
-                    <h1>Title of event here</h1>
-                    <p>Type of event listed here</p>
+                </div> 
+                <div class="cl-event-title-header inline-block">
+                    <h1><?= $eventDets['title'];?></h1>
+                    <p><?= $eventDets['type'];?></p>
                     
-                  </div>
-                  <div class="cl-vote-widget inline-block">
+                </div>
+                <div class="cl-vote-widget inline-block pull-right">
                     <img src="res/votearrows/stack-up-off.png">
                     <h2>Vote</h2>
                     <img src="res/votearrows/stack-down-off.png">
                 </div>
-
                 <hr>
-                <div class="cl-event-share-widget inline-block">
-                    <h2>Share</h2>
-                    <p2>Share <span>Get 10 Luvs</span></p2>
-                    <!-- Share options will be inserted here -->
+
+                <!-- Event Sharing  -->
+                <div class="cl-event-share-widget">
+                    <h2 >Share this Event</h2>
+                                       
                 </div>
-
-                <div class="cl-event-check-in-now inline-block"></div>
-                <span class="cl-event-check-in-status cl-text-standout"></span>
-    
-
                 <hr>
+                
+                <!-- Check-In -->
+                <?php if($eventDets['crowdluv_placeid'] != ""){ ?>
+    
+                <h2 class= "inline-block">Check In</h2>
+                <div class="cl-event-check-in-now inline-block">
+
+                    <button disabled id='cl-event-checkin-button' class='cl-button-standout'
+                        onclick='onClickCheckIn(<?= $eventDets['id'];?>, <?= $eventDets['latitude'];?>, <?= $eventDets['longitude'];?>);' 
+                        >
+                        Check In 
+                    </button>
+                </div>
+                <span class="cl-event-check-in-status cl-text-standout"></span>
+                
+                <hr>
+                <?php } ?>
+
+                <!-- Event Details / Description -->
+                <div class="cl-event-description">
+                    <h2>Details</h2>
+                    <p> &nbsp; <?= $eventDets['description'];?></p>
+                </div>
+                <br>
+
+               <!-- Event Location Details -->
+  
                 <div class="cl-event-key-details inline-block">
+                <?php if($eventDets['name'] != ""){ ?>
+    
+                    <h2>Location<h2>
                     <p class="cl-event-location">
-                        <!-- <span class="cl-event-location"> </span>  -->
-                    </p>
-                    <p class="cl-event-date-time">
                         
+                        <a target='_new' href='http://www.facebook.com/<?= $eventDets['fb_pid'];?>'>
+                             <?= $eventDets['name'];?>
+                        </a>
+                        <br>
+                        <span class='cl-text-muted'>
+                            <?= $eventDets['street'];?>, <?= $eventDets['city'];?>, <?= $eventDets['state'];?>
+                        </span>
+
                     </p>
-                    <p class="cl-event-more-info">
-                        <span>More Info: </span><span class="cl-event-more-info-url">http://www.mreinfo.com/moreinfo.html</span>
-                    </p>
+                    <br>
+                    <?php } ?>
+
+                    <!-- Start Time -->
+                    <h2 class="inline-block">Start Time</h2> <p class="cl-event-date-time inline-block"> <?= $eventDets['start_time'];?></p>
+                    <br><br>
+                    <!-- More Info URL -->
+                    
+                    <?php if($eventDets['more_info_url'] != "" && $eventDets['more_info_url'] != "http://" ){ ?>
+                        <p class="cl-event-more-info">
+                            <h2 class=" inline-block">More Details: </h2>
+                            <span class="cl-event-more-info-url"> <?= $eventDets['more_info_url'];?> </span>
+                        </p>
+                        <br>
+                    <?php } ?>
+                    
+                    
+                    <!-- Created by -->
 
                     <p>
-                        <span>Created By:</span> <span class="cl-event-created-by-user-name"> </span> <span class="cl-event-created-by-user-rank"></span>
+                        <span class="fwb">Created By:</span> <span class="cl-event-created-by-user-name"> <?= $eventDets['firstname'];?> <?= $eventDets['lastname'];?> </span> <span class="cl-event-created-by-user-rank"> (<?= $eventDets['created_by_user_rank'];?>)</span>
                     </p>
                 </div>
                 <hr>
-                <div class="cl-event-description">
-                    <h2>Description</h2>
-                    <p> </p>
-                </div>
 
 
             </div>      
@@ -534,13 +522,64 @@
             <!-- **  Upcoming Events Ticker *** -->
             <div class="row">
                 <div class="col-xs-12 clwhitebg crowdluvsection">
-                    <h1 style="display:inline-block;" class="cl-textcolor-standout">Events</h1>
+                    <h1 style="display:inline-block;" class="cl-textcolor-standout">Whats Happening</h1>
                     <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-event').show(); return false; ">
-                        <button > Add Event. </button>
+                        <button > Add + </button>
                     </a>
                     <hr>
                     <div class="cl-panel-vscroll cl-panel-medium-height cl-panel-upcoming-events">
-                        Loading events...
+                        
+                        <div class='cl-ticker-item-block' style='background:lightgray'>
+                            <div class='cl-ticker-event-title inline-block'>
+                                <p class='fwb'>
+                                    New&Upcoming Releases and Events Near You
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id='new-upcoming-events-near-me'> </div>
+
+
+                        <div class='cl-ticker-item-block' style='background:lightgray'>
+                            <div class='cl-ticker-event-title inline-block'>
+                                <p class='fwb'>
+                                    New&Upcoming Minor Releases
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id='new-upcoming-minor-releases'>  </div>
+
+                        <div class='cl-ticker-item-block' style='background:lightgray'>
+                            <div class='cl-ticker-event-title inline-block'>
+                                <p class='fwb'>
+                                    Past Releases
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id='past-releases'>  </div>
+
+                        <!-- All Upcoming Events -->
+                        <div id='all-upcoming-events-section-header' class='cl-ticker-item-block' style='background:lightgray'>
+                            <div class='cl-ticker-event-title inline-block'>
+                                <p class='fwb'>
+                                    All Upcoming Events >
+                                </p>
+                            </div>
+                        </div>
+
+                        <div hidden id='all-upcoming-events'>  </div>
+
+                        <div id='all-past-events-section-header' class='cl-ticker-item-block' style='background:lightgray'>
+                            <div class='cl-ticker-event-title inline-block'>
+                                <p class='fwb'>
+                                    All Past Events >
+                                </p>
+                            </div>
+                        </div>
+
+                        <div hidden id='all-past-events'>  </div>
                     
                     </div>
 
@@ -553,7 +592,7 @@
                 <div class="col-xs-12 clwhitebg crowdluvsection">
                     <h1 style="display:inline-block;" class="cl-textcolor-standout">Fan Questions</h1>
                      <a href="#" onclick="$('#CL_fullpage_transparent_screen').show();$('#CL-modal-add-question').show(); return false; ">
-                            <button>Ask Question</button>
+                            <button>Ask a Question</button>
                         </a>
                     <hr>
 
@@ -665,7 +704,7 @@
         </div>
     </div>
 
-<?php   //closing brace for outputting overview
+    <?php   //closing brace for outputting overview
      } ?>
 
 
@@ -810,43 +849,86 @@
 
    
 
-/*
-    function btn_moreoptions_clickhandler(crowdluv_tid){
-        console.log("entering btn_moreoptions_clickhandler, crowdluv_tid=" + crowdluv_tid);
-        //$("#cltoptsrow" + crowdluv_tid).toggle();
-        $("#div-luverboards").hide();
-        $("#div-preferences").show();
-        $("#div-sharing").hide();
-        $("#panel-event-details").hide();
-
-    }
-*/
-/*    function rank_clickhandler(){
-
-        $("#div-luverboards").show();
-        $("#div-preferences").hide();
-        $("#div-sharing").hide();
-        $("#panel-event-details").hide();
-
-    }
-*/
-/*
-    function share_clickhandler(){
-
-        $("#div-luverboards").hide();
-        $("#div-preferences").hide();
-        $("#panel-event-details").hide();
-
-
-
-        $("#div-sharing").show();
-
-    }
-*/
     function onSelectEvent(eventID){
         window.location.href = window.location.href + "&p=event&eventID=" + eventID;
     }
 
+
+    function appendEventText(message, divId){
+
+            $('#' + divId).append(
+            "<div class='cl-ticker-item-block'> " + 
+                "<div class='cl-ticker-event-title inline-block'>" + 
+                    "<p >" 
+                        + message + 
+                    "</p>" +
+                "</div>" +
+            "</div>"
+        );
+
+
+    }
+    function appendEvent(response, i, divId){
+
+           var elgLPs = 0;
+            //console.log("shareElg length: " + response.events[i].shareEligibility.length);
+            for(var shrMeth in response.events[i].shareEligibility){
+                console.log("ddddddd");
+                if(response.events[i].shareEligibility[shrMeth].eligibleLuvPoints > elgLPs) elgLPs = response.events[i].shareEligibility[shrMeth].eligibleLuvPoints;
+            }
+
+
+            var t = response.events[i].start_time.split(/[- :]/);
+            var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+            t = response.events[i].end_time.split(/[- :]/);
+            var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+
+            //Insert a ticker row for the event
+
+            line2Text = "";
+            if(response.events[i].type == "performance"){
+                line2Text = "Performance - " + response.events[i].name + ", " + response.events[i].state;
+            }
+            else if(response.events[i].type == "significant_release"){
+                line2Text = "Major New Release ";
+            }
+            else if(response.events[i].type == "minor_release"){
+                line2Text = "New Release";
+            }
+            else if(response.events[i].type == "other"){
+                if(response.events[i].name) line2Text =  response.events[i].name + ", " + response.events[i].state;
+            }
+
+            shrElgStr = "";
+            if (elgLPs) shrElgStr = " --- <img style=\"width: 1.25em;\" src=\"res/top-heart.png\">" +  "+" + elgLPs;
+   
+            line2Text = line2Text + shrElgStr;
+
+            $('#' + divId).append(
+                "<div class='cl-ticker-item-block '" + 
+                        "onClick='javascript: onSelectEvent(" + response.events[i].id + ")'>" +
+                    "<div class='cl-ticker-event-date inline-block '>" +
+                        "<h2>" +
+                            getMonthAcronymForDate(startDate) + 
+                        "</h2>" +
+                        "<h1>" + startDate.getDate() + "</h1>" +
+                    "</div>" +
+                    "<div class='cl-ticker-event-title inline-block '>" + 
+                        "<p class='fwb'>" 
+                            + response.events[i].title + 
+                        "</p>" +
+                        "<p2>" + line2Text + "</p2>" +
+                    "</div>" +
+                    "<div class='pull-right cl-ticker-event-date inline-block '>" +
+                        "<h2>" +
+                            getMonthAcronymForDate(startDate) + 
+                        "</h2>" +
+                        "<h1>" + startDate.getDate() + "</h1>" +
+                    "</div>" +
+                    "<div style='clear:both'></div>" +
+                "</div>"
+            );
+    }
 
     function reloadUpcomingEvents(){
 
@@ -864,116 +946,131 @@
                   
                 }
                 else{
-                    if(response.events.length > 0) $('.cl-panel-upcoming-events').text("");
-                    else if(response.events.length == 0) $('.cl-panel-upcoming-events').text("No upcoming events");
                     //display the events in the panel
                     var pastEvtFlag = 0;
                     var nearMeComplete=0;
 
 
-                    //Insert a heading for "Near you"
-                    if(response.events.length > 0)
-                    $('.cl-panel-upcoming-events').append(
-                        "<div class='cl-ticker-item-block' style='background:lightgray'>" + 
-                            "<div class='cl-ticker-event-title inline-block'>" + 
-                                "<p class='fwb'>" 
-                                    + "Upcoming Events Near You" + 
-                                "</p>" +
-                            "</div>" +
-                        "</div>"
-                    );
+                    //First, list events near you and upcoming/recent releases
+    
+                    var cntEvts=0;
+                    for( i=0; i < response.events.length; i++){ 
 
-                    //Insert the events,  addings headers in the appropriate places
-                    for( i=0; i < response.events.length; i++){
-                        
-                        //check to see how many luvpoints the user is eligible for to 
-                        //share the event,  if any
-                        var elgLPs = 0;
-                        //console.log("shareElg length: " + response.events[i].shareEligibility.length);
-                        for(var shrMeth in response.events[i].shareEligibility){
-                            console.log("ddddddd");
-                            if(response.events[i].shareEligibility[shrMeth].eligibleLuvPoints > elgLPs) elgLPs = response.events[i].shareEligibility[shrMeth].eligibleLuvPoints;
+                        var t = response.events[i].start_time.split(/[- :]/);
+                        var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+                        t = response.events[i].end_time.split(/[- :]/);
+                        var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+                        var today = new Date();
+                        var threemonthsago = new Date(  today.setMonth(today.getMonth() - 3) );
+
+                        //list the event if it is upcoming and near me or a significant release
+                        if(   (response.events[i].near_me == 1 && endDate > new Date()) ||
+                            (response.events[i].type == 'significant_release' && endDate > threemonthsago )
+                            ) {
+                            appendEvent(response, i, 'new-upcoming-events-near-me');
+                        cntEvts++;
                         }
+
+                    }
+
+                    //If there were no upcoming events near the user, insert a message mentioning that
+                    if(!cntEvts) appendEventText("&nbsp; No new release or Upcoming Events near you", 'new-upcoming-events-near-me');
+
+
+                    //next, list upcoming/recent minor releases/content
+                 
+                    var cntEvts=0;
+                    for( i=0; i < response.events.length; i++){ 
 
                         var t = response.events[i].start_time.split(/[- :]/);
                         var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
                         t = response.events[i].end_time.split(/[- :]/);
                         var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 
-                        //If there were no upcoming events near the user, insert a message mentioning that
-                        if(i==0 && (response.events[i].near_me == 0 || endDate < new Date()))
-                            $('.cl-panel-upcoming-events').append(
-                                "<div class='cl-ticker-item-block'> " + 
-                                    "<div class='cl-ticker-event-title inline-block'>" + 
-                                        "<p >" 
-                                            + "&nbsp; No Upcoming Events near you" + 
-                                        "</p>" +
-                                    "</div>" +
-                                "</div>"
-                            );
-
-
-                        //If there were no upcoming events or when we arrive at upcoming-not-near-me events, insert a heading
-                        if( (i==0 && (endDate < new Date())) || response.events[i].near_me == 0 && ! nearMeComplete++ )
-                            $('.cl-panel-upcoming-events').append(
-                                "<div class='cl-ticker-item-block' style='background:lightgray'>" + 
-                                    "<div class='cl-ticker-event-title inline-block'>" + 
-                                        "<p class='fwb'>" 
-                                            + "Upcoming Events" + 
-                                        "</p>" +
-                                    "</div>" +
-                                "</div>"
-                            );
-
-                        //If there were no upcoming events, insert a message mentioning that
-                        if(i==0 && (endDate < new Date()))
-                            $('.cl-panel-upcoming-events').append(
-                                "<div class='cl-ticker-item-block'> " + 
-                                    "<div class='cl-ticker-event-title inline-block'>" + 
-                                        "<p >" 
-                                            + "&nbsp; No Upcoming Events" + 
-                                        "</p>" +
-                                    "</div>" +
-                                "</div>"
-                            );
-
-
-                        //Insert a divider between upcoming events and past events
-                        if(endDate < new Date() && ! pastEvtFlag++ )
-                            $('.cl-panel-upcoming-events').append(
-                                "<div class='cl-ticker-item-block' style='background:lightgray'>" + 
-                                    "<div class='cl-ticker-event-title inline-block'>" + 
-                                        "<p class='fwb'>" 
-                                            + "Past Events" + 
-                                        "</p>" +
-                                    "</div>" +
-                                "</div>"
-                            );
-
-
-                        //Insert a ticker row for the event
-                        shrElgStr = "";
-                        if (elgLPs) shrElgStr = " --- <img style=\"width: 1.25em;\" src=\"res/top-heart.png\">" +  "+ " + elgLPs + " - Share for " + elgLPs +  " LuvPoints!";
-
-                        $('.cl-panel-upcoming-events').append(
-                            "<div class='cl-ticker-item-block'" + 
-                                    "onClick='javascript: onSelectEvent(" + response.events[i].id + ")'>" +
-                                "<div class='cl-ticker-event-date inline-block'>" +
-                                    "<h2>" +
-                                        getMonthAcronymForDate(startDate) + 
-                                    "</h2>" +
-                                    "<h1>" + startDate.getDate() + "</h1>" +
-                                "</div>" +
-                                "<div class='cl-ticker-event-title inline-block'>" + 
-                                    "<p class='fwb'>" 
-                                        + response.events[i].title + 
-                                    "</p>" +
-                                    "<p2>" + response.events[i].name + ", " + response.events[i].state + shrElgStr + "</p2>" +
-                                "</div>" +
-                            "</div>"
-                        );
+                        //list the event if it is upcoming and near me or a significant release
+                        if(   
+                            (response.events[i].type == 'minor_release' && endDate > new Date()) 
+                            ){
+                            appendEvent(response, i, 'new-upcoming-minor-releases');
+                        cntEvts++;
+                        }
 
                     }
+                    //If there were no upcoming events near the user, insert a message mentioning that
+                    if(!cntEvts)   appendEventText("&nbsp; No new releases found", 'new-upcoming-minor-releases');
+    
+
+
+                    //next, list upcoming/recent minor releases/content
+         
+                    var cntEvts=0;
+                    for( i=0; i < response.events.length; i++){ 
+
+                        var t = response.events[i].start_time.split(/[- :]/);
+                        var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+                        t = response.events[i].end_time.split(/[- :]/);
+                        var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+
+                        //list the event if it is upcoming and near me or a significant release
+                        if(   
+                            (response.events[i].type == 'minor_release' || response.events[i].type == 'significant_release') && (endDate < new Date()) 
+                            ){
+                            appendEvent(response, i, 'past-releases');
+                        cntEvts++;
+                        }
+
+                    }
+
+                    //If there were no upcoming events near the user, insert a message mentioning that
+                    if(!cntEvts) appendEventText("&nbsp; No past releases", 'past-releases');
+   
+                    //next, list all upcoming events
+
+                    var cntEvts=0;
+                    for( i=0; i < response.events.length; i++){ 
+
+                        var t = response.events[i].start_time.split(/[- :]/);
+                        var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+                        t = response.events[i].end_time.split(/[- :]/);
+                        var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+
+                        //list the event if it is upcoming and near me or a significant release
+                        if(   
+                            endDate > new Date() 
+                            ){
+                            appendEvent(response, i, 'all-upcoming-events');
+                        cntEvts++;
+                        }
+
+                    }
+
+                    //If there were no upcoming events near the user, insert a message mentioning that
+                    if(!cntEvts) appendEventText("&nbsp; No Upcoming Events", 'all-upcoming-events' );
+      
+                   //next, list all past events
+ 
+                        var cntEvts=0;
+                        for( i=0; i < response.events.length; i++){ 
+
+                            var t = response.events[i].start_time.split(/[- :]/);
+                            var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+                            t = response.events[i].end_time.split(/[- :]/);
+                            var endDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+
+                            //list the event if it is upcoming and near me or a significant release
+                            if(   
+                                endDate < new Date() 
+                                ){
+                                appendEvent(response, i, 'all-past-events');
+                            cntEvts++;
+                            }
+
+                        }
+
+                        //If there were no upcoming events near the user, insert a message mentioning that
+                        if(!cntEvts) appendEventText("&nbsp; No Past Events" , 'all-past-events');
+                        
+    
 
                 }
                 
@@ -989,7 +1086,7 @@
             .always(function(response){
 
             });
-
+            
     }
 
     $(document).ready(function(){
@@ -998,8 +1095,21 @@
             contact_preference_change_handler($(this).data('crowdluv_tid'), "will_travel_time", $(this).val());
         });
 
+        
+
         //Load events into the 'upcoming events' ticker
         reloadUpcomingEvents();
+
+
+        $("#all-past-events-section-header").click(function(){
+            //console.log("sfsadfa");
+            $("#all-past-events").toggle();
+        });
+        $("#all-upcoming-events-section-header").click(function(){
+            //console.log("sfsadfa");
+            $("#all-upcoming-events").toggle();
+        });
+
         //if an event ID was passed in the query string, load it in the event details panel
         if(qsEventID=getQueryVariable("eventID")) { 
             //Call API to get event details

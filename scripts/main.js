@@ -397,32 +397,41 @@ function buildHTMLWidget_FacebookShare(params) {
   else if (params.shareType == "crowdluv-event") params.url = "<?php echo CLADDR;?>follower_talent_detail.php?crowdluv_tid=" + params.shareDetails.crowdluvTID + '&p=event&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.crowdluvUID;
 
   //select which image to use and what status text to display
+  //dont use the 'off'/disabled images any more. Just allow the +heart text to indicate sharepoiint eligbility
+  widgetImage = widgetImagesOn[params.shareMethod];
+  heartImgHTML = "<img style=\"width: 1.25em;\" src=\"res/top-heart.png\">";
+  pointsOrNextTimeSpanClass = "cl-textcolor-standout";
   if(params.luvPoints > 0) {
-   widgetImage = widgetImagesOn[params.shareMethod];
-   pointsOrNextTime = "+" + params.luvPoints;
-   pointsOrNextTimeSpanClass = "cl-textcolor-standout";
+   pointsOrNextTime = params.luvPoints;
+   
   }
-  else {
-    widgetImage = widgetImagesOff[params.shareMethod];
-    pointsOrNextTime = params.nextShareTimeString;
-    pointsOrNextTimeSpanClass = "cl-text-muted";
+  else{
+  //  widgetImage = widgetImagesOff[params.shareMethod];
+    // pointsOrNextTime = params.nextShareTimeString;
+    // pointsOrNextTimeSpanClass = "cl-text-muted";
+
+    
+    if(typeof params.nextShareTimeString === 'undefined'){ pointsOrNextTime=""; heartImgHTML = "";}
+    else{ pointsOrNextTime = params.nextShareTimeString; }
+    
   }
+
 
   //Construct the onclick function
   var paramsJSON = JSON.stringify(params);
   var onclickString = "";
-  if(params.luvPoints > 0) onclickString = "doFacebookShareDialog(" + paramsJSON + ");";
+  /*if(params.luvPoints > 0) */ onclickString = "doFacebookShareDialog(" + paramsJSON + ");";
 
   //Construct the HTML for the widget
   var widgetHTML =
-      "<p2 id=\"" + params.widgetID + "\">" +
+      "<p2 style='display:inline-block;text-align:center;'  id=\"" + params.widgetID + "\">" +
           "<img style=\"width:50px;\" src=\"" + widgetImage + "\" " +
               //"onclick=\"" + params.onclickFunctionString + "\">" +
               "onclick=\'" + onclickString + "\'>" +
-          "<span class=\"status\">" +
-            "<img style=\"width: 1.25em;\" src=\"res/top-heart.png\">" +
+          "<p2 class=\"status\">" +
+            heartImgHTML + //"<img style=\"width: 1.25em;\" src=\"res/top-heart.png\">" +
             "<span class=\"" + pointsOrNextTimeSpanClass + "\">" + pointsOrNextTime + "</span>" +
-          "</span>" +
+          "</p2>" +
       "</p2>";
 
   return widgetHTML;
@@ -511,32 +520,33 @@ function buildHTMLWidget_TwitterShare(params){
   if(params.shareType == "crowdluv-event") dataURL = "<?php echo CLADDR;?>follower_talent_detail.php?crowdluv_tid=" + params.shareDetails.cl_tidt + '&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.cl_uidt;
   
   //Construct the tweet button HTML based on available luvpoints
-  if(params.luvPoints > 0) {
+  //if(params.luvPoints > 0) {
       tweetButtonHTML =  "<a href=\"https://twitter.com/share\" class=\"twitter-share-button\"" +
           "data-text=\"" + dataText + "\"" +
           "data-url=\"" + dataURL + "\"" +
           "data-count=\"none\">Tweet</a>";
-  }
-  else {
-    tweetButtonHTML = "<img style=\"width:50px;\" src=\"res/twitter-tweet-button-gray.png\">";
-  }
+  // }
+  // else {
+  //   tweetButtonHTML = "<img style=\"width:50px;\" src=\"res/twitter-tweet-button-gray.png\">";
+  // }
 
   //Determine status indicator based on available luvpoints
   if(params.luvPoints > 0) {
-   pointsOrNextTime = "+" + params.luvPoints;
+   pointsOrNextTime = params.luvPoints;
    pointsOrNextTimeSpanClass = "cl-textcolor-standout";
    heartImgHTML = "<img style=\"width: 1.25em;\" src=\"res/top-heart.png\">";
   }
   else {
-    pointsOrNextTime = params.nextShareTimeString;
     pointsOrNextTimeSpanClass = "cl-text-muted";
-    heartImgHTML = "<img style=\"width: 1.25em;\" src=\"res/top-heart-gray.png\">";
+    if(typeof params.nextShareTimeString === 'undefined'){ pointsOrNextTime=""; heartImgHTML = "";}
+    else{ pointsOrNextTime = params.nextShareTimeString; heartImgHTML = "<img style=\"width: 1.25em;\" src=\"res/top-heart-gray.png\">";}
+    
   }
 
   widgetHTML =
-    "<p2 class= \"inline-block\" data-crowdluv-uid=\"" + params.shareDetails.cl_uidt + "\" + data-crowdluv-share-type=\"" + params.shareType + "\" + data-crowdluv-tid=\"" + params.shareDetails.cl_tidt + "\">" +
+    "<p2 style=\"display:inline-block;text-align:center;\" data-crowdluv-uid=\"" + params.shareDetails.cl_uidt + "\" + data-crowdluv-share-type=\"" + params.shareType + "\" + data-crowdluv-tid=\"" + params.shareDetails.cl_tidt + "\">" +
         tweetButtonHTML +
-        heartImgHTML + "<span id=\"lbl-twitter-tweet-status-" + params.cl_tidt + "\" class=\"" + pointsOrNextTimeSpanClass + "\">" + pointsOrNextTime + "</span>"  +
+        "<p2 id=\"lbl-twitter-tweet-status-" + params.cl_tidt + "\" class=\"" + pointsOrNextTimeSpanClass + "\">" + heartImgHTML +  pointsOrNextTime + "</p2>"  +
     "</p2>";
          
 
@@ -754,39 +764,18 @@ function populateEventDetailPanel(panel, eventObj){
     //Populate Date, Title, type
     var t = eventObj.start_time.split(/[- :]/);
     var startDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
-    //var startDate = new Date(eventObj.start_time);
     
     var today = new Date();
     $(panel + " .cl-calendar-icon h2").html(getMonthAcronymForDate(startDate));
     $(panel + " .cl-calendar-icon p").html(startDate.getDate());
     if(isEventToday(eventObj)){
-      if(! eventObj.eventCheckInStatus) $(panel + " .cl-event-check-in-now").html("<button id='cl-event-checkin-button' onclick='onClickCheckIn(" + eventObj.id + ", " + eventObj.latitude + ", " +eventObj.longitude + ");' class='cl-button-standout'>Check In Now!</button>");
+      if(! eventObj.eventCheckInStatus) { $("#cl-event-checkin-button").removeAttr('disabled'); $("#cl-event-checkin-button").text('Check In Now!');}
       else $(panel + " .cl-event-check-in-now").html("<p2>You checked in to this event " + eventObj.eventCheckInStatus.timestamp + " </p2>");
     }
-    else $(panel + " .cl-event-check-in-now").html("<p2>Check-In here when this event starts</p2>");
-    $(panel + " .cl-event-title-header h1").html(eventObj.title);
-    $(panel + " .cl-event-title-header p").html(eventObj.type);
-    //Populate location, URL, cr by
-    $(panel + " .cl-event-location").html(
-                                          "<a target='_new' href='http://www.facebook.com/" + eventObj.fb_pid + "'>" +
-                                          eventObj.name +
-                                          "</a><br>" +
-                                          "<span class='cl-text-muted'>" + eventObj.street + ", " + eventObj.city + ", " + eventObj.state + "</span>"
-
-                                          );
-    $(panel + " .cl-event-date-time").html(
-                                          eventObj.start_time
-                                          );
-    $(panel + " .cl-event-created-by-user-name").html(eventObj.firstname + " " + eventObj.lastname);
-    $(panel + " .cl-event-created-by-user-rank").html("(" + eventObj.created_by_user_rank + ")");
-    if(eventObj.more_info_url !== ""){
-      $(panel + " .cl-event-more-info-url").html(eventObj.more_info_url);
-    }
-    else $(panel + " .cl-event-more-info").hide();
-    //Clear the event sharing widget section          
-    $(panel + " .cl-event-share-widget").html("<h2>Share This Event</h2>");
+    else $(panel + " .cl-event-check-in-now").append("<p2>Check-In here when this event starts</p2>");
       
 
+    // DO NOT DELETE - PHP Code
     //<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>
     //If we have a logged-in user, Add share widgets
     //TODO:  only show if they are eligible for share?
@@ -811,7 +800,6 @@ function populateEventDetailPanel(panel, eventObj){
     $(panel + " .cl-event-share-widget").append(buildHTMLWidget_FacebookShare({
                                                             shareType: "crowdluv-event",
                                                             shareMethod: "facebook-send",
-                                                            //onclickFunctionString: fbShareLandingPageFunctionString,
                                                             shareDetails: eventShareDetails,
                                                             luvPoints: eventObj.shareEligibility['facebook-send'].eligibleLuvPoints,
                                                             widgetID: "cl-share-widget-facebook-send-event-" + eventObj.id
@@ -829,15 +817,13 @@ function populateEventDetailPanel(panel, eventObj){
     
     $(panel + " .cl-event-share-widget").append(tweetWidgetHTML);
     twttr.widgets.load();
-    /*
+    /*  DO NOT DELETE - PHP CODE
     <?php }
     else { ?>
     */
     $(panel + " .cl-event-share-widget").append("Log in to share this event");
     /*<?php } ?> */
 
-    //Populate description
-    $(panel + " .cl-event-description p").html(eventObj.description);
 
 }
 

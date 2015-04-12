@@ -810,6 +810,10 @@ background-size: contain;
     background: red;
 }
 
+.cl-button-standout:disabled, .clredbutton:disabled {
+    background: gray;
+}
+
 
 
 .cl-textcolor-default {
@@ -851,6 +855,8 @@ background-size: contain;
 .cl-ticker-item-block {
     border-bottom: 1px dashed;
     border-bottom-color: #e9e9e9;
+    white-space: nowrap;
+    overflow: hidden;
 
 }
 .cl-ticker-item-block:hover {
@@ -871,7 +877,10 @@ background-size: contain;
     }
 
 .cl-ticker-event-title {
-    width:80%;
+    /*min-width:20%;*/
+    max-width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 
@@ -920,7 +929,7 @@ background-size: contain;
     vertical-align: top;
 }
 .cl-event-share-widget{
-    width:6.5em;
+    /*width:6.5em;*/
 }
 
 .cl-question2answer-embed-question-detail {

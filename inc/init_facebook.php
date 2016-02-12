@@ -102,6 +102,7 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   $facebookJavascriptLoginHelper = new FacebookJavaScriptLoginHelper();
 
   $facebookSession= null;
+  
   // see if we've previously saved a facebook session token
   if ( isset( $_SESSION ) && isset( $_SESSION['fb_token'] ) ) {
     // create new fb session object from saved access_token

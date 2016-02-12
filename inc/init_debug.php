@@ -2,7 +2,8 @@
   
   
 
-    $_SESSION["debugmsgs"] = "";
+  $_SESSION["debugmsgs"] = "";
+  
   function cldbgmsg($debugmessage){
     //echo "adding " . $debugmessage;
     $_SESSION["debugmsgs"][] = $debugmessage;

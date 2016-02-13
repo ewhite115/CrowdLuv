@@ -6,8 +6,7 @@
 
 	if(!$servlet_testing)	ob_start();
 
-	require_once("inc/cl_datafunctions.php");
-	require_once("inc/cl_init.php");
+	require_once("inc/cl_bootstrap.php");
 
 	$allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms'];
 	//if(!isset($_GET['crowdluv_uid'])) {echo "crowdluv_uid not set"; exit;}

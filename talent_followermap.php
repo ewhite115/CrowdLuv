@@ -1,9 +1,8 @@
 <?php 
-
-    $pageTitle = "CrowdLuv";
+    require_once("inc/cl_bootstrap.php"); 
+    
     $CL_SITE_SECTION = "talent";
-    require_once("inc/init_config.php"); 
-    include(ROOT_PATH . 'inc/header.php');
+    
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
     // if(! isset($CL_LOGGEDIN_USER_UID) || ! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
 
@@ -12,6 +11,8 @@
 
     $topcities= $CL_model->get_top_cities_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
 
+
+    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
 
 ?>
 

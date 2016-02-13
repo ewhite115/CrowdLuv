@@ -16,12 +16,10 @@
 
     }
 
+  
+    require_once("inc/cl_bootstrap.php");
+
     $CL_SITE_SECTION = "follower";
-    
-    //Load the init files  
-    require_once("inc/init_config.php");
-    require_once("inc/cl_datafunctions.php");
-    require_once("inc/cl_init.php");
 
     //construct the page title and OG tag values
     $pageTitle = $CL_CUR_TGT_TALENT['fb_page_name'] . " on CrowdLuv";
@@ -32,15 +30,7 @@
         $CL_OG_DESCRIPTION = $eventDets['title'] . " - " . $eventDets['location_string'] . " - " . $eventDets['start_date'];
     }
 
-    //Proceed to print the html header and body leaders
-    include(ROOT_PATH . 'inc/header_htmlhead_leader.php'); 
-?>
-
-    </head>
-
-<?php 
-    include(ROOT_PATH . 'inc/header_htmlbody_leader.php'); 
-
+ 
     //This page functions as a 'public' profile for the talent. Therefore We 
     //  dont require a logged in user - but do require a target talent to be specified
     include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
@@ -96,6 +86,11 @@
         $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord);
 
     }
+
+
+
+   //Proceed to print the html header and body leaders
+    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
 
 
 

@@ -1,10 +1,9 @@
 <?php 
+    require_once("inc/cl_bootstrap.php"); 
 
     $pageTitle = "CrowdLuv";
     $CL_SITE_SECTION = "talent";
-    require_once("inc/init_config.php"); 
-    include(ROOT_PATH . 'inc/header.php');
-
+ 
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
         // if(! $CL_LOGGEDIN_USER_UID) { echo "no logged in user(?)"; exit; } 
 
@@ -49,6 +48,8 @@
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';//else $tlpimg = BASE_URL . 'crowdluvdata/default_talent_landingpage_image.jpg';
     
 
+
+    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
 
 ?>
     

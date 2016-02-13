@@ -1,18 +1,18 @@
 <?php 
+    require_once("inc/cl_bootstrap.php"); 
 
-    $pageTitle = "CrowdLuv";
+
     $CL_SITE_SECTION = "talent";
-    require_once("inc/init_config.php"); 
-    include(ROOT_PATH . 'inc/header.php');
 
-    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
-        //if(! $fb_user) { echo "user is null"; exit;  } 
-        //if(! $fb_user_pages) { echo "fb_user_pages is null";   }
-    
+    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');   
     
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active managed talent set"; exit;}
 
     $folst=$CL_model->get_followers_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+
+
+
+    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
 
 ?>
 

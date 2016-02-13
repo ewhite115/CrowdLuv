@@ -6,8 +6,7 @@
 
 	if(!$servlet_testing)	ob_start();
 
-	require_once("inc/cl_datafunctions.php");
-	require_once("inc/cl_init.php");
+	require_once("inc/cl_bootstrap.php");
 
 	$allowed_prefnames = ['allow_email_major_announcements',
 	 					  'allow_sms_major_announcements', 

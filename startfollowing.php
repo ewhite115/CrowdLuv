@@ -1,7 +1,6 @@
 <?php
 
-	require_once("inc/cl_datafunctions.php");
-	require_once("inc/cl_init.php");
+    require_once("inc/cl_bootstrap.php");
 	
 	parse_str($_SERVER['QUERY_STRING']);
 

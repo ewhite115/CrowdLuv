@@ -1,13 +1,13 @@
 <?php 
+    require_once("inc/cl_bootstrap.php"); 
 
-    $pageTitle = "CrowdLuv";
+    
     $CL_SITE_SECTION = "talent";
-    require_once("inc/init_config.php"); 
-    include(ROOT_PATH . 'inc/header.php');
-
 
     if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
+
+    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
 
 ?>
 

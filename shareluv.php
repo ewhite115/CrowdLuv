@@ -17,12 +17,11 @@
 
     }
 
-
-    $pageTitle = "CrowdLuv";
+    require_once("inc/cl_bootstrap.php");
+ 
+    
     $CL_SITE_SECTION = "follower";
-    require_once("inc/init_config.php");
-    include(ROOT_PATH . 'inc/header.php');
-
+    
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
 
     //Get the list of talent this user is following, 
@@ -52,6 +51,9 @@
 
     }
 
+
+
+    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
 
 ?> 
 

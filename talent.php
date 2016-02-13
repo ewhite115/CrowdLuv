@@ -1,12 +1,9 @@
 <?php 
+    require_once("inc/cl_bootstrap.php");
+ 	
 	$CL_SITE_SECTION = "landing";
-	require_once("inc/init_config.php");
-	require_once("inc/cl_datafunctions.php");
-	require_once("inc/cl_init.php");
-	
-
+ 
 	if(isset($CL_CUR_TGT_TALENT)) $pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
-	
 	
 	
 	//Get the landing page settings for this talent  (do this before printing header)
@@ -20,9 +17,7 @@
     $CL_OG_IMAGE = $tlpimg;
     $CL_OG_DESCRIPTION = $CL_CUR_TGT_TALENT['fb_page_name'] . " wants to know where to visit. Vote for your town"; 
 
-	// Print page header/banner (this must come after we got the lanidng page 
-	// 	 settings so that the og:tags in the head will be set properly)
-	include(ROOT_PATH . 'inc/header.php'); 
+
 	// and check that a crowdluv_tid has been passed in
 	include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
 
@@ -30,6 +25,10 @@
 	//See if the user has arrived from a referral/share, and if so, save the referrer's user id 
 	if(isset($_GET['ref_uid'])) $ref_uid = $_GET['ref_uid']; else $ref_uid="";
 
+
+
+
+	include(ROOT_PATH . 'inc/cl_html_leader.php'); 	
 
 ?>
 

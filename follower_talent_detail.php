@@ -1,5 +1,7 @@
 <?php 
     use Facebook\FacebookRequest;
+ 
+    require_once("inc/cl_bootstrap.php");
 
 
     function getNextShareTimeString($nextEligibleShareTimestamp){
@@ -18,16 +20,11 @@
 
     }
 
+ 
+
     $CL_SITE_SECTION = "follower";
-    
-    //Load the init files  
-    require_once("inc/init_config.php");
-    require_once("inc/cl_datafunctions.php");
-    require_once("inc/cl_init.php");
 
-
-
-
+ 
     //Determine which brand profile subpage is being requested
     $profileSubPage = "main";  //default
     if(isset($_GET['p'])) $profileSubPage = $_GET['p'];
@@ -145,17 +142,13 @@
     }
 
 
-    //Proceed to print the html header and body leaders
-    include(ROOT_PATH . 'inc/header_htmlhead_leader.php'); 
-
-?>
-    </head>
-<?php 
-    include(ROOT_PATH . 'inc/header_htmlbody_leader.php'); 
-
     //This page functions as a 'public' profile for the talent. Therefore We 
     //  dont require a logged in user - but do require a target talent to be specified
     include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
+
+
+    include(ROOT_PATH . 'inc/cl_html_leader.php');
+
 
 ?> 
 

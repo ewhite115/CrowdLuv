@@ -2,21 +2,20 @@
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
 
+require_once "inc/cl_bootstrap.php";
 
-$pageTitle = "CrowdLuv";
+//$pageTitle = "CrowdLuv";
 $CL_SITE_SECTION = "home";
-require_once("inc/init_config.php");
-
-include(ROOT_PATH . 'inc/header.php'); 
-
-/*facebook php3.2.3 sdk
-//Create parameters for creating facebook login URL that will be used for the login buttons
-$folparams = array('scope' => CL_FB_PERMISSION_SCOPE_STRING,'redirect_uri' => CLADDR . 'follower_dashboard.php'  );
-$talparams = array('scope' => CL_FB_TALENT_PERMISSION_SCOPE_STRING);
-*/
 
 
 if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
+
+
+
+
+
+
+include(ROOT_PATH . 'inc/cl_html_leader.php'); 
 
 ?>
 
@@ -189,7 +188,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 <script type="text/javascript">
     $(document).ready(function(){  
 
-          //Click handler for the "Reactivate account" button
+        //Click handler for the "Reactivate account" button
         $("[name=btn_reactivate_account]").click(function(){
             
             reactivate_follower(<?php echo (isset($CL_LOGGEDIN_USER_OBJ['crowdluv_uid']) ? $CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] : "no_user"); ?>, function(){

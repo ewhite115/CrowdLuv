@@ -3,17 +3,16 @@
     $servlet_testing=0;
     if(!$servlet_testing)   ob_start();
 
+    require_once("inc/cl_bootstrap.php");
+
     $pageTitle = "CrowdLuv";
     $CL_SITE_SECTION = "follower";
 
-    require_once("inc/init_config.php");
-    include(ROOT_PATH . 'inc/header.php'); 
 
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
     include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
 
-    //if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}
-    
+    //if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}  
 
     //Record that the follower luvs the talent
     $CL_model->setFollower_Luvs_Talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid'], 1);

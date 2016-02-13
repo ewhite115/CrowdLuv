@@ -1,21 +1,18 @@
 <?php 
 
-    $pageTitle = "CrowdLuv";
+    require_once("inc/cl_bootstrap.php");
+
+    //$pageTitle = "CrowdLuv";
     $CL_SITE_SECTION = "follower";
-    require_once("inc/init_config.php");
-    include(ROOT_PATH . 'inc/header.php');
+
 
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
-
- 
-
     //Get the list of talent this user luvs 
     $mostLuvd = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
     //re-sort the list by how many LuvPoints the fan has for each
     $scores=array();
     foreach($mostLuvd as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); }
     array_multisort($scores, SORT_DESC, $mostLuvd);
-
 
     //Get the list of talent this user likes 
     $mylikes = $CL_model->getTalentsThatFollowerFacebookLikesButNotLuvs($CL_LOGGEDIN_USER_UID);
@@ -24,6 +21,9 @@
 
 
 
+
+
+include(ROOT_PATH . 'inc/cl_html_leader.php');
 
 ?>
     

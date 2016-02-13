@@ -1,39 +1,23 @@
 <?php
 
 
-function utf8_encode_deep(&$input) {
-	if (is_string($input)) {
-		$input = utf8_encode($input);
-	} else if (is_array($input)) {
-		foreach ($input as &$value) {
-			utf8_encode_deep($value);
-		}
-		
-		unset($value);
-	} else if (is_object($input)) {
-		$vars = array_keys(get_object_vars($input));
-		
-		foreach ($vars as $var) {
-			utf8_encode_deep($input->$var);
+	function utf8_encode_deep(&$input) {
+		if (is_string($input)) {
+			$input = utf8_encode($input);
+		} else if (is_array($input)) {
+			foreach ($input as &$value) {
+				utf8_encode_deep($value);
+			}
+			
+			unset($value);
+		} else if (is_object($input)) {
+			$vars = array_keys(get_object_vars($input));
+			
+			foreach ($vars as $var) {
+				utf8_encode_deep($input->$var);
+			}
 		}
 	}
-}
-
-
-
-	/**
-	 * [recordFollowerShareCompletion makes an ajax call to the server to record the fact that a follower has completed a share ]
-	 * @param  {[String]} shareType   
-	 *         			[Identifies the type of share th user completed
-	 *                  	facebook-share-landingpage:  User shared the talent's CrowdLuv landing page (ie from the "Share the Luv" page) on their facebook timeline
-	 *                  	facebook-send-landingpage:  User shared the talent's CrowdLuv landing page (ie from the "Share the Luv" page) in a private message to one or more friends
-	 *                  	twitter-tweet-landingpage:  User tweeted the talent's CrowdLuv landing page (ie from the "Share the Luv" page) 
-	 *                  	]
-	 *                  	
-	 * @param  {[type]} cl_uid [description]
-	 * @param  {[type]} cl_tid [description]
-	 * @return {[type]}        [description]
-	 */
 
 
 	//start output buffering in order to intercept debug messages so 
@@ -42,15 +26,12 @@ function utf8_encode_deep(&$input) {
 	$obcontents="";
 	if(!$servlet_testing)	ob_start();
 	//echo "output buffeering started";
-	//initializations
-	require_once("inc/cl_datafunctions.php");
-	require_once("inc/cl_init.php");
+
+	require_once("inc/cl_bootstrap.php");
 
 
 	//Clear the response array that will be returned
 	$response = array();
-
-
 
 	//Validate input
 

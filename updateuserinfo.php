@@ -1,7 +1,6 @@
 <?php
 
-	require_once("inc/cl_datafunctions.php");
-	require_once("inc/cl_init.php");
+    require_once("inc/cl_bootstrap.php");
 
 	$CL_LOGGEDIN_USER_OBJ['email'] = $_POST['email'];
 	$CL_LOGGEDIN_USER_OBJ['mobile'] = $_POST['mobile'];

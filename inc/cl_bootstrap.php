@@ -55,7 +55,7 @@ require_once ROOT_PATH . "inc/cl_bootstrap_debug.php";
 require_once ROOT_PATH . "inc/cl_bootstrap_sessionglobals.php";
 
 //Load facebook SDK, Check for facebook session, create/update globals and DB accordingly
-require_once ROOT_PATH . "inc/facebook-sdk/facebook.php";
+//require_once ROOT_PATH . "inc/facebook-sdk/facebook.php";
 require_once ROOT_PATH . "inc/cl_bootstrap_facebook.php";
 
 //Check for additional parameters on query string and update globals or db accordingly

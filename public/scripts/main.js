@@ -1,7 +1,7 @@
 //Even though this is a JS file, We can have PHP intepreted in order to insert 
 //  some configuration constants into the JS below  (ie  FB App ID)
 /* <?php 
-    require_once("../inc/cl_bootstrap.php");
+    require_once("../../inc/cl_bootstrap.php");
 
   ?>
 */

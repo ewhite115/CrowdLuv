@@ -62,7 +62,7 @@
 
 
 <!-- New Luv Wizard - Intro Screen  -->
-<?php if(isset($CL_LOGGEDIN_USER_OBJ)) { ?>
+<?php if(isset($CL_LOGGEDIN_USER_OBJ) && isset($CL_CUR_TGT_TALENT)) { ?>
 
 
   <div id="cl-newluvwizard-screen-1" class="text-center crowdluvsection cl-newluvwizard-screen">

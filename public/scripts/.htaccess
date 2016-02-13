@@ -13,8 +13,8 @@ RewriteRule ^(shirts/[0-9]+)$ $1/ [R=301]
 
 
 
-RewriteRule ^talent/([0-9]+)/$ /crowdluv/talent.php?crowdluv_tid=$1
-RewriteRule ^talent/([0-9]+)$ /crowdluv/talent.php?crowdluv_tid=$1
+RewriteRule ^talent/([0-9]+)/$ /crowdluv/brand_cometomytown.php?crowdluv_tid=$1
+RewriteRule ^talent/([0-9]+)$ /crowdluv/brand_cometomytown.php?crowdluv_tid=$1
 
 RewriteRule ^luv/([0-9]+)/$ /crowdluv/luv.php?crowdluv_tid=$1
 RewriteRule ^luv/([0-9]+)$ /crowdluv/luv.php?crowdluv_tid=$1

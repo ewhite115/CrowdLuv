@@ -52,7 +52,7 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
           
             <?php foreach($mostLuvd as $cltalentobj){  ?>              
                 
-                <a class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " href="follower_talent_detail.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">     
+                <a class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">     
                     
                     <div class="talent-avatar"> 
                         <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>"> 
@@ -116,7 +116,7 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
                     
                     <div class="talent-avatar "> 
                         <!-- <a href="talent/<?php echo $cltalentobj['crowdluv_vurl'];?>"> -->
-                        <a href="follower_talent_detail.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">
+                        <a href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">
                             <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>"> 
                         </a>
                         
@@ -124,7 +124,7 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
 
                     <div class="card-info">
                         <p class="talent-name">
-                            <a class="inline-block" href="follower_talent_detail.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">
+                            <a class="inline-block" href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">
                               <?php echo $cltalentobj['fb_page_name'];?>  
                             </a>
                             <br>

@@ -392,7 +392,7 @@ function buildHTMLWidget_FacebookShare(params) {
   //construct the URL based on the shareType and corresponding shareDetails,
   //   and add that url to params
   if(params.shareType == "crowdluv-talent-landing-page") params.url = '<?php echo CLADDR;?>talent/' + params.shareDetails.vurl + '?ref_uid=' + params.shareDetails.crowdluvUID;
-  else if (params.shareType == "crowdluv-event") params.url = "<?php echo CLADDR;?>follower_talent_detail.php?crowdluv_tid=" + params.shareDetails.crowdluvTID + '&p=event&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.crowdluvUID;
+  else if (params.shareType == "crowdluv-event") params.url = "<?php echo CLADDR;?>brand.php?crowdluv_tid=" + params.shareDetails.crowdluvTID + '&p=event&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.crowdluvUID;
 
   //select which image to use and what status text to display
   //dont use the 'off'/disabled images any more. Just allow the +heart text to indicate sharepoiint eligbility
@@ -515,7 +515,7 @@ function buildHTMLWidget_TwitterShare(params){
 
   //Construct dataURL (URL to tweet) based on shareType
   if(params.shareType == "crowdluv-talent-landing-page") dataURL = "<?php echo CLADDR;?>talent/" + params.shareDetails.vurl + "?ref_uid=" + params.shareDetails.cl_uidt;
-  if(params.shareType == "crowdluv-event") dataURL = "<?php echo CLADDR;?>follower_talent_detail.php?crowdluv_tid=" + params.shareDetails.cl_tidt + '&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.cl_uidt;
+  if(params.shareType == "crowdluv-event") dataURL = "<?php echo CLADDR;?>brand.php?crowdluv_tid=" + params.shareDetails.cl_tidt + '&eventID=' + params.shareDetails.eventID + '?ref_uid=' + params.shareDetails.cl_uidt;
   
   //Construct the tweet button HTML based on available luvpoints
   //if(params.luvPoints > 0) {

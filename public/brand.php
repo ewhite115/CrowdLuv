@@ -166,7 +166,7 @@
         <div class="col-xs-12 col-sm-4 clwhitebg crowdluvsection text-center">
             
             <!-- Brand Name, Image, and button -->
-            <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+            <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
             <h1 class="cl-textcolor-standout">
                 <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>
             </h1>               
@@ -176,27 +176,27 @@
 
             <!-- **** Preferences or call-to-action -->
             <?php if($targetTalentPreferences) { ?>
-                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
                     <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
                         Overview
                     </button>                      
                 </a>
-                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=preferences">
+                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=preferences">
                     <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
                         Your Preferences 
                     </button>                      
                 </a>
-                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=showyourluv">
+                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=showyourluv">
                     <button class="cl-button-standout-narrow" name="btn_showyourluv" id="btn_showyourluv" >
                         Show Your Luv
                     </button>                      
                 </a>
-                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=events">
+                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=events">
                     <button class="cl-button-standout-narrow" name="btn_events" id="btn_events" >
                         Events
                     </button>                      
                 </a>
-                <a href="follower_talent_detail.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=questions">
+                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=questions">
                     <button class="cl-button-standout-narrow" name="btn_questions" id="btn_questions" >
                         Fan Q&A
                     </button>                      

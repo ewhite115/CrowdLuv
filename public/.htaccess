@@ -10,13 +10,13 @@ RewriteRule ^(shirts/[0-9]+)$ $1/ [R=301]
 
 
 
-#RewriteRule ^talent/([0-9]+)/$ /crowdluv/talent.php?crowdluv_tid=$1
-#RewriteRule ^talent/([0-9]+)$ /crowdluv/talent.php?crowdluv_tid=$1
+#RewriteRule ^talent/([0-9]+)/$ /crowdluv/brand_cometomytown.php?crowdluv_tid=$1
+#RewriteRule ^talent/([0-9]+)$ /crowdluv/brand_cometomytown.php?crowdluv_tid=$1
 
-RewriteRule ^talent/([0-9]+)/$ %{ENV:CL_BASE_URL}talent.php?crowdluv_tid=$1 [QSA]
-RewriteRule ^talent/([0-9]+)$ %{ENV:CL_BASE_URL}talent.php?crowdluv_tid=$1 [QSA]
-RewriteRule ^talent/([A-Za-z0-9-]+)/?$ %{ENV:CL_BASE_URL}talent.php?crowdluv_vurl=$1 [QSA]
-RewriteRule ^talent/([A-Za-z0-9-]+)?$ %{ENV:CL_BASE_URL}talent.php?crowdluv_vurl=$1 [QSA]
+RewriteRule ^talent/([0-9]+)/$ %{ENV:CL_BASE_URL}brand_cometomytown.php?crowdluv_tid=$1 [QSA]
+RewriteRule ^talent/([0-9]+)$ %{ENV:CL_BASE_URL}brand_cometomytown.php?crowdluv_tid=$1 [QSA]
+RewriteRule ^talent/([A-Za-z0-9-]+)/?$ %{ENV:CL_BASE_URL}brand_cometomytown.php?crowdluv_vurl=$1 [QSA]
+RewriteRule ^talent/([A-Za-z0-9-]+)?$ %{ENV:CL_BASE_URL}brand_cometomytown.php?crowdluv_vurl=$1 [QSA]
 
 
 

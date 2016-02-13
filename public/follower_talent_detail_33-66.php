@@ -627,7 +627,7 @@
          };
          console.log(qopts);
 
-        resl = $.getJSON('ajax_updatefollowerprefs_fortalent.php', qopts, function(result) {
+        resl = $.getJSON('ajax_updatefollowerprefs_forbrand_cometomytown.php', qopts, function(result) {
             console.log("entering callback, received unfiltered result:"); console.log(result);
             //update the display of "Yes/No (Start/Stop)"
             if(result.prefname == "allow_email" && result.prefval=="0" && result.result=="1"){

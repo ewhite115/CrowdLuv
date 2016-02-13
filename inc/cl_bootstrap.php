@@ -29,9 +29,11 @@ session_start();
  * 			/  				 on aws staging/prod environments
  * 			/crowdluv    	 on local development machines
  * 		ROOT_PATH:   Root path of this application on the local filesystem
+ * 				
  */		
 if(!defined("BASE_URL")) define("BASE_URL",$_SERVER['CL_BASE_URL']);  
-if(!defined("ROOT_PATH")) define("ROOT_PATH",$_SERVER["DOCUMENT_ROOT"] . BASE_URL);
+
+if(!defined("ROOT_PATH")) define("ROOT_PATH",$_SERVER["DOCUMENT_ROOT"] . "/../");
 
 //cl_bootstrap_configs.php will initialize additional key environment variables
 require_once ROOT_PATH . "inc/cl_bootstrap_configs.php" ;

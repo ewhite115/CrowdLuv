@@ -1,7 +1,7 @@
 <?php
  
 
-    require "inc/twilio/Services/Twilio.php";
+    require "../vendor/twilio/Services/Twilio.php";
  
     // Twilio AccountSid and AuthToken 
     // TODO:  move to env var's

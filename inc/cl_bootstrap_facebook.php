@@ -1,6 +1,6 @@
 <?php
 
-  require_once(ROOT_PATH . 'vendor/autoload.php');
+  //require_once(ROOT_PATH . 'vendor/autoload.php');
   use Facebook\FacebookSession;
   use Facebook\FacebookRequest;
   use Facebook\FacebookRedirectLoginHelper;

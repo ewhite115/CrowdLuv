@@ -1,18 +1,23 @@
 <?php 
 
-    require_once "../inc/cl_bootstrap.php";
+    ////require_once "../inc/cl_bootstrap.php";
 
-    //$pageTitle = "CrowdLuv";
+
     $CL_SITE_SECTION = "follower";
 
-
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
+
+    $mobileStatus = $CL_model->getMobileValidityForFollower($CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] );
+    $emailStatus = $CL_model->getEmailValidityForFollower($CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] );
+
+
     //Get the list of talent this user luvs 
     $mostLuvd = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
     //re-sort the list by how many LuvPoints the fan has for each
     $scores=array();
     foreach($mostLuvd as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); }
     array_multisort($scores, SORT_DESC, $mostLuvd);
+
 
     //Get the list of talent this user likes 
     $mylikes = $CL_model->getTalentsThatFollowerFacebookLikesButNotLuvs($CL_LOGGEDIN_USER_UID);
@@ -22,14 +27,54 @@
 
 
 
+    include(ROOT_PATH . 'inc/cl_html_leader.php');
 
-include(ROOT_PATH . 'inc/cl_html_leader.php');
 
 ?>
     
 <BR>
 
-  
+    <!-- Block to show status of contact info -->
+    <div class="row">
+        <div class="col-xs-11 col-xs-offset-1 clwhitebg crowdluvsection">
+            <div class="row">
+                <div class="col-xs-4">
+                    <h1 class="inline-block">Mobile</h1>
+                    <span> 
+                    <?php if($mobileStatus=="invalid") { ?>Invalid<?php } ?>
+                    <?php if($mobileStatus=="valid") { ?>Valid<?php } ?>
+                    <?php if($mobileStatus=="verified") { ?>Verified<?php } ?>
+                    </span>
+                    <br><br>
+                </div>
+                <div class="col-xs-4">
+                    <h1 class= "inline-block">Email</h1>
+                    <span>
+                    <?php if($emailStatus=="invalid") { ?>Invalid<?php } ?>
+                    <?php if($emailStatus=="valid") { ?>Valid<?php } ?>
+                    <?php if($emailStatus=="verified") { ?>Verified<?php } ?>
+
+                    </span>
+                </div>
+                <div class="col-xs-4 text-right">
+                    <a href="follower_preferences.php">My Settings --> </a>
+
+                </div>
+            </div>
+            <?php if($mobileStatus == "invalid" || $emailStatus == "invalid"){ ?>
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="cl-textcolor-standout">
+                        Providing valid contact info allows you to sign up to receive alerts from your favorite acts
+                    </p>
+                </div>
+
+            </div>
+            <?php } ?>
+        </div>
+    </div>
+
+<br>
 
 
 
@@ -106,9 +151,9 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
     </div>
     -->
 
-    <div class="fluid-row ">
+    <div class="row ">
 
-        <div class="col-xs-12 col-sm-8  cl-vscroll-card-container crowdluvsection clwhitebg cl-grayborder">
+        <div class="col-xs-12 col-sm-8 col-sm-ofset-1 cl-vscroll-card-container crowdluvsection clwhitebg cl-grayborder">
           
             <?php foreach($likesAndLuvs as $cltalentobj){  ?>              
                 

@@ -1,5 +1,5 @@
 <?php 
-    require_once "../inc/cl_bootstrap.php"; 
+    //require_once "../inc/cl_bootstrap.php"; 
 
     $pageTitle = "CrowdLuv";
     $CL_SITE_SECTION = "talent";

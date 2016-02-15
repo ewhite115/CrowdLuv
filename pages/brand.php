@@ -1,7 +1,7 @@
 <?php 
     use Facebook\FacebookRequest;
  
-    require_once "../inc/cl_bootstrap.php";
+    ////require_once "../inc/cl_bootstrap.php";
 
 
     function getNextShareTimeString($nextEligibleShareTimestamp){

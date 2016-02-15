@@ -17,7 +17,7 @@
     }
 
   
-    require_once "../inc/cl_bootstrap.php";
+    ////require_once "../inc/cl_bootstrap.php";
 
     $CL_SITE_SECTION = "follower";
 

@@ -37,9 +37,10 @@ if(!defined("ROOT_PATH")) define("ROOT_PATH",$_SERVER["DOCUMENT_ROOT"] . "/../")
 
 //cl_bootstrap_configs.php will initialize additional key environment variables
 require_once ROOT_PATH . "inc/cl_bootstrap_configs.php" ;
-//CrowdLuvModel.php defines the data model class / functions for all database functions for the application
-require_once ROOT_PATH . "inc/CrowdLuvModel.php" ;
 
+//CrowdLuvModel.php defines the data model class / functions for all database functions for the application
+//  --  removed 2/13/16 in lieu of migrating to autoloading via composer
+//require_once ROOT_PATH . "inc/CrowdLuvModel.php" ;
 
 
 //autoload.php is used by Composer (and/or Symfony?) for  package / dependencies

@@ -59,7 +59,7 @@
  
   <!-- CrowdLuv Stylesheets and JS -->
   <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css" type="text/css">
-  <link rel="shortcut icon" href="<?php echo BASE_URL; ?>favicon.ico">  
+  <link rel="shortcut icon" href="<?php echo BASE_URL; ?>res/favicon.ico">  
   <script src="<?php echo BASE_URL;?>scripts/main.js"></script> 
 
 

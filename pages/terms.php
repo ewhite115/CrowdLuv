@@ -1,7 +1,7 @@
 <?php 
 
     $CL_SITE_SECTION = "landing";
-    require_once "../inc/cl_bootstrap.php"; 
+    ////require_once "../inc/cl_bootstrap.php"; 
  
     include(ROOT_PATH . 'inc/cl_html_leader.php'); 
 

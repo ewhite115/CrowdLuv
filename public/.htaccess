@@ -1,12 +1,12 @@
 
 
 RewriteEngine On
-RewriteRule ^shirts/$ shirts/shirts.php
-RewriteRule ^shirts/([0-9]+)/$ shirts/shirt.php?id=$1
-RewriteRule ^receipt.php$ receipt/ [R=301]
-RewriteRule ^contact.php$ contact/ [R=301]
-RewriteRule ^shirts.php$ shirts/ [R=301]
-RewriteRule ^(shirts/[0-9]+)$ $1/ [R=301]
+#RewriteRule ^shirts/$ shirts/shirts.php
+#RewriteRule ^shirts/([0-9]+)/$ shirts/shirt.php?id=$1
+#RewriteRule ^receipt.php$ receipt/ [R=301]
+#RewriteRule ^contact.php$ contact/ [R=301]
+#RewriteRule ^shirts.php$ shirts/ [R=301]
+#RewriteRule ^(shirts/[0-9]+)$ $1/ [R=301]
 
 
 
@@ -27,5 +27,20 @@ RewriteRule ^luv/([0-9]+)$ %{ENV:CL_BASE_URL}luv.php?crowdluv_tid=$1
 
 
 
-RewriteCond %{QUERY_STRING} ^id=([0-9]+)$
-RewriteRule ^shirt.php$ shirts/%1/? [R=301]
+#RewriteCond %{QUERY_STRING} ^id=([0-9]+)$
+#RewriteRule ^shirt.php$ shirts/%1/? [R=301]
+
+
+ # turn empty requests into requests for the "front.php" 
+ # bootstrap script, keeping the query string intact
+ RewriteRule ^$ front.php [QSA] 
+
+
+ # for all files and dirs not in the document root,  
+ # reroute to the "front.php" bootstrap script,
+ # keeping the query string intact, and making this 
+ # the last rewrite rule
+ RewriteCond %{REQUEST_FILENAME} !-f 
+ RewriteCond %{REQUEST_FILENAME} !-d
+ RewriteRule ^(.*)$ front.php [QSA,L]
+

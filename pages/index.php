@@ -13,11 +13,14 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 
 
 
-
-
-include(ROOT_PATH . 'inc/cl_html_leader.php'); 
-
+//END CONTROLLER 
+//
 ?>
+
+
+
+
+<?php  include(ROOT_PATH . 'inc/cl_html_leader.php');   ?>
 
 
 <div class= "row" id="CL_landingpage_jumbotron">

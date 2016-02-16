@@ -19,9 +19,9 @@ hr {
 
 
 
-.footer {
+.clfooter {
     clear:both;  /* had to add this to get the footer to push down below the login boxes on home page*/
-    background: #f4f4f4; /* #f0eeed; */
+    background: #f4f4f4; 
     padding: 5px 0;
     margin-top: 5px;
     margin-bottom: 5px;
@@ -31,17 +31,17 @@ hr {
 
 }
 
-.footer p {margin: 0; text-align: right; padding-right: 3px;}
-.footer a {text-decoration: none; color: #539def; margin: 0 10px;}
-.footer li:first-child a {margin-left: 4px;}
-.footer a:hover, .footer a:active {text-decoration: underline;}
+.clfooter p {margin: 0; text-align: right; padding-right: 3px;}
+.clfooter a {text-decoration: none; color: #539def; margin: 0 10px;}
+.clfooter li:first-child a {margin-left: 4px;}
+.clfooter a:hover, .footer a:active {text-decoration: underline;}
 
 
 
 
 .CL_fullpagewrapper {
     width: 97%;
-    max-width:1200px;
+    /* max-width:1200px; */
     min-width:300px;
     background:#f4f4f4; /*#f0eeed;*/
     margin-left:auto;
@@ -49,7 +49,7 @@ hr {
     margin-top: .75em;    /* 15/900px */ 
     margin-bottom: 2em;
     padding: 1.5em 0px 1px 0px;    /*  25/900px   */
-    border-radius:8px;
+    /*border-radius:8px;*/
 }
 
 
@@ -280,27 +280,12 @@ h1.cl-major-heading{
 }
 
 
+
 /* At under 768px,   */
-@media screen and (max-width: 1200px){
+@media screen and (max-width: 768px){
 
-            /*change to the dark "mobile" header */
-            .cl_site_section_header {
-                background-color: #303032;
-                background-image: url("../res/crowdluv-mobile-logo.jpg");
-                background-position: center center;
-                background-repeat: no-repeat;
-                height: 45px;
-                min-height:45px;
-                position: fixed;
-                width:100%;
-                z-index: 110;
-                padding-top: 4.5px;
 
-            }
-            /*Add padding to the top of the #content div to push it down below the sticky header/nav bar*/
-            #content {
-                padding-top:45px;
-            }
+
             /*show the 3-bar navicon */
             .cl_site_section_header .threebarnav {
                 display:inline-block;
@@ -336,6 +321,32 @@ h1.cl-major-heading{
                 background-color: red;
             }
            
+           
+}
+
+
+/* At under 2000px,   */
+@media screen and (max-width: 2000px){
+
+            /*change to the dark "mobile" header */
+            .cl_site_section_header {
+                background-color: #2F2F2F;
+                background-image: url("../res/crowdluv-mobile-logo.jpg");
+                background-position: center center;
+                background-repeat: no-repeat;
+                height: 45px;
+                min-height:45px;
+                position: fixed;
+                width:100%;
+                z-index: 110;
+                padding-top: 4.5px;
+
+            }
+            /*Add padding to the top of the #content div to push it down below the sticky header/nav bar*/
+            #content {
+                padding-top:45px;
+            }
+
                 
             /*Adjust the link on the header banner logos for small-screen*/
             .cl_site_section_header #cl_header_link {
@@ -357,7 +368,7 @@ h1.cl-major-heading{
                 
                 margin:0px;
                 padding: 0.1px 0px 1px 0px;    /*  25/900px   */
-                border-radius:8px;
+                
             }
 
 
@@ -462,15 +473,17 @@ h1.cl-major-heading{
 
 #CL_landingpage_jumbotron {
     
-    min-height:250px;
-    margin-bottom: .8em;  
-   
-    padding-top:2%;
+
+    min-height: 250px;
+    /* height: initial; */
+    margin-bottom: .8em;
+    padding-top: 3.5%;
+    padding-bottom: 15%;
     background-image: url("../res/concert-audience-stock1214.jpg");
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
-    /*background-attachment: fixed;*/
+    /* background-attachment: fixed; */
 
 
 }
@@ -615,7 +628,7 @@ h1.cl-major-heading{
 }
 .cl-talent-listing-card .card-info img {
     /*width:50%;*/
-    padding: .8em 0;
+    /*padding: .8em 0;*/
 
 }
 

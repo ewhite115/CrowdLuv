@@ -44,7 +44,7 @@
 
 <!-- small banner at top of page to remind user to update contact info when they follow new luvs
         This is hidden by default but gets shown if querystring newluv=x is passed  -->
-<a href="follower_preferences.php">
+<a href="mypreferences">
 <div class="CL_small_reminder_banner text-center">
     <p>Make sure CrowdLuv has your current contact info! Click here to confirm/update</p>
 </div>

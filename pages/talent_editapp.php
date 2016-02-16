@@ -107,7 +107,7 @@
 <div class="row ">
         <div class="col-sm-5 crowdluvsection">
             
-            <img src="<?php echo $tlpimg;?>" style="max-width: 100%;"/>    
+            <img src="<?php echo $tlpimg;?>" style="max-width: 100%;max-height: 300px;"/>    
         </div>
 
         <div class="col-sm-3 crowdluvsection">  

@@ -22,7 +22,7 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
 
 <div class= "row" id="CL_landingpage_jumbotron">
     
-      <div id="cl-landingpage-jumbotron-video-col" class="col-xs-12 col-ms-7 text-center">
+      <div id="cl-landingpage-jumbotron-video-col" class="col-xs-12 col-sm-5 text-center">
         <!-- <img class="img-responsive" src="res/vid-comingsoon.png" /> -->
         <!-- <video controls>
            <source src="res/renthigh.mp4" type="video/mp4">
@@ -31,12 +31,12 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
              <embed src="res/cyn-intro.swf">
            </object> 
         </video>  -->
-
-      <iframe id="homepage-jumbotron-video-iframe" src="//www.youtube.com/embed/4vfdMqEE5lY?rel=0&showinfo=0&modestbranding=1&controls=0&autoplay=0&end=10" frameborder="0" allowfullscreen></iframe>
+        <br>
+        <iframe class="hidden" id="homepage-jumbotron-video-iframe" src="//www.youtube.com/embed/4vfdMqEE5lY?rel=0&showinfo=0&modestbranding=1&controls=0&autoplay=0&end=10" frameborder="0" allowfullscreen></iframe>
         
       </div>
       
-      <div class="col-xs-12 col-ms-4 ">
+      <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-1 col-md-4 col-lg-4  ">
         <h1>Show Some Luv</h1>
         <h2>CrowdLuv lets YOU decide where your favorite artists, speakers, authors should visit next. </h2>
         <h2>Show them how much Luv they have in your town. </h2>
@@ -50,11 +50,11 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
   <!--  Fan Call-to-Action   -->
   <!-- If not logged in, show the Call-to-action homepage with facebook login buttons -->
   <?php if(! isset($CL_LOGGEDIN_USER_OBJ)){ ?>
-    <div class="col-xs-12 col-ms-6 ">
+    <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
       <div class="text-center crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
-          <h1 class="cl-textcolor-standout cl-major-heading">For Fans</h1>
+          <!-- <h1 class="cl-textcolor-standout cl-major-heading">For Fans</h1> -->
           <p class=""> Get your favorite acts to come to you. Share the Luv to establish yourself as the #1 fan and earn VIP perks.  </p><br>
-          <a href="<?php echo $talentLoginURL;?>"><img width="60%" class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
+          <a href="<?php echo $talentLoginURL;?>"><img  class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
 
           <br> 
           <!-- User Denied Facebook Permission -->
@@ -74,7 +74,7 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
             
     <div class="row">       
         
-        <a href="follower_myluvs.php">
+        <a href="myluvs">
         <div class="col-xs-6 col-sm-3 text-center ">
         
           <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
@@ -118,18 +118,26 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
                   
                     
   </div>   
+  
   <?php }  ?>
+  </div>
+
+  <br>
+  <div class="row">
+
+
+
 
   <!-- Talent Call-To-Action  -->
   <?php if(! isset($CL_LOGGEDIN_TALENTS_ARR) || empty($CL_LOGGEDIN_TALENTS_ARR) )  {  ?>
     
-    <div class="col-xs-12 col-ms-6" >
+    <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3" >
       <div class="text-center crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box">
         <h1 class="cl-textcolor-standout cl-major-heading"> Artists, musicians, speakers </h1>        
         <p> </p>
             <p>Find out where you have the most Luv. Build relationships with your fans.  </p>    
             <br>
-            <a href="<?php echo $talentLoginURL;?>"><img width="50%" class="" src="<?php echo BASE_URL;?>res/select-facebook-pages.jpg" /></a><br>      
+            <a href="<?php echo $talentLoginURL;?>"><img  class="" src="<?php echo BASE_URL;?>res/select-facebook-pages.jpg" /></a><br>      
             
             <!-- Talent Denied Facebook Permission -->
             <?php if((isset( $_GET['fb_user_denied_permissions'] ) && $_GET['fb_user_denied_permissions'] == '1')){ ?>
@@ -146,8 +154,8 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
   <?php } else { ?>
       
 
-      <div class="col-xs-12 col-ms-12" >
-        <div class="crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box">
+      <div class="col-xs-12 col-ms-12 clwhitebg" >
+        <div class="crowdluvsection crowdluv_landingpage_memberlogin_box">
           <h1 class="cl-textcolor-standout" >Your CrowdLuv Talent Profiles </h1>        
           <p></p>
           

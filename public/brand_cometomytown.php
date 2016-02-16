@@ -1,7 +1,7 @@
 <?php 
-    //require_once "../inc/cl_bootstrap.php";
+    require_once "../inc/cl_bootstrap.php";
  	
-	$CL_SITE_SECTION = "landing";
+	$CL_SITE_SECTION = "home";
  
 	if(isset($CL_CUR_TGT_TALENT)) $pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
 	
@@ -41,7 +41,7 @@
 		<div class="col-xs-12">
 			<h1>Want <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> in your town?</h1><br>
 			<a href="#" id="fbtab_cometomytown">
-				<img src="../res/yescometomytown.jpg">
+				<img src="/res/yescometomytown.jpg">
 			</a><br><br>
 			
 		</div>
@@ -63,15 +63,15 @@
 				<h1>What hapens when I click the big red button?</h1>	
 	
 				<div class="row">
-					<div class="text-right col-xs-1 crowdluvsection "><img src="../res/allow.jpg"></div>
+					<div class="text-right col-xs-1 crowdluvsection "><img src="/res/allow.jpg"></div>
 					<div class="col-xs-10 "> <p>Facebook wil ask you to share info with CrowdLuv.com, a safe application that allows fans like you to privately and safely entreat musicians, speakers, performers and travelling shows to come to your town. </p>	</div>
 				</div>
 				<div class="row">
-					<div class="text-right col-xs-1 crowdluvsection "><img src="../res/graypadlock.jpg"></div>
+					<div class="text-right col-xs-1 crowdluvsection "><img src="/res/graypadlock.jpg"></div>
 					<div class="col-xs-10 "> <p>The Facebook information you share will remain private and will not be shared with anyone else. Your contact information will not even be shared with <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>! <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> has to log into CrowdLuv in order to send you text messages or emails. Your contact information is hidden from all talent . </p></div>
 				</div>
 				<div class="row">
-					<div class="text-right col-xs-1 crowdluvsection "><img src="../res/grayletter.jpg"></div>
+					<div class="text-right col-xs-1 crowdluvsection "><img src="/res/grayletter.jpg"></div>
 					<div class="col-xs-10 "> <p><?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> will keep in touch via email or text message to let you know when he comes to your town. By Luv'ing <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>, you get to decide where he goes next! </p>	</div>
 				</div>
 			</div>

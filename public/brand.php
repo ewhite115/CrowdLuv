@@ -168,7 +168,7 @@
                     <h3 class="follower-rank">Your Fan Rank</h3>
                     <div class="text-center" style="
                         height: 2.25em;
-                        background-image: url('res/top-heart.png');
+                        background-image: url('/res/top-heart.png');
                         background-position:  center top;
                         background-repeat: no-repeat;
                         background-size: contain;
@@ -201,7 +201,7 @@
                     <h3 class="follower-rank">Your Town's Rank</h3>
                     <div class="text-center" style="
                         height: 2.25em;
-                        background-image: url('res/top-heart.png');
+                        background-image: url('/res/top-heart.png');
                         background-position:  center top;
                         background-repeat: no-repeat;
                         background-size: contain;
@@ -246,8 +246,8 @@
 
                <!--  **** Show Your Luv  -->
                     <h3 >Show Your Luv</h3>
-                    <img width="25" src="res/facebook-icon-circle.png">
-                    <img width="25" src="res/twitterCircle_0.png">
+                    <img width="25" src="/res/facebook-icon-circle.png">
+                    <img width="25" src="/res/twitterCircle_0.png">
                     <BR><BR>
                     <!-- <p class="inline-block">
                         Help us out to increase your rank and build Luv for your town. </p> 
@@ -262,7 +262,7 @@
     <div class="row">      
        <div class="col-xs-12 col-sm-10 col-sm-offset-1 clwhitebg crowdluvsection text-center">
                 
-            <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+            <a href="?p=main">
             <h1 class="cl-textcolor-standout">
                 <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>
             </h1>               
@@ -272,27 +272,27 @@
 
             <!-- **** Buttons or call-to-action -->
             <?php if($targetTalentPreferences) { ?>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+                <a href="?p=main">
                     <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
                         Overview
                     </button>                      
                 </a>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=preferences">
+                <a href="?p=preferences">
                     <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
                         Your Preferences 
                     </button>                      
                 </a>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=showyourluv">
+                <a href="?p=showyourluv">
                     <button class="cl-button-standout-narrow" name="btn_showyourluv" id="btn_showyourluv" >
                         Show Your Luv
                     </button>                      
                 </a>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=events">
+                <a href="?p=events">
                     <button class="cl-button-standout-narrow" name="btn_events" id="btn_events" >
                         Events
                     </button>                      
                 </a>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=questions">
+                <a href="?p=questions">
                     <button class="cl-button-standout-narrow" name="btn_questions" id="btn_questions" >
                         Fan Q&A
                     </button>                      
@@ -355,9 +355,9 @@
                     
                 </div>
                 <div class="cl-vote-widget inline-block pull-right">
-                    <img src="res/votearrows/stack-up-off.png">
+                    <img src="/res/votearrows/stack-up-off.png">
                     <h2>Vote</h2>
-                    <img src="res/votearrows/stack-down-off.png">
+                    <img src="/res/votearrows/stack-down-off.png">
                 </div>
                 <hr>
 
@@ -652,7 +652,7 @@
 
                            <div class="row crowdluvsection ">
                                 <div class="col-xs-2  ">
-                                    <img class="img-responsive" src='res/top-heart.png'>           
+                                    <img class="img-responsive" src='/res/top-heart.png'>           
                                     <div style='position:absolute;top:9px;left:25px;color:white;font-size:14px;'><p><b>#<?php echo $cnt++;?></b></p></div>
                                 </div>
                                 <div class="col-xs-6 text-left">

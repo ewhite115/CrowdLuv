@@ -36,7 +36,7 @@
 
     <!-- Block to show status of contact info -->
     <div class="row">
-        <div class="col-xs-11 col-xs-offset-1 clwhitebg crowdluvsection">
+        <div class="col-xs-12 col-sm-10 col-sm-offset-1 clwhitebg crowdluvsection">
             <div class="row">
                 <div class="col-xs-4">
                     <h1 class="inline-block">Mobile</h1>
@@ -57,7 +57,7 @@
                     </span>
                 </div>
                 <div class="col-xs-4 text-right">
-                    <a href="follower_preferences.php">My Settings --> </a>
+                    <a href="mypreferences">My Settings --> </a>
 
                 </div>
             </div>
@@ -151,9 +151,9 @@
     </div>
     -->
 
-    <div class="row ">
+     <div class="row ">
 
-        <div class="col-xs-12 col-sm-8 col-sm-ofset-1 cl-vscroll-card-container crowdluvsection clwhitebg cl-grayborder">
+        <div class="col-xs-12    crowdluvsection clwhitebg cl-grayborder">
           
             <?php foreach($likesAndLuvs as $cltalentobj){  ?>              
                 
@@ -174,19 +174,22 @@
                             </a>
                             <br>
                             
-                            <img style="width:1.25em;" src='res/FB-ThumbsUp_50.png'/>
-
+                            <!-- Luv   -->
+                            <p>
                             <?php if($cltalentobj['still_following']) { ?>
                                 <img style="width:1.25em;" src='res/top-heart.png'/>
                             <?php } 
                                  else { ?>
                                 <img style="width:1.25em;" src='res/top-heart-gray.png'/>
                             <?php } ?>
-
                             <span>
-                                <?php echo $cltalentobj['score'];?> Luvs
+                                <?php echo $cltalentobj['score'];?> 
+                            <span> 
+                            </p>
+                            <!-- Like -->
+                            <img style="width:1.25em;" src='res/FB-ThumbsUp_50.png'/>
 
-                            </span> 
+
                         </p>
                         
                         

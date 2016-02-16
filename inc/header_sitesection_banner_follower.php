@@ -6,7 +6,7 @@
 	<ul id="cl_nav" class="nav nav-pills ">
     	<li><a href="follower_dashboard.php">My Most Luv'd</a></li>
     	<li><a href="shareluv.php">Share Luv</a></li>
-	    <li><a href="follower_preferences.php">
+	    <li><a href="<?php echo BASE_URL;?>mypreferences">
 	    	My Settings 
 	    	<?php if(isset($CL_LOGGEDIN_USER_OBJ)) { ?> <img width="25px" src='https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid']; ?>/picture?access_token=<?php echo $facebookSession->getToken();?>'><?php } ?>
 	    	</a>

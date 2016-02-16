@@ -1,8 +1,3 @@
-<?php
-
-    if(isset($_GET['cmd']) && $_GET['cmd'] == "reloadfollowerplacesfromfacebook"){ $CL_model->ReloadFollowerPlacesFromFacebook();}
-
-?>
 
 
 <!DOCTYPE html>

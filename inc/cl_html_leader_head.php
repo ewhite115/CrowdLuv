@@ -9,23 +9,6 @@
   <meta charset="UTF-8" />
 
   <!-- Open Graph Meta Tags -->
-  <?php
-    // Default to the following values, but individual pages can change 
-    // these values prior to including the header/leader files    
-
-    // if a target talent is set, default to that talents fb page image 
-    if(isset($CL_CUR_TGT_TALENT['fb_pid'])) {
-      $CL_OG_IMAGE =  "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT["fb_pid"] . "/picture?type=large";
-      if(isset($CL_LOGGEDIN_USER_UID)){ 
-        $CL_OG_IMAGE = $CL_OG_IMAGE . "&access_token=" . $facebookSession->getToken(); 
-      }
-    }
-    //if not target talent specified, default the og image to CL logo
-    else if(! isset($CL_OG_IMAGE) || ! $CL_OG_IMAGE)  $CL_OG_IMAGE = CLADDR . 'res/crowdluv_fbtab_logo_dark.png';
-    //Default the OG description to a generic phrase
-    if(! isset($CL_OG_DESCRIPTION) || ! $CL_OG_DESCRIPTION) $CL_OG_DESCRIPTION = "CrowdLuv lets you decide where your favorite acts should come next";
-  ?>
-
   <meta property="og:site_name" content="CrowdLuv" />
   <meta property="og:title" content="<?php echo $pageTitle;?>" />
   <meta property="fb:app_id" content="<?php echo CL_FB_APP_ID;?>" />

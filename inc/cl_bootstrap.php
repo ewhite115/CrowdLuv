@@ -63,5 +63,3 @@ require_once ROOT_PATH . "inc/cl_bootstrap_facebook.php";
 require_once ROOT_PATH . "inc/cl_bootstrap_parameters.php";
 
 
-//Default pageTitle for the application. Can be overriden by pages
-$pageTitle = "CrowdLuv";

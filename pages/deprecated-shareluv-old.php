@@ -26,7 +26,7 @@
         <h1 class="cl-textcolor-standout">Welcome to CrowdLuv</h1>
         <p> Please confirm your contact information. </p>
 
-        <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
+        <?php include(ROOT_PATH . 'views/partial_userinfoform.php'); ?>
         <a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_contactinfo_confirmation_modal').hide();return false;">
             <p class="cl-button-standout">Confirm</p>
         </a>
@@ -269,4 +269,4 @@
 </script>
 
 
-<?php include(ROOT_PATH . 'inc/footer.php') ?>
+<?php include(ROOT_PATH . 'views/partial_footer.php') ?>

@@ -21,7 +21,7 @@
  
  
 
-    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
+    include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
 
 ?>
 
@@ -49,7 +49,7 @@
 
     <div class="crowdluvsection" style="text-align:justify;">
 
-        <?php include(ROOT_PATH . "inc/print_top_cities.php");?>
+        <?php include(ROOT_PATH . "views/partial_top_cities.php");?>
         
     </div>
 
@@ -73,4 +73,4 @@
 
 
 
-<?php include(ROOT_PATH . 'inc/footer.php') ?>
+<?php include(ROOT_PATH . 'views/partial_footer.php') ?>

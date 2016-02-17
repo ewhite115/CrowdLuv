@@ -12,7 +12,7 @@
     $topcities= $CL_model->get_top_cities_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
 
 
-    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
+    include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
 
 ?>
 
@@ -25,9 +25,9 @@
     </div>
 
 
-<?php include(ROOT_PATH . 'inc/cl_followermap_partial.php') ?>
+<?php include(ROOT_PATH . 'inc/partial_cl_followermap.php') ?>
 
 
 
 
-<?php include(ROOT_PATH . 'inc/footer.php') ?>
+<?php include(ROOT_PATH . 'views/partial_footer.php') ?>

@@ -1,6 +1,6 @@
 <body>
 <!-- Google analytics -->
-<?php include_once("analyticstracking.php") ?>
+<?php include_once(ROOT_PATH . "inc/analyticstracking.php") ?>
 
 
 
@@ -52,10 +52,10 @@
 
 
 <?php  // add the correct section header here
-  if($CL_SITE_SECTION == "landing") {include(ROOT_PATH . "inc/header_sitesection_banner_landing.php");}
-  else if($CL_SITE_SECTION == "home") {include(ROOT_PATH . "inc/header_sitesection_banner_home.php");}
-  else if($CL_SITE_SECTION == "talent") {include(ROOT_PATH . "inc/header_sitesection_banner_talent.php");}
-  else if($CL_SITE_SECTION == "follower") {include(ROOT_PATH . "inc/header_sitesection_banner_follower.php");}
+  if($CL_SITE_SECTION == "landing") {include(ROOT_PATH . "views/partial_banner_landing.php");}
+  else if($CL_SITE_SECTION == "home") {include(ROOT_PATH . "views/partial_banner_home.php");}
+  else if($CL_SITE_SECTION == "talent") {include(ROOT_PATH . "views/partial_banner_talent.php");}
+  else if($CL_SITE_SECTION == "follower") {include(ROOT_PATH . "views/partial_banner_follower.php");}
 ?>
 
 
@@ -106,7 +106,7 @@
       <br>
       <h1>Your Preferences - <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> </h1>
       <div class="clwhitebg">
-        <?php include(ROOT_PATH . 'inc/partial_follower_talent_preference_form.php'); ?>
+        <?php include(ROOT_PATH . 'views/partial_follower_talent_preference_form.php'); ?>
         <br>
         <button class="cl-button-standout" 
                   onclick="$('#cl-newluvwizard-screen-2').hide();$('#cl-newluvwizard-screen-3').show();return false;">
@@ -121,7 +121,7 @@
       <h1 class="cl-textcolor-standout">Confirm Your Contact Info</h1>
       
       <div class="clwhitebg">
-        <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
+        <?php include(ROOT_PATH . 'views/partial_userinfoform.php'); ?>
         <br><br>
         <button class="cl-button-standout" 
                   onclick="$('#CL_fullpage_transparentscreen').hide();$('#cl-newluvwizard-screen-3').hide();$('#content').show();return false;">

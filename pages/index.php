@@ -20,7 +20,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 
 
 
-<?php  include(ROOT_PATH . 'inc/cl_html_leader.php');   ?>
+<?php  include(ROOT_PATH . 'views/partial_cl_html_leader.php');   ?>
 
 
 <div class= "row" id="CL_landingpage_jumbotron">
@@ -193,7 +193,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
 
 
 
-<?php include(ROOT_PATH . 'inc/footer.php') ?>
+<?php include(ROOT_PATH . 'views/partial_footer.php') ?>
 
 
 <script type="text/javascript">

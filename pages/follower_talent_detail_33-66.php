@@ -90,7 +90,7 @@
 
 
    //Proceed to print the html header and body leaders
-    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
+    include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
 
 
 
@@ -102,7 +102,7 @@
         <h1 class="cl-textcolor-standout">Welcome to CrowdLuv</h1>
         <p> Please confirm your contact information. </p>
 
-        <?php include(ROOT_PATH . 'inc/userinfoform.php'); ?>
+        <?php include(ROOT_PATH . 'views/partial_userinfoform.php'); ?>
         <a href="#" onclick="$('#CL_fullpage_transparentscreen').hide();$('#CL_contactinfo_confirmation_modal').hide();return false;">
             <p class="cl-button-standout">Confirm</p>
         </a>
@@ -560,7 +560,7 @@
 
 
 
-<?php include(ROOT_PATH . 'inc/partial_create_new_event_modal.php'); ?>
+<?php include(ROOT_PATH . 'views/partial_create_new_event_modal.php'); ?>
 
 
 
@@ -865,4 +865,4 @@
 
 
 
-<?php include(ROOT_PATH . 'inc/footer.php'); ?>
+<?php include(ROOT_PATH . 'views/partial_footer.php'); ?>

@@ -28,7 +28,7 @@
 
 
 
-	include(ROOT_PATH . 'inc/cl_html_leader.php'); 	
+	include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 	
 
 ?>
 
@@ -106,7 +106,7 @@
 </script>
 
 
-<?php include(ROOT_PATH . 'inc/footer.php') ?>
+<?php include(ROOT_PATH . 'views/partial_footer.php') ?>
 
 
 

@@ -3,7 +3,7 @@
     $CL_SITE_SECTION = "landing";
     ////require_once "../inc/cl_bootstrap.php"; 
  
-    include(ROOT_PATH . 'inc/cl_html_leader.php'); 
+    include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
 
 ?>
     
@@ -81,4 +81,4 @@
 
 
 
-<?php include(ROOT_PATH . 'inc/footer.php') ?>
+<?php include(ROOT_PATH . 'views/partial_footer.php') ?>

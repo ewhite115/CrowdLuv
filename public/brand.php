@@ -147,13 +147,13 @@
     include(ROOT_PATH . 'inc/partial_confirm_target_talent_set.php');
 
 
-    include(ROOT_PATH . 'inc/cl_html_leader.php');
+    include(ROOT_PATH . 'views/partial_cl_html_leader.php');
 
 
 ?> 
 
-<?php include(ROOT_PATH . 'inc/partial_create_new_event_modal.php'); ?>
-<?php include(ROOT_PATH . 'inc/partial_create_question_modal.php'); ?>
+<?php include(ROOT_PATH . 'views/partial_create_new_event_modal.php'); ?>
+<?php include(ROOT_PATH . 'views/partial_create_question_modal.php'); ?>
 
 
    <!--  Profile Leader -->
@@ -449,7 +449,7 @@
             <div class="col-xs-12 col-sm-10 col-sm-offset-1  clwhitebg crowdluvsection ">
                 <h1 class="cl-textcolor-standout">Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
                 
-                    <?php include(ROOT_PATH . 'inc/partial_follower_talent_preference_form.php'); ?>
+                    <?php include(ROOT_PATH . 'views/partial_follower_talent_preference_form.php'); ?>
                     <button onclick='contact_preference_change_handler(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>, "still_following", "0")'>
                         Stop Following
                     </button>
@@ -1224,4 +1224,4 @@
 
 
 
-<?php include(ROOT_PATH . 'inc/footer.php'); ?>
+<?php include(ROOT_PATH . 'views/partial_footer.php'); ?>

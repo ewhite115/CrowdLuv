@@ -11,7 +11,7 @@ $citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crow
 
 
 
-include(ROOT_PATH . 'inc/cl_html_leader.php'); 
+include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
 
 ?>
 
@@ -543,4 +543,4 @@ include(ROOT_PATH . 'inc/cl_html_leader.php');
 
 
 
-<?php include(ROOT_PATH . 'inc/footer.php') ?>
+<?php include(ROOT_PATH . 'views/partial_footer.php') ?>

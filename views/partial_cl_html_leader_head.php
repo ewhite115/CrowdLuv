@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?php echo $pageTitle; ?></title>
+	<title><?php echo $clResponseInformation->pageTitle; ?></title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8" />

@@ -55,13 +55,13 @@ class CrowdLuvModel {
 
 
     public function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup) {
-        //pass in the JSON object returned by FB API
+        //pass in the array /  JSON object returned by FB API
         if(!$follower_fbup) return 0;
 
         try {
             //Update this line to insert any/all values from the user profile into db
             $f = $follower_fbup;
-            //var_dump($f);exit;       
+            
             $fblocid="0"; $fblocname="Unspecified"; $clPlaceID= 0;
             if(isset($f['location'])) {
                 $fblocid=$f['location']->id; 
@@ -75,17 +75,25 @@ class CrowdLuvModel {
             $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
             date_default_timezone_set('America/New_York');
             $fbbdate="1900-01-01"; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
+
+            //Execute the insert
             $sql = "INSERT INTO follower (fb_uid,                location_fb_id,     crowluv_placeid,   location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
                                   VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $clPlaceID . "', '"  . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
             //echo $sql;// exit;
             $results = $this->cldb->query($sql);
+            
+            //Return the crowdluv_uid of the newly created user
+            return $this->get_crowdluv_uid_by_fb_uid($f['id']);
             //var_dump($results); exit;
+            
             
             
         } catch (Exception $e) {
             echo "Data could not be inserted to the database. " . $e;
             return -1;
         }
+
+
     }
 
 
@@ -307,16 +315,25 @@ class CrowdLuvModel {
 
             $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id);
             $this->setDefautValuesForNewTalent($new_cl_tid);
+            return $new_cl_tid;
 
             //$results = $CL_db->query($sql);
         } catch (Exception $e) {
             echo "Failed inserting into talent table from create_new_cl_tlent_record_from_facebook_page_profile" . $e->getMessage();
             die;
-            return -1;
+            return null;
         }
 
+        return 0;
+        
     }
 
+    /**
+     * [create_new_cl_talent_record_from_facebook_user_like   Takes a fb page profile from a user's 'like' and creates and new CrowdLuv brand for it.]
+     * @param  [type] $talent_fbpp [description]
+     * @return [type]              [tid of the newly created brand.]
+     * @return null                 if there was an exception
+     */
     public function create_new_cl_talent_record_from_facebook_user_like($talent_fbpp){
         //pass in json object of the page
         //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
@@ -337,9 +354,7 @@ class CrowdLuvModel {
             $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id);
 
             $this->setDefautValuesForNewTalent($new_cl_tid);
-            //Default the vanity URL to the sanitized version of their facebook page name
-            //$this->update_talent_landingpage_vurl($new_cl_tid, htmlspecialchars($talent_fbpp->name));
-            //$tmp = $this->update_talent_landingpage_vurl($new_cl_tid, $this->getVURLFromFacebookLink($talent_fbpp->link));
+
             //echo "<pre>"; var_dump($tmp);  echo "</pre>"; 
             
             // Update the crowdluv_vurl to match that of the facebook page. bypass sanitization since it should alreayd be sanitized for fb.
@@ -347,13 +362,17 @@ class CrowdLuvModel {
             // TODO:  deal with  /pages/.../####
             $this->update_talent_setting($new_cl_tid, "crowdluv_vurl", $this->getVURLFromFacebookLink($talent_fbpp->link));
 
+            //return the talent id of the newly created entry
+            return $new_cl_tid;            
+            
             //$results = $CL_db->query($sql);
         } catch (Exception $e) {
             echo "Failed inserting into talent table from create_new_cl_talent_record_from_facebook_user_like" . $e->getMessage();
             die;
-            return -1;
+            return null;
         }
 
+        return 0;
 
     }
 

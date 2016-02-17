@@ -25,7 +25,7 @@
     </div>
 
 
-<?php include(ROOT_PATH . 'inc/partial_cl_followermap.php') ?>
+<?php include(ROOT_PATH . 'views/partial_cl_followermap.php') ?>
 
 
 

@@ -11,9 +11,9 @@
 
 class CrowdLuvFacebookHelper {
 
-	//TODO:  make private and add getter()
-    public $facebookSession = null;
     public $isNewSession = false;
+ 
+    private $facebookSession = null;
     private $facebookLoginHelper = null;
     private $facebookJavascriptLoginHelper = null;
     private $talentLoginURL = null;
@@ -51,8 +51,10 @@ class CrowdLuvFacebookHelper {
 
 	function __construct() {
 
-        //print "In BaseClass constructor\n";
-        FacebookSession::setDefaultApplication( CL_FB_APP_ID, CL_FB_APP_SECRET);
+   		//Check for fb_user session variable and print result to CL debugger log
+  		//if(isset($_SESSION['fb_user'])) { cldbgmsg("CL_SESSION['fb_user'] = " . $_SESSION['fb_user']);} else { cldbgmsg("CL_SESSION['fb_user'] not set");}
+
+    	FacebookSession::setDefaultApplication( CL_FB_APP_ID, CL_FB_APP_SECRET);
  		$this->facebookSession= null;
 		$this->facebookLoginHelper = new FacebookRedirectLoginHelper(CLADDR);
 		$this->facebookJavascriptLoginHelper = new FacebookJavaScriptLoginHelper();
@@ -221,13 +223,13 @@ class CrowdLuvFacebookHelper {
 
 	     try{
 	        // graph api request for pages the user manages
-	        $request = new FacebookRequest( $facebookSession, 'GET', '/me/accounts' );
+	        $request = new FacebookRequest( $this->facebookSession, 'GET', '/me/accounts' );
 	        $response = $request->execute();
 	        return $response->getGraphObject()->asArray();
 	        //echo "<pre>"; var_dump($fb_user_pages); echo "</pre>";	        
 	   
 	      } catch (FacebookApiException $e) {        
-	        cldbgmsg("FacebookAPIException in cl_init.php requesting page info:-------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+	        cldbgmsg("FacebookAPIException in CrowdLuvFacebookHelper->getManagedPages requesting page info:-------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
 	        return null;
 	      }       
 

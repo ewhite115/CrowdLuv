@@ -8,15 +8,12 @@
  * 
  */
 
-  $_SESSION["debugmsgs"] = "";
-  function cldbgmsg($debugmessage){
+ function cldbgmsg($debugmessage){
 
     $_SESSION["debugmsgs"][] = $debugmessage;
 
   }
   if(isset($_COOKIE["PHPSESSID"])) { cldbgmsg("COOKIE['PHPSESSID'] = " . $_COOKIE["PHPSESSID"]) ;} else { cldbgmsg("PHPSEESID cookie doesnt exist");}//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
-
-
 
 
 
@@ -29,7 +26,8 @@ session_save_path($dir);
 //  inside the init_session file, because Symfony 
 //  requires that we not call it when using the child/ admin application  (?)
 session_start();
-
+$_SESSION["debugmsgs"] = "";
+  
 
 /** Load BASE_URL and ROOT_PATH environment variables, which are needed to ensure that
  * 	we can load the subsequent bootstrap files from the correct location, regardless of
@@ -50,11 +48,16 @@ require_once ROOT_PATH . "inc/cl_bootstrap_configs.php" ;
 require_once ROOT_PATH . 'vendor/autoload.php';
 
 
-//Establish DB connection and global $CL_model object
-require_once ROOT_PATH . "inc/cl_bootstrap_model.php";
+//Create CL_model with it's db dependency
+$CL_model = new CrowdLuvModel();
+$CL_model->setDB((new CrowdLuvDBFactory())->getCrowdLuvDB());
 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
+
 $clRequestInformation = new CrowdLuvRequestInformation();
+$clRequestInformation->clFacebookHelper = $clFacebookHelper;
+$clRequestInformation->clModel = $CL_model;
+
 $clResponseInformation = new CrowdLuvResponseInformation();
  
 
@@ -64,4 +67,7 @@ require_once ROOT_PATH . "inc/cl_bootstrap_facebook.php";
 //Check for additional parameters on query string and update globals or db accordingly
 require_once ROOT_PATH . "inc/cl_bootstrap_parameters.php";
 
+//Make an initial call to set the target brand.  Eventually remove this after we've refactored to remove the CL_CUR_)TGT_Talent global var
+$clRequestInformation->getTargetBrand();
+$clRequestInformation->getActiveManagedBrand();
 

@@ -56,7 +56,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
       <div class="text-center crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
           <!-- <h1 class="cl-textcolor-standout cl-major-heading">For Fans</h1> -->
           <p class=""> Get your favorite acts to come to you. Share the Luv to establish yourself as the #1 fan and earn VIP perks.  </p><br>
-          <a href="<?php echo $talentLoginURL;?>"><img  class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
+          <a href="<?php echo $clFacebookHelper->getLoginUrl(); ?>"><img  class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
 
           <br> 
           <!-- User Denied Facebook Permission -->

@@ -5,7 +5,7 @@
 
 <!-- ***  Modal for adding an event -->
 <div hidden id="CL-modal-add-event" class="CL_modal text-center crowdluvsection">
-    <h1 class="cl-textcolor-standout">Add a <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> Event</h1>
+    <h1 class="cl-textcolor-standout">Add a <?= $clRequestInformation->getTargetBrand()['fb_page_name'];?> Event</h1>
 
 
 
@@ -13,7 +13,7 @@
         <div>
             <form id="CL-form-add-event">
                 <input type="hidden" name="created-by-crowdluv-uid" value="<?= $CL_LOGGEDIN_USER_UID;?>">
-                <input type="hidden" name="created-for-crowdluv-tid" value="<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+                <input type="hidden" name="created-for-crowdluv-tid" value="<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>">
                 <label for="type">Type:</label>
                 <select name="type">
                   <option value="performance">Performance/Appearance</option>

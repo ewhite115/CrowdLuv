@@ -30,7 +30,7 @@
 
 
     if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_all_thisbrand"){
-        $CL_model->importEventsForTalent($CL_CUR_TGT_TALENT['crowdluv_tid'] , $CL_CUR_TGT_TALENT['fb_pid'], $facebookSession);
+        $CL_model->importEventsForTalent($clRequestInformation->getTargetBrand()['crowdluv_tid'] , $clRequestInformation->getTargetBrand()['fb_pid'], $facebookSession);
     }
 
    if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_sincenow_allbrands"){
@@ -59,10 +59,10 @@
 
     //selspec for searching by tags
     //$selspec = qa_db_search_posts_selectspec($voteuserid, $titlewords, $contentwords, $tagwords, $handlewords, $handle, $start, $full=false, $count=null);
-    //$selspec = qa_db_search_posts_selectspec($CL_LOGGEDIN_USER_UID, null, null, "crowdluvtid" . $CL_CUR_TGT_TALENT['crowdluv_tid'], null, null, 0, true, 10);
+    //$selspec = qa_db_search_posts_selectspec($CL_LOGGEDIN_USER_UID, null, null, "crowdluvtid" . $clRequestInformation->getTargetBrand()['crowdluv_tid'], null, null, 0, true, 10);
     //selspec for selecting by tag
     
-    $selspec = qa_db_tag_recent_qs_selectspec(isset($CL_LOGGEDIN_USER_UID) ? $CL_LOGGEDIN_USER_UID : null, "crowdluvtid" . $CL_CUR_TGT_TALENT['crowdluv_tid'], 0, true, 10);
+    $selspec = qa_db_tag_recent_qs_selectspec(isset($CL_LOGGEDIN_USER_UID) ? $CL_LOGGEDIN_USER_UID : null, "crowdluvtid" . $clRequestInformation->getTargetBrand()['crowdluv_tid'], 0, true, 10);
     //selspec for all
     //$selspec = qa_db_qs_selectspec($CL_LOGGEDIN_USER_UID, 'created', 0, null, null, false, true, 10);
 
@@ -76,12 +76,12 @@
 
 
     //construct the page title and OG tag values
-    $pageTitle = $CL_CUR_TGT_TALENT['fb_page_name'] . " on CrowdLuv";
+    $clResponseInformation->pageTitle = $clRequestInformation->getTargetBrand()['fb_page_name'] . " on CrowdLuv";
 
     if(isset($_GET['eventID'])) {
 
         $eventDets = $CL_model->getEventDetails($_GET['eventID'], isset($CL_LOGGEDIN_USER_OBJ['crowdluv_uid']) ? $CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] : null );
-        $pageTitle = $CL_CUR_TGT_TALENT['fb_page_name'] . " event on CrowdLuv";
+        $pageTitle = $clRequestInformation->getTargetBrand()['fb_page_name'] . " event on CrowdLuv";
         $CL_OG_DESCRIPTION = $eventDets['title'] . " - " . $eventDets['name'] . " - " . $eventDets['start_time'];
         //echo "<pre>"; var_dump($eventDets); echo "</pre>"; 
     }
@@ -94,28 +94,28 @@
 
     //Get talent info
     //Get the list of luvers for the top luvers luverboard
-    $rankedLuvers = $CL_model->getFollowersWhoLuvTalentSortedByScore($CL_CUR_TGT_TALENT['crowdluv_tid']);
+    $rankedLuvers = $CL_model->getFollowersWhoLuvTalentSortedByScore($clRequestInformation->getTargetBrand()['crowdluv_tid']);
     //echo "<pre>"; var_dump($rankedLuvers); echo "</pre>";die;
     //Get the list of top cities for the top cities luverboard
     $cnt=1;
-    $topcities= $CL_model->get_top_cities_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']);
+    $topcities= $CL_model->get_top_cities_for_talent($clRequestInformation->getTargetBrand()['crowdluv_tid']);
     //var_dump($topcities);
     
 
     //If there's a logged-in follower, get additional info about the talent for the follower
     if(isset($CL_LOGGEDIN_USER_UID)){
-        $score = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']); 
-        $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']);
+        $score = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $clRequestInformation->getTargetBrand()['crowdluv_tid']); 
+        $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $clRequestInformation->getTargetBrand()['crowdluv_tid']);
 
         //Get the follower's settings for the target talent
         $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);  
-        foreach($ret_tals as &$ret_tal){ if($ret_tal['crowdluv_tid'] == $CL_CUR_TGT_TALENT['crowdluv_tid']) $targetTalentPreferences = $ret_tal;}   
+        foreach($ret_tals as &$ret_tal){ if($ret_tal['crowdluv_tid'] == $clRequestInformation->getTargetBrand()['crowdluv_tid']) $targetTalentPreferences = $ret_tal;}   
 
         //Get My city's rank.
-        $myCityRank = $CL_model->calculate_city_rank_for_talent($CL_LOGGEDIN_USER_OBJ['location_fb_id'], $CL_CUR_TGT_TALENT['crowdluv_tid']);
+        $myCityRank = $CL_model->calculate_city_rank_for_talent($CL_LOGGEDIN_USER_OBJ['location_fb_id'], $clRequestInformation->getTargetBrand()['crowdluv_tid']);
 
         //Get the sorted/ranked list of luver in my city
-        $rankedLuversMyCity = $CL_model->getFollowersWhoLuvTalentInCitySortedByScore($CL_CUR_TGT_TALENT['crowdluv_tid'], $CL_LOGGEDIN_USER_OBJ['location_fbname'], 5);
+        $rankedLuversMyCity = $CL_model->getFollowersWhoLuvTalentInCitySortedByScore($clRequestInformation->getTargetBrand()['crowdluv_tid'], $CL_LOGGEDIN_USER_OBJ['location_fbname'], 5);
 
         //Sharing
         $nowTimestamp = date("Y-m-d G:i:s", time());
@@ -123,20 +123,20 @@
                                 'shareType' => "crowdluv-talent-landing-page",
                                 'shareDetails' => [
                                     "crowdluvUID" => $CL_LOGGEDIN_USER_UID, 
-                                    'crowdluvTID' => $CL_CUR_TGT_TALENT['crowdluv_tid']
+                                    'crowdluvTID' => $clRequestInformation->getTargetBrand()['crowdluv_tid']
                                     ],
                                 'timestamp' => $nowTimestamp  
                                 ];
 
                 
         $potentialShareRecord['shareMethod'] = "facebook-share";
-        $CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord, true);
+        $clRequestInformation->getTargetBrand()['facebook_share_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord, true);
         
         $potentialShareRecord['shareMethod'] = "facebook-send";
-        $CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord, true);
+        $clRequestInformation->getTargetBrand()['facebook_send_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord, true);
         
         $potentialShareRecord['shareMethod'] = "twitter-tweet";
-        $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord, true);
+        $clRequestInformation->getTargetBrand()['twitter_tweet_landingpage_eligibility'] = $CL_model->calculateEligibilityForShareRecord($potentialShareRecord, true);
 
     }
 
@@ -179,7 +179,7 @@
                     </div>
                     <?php if( $targetTalentPreferences) { ?>
                         <p2>
-                            <?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?> out of <?php echo count($CL_model->get_followers_for_talent($CL_CUR_TGT_TALENT['crowdluv_tid']));?> fans     
+                            <?php if($rank['tie_count'] > 0 ) echo "Tied for";  ?> #<?php echo $rank['rank'];   ?> out of <?php echo count($CL_model->get_followers_for_talent($clRequestInformation->getTargetBrand()['crowdluv_tid']));?> fans     
                             -- (<?php echo $score; ?> Luvs)</p2>
                         
 
@@ -261,37 +261,37 @@
     <div class="row">      
        <div class="col-xs-12 col-sm-10 col-sm-offset-1 clwhitebg crowdluvsection text-center">
                 
-            <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+            <a href="brand.php?crowdluv_tid=<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>">
             <h1 class="cl-textcolor-standout">
-                <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>
+                <?php echo $clRequestInformation->getTargetBrand()['fb_page_name'];?>
             </h1>               
 
-            <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=large<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">             
+            <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $clRequestInformation->getTargetBrand()["fb_pid"];?>/picture?type=large<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">             
             </a>
 
             <!-- **** Buttons or call-to-action -->
             <?php if($targetTalentPreferences) { ?>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+                <a href="brand.php?crowdluv_tid=<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>">
                     <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
                         Overview
                     </button>                      
                 </a>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=preferences">
+                <a href="brand.php?crowdluv_tid=<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>&p=preferences">
                     <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
                         Your Preferences 
                     </button>                      
                 </a>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=showyourluv">
+                <a href="brand.php?crowdluv_tid=<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>&p=showyourluv">
                     <button class="cl-button-standout-narrow" name="btn_showyourluv" id="btn_showyourluv" >
                         Show Your Luv
                     </button>                      
                 </a>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=events">
+                <a href="brand.php?crowdluv_tid=<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>&p=events">
                     <button class="cl-button-standout-narrow" name="btn_events" id="btn_events" >
                         Events
                     </button>                      
                 </a>
-                <a href="brand.php?crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>&p=questions">
+                <a href="brand.php?crowdluv_tid=<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>&p=questions">
                     <button class="cl-button-standout-narrow" name="btn_questions" id="btn_questions" >
                         Fan Q&A
                     </button>                      
@@ -301,7 +301,7 @@
 
             <?php if(! $targetTalentPreferences) { ?>
                 <h1><u>Luv</u> us?</h1>
-                <button class="cl-button-standout" onclick="loginAndLuvTalent(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?> , '');"> 
+                <button class="cl-button-standout" onclick="loginAndLuvTalent(<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?> , '');"> 
                   <h1>Yes! </h1>  Sign-up / Sign-In and Luv us on CrowdLuv 
                 </button>
                 <p>Receive our most important updates.</p>
@@ -446,10 +446,10 @@
        <!-- Preferences Panel  -->
         <div id="div-preferences" class="fluid-row">
             <div class="col-xs-12 col-sm-10 col-sm-offset-1  clwhitebg crowdluvsection ">
-                <h1 class="cl-textcolor-standout">Your Preferences for <?= $CL_CUR_TGT_TALENT['fb_page_name'];?></h1>
+                <h1 class="cl-textcolor-standout">Your Preferences for <?= $clRequestInformation->getTargetBrand()['fb_page_name'];?></h1>
                 
                     <?php include(ROOT_PATH . 'views/partial_follower_talent_preference_form.php'); ?>
-                    <button onclick='contact_preference_change_handler(<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>, "still_following", "0")'>
+                    <button onclick='contact_preference_change_handler(<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>, "still_following", "0")'>
                         Stop Following
                     </button>
             </div>
@@ -464,7 +464,7 @@
                 <h1 class="cl-textcolor-standout">Show your Luv</h1>
                 <hr>
 
-                <p id="<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans"></p>
+                <p id="<?php echo $clRequestInformation->getTargetBrand()['fb_pid'];?>_friendfans"></p>
 
                 <?php if(isset($CL_LOGGEDIN_USER_UID)) { ?>
                 <!-- Share Talent Card 
@@ -630,7 +630,7 @@
 
                 <div id="myTabContent" class="tab-content">
                     <div class="tab-pane fade in active cl-panel-vscroll cl-panel-tall-height" id="home">
-                        <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan?</h2>
+                        <h2 class="text-center">Are you <?php echo $clRequestInformation->getTargetBrand()['fb_page_name'];?>'s #1 Fan?</h2>
                         <p class="text-center">Learn how to <a href="shareluv.php">Show your Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>
                             <p>
@@ -644,7 +644,7 @@
                     </div>
                     <div class="tab-pane fade cl-panel-vscroll cl-panel-medium-height" id="top-cities">
   
-                        <h2 class="text-center">Does your city have the most Luv for <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>?</h2>
+                        <h2 class="text-center">Does your city have the most Luv for <?php echo $clRequestInformation->getTargetBrand()['fb_page_name'];?>?</h2>
                         <p class="text-center"><a href="shareluv.php">Show your Luv</a> to increase your City's LuvScore. </p>
 
                         <?php foreach($topcities as $row){ ?>
@@ -670,7 +670,7 @@
 
                    </div>
                    <div class="tab-pane fade cl-panel-vscroll  cl-panel-medium-height" id="top-luvers-city">
-                        <h2 class="text-center">Are you <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>'s #1 Fan in <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>?</h2>
+                        <h2 class="text-center">Are you <?php echo $clRequestInformation->getTargetBrand()['fb_page_name'];?>'s #1 Fan in <?php echo $CL_LOGGEDIN_USER_OBJ['location_fbname'];?>?</h2>
                         <p class="text-center">Learn how to <a href="shareluv.php">Show your Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuversMyCity as $rankedLuver) { ?>
                             <p>
@@ -922,7 +922,7 @@
 
         //console.log("dsfsa");
 
-        $.post( "ajax_handle_post.php", "ajaxPostType=getUpcomingEventsForTalent&related_crowdluv_tid=<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>",
+        $.post( "ajax_handle_post.php", "ajaxPostType=getUpcomingEventsForTalent&related_crowdluv_tid=<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>",
             function(response, status, xhr){
 
                 console.log("ajax_handle_post for getting upcomin events:");
@@ -1113,9 +1113,9 @@
        <?php if(isset($CL_LOGGEDIN_USER_UID) && $profileSubPage == "showyourluv"){ ?>
         $("#div-sharing .card-info").html("");
         //add landing-page fbshare widget
-        var vurlOrTID = "<?php if($CL_CUR_TGT_TALENT["crowdluv_vurl"] == "")
-                                    { echo $CL_CUR_TGT_TALENT["crowdluv_tid"];} 
-                               else {echo $CL_CUR_TGT_TALENT["crowdluv_vurl"];}
+        var vurlOrTID = "<?php if($clRequestInformation->getTargetBrand()["crowdluv_vurl"] == "")
+                                    { echo $clRequestInformation->getTargetBrand()["crowdluv_tid"];} 
+                               else {echo $clRequestInformation->getTargetBrand()["crowdluv_vurl"];}
                         ?>";
         console.log(vurlOrTID);
 
@@ -1126,12 +1126,12 @@
                                         shareDetails: {
                                             vurl: vurlOrTID,
                                             crowdluvUID: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
-                                            crowdluvTID: '<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>'
+                                            crowdluvTID: '<?php echo $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>'
 
                                         },
-                                        luvPoints: <?php echo $CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility']['eligibleLuvPoints'];?>,
-                                        nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['facebook_share_landingpage_eligibility']['nextEligibleTimestamp']); ?>",
-                                        widgetID: "cl-share-widget-facebook-share-<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>"
+                                        luvPoints: <?php echo $clRequestInformation->getTargetBrand()['facebook_share_landingpage_eligibility']['eligibleLuvPoints'];?>,
+                                        nextShareTimeString: "<?= getNextShareTimeString($clRequestInformation->getTargetBrand()['facebook_share_landingpage_eligibility']['nextEligibleTimestamp']); ?>",
+                                        widgetID: "cl-share-widget-facebook-share-<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>"
                                         });
 
         $("#div-sharing .card-info").append(fbShareWidgetHTML);
@@ -1145,11 +1145,11 @@
                                         shareDetails: {
                                             vurl: vurlOrTID,
                                             crowdluvUID: '<?php echo $CL_LOGGEDIN_USER_UID;?>',
-                                            crowdluvTID: '<?php echo $CL_CUR_TGT_TALENT['crowdluv_tid'];?>'
+                                            crowdluvTID: '<?php echo $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>'
                                         },
-                                        luvPoints: <?php echo $CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility']['eligibleLuvPoints'];?>,
-                                        nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['facebook_send_landingpage_eligibility']['nextEligibleTimestamp']); ?>",
-                                        widgetID: "cl-share-widget-facebook-send-<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>"
+                                        luvPoints: <?php echo $clRequestInformation->getTargetBrand()['facebook_send_landingpage_eligibility']['eligibleLuvPoints'];?>,
+                                        nextShareTimeString: "<?= getNextShareTimeString($clRequestInformation->getTargetBrand()['facebook_send_landingpage_eligibility']['nextEligibleTimestamp']); ?>",
+                                        widgetID: "cl-share-widget-facebook-send-<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>"
                                         });
         $("#div-sharing .card-info").append(fbSendWidgetHTML);
          
@@ -1160,12 +1160,12 @@
                                                 shareMethod: "twitter-tweet",
                                                 shareDetails: {
                                                     vurl: vurlOrTID,
-                                                    talentName: "<?= $CL_CUR_TGT_TALENT['fb_page_name'];?>",
+                                                    talentName: "<?= $clRequestInformation->getTargetBrand()['fb_page_name'];?>",
                                                     crowdluvUID: "<?= $CL_LOGGEDIN_USER_UID;?>",
-                                                    crowdluvTID: "<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>"
+                                                    crowdluvTID: "<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>"
                                                 },
-                                                luvPoints: <?= $CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility']['eligibleLuvPoints'];?>,
-                                                nextShareTimeString: "<?= getNextShareTimeString($CL_CUR_TGT_TALENT['twitter_tweet_landingpage_eligibility']['nextEligibleTimestamp']);?>"
+                                                luvPoints: <?= $clRequestInformation->getTargetBrand()['twitter_tweet_landingpage_eligibility']['eligibleLuvPoints'];?>,
+                                                nextShareTimeString: "<?= getNextShareTimeString($clRequestInformation->getTargetBrand()['twitter_tweet_landingpage_eligibility']['nextEligibleTimestamp']);?>"
                                           });
         
         $("#div-sharing .card-info").append(tweetLandingPageWidgetHTML);
@@ -1192,20 +1192,20 @@
                 {   
                 method: 'fql.query',
                 //query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=661469737211316 AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
-                query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?> AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
+                query: 'Select uid, first_name, last_name from user where uid in (SELECT uid FROM page_fan WHERE page_id=<?php echo $clRequestInformation->getTargetBrand()['fb_pid'];?> AND uid IN (SELECT uid2 FROM friend WHERE uid1=me()))'
                 }, 
                 function(data) {
                     console.log("in handler for call to get friends who like the talent:");           
                     console.log(data);
                     //For each of the friends, add their picture to the slide-down for the talent
                     if(data.length==0){ 
-                        $("#<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans").append("None of your Facebook friends like <?php echo $CL_CUR_TGT_TALENT['fb_page_name'];?>... Share a post on your wall and invite your friends to show some Luv?<br>"); 
+                        $("#<?php echo $clRequestInformation->getTargetBrand()['fb_pid'];?>_friendfans").append("None of your Facebook friends like <?php echo $clRequestInformation->getTargetBrand()['fb_page_name'];?>... Share a post on your wall and invite your friends to show some Luv?<br>"); 
                     }
                     else{ 
-                        $("#<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans").append("Some of your Facebook friends already like us... invite them to LUV us! <br>");
+                        $("#<?php echo $clRequestInformation->getTargetBrand()['fb_pid'];?>_friendfans").append("Some of your Facebook friends already like us... invite them to LUV us! <br>");
                     }
                     for(var i=0;i<data.length;i++){
-                        $("#<?php echo $CL_CUR_TGT_TALENT['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
+                        $("#<?php echo $clRequestInformation->getTargetBrand()['fb_pid'];?>_friendfans").append('<img src="https://graph.facebook.com/' + data[i].uid + '/picture" width="8%" title="' + data[i].first_name + ' ' + data[i].last_name + '"> ');
                     }
                     //
                 }

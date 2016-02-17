@@ -61,7 +61,7 @@
             //Handler to reload the page when user changes the drop down for new follower interval
             $("#opt_new_follower_interval").change(function(){
                 //console.log("inside handler for new follower interval dropdown");
-                window.open('<?php echo BASE_URL;?>topcities.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"];?>&activemanagedtalentid=<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>&nfinterval=' + $("#opt_new_follower_interval").val() , "_top").focus();
+                window.open('<?php echo BASE_URL;?>topcities.php?crowdluv_tid=<?php echo $clRequestInformation->getTargetBrand()["crowdluv_tid"];?>&activemanagedtalentid=<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>&nfinterval=' + $("#opt_new_follower_interval").val() , "_top").focus();
             
             });
 

@@ -3,19 +3,19 @@
  	
 	$clResponseInformation->clSiteSection = "home";
  
-	if(isset($CL_CUR_TGT_TALENT)) $pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
+	if($clRequestInformation->getTargetBrand() ) $pageTitle = "Want " . $clRequestInformation->getTargetBrand()['fb_page_name'] . " in your Town? -  CrowdLuv";
 	
 	
 	//Get the landing page settings for this talent  (do this before printing header)
-	$tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_CUR_TGT_TALENT['crowdluv_tid']);   //var_dump($tlpgsettings); exit;
+	$tlpgsettings = $CL_model->get_talent_landingpage_settings($clRequestInformation->getTargetBrand()['crowdluv_tid']);   //var_dump($tlpgsettings); exit;
     //Set the URL for the image that will be used on the page and in the og: meta tags
-    //if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT['fb_pid'] . "/picture?type=large&access_token=" . $facebookSession->getToken();
-    if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_CUR_TGT_TALENT['fb_pid'] . "/picture?type=large";
+    //if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $clRequestInformation->getTargetBrand()['fb_pid'] . "/picture?type=large&access_token=" . $facebookSession->getToken();
+    if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $clRequestInformation->getTargetBrand()['fb_pid'] . "/picture?type=large";
     //else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default")  $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
- 	else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = CLADDR . 'crowdluvdata/talent/' . $CL_CUR_TGT_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
+ 	else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = CLADDR . 'crowdluvdata/talent/' . $clRequestInformation->getTargetBrand()["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';
     $CL_OG_IMAGE = $tlpimg;
-    $CL_OG_DESCRIPTION = $CL_CUR_TGT_TALENT['fb_page_name'] . " wants to know where to visit. Vote for your town"; 
+    $CL_OG_DESCRIPTION = $clRequestInformation->getTargetBrand()['fb_page_name'] . " wants to know where to visit. Vote for your town"; 
 
 
 	// and check that a crowdluv_tid has been passed in
@@ -39,7 +39,7 @@
 	
 	<div class="row crowdluvsection text-center">
 		<div class="col-xs-12">
-			<h1>Want <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> in your town?</h1><br>
+			<h1>Want <?php echo $clRequestInformation->getTargetBrand()['fb_page_name']; ?> in your town?</h1><br>
 			<a href="#" id="fbtab_cometomytown">
 				<img src="/res/yescometomytown.jpg">
 			</a><br><br>
@@ -50,7 +50,7 @@
 
 	<div class="row talent_landingpage_talentmessagesection">
 		<div class="col-xs-offset-1  crowdluvsection ">
-			<h1>New Message from <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>:</h1>
+			<h1>New Message from <?php echo $clRequestInformation->getTargetBrand()['fb_page_name']; ?>:</h1>
 			<p><?php echo $tlpgsettings['message'];?></p>
 		</div>
 
@@ -68,11 +68,11 @@
 				</div>
 				<div class="row">
 					<div class="text-right col-xs-1 crowdluvsection "><img src="/res/graypadlock.jpg"></div>
-					<div class="col-xs-10 "> <p>The Facebook information you share will remain private and will not be shared with anyone else. Your contact information will not even be shared with <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>! <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> has to log into CrowdLuv in order to send you text messages or emails. Your contact information is hidden from all talent . </p></div>
+					<div class="col-xs-10 "> <p>The Facebook information you share will remain private and will not be shared with anyone else. Your contact information will not even be shared with <?php echo $clRequestInformation->getTargetBrand()['fb_page_name']; ?>! <?php echo $clRequestInformation->getTargetBrand()['fb_page_name']; ?> has to log into CrowdLuv in order to send you text messages or emails. Your contact information is hidden from all talent . </p></div>
 				</div>
 				<div class="row">
 					<div class="text-right col-xs-1 crowdluvsection "><img src="/res/grayletter.jpg"></div>
-					<div class="col-xs-10 "> <p><?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?> will keep in touch via email or text message to let you know when he comes to your town. By Luv'ing <?php echo $CL_CUR_TGT_TALENT['fb_page_name']; ?>, you get to decide where he goes next! </p>	</div>
+					<div class="col-xs-10 "> <p><?php echo $clRequestInformation->getTargetBrand()['fb_page_name']; ?> will keep in touch via email or text message to let you know when he comes to your town. By Luv'ing <?php echo $clRequestInformation->getTargetBrand()['fb_page_name']; ?>, you get to decide where he goes next! </p>	</div>
 				</div>
 			</div>
 
@@ -91,7 +91,7 @@
 		    FB.login(function(response) {
 		        if (response.authResponse) {
 		            console.log("User authorized - redirecting to luv.php");
-		            window.open('<?php echo BASE_URL;?>luv.php?crowdluv_tid=<?php echo $CL_CUR_TGT_TALENT["crowdluv_tid"] . "&ref_uid=" . $ref_uid;?>', "_top").focus();
+		            window.open('<?php echo BASE_URL;?>luv.php?crowdluv_tid=<?php echo $clRequestInformation->getTargetBrand()["crowdluv_tid"] . "&ref_uid=" . $ref_uid;?>', "_top").focus();
 		            return false;
 		          } //end if
 		          else {// The person cancelled the login dialog 

@@ -53,7 +53,7 @@ require_once ROOT_PATH . "inc/cl_bootstrap_model.php";
 require_once ROOT_PATH . "inc/cl_bootstrap_debug.php";
 
 //Check for existing session variables and populate globals accordingly
-require_once ROOT_PATH . "inc/cl_bootstrap_sessionglobals.php";
+//require_once ROOT_PATH . "inc/cl_bootstrap_sessionglobals.php";
 
 //Load facebook SDK, Check for facebook session, create/update globals and DB accordingly
 //require_once ROOT_PATH . "inc/facebook-sdk/facebook.php";

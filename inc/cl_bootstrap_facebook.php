@@ -9,6 +9,46 @@
   //var_dump($_SESSION);
 
 
+
+
+
+
+/**
+ * [checkFacebookPermissions Makes graph API call to facebook to get permissions, and returns true/false if the user has granted sufficient permissions]
+ * @param  [FacebookSession] $fbSession [FacebookSession to use for making the API call]
+ * @param  [Array]           $required_perms [Array of required permissions]
+ * @return [bool]        [true if the user has granted sufficient permissions]
+ */
+  function checkFacebookPermissions($fbSession, $required_perms) {
+    try { 
+        // graph api request for user permissions
+        $request = new FacebookRequest( $fbSession, 'GET', '/me/permissions' );
+        $response = $request->execute();
+        // get response
+        $fb_user_permissions = $response->getGraphObject()->asArray();
+        //echo "<pre> Response to facebook graph call /me/permissions :"; var_dump($fb_user_permissions); echo "</pre>"; die;
+
+        foreach($fb_user_permissions as $perm){
+          //echo "<pre> perm :"; var_dump($perm); echo "</pre>"; die();
+          if($perm->permission == "installed"  && $perm->status != "granted" ) return false;
+          if($perm->permission == "public_profile"  && $perm->status != "granted" ) return false;
+          if(in_array($perm->permission, $required_perms) && $perm->status != "granted" ) return false;
+
+        }
+
+    } catch (FacebookApiException $e) {
+        //error_log($e);
+        cldbgmsg("FacebookAPIException in cl_init.php requesting user permissions:  " . $e);// var_dump($e);
+    }     
+    return true;
+
+  }//ChekFacebookPermissions
+
+
+
+
+
+
   /**
    * TODO:  is this still relvant in api 4.0?
    * Facebook Permissions Denied
@@ -54,41 +94,6 @@ $facebookLikeCategoriesToCreateStubsFor = array (
   'Author'
 
   );
-
-
-
-/**
- * [checkFacebookPermissions Makes graph API call to facebook to get permissions, and returns true/false if the user has granted sufficient permissions]
- * @param  [FacebookSession] $fbSession [FacebookSession to use for making the API call]
- * @param  [Array]           $required_perms [Array of required permissions]
- * @return [bool]        [true if the user has granted sufficient permissions]
- */
-  function checkFacebookPermissions($fbSession, $required_perms) {
-    try { 
-        // graph api request for user permissions
-        $request = new FacebookRequest( $fbSession, 'GET', '/me/permissions' );
-        $response = $request->execute();
-        // get response
-        $fb_user_permissions = $response->getGraphObject()->asArray();
-        //echo "<pre> Response to facebook graph call /me/permissions :"; var_dump($fb_user_permissions); echo "</pre>"; die;
-
-        foreach($fb_user_permissions as $perm){
-          //echo "<pre> perm :"; var_dump($perm); echo "</pre>"; die();
-          if($perm->permission == "installed"  && $perm->status != "granted" ) return false;
-          if($perm->permission == "public_profile"  && $perm->status != "granted" ) return false;
-          if(in_array($perm->permission, $required_perms) && $perm->status != "granted" ) return false;
-
-        }
-
-    } catch (FacebookApiException $e) {
-        //error_log($e);
-        cldbgmsg("FacebookAPIException in cl_init.php requesting user permissions:  " . $e);// var_dump($e);
-    }     
-    return true;
-
-  }//ChekFacebookPermissions
-
-
 
 
 

@@ -21,8 +21,8 @@
     }
 
  
-
-    $CL_SITE_SECTION = "follower";
+    //removed 2/16 - follower is set as default section during bootstrap
+    //$CL_SITE_SECTION = "follower";
 
  
     //Determine which brand profile subpage is being requested

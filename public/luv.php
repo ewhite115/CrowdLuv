@@ -14,10 +14,10 @@
     //if(! isset($_GET['crowdluv_tid'])) {echo "no crowdluv_tid passed in"; exit;}  
 
     //Record that the follower luvs the talent
-    $CL_model->setFollower_Luvs_Talent($CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid'], 1);
+    $CL_model->setFollower_Luvs_Talent($CL_LOGGEDIN_USER_UID, $clRequestInformation->getTargetBrand()['crowdluv_tid'], 1);
     //If there was a share referral for this Luv, record it
     //  TODO:  check aboveto see if the referee already luvs, and if so, skip the following line
-    if(isset($_GET['ref_uid']))  $CL_model->recordTalentShareReferralConversion($_GET['ref_uid'], $CL_LOGGEDIN_USER_UID, $CL_CUR_TGT_TALENT['crowdluv_tid']);
+    if(isset($_GET['ref_uid']))  $CL_model->recordTalentShareReferralConversion($_GET['ref_uid'], $CL_LOGGEDIN_USER_UID, $clRequestInformation->getTargetBrand()['crowdluv_tid']);
     
     //Check if this is the first talent that the follower has Luv'ed.
     //This count will be passed to the next page so that it can display notices to
@@ -31,7 +31,7 @@
 
     
     //Redirect to the follower dashboard/ "share luv" page. 
-    header('Location: brand.php?crowdluv_tid=' . $CL_CUR_TGT_TALENT['crowdluv_tid'] . '&newluv=' . $tcnt );
+    header('Location: brand.php?crowdluv_tid=' . $clRequestInformation->getTargetBrand()['crowdluv_tid'] . '&newluv=' . $tcnt );
     exit;
 
 ?>

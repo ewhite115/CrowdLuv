@@ -1,7 +1,7 @@
 <?php 
     //require_once "../inc/cl_bootstrap.php"; 
     
-    $clResponseInformation->clCiteSection = "talent";
+    $clResponseInformation->clSiteSection = "talent";
     
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
     // if(! isset($CL_LOGGEDIN_USER_UID) || ! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 

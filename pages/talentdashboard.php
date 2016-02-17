@@ -2,7 +2,7 @@
     //require_once "../inc/cl_bootstrap.php"; 
 
 
-    $clResponseInformation->clCiteSection = "talent";
+    $clResponseInformation->clSiteSection = "talent";
 
     include(ROOT_PATH . 'views/partial_confirm_loggedin_user.php');   
     

@@ -5,7 +5,7 @@ use Facebook\FacebookRedirectLoginHelper;
 ////require_once "../inc/cl_bootstrap.php";
 
 //$pageTitle = "CrowdLuv";
-$CL_SITE_SECTION = "home";
+$clResponseInformation->clCiteSection = "home";
 
 
 if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);

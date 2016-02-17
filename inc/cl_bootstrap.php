@@ -54,7 +54,8 @@ require_once ROOT_PATH . 'vendor/autoload.php';
 require_once ROOT_PATH . "inc/cl_bootstrap_model.php";
 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
-$clRequest = new CrowdLuvRequest();
+$clRequestInfo = new CrowdLuvRequestInformation();
+$clResponseInfo = new CrowdLuvResponseInformation();
  
 
 //Load facebook SDK, Check for facebook session, create/update globals and DB accordingly

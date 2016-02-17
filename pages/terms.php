@@ -1,6 +1,6 @@
 <?php 
 
-    $CL_SITE_SECTION = "landing";
+    $clResponseInformation->clCiteSection = "landing";
     ////require_once "../inc/cl_bootstrap.php"; 
  
     include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 

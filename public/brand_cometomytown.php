@@ -1,7 +1,7 @@
 <?php 
     require_once "../inc/cl_bootstrap.php";
  	
-	$CL_SITE_SECTION = "home";
+	$clResponseInformation->clCiteSection = "home";
  
 	if(isset($CL_CUR_TGT_TALENT)) $pageTitle = "Want " . $CL_CUR_TGT_TALENT['fb_page_name'] . " in your Town? -  CrowdLuv";
 	

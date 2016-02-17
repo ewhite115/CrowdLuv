@@ -19,8 +19,7 @@
   
     ////require_once "../inc/cl_bootstrap.php";
 
-    $CL_SITE_SECTION = "follower";
-
+ 
     //construct the page title and OG tag values
     $pageTitle = $CL_CUR_TGT_TALENT['fb_page_name'] . " on CrowdLuv";
 

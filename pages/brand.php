@@ -22,8 +22,7 @@
 
  
 
-    $CL_SITE_SECTION = "follower";
-
+ 
  
     //Determine which brand profile subpage is being requested
     $profileSubPage = "main";  //default

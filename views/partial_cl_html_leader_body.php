@@ -52,10 +52,10 @@
 
 
 <?php  // add the correct section header here
-  if($CL_SITE_SECTION == "landing") {include(ROOT_PATH . "views/partial_banner_landing.php");}
-  else if($CL_SITE_SECTION == "home") {include(ROOT_PATH . "views/partial_banner_home.php");}
-  else if($CL_SITE_SECTION == "talent") {include(ROOT_PATH . "views/partial_banner_talent.php");}
-  else if($CL_SITE_SECTION == "follower") {include(ROOT_PATH . "views/partial_banner_follower.php");}
+  if($clResponseInformation->clCiteSection == "landing") {include(ROOT_PATH . "views/partial_banner_landing.php");}
+  else if($clResponseInformation->clCiteSection == "home") {include(ROOT_PATH . "views/partial_banner_home.php");}
+  else if($clResponseInformation->clCiteSection == "talent") {include(ROOT_PATH . "views/partial_banner_talent.php");}
+  else if($clResponseInformation->clCiteSection == "follower") {include(ROOT_PATH . "views/partial_banner_follower.php");}
 ?>
 
 

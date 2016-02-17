@@ -20,7 +20,6 @@
     require_once "../inc/cl_bootstrap.php";
  
     
-    $CL_SITE_SECTION = "follower";
     
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
 

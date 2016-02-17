@@ -2,7 +2,7 @@
     //require_once "../inc/cl_bootstrap.php"; 
 
     
-    $CL_SITE_SECTION = "talent";
+    $clResponseInformation->clCiteSection = "talent";
 
     if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
     if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}

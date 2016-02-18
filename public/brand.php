@@ -31,23 +31,23 @@
 
 
     if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_all_thisbrand"){
-        $CL_model->importEventsForTalent($clRequestInformation->getTargetBrand()['crowdluv_tid'] , $clRequestInformation->getTargetBrand()['fb_pid'], $facebookSession);
+        $CL_model->importEventsForTalent($clRequestInformation->getTargetBrand()['crowdluv_tid'] , $clRequestInformation->getTargetBrand()['fb_pid'], $clFacebookHelper->getFacebookSession());
     }
 
    if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_sincenow_allbrands"){
-        $CL_model->importEventsForAllTalent($facebookSession, time());
+        $CL_model->importEventsForAllTalent($clFacebookHelper->getFacebookSession(), time());
     }
 
     if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_since_p1_allbrands"){
-        $CL_model->importEventsForAllTalent($facebookSession, time() - (4 * 60 * 60));
+        $CL_model->importEventsForAllTalent($clFacebookHelper->getFacebookSession(), time() - (4 * 60 * 60));
     }
 
     if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_since_p2_allbrands"){
-        $CL_model->importEventsForAllTalent($facebookSession, time() - (7 * 24 * 60 * 60));
+        $CL_model->importEventsForAllTalent($clFacebookHelper->getFacebookSession(), time() - (7 * 24 * 60 * 60));
     }
 
     if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_all_allbrands"){
-        $CL_model->importEventsForAllTalent($facebookSession);
+        $CL_model->importEventsForAllTalent($clFacebookHelper->getFacebookSession());
     }
 
 

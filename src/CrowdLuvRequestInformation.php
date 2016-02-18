@@ -1,4 +1,5 @@
 <?php
+use Facebook\FacebookRequest;
 
 
 class CrowdLuvRequestInformation {
@@ -7,11 +8,11 @@ class CrowdLuvRequestInformation {
    	public $clFacebookHelper = null;
 	public $clModel = null;
 
+
 	private $targetBrand = null;
 	private $targetActiveManagedBrand = null;
 	private $loggedInUserObj = null;
 	private $loggedInUserId = null;
-	
  	private $isInsideFacebookTab = false;
 	
 
@@ -67,7 +68,10 @@ class CrowdLuvRequestInformation {
 
 	}
 
-
+	/**
+	 * [getTargetBrand Returns array/object of the talent currently being viewed]
+	 * @return [Object] [Talent object]
+	 */
 	public function getTargetBrand(){
 
 		//If trgetBrand has been set as a result of a previous call to this method,  just return it to avoid repeat DB calls.
@@ -99,11 +103,7 @@ class CrowdLuvRequestInformation {
 		  //return $CL_CUR_TGT_TALENT;
 		  return $this->targetBrand = 0;
 
-
 	} //getTargetBrand
-
-
-
 
 
 	/**
@@ -112,14 +112,12 @@ class CrowdLuvRequestInformation {
 	 */
 	public function getManagedBrands(){
 
-		//global $CL_LOGGEDIN_TALENTS_ARR;
-
 		//If managedBrand has been set as a result of a previous call to this method,  just return it to avoid repeat DB calls.
 		if (isset($this->managedBrands)) return $this->managedBrands;
 
 		  /**  Managed-Pages Import from facebook
 		   * Now check for facebook pages the user is an administrator of,
-		   * add them to CL db if new, and store them in 'global' var 
+		   * add them to CL db if new 
 		   */
 		  if($this->clFacebookHelper->getFacebookSession()){
 
@@ -144,18 +142,16 @@ class CrowdLuvRequestInformation {
 	}
 
 
-
-
-
-
+	/**
+	 * [getActiveManagedBrand returns the Brand/talent object for the brand currently being managed by the logged in user]
+	 * @return [Object] [Talent object]
+	 * @return [null] if none
+	 */
 	public function getActiveManagedBrand(){
 
 
 		if (isset($this->targetActiveManagedBrand)) return $this->targetBrand;
-
-		//Temporary  default o treturning the global var,  until we refactor and remove the global var
-		//global $clRequestInformation->getActiveManagedBrand();
-		
+	
 		//If querystring indicated a a talent to set as the currently active managed talent, 
 		//  Set a session and global Object to store the talent that is currently being managed by the logged in user (if applicable)
 		if(isset($_GET['activemanagedtalent_tid'])){
@@ -177,6 +173,54 @@ class CrowdLuvRequestInformation {
 
 
 
+
+	public function importUserFacebookLikes(){
+
+	    //We may need to make multiple requests to get all the likes.
+	    // Loop making api call ..  
+	    $done=false;
+	    //Create the initial request object for retrieving user's likes
+	    $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/me/likes?fields=id,name,category,link&limit=100' );
+	    do{  
+	      try{          
+	          $response = $request->execute();
+	          // get response
+	          $fb_user_likes = $response->getGraphObject()->asArray();
+	          //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
+	          
+	          if(isset($fb_user_likes['data']) && sizeof($fb_user_likes['data']) > 0) {  
+	              
+	              foreach ($fb_user_likes['data'] as $fbupg) {
+	                  //...See if it already exists as a talent in the CL DB
+	                  $cltid = $this->clModel->get_crowdluv_tid_by_fb_pid($fbupg->id);
+	                  //If not, and it's in an "enabled" category, add it
+	                  if(! $cltid && (in_array($fbupg->category, CrowdLuvFacebookHelper::$facebookLikeCategoriesToCreateStubsFor))) {
+	                      cldbgmsg("Found new facebook like page to add: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->category); 
+	                      $this->clModel->create_new_cl_talent_record_from_facebook_user_like($fbupg);
+	                      $cltid = $this->clModel->get_crowdluv_tid_by_fb_pid($fbupg->id);
+	                      
+	                  }
+	                  //Make sure DB is updated to reflect that this user facebook-likes the talent
+	                  if($cltid) $this->clModel->setFollower_FacebookLikes_Talent($this->getLoggedInUserId(), $cltid, 1); 
+
+	              }//foreach
+	          } //if we got data back fro api call
+
+	      }catch (FacebookApiException $e) {
+	        cldbgmsg("FacebookAPIException requesting /me/likes -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+	        $fb_user_likes = null;
+	        //we should still be able to proceed, since the rest of the pages do not rely on 
+	        //  fb_user_likes, and should continue to use the talent array in the session var
+	      } 
+	      //Create a new request object and start over if there are more likes
+	    } while (($response) && $request = $response->getRequestForNextPage());
+
+
+
+
+
+
+	}
 
 
 

@@ -1,5 +1,5 @@
 <?php     
-
+ 
 
 /**
  * cl_bootstrap
@@ -7,14 +7,13 @@
  * 		initiating the model object, session/state values etc
  * 
  */
-
+//TODO:  refactor this to be part of CLResponseInformation   ?
  function cldbgmsg($debugmessage){
 
     $_SESSION["debugmsgs"][] = $debugmessage;
 
   }
   if(isset($_COOKIE["PHPSESSID"])) { cldbgmsg("COOKIE['PHPSESSID'] = " . $_COOKIE["PHPSESSID"]) ;} else { cldbgmsg("PHPSEESID cookie doesnt exist");}//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
-
 
 
 //The following is for compatibility with writing session files on AWS
@@ -47,26 +46,38 @@ require_once ROOT_PATH . "inc/cl_bootstrap_configs.php" ;
 require_once ROOT_PATH . 'vendor/autoload.php';
 
 
+//Create a CrowdLuvFacebookHelper 
+$clFacebookHelper = new CrowdLuvFacebookHelper();
+
 //Create CL_model with it's db dependency
 $CL_model = new CrowdLuvModel();
 $CL_model->setDB((new CrowdLuvDBFactory())->getCrowdLuvDB());
+$CL_model->setFacebookHelper($clFacebookHelper);
 
-$clFacebookHelper = new CrowdLuvFacebookHelper();
-
+//create a CrowdLuvRequest   object
 $clRequestInformation = new CrowdLuvRequestInformation();
 $clRequestInformation->clFacebookHelper = $clFacebookHelper;
 $clRequestInformation->clModel = $CL_model;
 
+//create a CrowdLuvResponse    object
 $clResponseInformation = new CrowdLuvResponseInformation();
+
  
 
-//Load facebook SDK, Check for facebook session, create/update globals and DB accordingly
-require_once ROOT_PATH . "inc/cl_bootstrap_facebook.php";
 
 
-//Make an initial call to set the target brand.  Eventually remove this after we've refactored to remove the CL_CUR_)TGT_Talent global var
-//$clRequestInformation->getTargetBrand();
-//$clRequestInformation->getActiveManagedBrand();
+/**  Facebook Likes
+  *  Check for facebook pages the user 'likes',
+  *   add those pages to CL db (as new brands) if not already present
+  *   add an entry in db indicating this user "likes" that page/talent 
+  */
+if($clFacebookHelper->getFacebookSession() and $clFacebookHelper->isNewSession){
+	$clRequestInformation->importUserFacebookLikes();
+
+}//  Facebook likes import
+
+
+
 
 
 //Look for special admin commands to execute in query string

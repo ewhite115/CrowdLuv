@@ -73,8 +73,25 @@ class CrowdLuvFacebookHelper {
    		 return $this->facebookSession;
    		}
 
-   		//Otherwise .....
-		 /** look for previously saved a facebook token in this session
+		//Otherwise .....
+		
+		/** Check for Facebook Permissions Denied & Redirect
+		   * TODO:  is this still relvant in api 4.0?
+		   * 
+		   * If this was the first time the user tried to login, but they denied
+		   * the facebook permission dialog, the query string will include the following
+		   * provided by facebook
+		   *     ?error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied&state=939d1a76d41e3612ff16087f39afc14c#_=_
+		   * So, check for this, and if found, redirect to the home page with
+		   * a flad to include explanation that the permission are required
+		   */
+		if((isset( $_GET['error_reason'] ) && $_GET['error_reason'] == 'user_denied')){
+		     header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
+		     die(); 
+		}
+
+   		
+		/** look for previously saved a facebook token in this session
 		   * 
 		   */   
 		if ( isset( $_SESSION ) && isset( $_SESSION['fb_token'] ) ) {

@@ -12,11 +12,13 @@ class CrowdLuvModel {
 
     private $cldb="";
     private $facebookSession;
+    private $clFacebookHelper;
     public static $SHARETYPES = [ 'crowdluv-talent-landing-page', 'crowdluv-event'];
     public static $SHAREMETHODS = [ 'facebook-share', 'facebook-send', 'twitter-tweet' ];
 
     public function setDB($thedbobj){ $this->cldb = $thedbobj;  }
     public function setFacebookSession($fbs){$this->facebookSession = $fbs;}
+    public function setFacebookHelper($fbh){$this->clFacebookHelper = $fbh;}
 
 
 
@@ -1921,6 +1923,7 @@ class CrowdLuvModel {
     } //updateEventValues
 
 
+    //TODO: remove facebooksesion as an arg here.  Changed to using facebookhelper 2/17
     public function importEventsForAllTalent($facebookSession, $sinceTimestamp = 1356998400){
 
         set_time_limit(0);
@@ -1928,7 +1931,7 @@ class CrowdLuvModel {
 
         foreach($tals as $tal){
 
-            $this->importEventsForTalent($tal['crowdluv_tid'], $tal['fb_pid'], $facebookSession, $sinceTimestamp);
+            $this->importEventsForTalent($tal['crowdluv_tid'], $tal['fb_pid'], $this->facebookHelper->getFacebookSession(), $sinceTimestamp);
 
         }
 
@@ -1941,7 +1944,7 @@ class CrowdLuvModel {
         //  Loop making api call ..  
         $done=false;
         //Create the initial request object for retrieving the events
-        $request = new FacebookRequest( $facebookSession, 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
+        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
         $response = null;
         do{  
             try{          
@@ -2487,7 +2490,7 @@ class CrowdLuvModel {
 
         try { 
             // graph api request for place data
-            $request = new FacebookRequest( $this->facebookSession, 'GET', '/' . $fbPid );
+            $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fbPid );
             $response = $request->execute();
             // get response
             $fbPlace = $response->getGraphObject()->asArray();
@@ -2498,7 +2501,6 @@ class CrowdLuvModel {
            if(! isset($fbPlace['location']->state)) $fbPlace['location']->state = "";
            if(! isset($fbPlace['location']->country)) $fbPlace['location']->country = "";
            if(! isset($fbPlace['location']->zip)) $fbPlace['location']->zip = "";
-
 
             return $this->createPlace($fbPid, 
                                 $fbPlace['name'],

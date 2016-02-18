@@ -4,7 +4,7 @@
     $clResponseInformation->clSiteSection = "talent";
     
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
-    // if(! isset($CL_LOGGEDIN_USER_UID) || ! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
+    // if(! $clRequestInformation->getLoggedInUserId() || ! $clRequestInformation->getLoggedInUserId()) { echo "No logged in user(?)"; exit;  } 
 
     //if(! $fb_user_pages) { echo "fb_user_pages is null";   }
     if(! ($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}

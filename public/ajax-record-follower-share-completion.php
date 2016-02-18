@@ -38,14 +38,14 @@
 	$cltidt = $_GET['crowdluv_tid'];
 	
 	if(! in_array($shareType, $allowed_shareTypes)) {echo "invalid share type"; exit;}
-	if($cluidt != $CL_LOGGEDIN_USER_UID) {echo "CL User ID doesnt match logged in-user"; exit;}
+	if($cluidt != $clRequestInformation->getLoggedInUserId()) {echo "CL User ID doesnt match logged in-user"; exit;}
 
 
 	//Perform Logic
 	//
 	//		
 
-	$result = $CL_model->recordFollowerShareCompletion($shareType, $CL_LOGGEDIN_USER_UID, $cltidt);
+	$result = $CL_model->recordFollowerShareCompletion($shareType, $clRequestInformation->getLoggedInUserId(), $cltidt);
 
 
 
@@ -55,7 +55,7 @@
 	if(!$servlet_testing)   ob_end_clean();
 
 	$response = array();
-	$response['crowdluv_uid'] = $CL_LOGGEDIN_USER_UID;
+	$response['crowdluv_uid'] = $clRequestInformation->getLoggedInUserId();
 	$response['crowdluv_tid'] = $cltidt;
 	$response['shareType'] = $shareType;
 

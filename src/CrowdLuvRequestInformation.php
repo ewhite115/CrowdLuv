@@ -4,12 +4,68 @@
 class CrowdLuvRequestInformation {
 
 	
-    private $isInsideFacebookTab = false;
-	public $clFacebookHelper = null;
+   	public $clFacebookHelper = null;
 	public $clModel = null;
 
 	private $targetBrand = null;
 	private $targetActiveManagedBrand = null;
+	private $loggedInUserObj = null;
+	private $loggedInUserId = null;
+	
+ 	private $isInsideFacebookTab = false;
+	
+
+	/**
+	 * [getLoggedInUserId Get crowdluv_uid of the logged in user]
+	 * @return [Object] [croiwdluv user object of logged in user]
+	 * @return [null]	[if no logged in user]
+	 */
+	public function getLoggedInUserObj(){
+
+		//If loggedInUserObj has been set as a result of a previous call to this method,  just return it to avoid repeat work.
+		if (isset($this->loggedInUserObj)) return $this->loggedInUserObj;
+
+		
+		//Otherwise ....
+		 /**  CrowdLuv User Identification / Login based on facebook identity 
+		   * If we have a logged-in facebook user - Look up their crowdluv profile,
+		   *     or,  create a new one if they are new to crowdluv
+		   */
+		  if ($this->clFacebookHelper->getFacebookSession()) {  // Proceed thinking you have a logged in user who's authenticated.  
+		      
+		      	//Get this user's info based on their facebook profile.  (New entry will be created if needed.)
+		      	//    Set a global variable containing the crowdluv_uid
+		      	$this->loggedInUserId = $this->clModel->getCrowdLuvUIDByFacebookProfileObject($this->clFacebookHelper->getFacebookUserProfile()); //get_crowdluv_uid_by_fb_uid($fb_user);
+		      	$this->loggedInUserObj = $this->clModel->get_follower_object_by_uid($this->getLoggedInUserId());
+		            //TODO:  make the call to /api/me on every "new" session, check against our existing info,
+		                //and later prompt user for updates if anything has changed?
+		                   
+		  		return $this->loggedInUserObj;
+		  }
+
+		  return null;
+	}
+
+	/**
+	 * [getLoggedInUserId Get crowdluv_uid of the logged in user]
+	 * @return [int] [croiwdluv_uid of logged in user]
+	 * @return [null]	[if no logged in user]
+	 */
+	public function getLoggedInUserId(){
+
+		//If loggedInUserObj has been set as a result of a previous call to this method,  just return it to avoid repeat work.
+		if (isset($this->loggedInUserId)) return $this->loggedInUserId;
+
+		//otherwise ..  called getloggedinuserobj to look for a logged in user
+		if($this->getLoggedInUserObj()){
+		
+			return $this->getLoggedInUserObj()['crowdluv_uid'];
+		
+		}
+		return null;
+
+
+	}
 
 
 	public function getTargetBrand(){
@@ -45,6 +101,48 @@ class CrowdLuvRequestInformation {
 
 
 	} //getTargetBrand
+
+
+
+
+
+	/**
+	 * [getManagedBrands Returns an array of talent objects that the logged in user is a manager of]
+	 * @return [array] [talent objects the logged in user is a manager for]
+	 */
+	public function getManagedBrands(){
+
+		//global $CL_LOGGEDIN_TALENTS_ARR;
+
+		//If managedBrand has been set as a result of a previous call to this method,  just return it to avoid repeat DB calls.
+		if (isset($this->managedBrands)) return $this->managedBrands;
+
+		  /**  Managed-Pages Import from facebook
+		   * Now check for facebook pages the user is an administrator of,
+		   * add them to CL db if new, and store them in 'global' var 
+		   */
+		  if($this->clFacebookHelper->getFacebookSession()){
+
+		        //$_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR = "";
+		        //Get a list of any facebook pages this user manages.
+		        $fb_user_pages = $this->clFacebookHelper->getManagedFacebookPages();
+		        //Look up the corresponding CrowdLuv brand for each of tose pages  (creating new brands if needed)  
+		        foreach ($fb_user_pages['data'] as $fbupg) {
+		          
+		          $cltid = $this->clModel->getCrowdLuvTIDByFacebookPageProfile($fbupg);
+		          //  Add the talent obj to a global array
+		          $CL_LOGGEDIN_TALENTS_ARR[] = $this->clModel->get_talent_object_by_tid($cltid);
+		        }
+		        //Set (or update) the session var with the array we were able to build
+		        return $CL_LOGGEDIN_TALENTS_ARR;   
+		  
+
+		  }// import managed fb pages
+
+
+		  return null;
+	}
+
 
 
 

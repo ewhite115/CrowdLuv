@@ -9,10 +9,10 @@
 
 
 
-    <?php if(isset($CL_LOGGEDIN_USER_OBJ)) { ?>
+    <?php if($clRequestInformation->getLoggedInUserObj()) { ?>
         <div>
             <form id="CL-form-add-question">
-                <input type="hidden" name="created-by-crowdluv-uid" value="<?= $CL_LOGGEDIN_USER_UID;?>">
+                <input type="hidden" name="created-by-crowdluv-uid" value="<?= $clRequestInformation->getLoggedInUserId();?>">
                 <input type="hidden" name="created-for-crowdluv-tid" value="<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>">
                 <label for="title">Title:</label>
                 <input name="title" type="text"><br>

@@ -14,7 +14,7 @@
     <div class="fluid-row">
         <div class="col-xs-12">
             <div class="crowdluvsection">
-                <h1>My Settings - <?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname']; ?></h1>
+                <h1>My Settings - <?php echo $clRequestInformation->getLoggedInUserObj()['firstname'] . " " . $clRequestInformation->getLoggedInUserObj()['lastname']; ?></h1>
                 <p>Edit Information and settings</p><br>
             </div>
         </div>

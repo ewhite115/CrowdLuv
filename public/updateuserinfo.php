@@ -2,14 +2,14 @@
 
     require_once "../inc/cl_bootstrap.php";
 
-	$CL_LOGGEDIN_USER_OBJ['email'] = $_POST['email'];
-	$CL_LOGGEDIN_USER_OBJ['mobile'] = $_POST['mobile'];
-	$CL_LOGGEDIN_USER_OBJ['allow_cl_email'] = $_POST['allow_cl_email'];
-	$CL_LOGGEDIN_USER_OBJ['allow_cl_sms'] = $_POST['allow_cl_sms'];
-	$CL_LOGGEDIN_USER_OBJ['firstname'] = $_POST['firstname'];
-	$CL_LOGGEDIN_USER_OBJ['lastname'] = $_POST['lastname'];
+	$clRequestInformation->getLoggedInUserObj()['email'] = $_POST['email'];
+	$clRequestInformation->getLoggedInUserObj()['mobile'] = $_POST['mobile'];
+	$clRequestInformation->getLoggedInUserObj()['allow_cl_email'] = $_POST['allow_cl_email'];
+	$clRequestInformation->getLoggedInUserObj()['allow_cl_sms'] = $_POST['allow_cl_sms'];
+	$clRequestInformation->getLoggedInUserObj()['firstname'] = $_POST['firstname'];
+	$clRequestInformation->getLoggedInUserObj()['lastname'] = $_POST['lastname'];
 
-	$CL_model->update_crowdluv_follower_record($CL_LOGGEDIN_USER_OBJ);
+	$CL_model->update_crowdluv_follower_record($clRequestInformation->getLoggedInUserObj());
 
 	header( 'Location: followerdashboard.php' ) ;
 

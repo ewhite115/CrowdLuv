@@ -19,43 +19,26 @@
   }
 
   /** Check for facebook session  */
-      //If a session was found,  inject it as a dependency on the CL model
-  if ($clFacebookHelper->getFacebookSession()) { $CL_model->setFacebookSession($clFacebookHelper->getFacebookSession()); }
 
-  /**  CrowdLuv User Identification / Login based on facebook identity 
-   * If we have a logged-in facebook user - Look up their crowdluv profile,
-   *     or,  create a new one if they are new to crowdluv
-   */
-  if ($clFacebookHelper->getFacebookSession()) {  // Proceed thinking you have a logged in user who's authenticated.  
-      
-      //Get this user's info based on their facebook profile.  (New entry will be created if needed.)
-      //    Set a global variable containing the crowdluv_uid
-      $CL_LOGGEDIN_USER_UID = $_SESSION["CL_LOGGEDIN_USER_UID"] = $CL_model->getCrowdLuvUIDByFacebookProfileObject($clFacebookHelper->getFacebookUserProfile()); //get_crowdluv_uid_by_fb_uid($fb_user);
-      $CL_LOGGEDIN_USER_OBJ = $_SESSION['CL_LOGGEDIN_USER_OBJ'] = $CL_model->get_follower_object_by_uid($CL_LOGGEDIN_USER_UID);
-            //TODO:  make the call to /api/me on every "new" session, check against our existing info,
-                    //and later prompt user for updates if anything has changed?
-  }
+  if ($clFacebookHelper->getFacebookSession()) { 
+
+    //If a session was found,  inject it as a dependency on the CL model
+    $CL_model->setFacebookSession($clFacebookHelper->getFacebookSession()); 
+    
+    //Call getLoggedinUserObj - removed 2/17  dont need to do this until it is needed
+    //$clRequestInformation->getLoggedInUserObj();
+
+    /**  Managed-Pages Import from facebook
+     * Now check for facebook pages the user is an administrator of,
+     * add them to CL db if new. 
+     */
+    $clRequestInformation->getManagedBrands();
 
 
-  /**  Managed-Pages Import from facebook
-   * Now check for facebook pages the user is an administrator of,
-   * add them to CL db if new, and store them in 'global' var 
-   */
-  if($clFacebookHelper->getFacebookSession()){
+ }
 
-        $_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR = "";
-        //Get a list of any facebook pages this user manages.
-        $fb_user_pages = $clFacebookHelper->getManagedFacebookPages();
-        //Look up the corresponding CrowdLuv brand for each of tose pages  (creating new brands if needed)  
-        foreach ($fb_user_pages['data'] as $fbupg) {
-          
-          $cltid = $CL_model->getCrowdLuvTIDByFacebookPageProfile($fbupg);
-          //  Add the talent obj to a global array
-          $CL_LOGGEDIN_TALENTS_ARR[] = $CL_model->get_talent_object_by_tid($cltid);
-        }
-        //Set (or update) the session var with the array we were able to build
-        $_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR;   
-  }// import managed fb pages
+
+
 
 
   /**  Facebook Likes
@@ -68,7 +51,7 @@
     //  Loop making api call ..  
     $done=false;
     //Create the initial request object for retrieving user's likes
-    $request = new FacebookRequest( $facebookSession, 'GET', '/me/likes?fields=id,name,category,link&limit=100' );
+    $request = new FacebookRequest( $clFacebookHelper->getFacebookSession(), 'GET', '/me/likes?fields=id,name,category,link&limit=100' );
     do{  
       try{          
           $response = $request->execute();
@@ -89,7 +72,7 @@
                       
                   }
                   //Make sure DB is updated to reflect that this user facebook-likes the talent
-                  if($cltid) $CL_model->setFollower_FacebookLikes_Talent($CL_LOGGEDIN_USER_UID, $cltid, 1); 
+                  if($cltid) $CL_model->setFollower_FacebookLikes_Talent($clRequestInformation->getLoggedInUserId(), $cltid, 1); 
 
 
               }//foreach

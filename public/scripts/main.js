@@ -774,12 +774,12 @@ function populateEventDetailPanel(panel, eventObj){
       
 
     // DO NOT DELETE - PHP Code
-    //<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>
+    //<?php if($clRequestInformation->getLoggedInUserId()){ ?>
     //If we have a logged-in user, Add share widgets
     //TODO:  only show if they are eligible for share?
     var eventShareDetails = {
         eventID: eventObj.id,
-        crowdluvUID: '<?php if(isset($CL_LOGGEDIN_USER_UID)) echo $CL_LOGGEDIN_USER_UID;?>',
+        crowdluvUID: '<?php if($clRequestInformation->getLoggedInUserId()) echo $clRequestInformation->getLoggedInUserId();?>',
         crowdluvTID: eventObj.related_crowdluv_tid
     };
 

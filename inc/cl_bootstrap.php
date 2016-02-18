@@ -43,7 +43,6 @@ if(!defined("ROOT_PATH")) define("ROOT_PATH",$_SERVER["DOCUMENT_ROOT"] . "/../")
 
 //cl_bootstrap_configs.php will initialize additional key environment variables
 require_once ROOT_PATH . "inc/cl_bootstrap_configs.php" ;
-
 //Composer autoload.php for  package / dependencies
 require_once ROOT_PATH . 'vendor/autoload.php';
 
@@ -64,10 +63,13 @@ $clResponseInformation = new CrowdLuvResponseInformation();
 //Load facebook SDK, Check for facebook session, create/update globals and DB accordingly
 require_once ROOT_PATH . "inc/cl_bootstrap_facebook.php";
 
-//Check for additional parameters on query string and update globals or db accordingly
-require_once ROOT_PATH . "inc/cl_bootstrap_parameters.php";
 
 //Make an initial call to set the target brand.  Eventually remove this after we've refactored to remove the CL_CUR_)TGT_Talent global var
 $clRequestInformation->getTargetBrand();
 $clRequestInformation->getActiveManagedBrand();
+
+
+//Look for special admin commands to execute in query string
+if(isset($_GET['cmd']) && $_GET['cmd'] == "reloadfollowerplacesfromfacebook"){ $CL_model->ReloadFollowerPlacesFromFacebook();}
+
 

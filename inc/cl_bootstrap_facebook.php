@@ -2,7 +2,6 @@
 
   use Facebook\FacebookRequest;
  
-
  
   /** Check for Facebook Permissions Denied & Redirect
    * TODO:  is this still relvant in api 4.0?
@@ -20,16 +19,14 @@
   }
 
   /** Check for facebook session  */
-  $facebookSession = $clFacebookHelper->getFacebookSession();
-
-  //If a session was found,  inject it as a dependency on the CL model
-  if ($facebookSession) { $CL_model->setFacebookSession($facebookSession); }
+      //If a session was found,  inject it as a dependency on the CL model
+  if ($clFacebookHelper->getFacebookSession()) { $CL_model->setFacebookSession($clFacebookHelper->getFacebookSession()); }
 
   /**  CrowdLuv User Identification / Login based on facebook identity 
    * If we have a logged-in facebook user - Look up their crowdluv profile,
    *     or,  create a new one if they are new to crowdluv
    */
-  if ($facebookSession) {  // Proceed thinking you have a logged in user who's authenticated.  
+  if ($clFacebookHelper->getFacebookSession()) {  // Proceed thinking you have a logged in user who's authenticated.  
       
       //Get this user's info based on their facebook profile.  (New entry will be created if needed.)
       //    Set a global variable containing the crowdluv_uid
@@ -44,7 +41,7 @@
    * Now check for facebook pages the user is an administrator of,
    * add them to CL db if new, and store them in 'global' var 
    */
-  if($facebookSession){
+  if($clFacebookHelper->getFacebookSession()){
 
         $_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR = "";
         //Get a list of any facebook pages this user manages.
@@ -66,7 +63,7 @@
    *   add those pages to CL db (as new brands) if not already present
    *   add an entry in db indicating this user "likes" that page/talent 
    */
-  if($facebookSession and $clFacebookHelper->isNewSession){
+  if($clFacebookHelper->getFacebookSession() and $clFacebookHelper->isNewSession){
     //We may need to make multiple requests to get all the likes.
     //  Loop making api call ..  
     $done=false;

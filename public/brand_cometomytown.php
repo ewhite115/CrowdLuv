@@ -11,7 +11,7 @@
     //Set the URL for the image that will be used on the page and in the og: meta tags
     //if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $clRequestInformation->getTargetBrand()['fb_pid'] . "/picture?type=large&access_token=" . $facebookSession->getToken();
     if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $clRequestInformation->getTargetBrand()['fb_pid'] . "/picture?type=large";
-    //else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default")  $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
+    //else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default")  $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
  	else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = CLADDR . 'crowdluvdata/talent/' . $clRequestInformation->getTargetBrand()["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';
     $CL_OG_IMAGE = $tlpimg;

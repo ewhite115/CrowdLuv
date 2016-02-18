@@ -6,9 +6,9 @@
 
     include(ROOT_PATH . 'views/partial_confirm_loggedin_user.php');   
     
-    if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active managed talent set"; exit;}
+    if(!isset($clRequestInformation->getActiveManagedBrand())) {echo "no active managed talent set"; exit;}
 
-    $folst=$CL_model->get_followers_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+    $folst=$CL_model->get_followers_for_talent($clRequestInformation->getActiveManagedBrand()['crowdluv_tid']);
 
 
 
@@ -17,9 +17,9 @@
 ?>
 
     <div class="crowdluvsection">
-        <h1><?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?>'s CrowdLuv dashboard </h1>
+        <h1><?php echo $clRequestInformation->getActiveManagedBrand()['fb_page_name'];?>'s CrowdLuv dashboard </h1>
 
-        <img src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebookSession->getToken();?>'><br>
+        <img src='https://graph.facebook.com/<?php echo $clRequestInformation->getActiveManagedBrand()['fb_pid']; ?>/picture?access_token=<?php echo $facebookSession->getToken();?>'><br>
         <br>
         
     </div>

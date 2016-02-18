@@ -9,7 +9,7 @@ class CrowdLuvRequestInformation {
 	public $clModel = null;
 
 	private $targetBrand = null;
-
+	private $targetActiveManagedBrand = null;
 
 
 	public function getTargetBrand(){
@@ -53,24 +53,26 @@ class CrowdLuvRequestInformation {
 	public function getActiveManagedBrand(){
 
 
+		if (isset($this->targetActiveManagedBrand)) return $this->targetBrand;
+
 		//Temporary  default o treturning the global var,  until we refactor and remove the global var
-		global $CL_ACTIVE_MANAGED_TALENT;
+		//global $clRequestInformation->getActiveManagedBrand();
 		
 		//If querystring indicated a a talent to set as the currently active managed talent, 
 		//  Set a session and global Object to store the talent that is currently being managed by the logged in user (if applicable)
 		if(isset($_GET['activemanagedtalent_tid'])){
 		  $_SESSION['CL_ACTIVE_MANAGED_TALENT'] = $this->clModel->get_talent_object_by_tid($_GET['activemanagedtalent_tid']);
-		  return $CL_ACTIVE_MANAGED_TALENT = $_SESSION['CL_ACTIVE_MANAGED_TALENT'];
+		  return $this->getActiveManagedBrand = $_SESSION['CL_ACTIVE_MANAGED_TALENT'];
 		}
 		//If the logged in user was previously managing a talent; carry that over to the global var for this request
 		if(isset($_SESSION['CL_ACTIVE_MANAGED_TALENT'])) {
 		  cldbgmsg("Found session value for cl active mgd tal");
-		  return $CL_ACTIVE_MANAGED_TALENT = $_SESSION['CL_ACTIVE_MANAGED_TALENT'] = $this->clModel->get_talent_object_by_tid($_SESSION['CL_ACTIVE_MANAGED_TALENT']['crowdluv_tid']);
+		  return $this->activeManagedBrand = $_SESSION['CL_ACTIVE_MANAGED_TALENT'] = $this->clModel->get_talent_object_by_tid($_SESSION['CL_ACTIVE_MANAGED_TALENT']['crowdluv_tid']);
 		}
 
 
 	      
-		return $CL_ACTIVE_MANAGED_TALENT;
+		return $clRequestInformation->getActiveManagedBrand();
 
 
 	} //getactivemgBrand

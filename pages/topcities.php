@@ -3,10 +3,10 @@
     
     $clResponseInformation->clCiteSection = "talent";
     
-    if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
+    if(!isset($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}
 
     //If there are no followers for this talent, redirect to the talent tutorial page
-    if(count($CL_model->get_followers_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'])) == 0 ) {
+    if(count($CL_model->get_followers_for_talent($clRequestInformation->getActiveManagedBrand()['crowdluv_tid'])) == 0 ) {
         header("Location: talent_gettingstarted.php");
         die();
     }
@@ -61,7 +61,7 @@
             //Handler to reload the page when user changes the drop down for new follower interval
             $("#opt_new_follower_interval").change(function(){
                 //console.log("inside handler for new follower interval dropdown");
-                window.open('<?php echo BASE_URL;?>topcities.php?crowdluv_tid=<?php echo $clRequestInformation->getTargetBrand()["crowdluv_tid"];?>&activemanagedtalentid=<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>&nfinterval=' + $("#opt_new_follower_interval").val() , "_top").focus();
+                window.open('<?php echo BASE_URL;?>topcities.php?crowdluv_tid=<?php echo $clRequestInformation->getTargetBrand()["crowdluv_tid"];?>&activemanagedtalentid=<?php echo $clRequestInformation->getActiveManagedBrand()['crowdluv_tid'];?>&nfinterval=' + $("#opt_new_follower_interval").val() , "_top").focus();
             
             });
 

@@ -4,7 +4,7 @@
 $clResponseInformation->clSiteSection = "talent";
 
 
-if(! isset($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}
+if(! $clRequestInformation->getActiveManagedBrand()) {echo "no active talent set"; exit;}
 if(! isset($_GET['city'])) {echo "no city passed in"; exit;  }
 $city=$_GET['city'];
 $citystats= $CL_model->get_city_stats_for_talent($clRequestInformation->getActiveManagedBrand()['crowdluv_tid'], $city, 5);

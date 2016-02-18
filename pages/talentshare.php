@@ -5,7 +5,7 @@
     
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
         // if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
-    if(!isset($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}
+    if(! ($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}
 
     include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
 

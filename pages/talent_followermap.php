@@ -7,7 +7,7 @@
     // if(! isset($CL_LOGGEDIN_USER_UID) || ! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
 
     //if(! $fb_user_pages) { echo "fb_user_pages is null";   }
-    if(!isset($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}
+    if(! ($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}
 
     $topcities= $CL_model->get_top_cities_for_talent($clRequestInformation->getActiveManagedBrand()['crowdluv_tid']);
 

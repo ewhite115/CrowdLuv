@@ -3,7 +3,7 @@
     
     $clResponseInformation->clCiteSection = "talent";
     
-    if(!isset($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}
+    if(!$clRequestInformation->getActiveManagedBrand()) {echo "no active talent set"; exit;}
 
     //If there are no followers for this talent, redirect to the talent tutorial page
     if(count($CL_model->get_followers_for_talent($clRequestInformation->getActiveManagedBrand()['crowdluv_tid'])) == 0 ) {

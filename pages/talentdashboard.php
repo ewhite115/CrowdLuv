@@ -4,15 +4,15 @@
 
     $clResponseInformation->clSiteSection = "talent";
 
-    include(ROOT_PATH . 'views/partial_confirm_loggedin_user.php');   
+    include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');   
     
-    if(!isset($clRequestInformation->getActiveManagedBrand())) {echo "no active managed talent set"; exit;}
+    if(!($clRequestInformation->getActiveManagedBrand())) {echo "no active managed talent set"; exit;}
 
     $folst=$CL_model->get_followers_for_talent($clRequestInformation->getActiveManagedBrand()['crowdluv_tid']);
 
 
 
-    include(ROOT_PATH . 'inc/partial_cl_html_leader.php'); 
+    include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
 
 ?>
 

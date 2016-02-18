@@ -1,10 +1,5 @@
 <?php 
 
-    ////require_once "../inc/cl_bootstrap.php";
-
-    //$pageTitle = "CrowdLuv";
- 
- 
 
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
     //Get the list of talent this user luvs 
@@ -31,12 +26,10 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
 
   
 
-
-
-<!-- ***  Luvs ***  -->
+    <!-- ***  Luvs ***  -->
 
     <div class="row">
-        <div class="col-xs-10 col-xs-offset-1 crowdluvsection">
+        <div class="col-xs-12 crowdluvsection">
             <img src='res/top-heart.png'/>
             <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
                 My Most Luv'd
@@ -45,70 +38,10 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
         </div>
     </div>
 
-<!-- <?php /*
-    <div class="cl-full-width-row crowdluvsection clwhitebg cl-grayborder">
-
-        <div class="cl-talent-listing-card-container-single-row">
-          
-            <?php foreach($mostLuvd as $cltalentobj){  ?>              
-                
-                <a class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">     
-                    
-                    <div class="talent-avatar"> 
-                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
-                        <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
-                    </div>
-                    <div class="card-info">
-                        <img src='res/top-heart.png'/>
-                        <p class="follower-rank">Your Rank</p>
-                    </div>
-
-                    <div class="text-center extra-info crowdluvsection "> <p><?php echo $cltalentobj['score'];?> Luvs</p>  </div>
-                                                
-                </a> 
-            <?php } ?>
-            
-                <a class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " href="follower_all_luvs.php">     
-                    
-                    <div class="talent-avatar text-center"> 
-                        <img src="https://graph.facebook.com/dddddddddddd/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
-                        <p class="talent-name">  More... </p>
-                    </div>
-                    <div class="heart-rank text-center">
-                        <img src='res/top-heart.png'/>
-                        <p class="follower-rank">See all Luvs</p>
-                    </div>
-
-                    <div class="extra-info crowdluvsection"> <p></p>  </div>
-                                                
-                </a> 
-
-        </div>
-
-
-
-    </div>
-   
-   */ ?> -->
   
-
-  
-<!-- ***  Likes ***  -->
-    <!--
-    <div class="row">
-        <div class="col-xs-10 col-xs-offset-1 crowdluvsection">
-            <img src='res/FB-ThumbsUp_50.png'/>
-            <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
-                My Likes
-            </h1>
-            <a href="follower_all_talents.php"><span> (See all...)</span></a>
-        </div>
-    </div>
-    -->
-
     <div class="row ">
 
-        <div class="col-xs-12    crowdluvsection clwhitebg cl-grayborder">
+        <div class="col-xs-12  crowdluvsection clwhitebg cl-grayborder">
           
             <?php foreach($likesAndLuvs as $cltalentobj){  ?>              
                 
@@ -155,16 +88,11 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
                                                 
                 </div> 
             <?php } ?>
-            
-       
-
+                   
         </div>
-
-
 
     </div>
    
-
 
 
 

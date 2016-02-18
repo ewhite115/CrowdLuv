@@ -1,13 +1,11 @@
 <?php 
-use Facebook\FacebookSession;
-use Facebook\FacebookRedirectLoginHelper;
 
-////require_once "../inc/cl_bootstrap.php";
+
 
 $clResponseInformation->clSiteSection = "home";
 
 
-if($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
+if ($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
 
 
 
@@ -114,8 +112,6 @@ if($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_t
         </div>
 
 
-
-
     </div>              
                   
                     
@@ -126,8 +122,6 @@ if($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_t
 
   <br>
   <div class="row">
-
-
 
 
   <!-- Talent Call-To-Action  -->

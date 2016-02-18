@@ -65,7 +65,7 @@ require_once ROOT_PATH . "inc/cl_bootstrap_facebook.php";
 
 
 //Make an initial call to set the target brand.  Eventually remove this after we've refactored to remove the CL_CUR_)TGT_Talent global var
-$clRequestInformation->getTargetBrand();
+//$clRequestInformation->getTargetBrand();
 $clRequestInformation->getActiveManagedBrand();
 
 

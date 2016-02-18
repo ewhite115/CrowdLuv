@@ -9,7 +9,6 @@
 	//Get the landing page settings for this talent  (do this before printing header)
 	$tlpgsettings = $CL_model->get_talent_landingpage_settings($clRequestInformation->getTargetBrand()['crowdluv_tid']);   //var_dump($tlpgsettings); exit;
     //Set the URL for the image that will be used on the page and in the og: meta tags
-    //if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $clRequestInformation->getTargetBrand()['fb_pid'] . "/picture?type=large&access_token=" . $facebookSession->getToken();
     if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $clRequestInformation->getTargetBrand()['fb_pid'] . "/picture?type=large";
     //else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default")  $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
  	else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = CLADDR . 'crowdluvdata/talent/' . $clRequestInformation->getTargetBrand()["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
@@ -35,7 +34,7 @@
 	
 
 	<div class="talent_landingpage_hero"  
-		style="background-image: url('<?php echo $tlpimg; if($tlpgsettings['image'] == "facebookprofile" && isset($CL_LOGGEDIN_USER_UID)) echo "&access_token=" . $facebookSession->getToken();?>');"> 	</div> 
+		style="background-image: url('<?php echo $tlpimg; if($tlpgsettings['image'] == "facebookprofile" && isset($CL_LOGGEDIN_USER_UID)) echo "&access_token=" . $clFacebookHelper->getFacebookSession()->getToken();?>');"> 	</div> 
 	
 	<div class="row crowdluvsection text-center">
 		<div class="col-xs-12">

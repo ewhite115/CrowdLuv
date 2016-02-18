@@ -80,7 +80,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         <div class="col-xs-6 col-sm-3 text-center ">
         
           <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
-          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>">
+          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">
           <p2 class= "cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
           <p class= "cl-textcolor-default">Manage Your CrowdLuv Profile and who you follow</p>                            
           <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']){ ?>
@@ -176,7 +176,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
               <?php if(! $cltalentobj['waitlisted']) {  ?> <a href="topcities.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>&activemanagedtalent_tid=<?php echo $cltalentobj['crowdluv_tid'];?>"> <?php } ?> 
               <div class="text-left cl_graybackground cl_grayborder talentpagelisting">
                   
-                <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
+                <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
                 <p>  <?php echo $cltalentobj['fb_page_name'];?></p>  <?php if($cltalentobj['waitlisted']) { ?> <p>(Wait-listed)</p> <?php } ?></span>
                 
               </div>        

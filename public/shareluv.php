@@ -94,7 +94,7 @@
                 <div data-crowdluv-tid="<?php echo $cltalentobj['crowdluv_tid'];?>" class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder cl_darkgraybackground"> 
                 
                     <div class="talent-avatar text-center"> 
-                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
+                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
                         <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
                     </div>
              

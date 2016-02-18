@@ -172,7 +172,7 @@
             source: function(request, add) {
                         $this = $(this)
                         // Call out to the Graph API for the friends list
-                        tokenUrl = "https://graph.facebook.com/search?q=" + request.term +"&type=place&fields=location,name,id,checkins&limit=20&access_token=<?php if(isset($facebookSession)) echo $facebookSession->getToken();?>";// + "&callback=?"
+                        tokenUrl = "https://graph.facebook.com/search?q=" + request.term +"&type=place&fields=location,name,id,checkins&limit=20&access_token=<?php if(isset($facebookSession)) echo $clFacebookHelper->getFacebookSession()->getToken();?>";// + "&callback=?"
                         $.ajax({
                             url: tokenUrl,
                             dataType: "jsonp",

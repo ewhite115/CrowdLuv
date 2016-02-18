@@ -19,7 +19,7 @@
     <div class="crowdluvsection">
         <h1><?php echo $clRequestInformation->getActiveManagedBrand()['fb_page_name'];?>'s CrowdLuv dashboard </h1>
 
-        <img src='https://graph.facebook.com/<?php echo $clRequestInformation->getActiveManagedBrand()['fb_pid']; ?>/picture?access_token=<?php echo $facebookSession->getToken();?>'><br>
+        <img src='https://graph.facebook.com/<?php echo $clRequestInformation->getActiveManagedBrand()['fb_pid']; ?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>'><br>
         <br>
         
     </div>
@@ -27,7 +27,7 @@
     <div class="crowdluvsection">
          <h1><?php echo count($folst) . " people luv you<br>";  ?></h1>
          <?php foreach ($folst as $folt) { ?>               
-                <img src="https://graph.facebook.com/<?php echo $folt['fb_uid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
+                <img src="https://graph.facebook.com/<?php echo $folt['fb_uid'];?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
          <?php } //var_dump($folst); ?> 
     </div>
 

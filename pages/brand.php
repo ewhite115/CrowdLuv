@@ -674,7 +674,7 @@
                         <p class="text-center">Learn how to <a href="shareluv.php">Show your Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuversMyCity as $rankedLuver) { ?>
                             <p>
-                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square&access_token=<?php echo $facebookSession->getToken();?>"> 
+                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
                                 <?php echo $rankedLuver['firstname']; ?> --- 
                                 <?php echo $rankedLuver['score']; ?> Luvs
 

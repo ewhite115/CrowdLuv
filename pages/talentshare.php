@@ -1,11 +1,11 @@
 <?php 
     //require_once "../inc/cl_bootstrap.php"; 
  
-    $CL_SITE_SECTION = "talent";
+    $clResponseInformation->clSiteSection = "talent";
     
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
-        // if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
-    if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
+        // if(! $clRequestInformation->getLoggedInUserId()) { echo "No logged in user(?)"; exit;  } 
+    if(! ($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}
 
     include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
 
@@ -28,7 +28,7 @@
             <h1>Facebook</h1>
                 
                 <p>1) Post a box to the top of your facebook page.</p>
-                    <a href="https://www.facebook.com/dialog/pagetab?app_id=<?php echo CL_FB_APP_ID; ?>&next=<?php echo CLADDR;?>talentdashboard.php?activemanagedtalent_tid=<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>">
+                    <a href="https://www.facebook.com/dialog/pagetab?app_id=<?php echo CL_FB_APP_ID; ?>&next=<?php echo CLADDR;?>talentdashboard.php?activemanagedtalent_tid=<?php echo $clRequestInformation->getActiveManagedBrand()['crowdluv_tid'];?>">
                         <img width="33%" class="img-responsive" src="<?php echo BASE_URL;?>res/want-me-in-your-town.jpg"></a> 
                 <!-- <br>
                 <p>2)Pick an image to post on your timeline</p> 
@@ -37,14 +37,14 @@
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
                 <br><br> -->
                 <p>2) Post a status update linking to your CrowdLuv Landing Page</p>
-                    <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                                else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>" data-width="80" data-type="button">
+                    <div class="fb-share-button" data-href="<?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                                else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?>" data-width="80" data-type="button">
                     </div>                  
 
-                <!-- <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
-                      <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>
+                <!-- <p2><a href="<?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                      else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?>">
+                      <?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                      else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?>
                 </a></p2> -->
                 
             </div>
@@ -59,14 +59,14 @@
                     <img width="31%" style="display:inline-block" class="img-responsive" src="<?php echo BASE_URL;?>res/crowdluv-mobile-logo.jpg">
                 <br>  -->
                 <p>1)Post a status update with this link and your own message</p>
-                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="Want me in your area? Luv me!" data-url="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                        else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>" data-count="none">Tweet</a>
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="Want me in your area? Luv me!" data-url="<?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                        else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?>" data-count="none">Tweet</a>
                     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-                    <!--  <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
-                      <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>
+                    <!--  <p2><a href="<?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                      else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?>">
+                      <?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                      else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?>
                 </a></p2>  -->
 
             </div>
@@ -80,10 +80,10 @@
             <p2>Want me to come to your town? The more people near you who say yes, the sooner I can get there. Please share this link on Facebook, Twitter, and forward this email to your friends
                 <br>
                 <br>
-                   <a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
-                    <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?></a>
+                   <a href="<?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                      else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?>">
+                    <?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                      else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?></a>
 
             </p2>
             <br>
@@ -99,16 +99,16 @@
             <br>
             <div class="cl_graybackground cl_grayborder" style="overflow:hidden;">
                 <p2>
-                &lt;p&gt;&lt;a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"&gt;Want me in your town?&lt;/a&gt;&lt;/p&gt;
+                &lt;p&gt;&lt;a href="<?php echo CLADDR;?>talent/<?php echo $clRequestInformation->getActiveManagedBrand()['crowdluv_tid']; ?>"&gt;Want me in your town?&lt;/a&gt;&lt;/p&gt;
                 </p2>
             </div>
             <br>
             <h1>Other</h1>
             <p>Share these links anywhere</p>
-            <p2><a href="<?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>">
-                    <?php echo CLADDR;?>talent/<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                      else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?></a></p2>
+            <p2><a href="<?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                      else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?>">
+                    <?php echo CLADDR;?>talent/<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                      else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?></a></p2>
 
         </div>
         </div>

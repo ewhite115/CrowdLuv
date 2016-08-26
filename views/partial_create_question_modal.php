@@ -5,15 +5,15 @@
 
 <!-- ***  Modal for adding an question -->
 <div hidden id="CL-modal-add-question" class="CL_modal text-center crowdluvsection">
-    <h1 class="cl-textcolor-standout">Ask a question about <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> </h1>
+    <h1 class="cl-textcolor-standout">Ask a question about <?= $clRequestInformation->getTargetBrand()['fb_page_name'];?> </h1>
 
 
 
-    <?php if(isset($CL_LOGGEDIN_USER_OBJ)) { ?>
+    <?php if($clRequestInformation->getLoggedInUserObj()) { ?>
         <div>
             <form id="CL-form-add-question">
-                <input type="hidden" name="created-by-crowdluv-uid" value="<?= $CL_LOGGEDIN_USER_UID;?>">
-                <input type="hidden" name="created-for-crowdluv-tid" value="<?= $CL_CUR_TGT_TALENT['crowdluv_tid'];?>">
+                <input type="hidden" name="created-by-crowdluv-uid" value="<?= $clRequestInformation->getLoggedInUserId();?>">
+                <input type="hidden" name="created-for-crowdluv-tid" value="<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>">
                 <label for="title">Title:</label>
                 <input name="title" type="text"><br>
                 <label for="description">Description:</label>

@@ -3,17 +3,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?php echo $pageTitle; ?></title>
+	<title><?php echo $clResponseInformation->pageTitle; ?></title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8" />
 
   <!-- Open Graph Meta Tags -->
   <meta property="og:site_name" content="CrowdLuv" />
-  <meta property="og:title" content="<?php echo $pageTitle;?>" />
+  <meta property="og:title" content="<?php echo $clResponseInformation->pageTitle;?>" />
   <meta property="fb:app_id" content="<?php echo CL_FB_APP_ID;?>" />
-  <meta property="og:description" content="<?= $CL_OG_DESCRIPTION;?>"/>
-  <meta property="og:image" content="<?php echo $CL_OG_IMAGE; ?>" />      
+  <meta property="og:description" content="<?= $clResponseInformation->clOpenGraphDescription;?>"/>
+  <meta property="og:image" content="<?php echo $clResponseInformation->clOpenGraphImage; ?>" />      
 
 
   <!-- JQuery -->

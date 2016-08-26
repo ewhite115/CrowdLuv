@@ -1,14 +1,19 @@
 <?php     
-
+ 
 
 /**
  * cl_bootstrap
  * 		This file bootstraps the application by loading key environment variables,
  * 		initiating the model object, session/state values etc
- *
- *
  * 
  */
+//TODO:  refactor this to be part of CLResponseInformation   ?
+ function cldbgmsg($debugmessage){
+
+    $_SESSION["debugmsgs"][] = $debugmessage;
+
+  }
+  if(isset($_COOKIE["PHPSESSID"])) { cldbgmsg("COOKIE['PHPSESSID'] = " . $_COOKIE["PHPSESSID"]) ;} else { cldbgmsg("PHPSEESID cookie doesnt exist");}//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
 
 
 //The following is for compatibility with writing session files on AWS
@@ -20,7 +25,8 @@ session_save_path($dir);
 //  inside the init_session file, because Symfony 
 //  requires that we not call it when using the child/ admin application  (?)
 session_start();
-
+$_SESSION["debugmsgs"] = "";
+  
 
 /** Load BASE_URL and ROOT_PATH environment variables, which are needed to ensure that
  * 	we can load the subsequent bootstrap files from the correct location, regardless of
@@ -32,34 +38,49 @@ session_start();
  * 				
  */		
 if(!defined("BASE_URL")) define("BASE_URL",$_SERVER['CL_BASE_URL']);  
-
 if(!defined("ROOT_PATH")) define("ROOT_PATH",$_SERVER["DOCUMENT_ROOT"] . "/../");
 
 //cl_bootstrap_configs.php will initialize additional key environment variables
 require_once ROOT_PATH . "inc/cl_bootstrap_configs.php" ;
-
-//CrowdLuvModel.php defines the data model class / functions for all database functions for the application
-//  --  removed 2/13/16 in lieu of migrating to autoloading via composer
-//require_once ROOT_PATH . "inc/CrowdLuvModel.php" ;
-
-
-//autoload.php is used by Composer (and/or Symfony?) for  package / dependencies
+//Composer autoload.php for  package / dependencies
 require_once ROOT_PATH . 'vendor/autoload.php';
 
-//Establish DB connection and global $CL_model object
-require_once ROOT_PATH . "inc/cl_bootstrap_model.php";
 
-//Establish function and global var for debug/diagnostic
-require_once ROOT_PATH . "inc/cl_bootstrap_debug.php";
+//Create a CrowdLuvFacebookHelper 
+$clFacebookHelper = new CrowdLuvFacebookHelper();
 
-//Check for existing session variables and populate globals accordingly
-//require_once ROOT_PATH . "inc/cl_bootstrap_sessionglobals.php";
+//Create CL_model with it's db dependency
+$CL_model = new CrowdLuvModel();
+$CL_model->setDB((new CrowdLuvDBFactory())->getCrowdLuvDB());
+$CL_model->setFacebookHelper($clFacebookHelper);
 
-//Load facebook SDK, Check for facebook session, create/update globals and DB accordingly
-//require_once ROOT_PATH . "inc/facebook-sdk/facebook.php";
-require_once ROOT_PATH . "inc/cl_bootstrap_facebook.php";
+//create a CrowdLuvRequest   object
+$clRequestInformation = new CrowdLuvRequestInformation();
+$clRequestInformation->clFacebookHelper = $clFacebookHelper;
+$clRequestInformation->clModel = $CL_model;
 
-//Check for additional parameters on query string and update globals or db accordingly
-require_once ROOT_PATH . "inc/cl_bootstrap_parameters.php";
+//create a CrowdLuvResponse    object
+$clResponseInformation = new CrowdLuvResponseInformation();
+
+ 
+
+
+
+/**  Facebook Likes
+  *  Check for facebook pages the user 'likes',
+  *   add those pages to CL db (as new brands) if not already present
+  *   add an entry in db indicating this user "likes" that page/talent 
+  */
+if($clFacebookHelper->getFacebookSession() and $clFacebookHelper->isNewSession){
+	$clRequestInformation->importUserFacebookLikes();
+
+}//  Facebook likes import
+
+
+
+
+
+//Look for special admin commands to execute in query string
+if(isset($_GET['cmd']) && $_GET['cmd'] == "reloadfollowerplacesfromfacebook"){ $CL_model->ReloadFollowerPlacesFromFacebook();}
 
 

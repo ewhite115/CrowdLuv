@@ -13,7 +13,7 @@
 
 <!-- *** New-User Modal *** Modal pane containing an intro video about CL. Hidden by default. 
   If JS detects the user has not authorized CL on FB, it will show this dialog -->
-<?php if(! $CL_INSIDE_FACEBOOK_TAB) {   //Dont show this when inside the facebook tab ?>
+<?php if(! $clFacebookHelper->isRequestInsideFacebookTab()) {   //Dont show this when inside the facebook tab ?>
 <div id="CL_newuser_introvideo_modal" class="text-center">
     <h1 class="cl-textcolor-standout">Welcome to CrowdLuv</h1>
       <!-- For video hosted on CL env
@@ -29,7 +29,7 @@
     <iframe id="cl-modal-intro-player" src="http://www.youtube.com/embed/4vfdMqEE5lY?enablejsapi=1&rel=0&showinfo=0&modestbranding=1&controls=0" frameborder="0" allowfullscreen></iframe>    
      
     <p class="crowdluvsection text-strong">
-      CrowdLuv allows YOU to decide where <?php echo ( isset($CL_CUR_TGT_TALENT) ? $CL_CUR_TGT_TALENT['fb_page_name']  :  "your favorite acts"  )   ?>  will come next.
+      CrowdLuv allows YOU to decide where <?php echo ( $clRequestInformation->getTargetBrand() ? $clRequestInformation->getTargetBrand()['fb_page_name']  :  "your favorite acts"  )   ?>  will come next.
     </p>
 
     <p>
@@ -52,29 +52,29 @@
 
 
 <?php  // add the correct section header here
-  if($CL_SITE_SECTION == "landing") {include(ROOT_PATH . "views/partial_banner_landing.php");}
-  else if($CL_SITE_SECTION == "home") {include(ROOT_PATH . "views/partial_banner_home.php");}
-  else if($CL_SITE_SECTION == "talent") {include(ROOT_PATH . "views/partial_banner_talent.php");}
-  else if($CL_SITE_SECTION == "follower") {include(ROOT_PATH . "views/partial_banner_follower.php");}
+  if($clResponseInformation->clSiteSection == "landing") {include(ROOT_PATH . "views/partial_banner_landing.php");}
+  else if($clResponseInformation->clSiteSection == "home") {include(ROOT_PATH . "views/partial_banner_home.php");}
+  else if($clResponseInformation->clSiteSection == "talent") {include(ROOT_PATH . "views/partial_banner_talent.php");}
+  else if($clResponseInformation->clSiteSection == "follower") {include(ROOT_PATH . "views/partial_banner_follower.php");}
 ?>
 
 
 
 
 <!-- New Luv Wizard - Intro Screen  -->
-<?php if(isset($CL_LOGGEDIN_USER_OBJ) && isset($CL_CUR_TGT_TALENT)) { ?>
+<?php if($clRequestInformation->getLoggedInUserObj() && $clRequestInformation->getTargetBrand()) { ?>
 
 
   <div id="cl-newluvwizard-screen-1" class="text-center crowdluvsection cl-newluvwizard-screen">
     
-    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>">
-    <img src='res/top-heart.png'/>
-    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=normal&<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
+    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">
+    <img src='/res/top-heart.png'/>
+    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getTargetBrand()["fb_pid"];?>/picture?type=normal&<?php if(($clRequestInformation->getLoggedInUserId())){ ?>&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken(); }?>">
 
     <br><br> 
     <div class="clwhitebg">
     <h1 class="cl-textcolor-standout"> 
-      <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> - powered by CrowdLuv - is the best way to keep up and connect with us
+      <?= $clRequestInformation->getTargetBrand()['fb_page_name'];?> - powered by CrowdLuv - is the best way to keep up and connect with us
     </h1>
     
    
@@ -100,11 +100,11 @@
 
   <!-- New-Luv Wizard screen 2- gather contact preferences for the talent the first time user Luvs a talent -->
   <div id="cl-newluvwizard-screen-2" class="text-center crowdluvsection cl-newluvwizard-screen">
-      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>">
+      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">
       <img src='res/top-heart.png'/>
-      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $CL_CUR_TGT_TALENT["fb_pid"];?>/picture?type=normal&<?php if(isset($CL_LOGGEDIN_USER_UID)){ ?>&access_token=<?php echo $facebookSession->getToken(); }?>">
+      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getTargetBrand()["fb_pid"];?>/picture?type=normal&<?php if(($clRequestInformation->getLoggedInUserId())){ ?>&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken(); }?>">
       <br>
-      <h1>Your Preferences - <?= $CL_CUR_TGT_TALENT['fb_page_name'];?> </h1>
+      <h1>Your Preferences - <?= $clRequestInformation->getTargetBrand()['fb_page_name'];?> </h1>
       <div class="clwhitebg">
         <?php include(ROOT_PATH . 'views/partial_follower_talent_preference_form.php'); ?>
         <br>

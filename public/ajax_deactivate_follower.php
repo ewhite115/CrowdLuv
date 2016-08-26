@@ -19,13 +19,13 @@
 
 	//if(! in_array($prefname, $allowed_prefnames)) {echo "invalid pref name"; exit;}
 
-	$result = $CL_model->deactivate_follower($CL_LOGGEDIN_USER_UID);
+	$result = $CL_model->deactivate_follower($clRequestInformation->getLoggedInUserId());
 
 	//clear out the buffer so the browser only receives the json object
 	if(!$servlet_testing)	$obcontents = ob_get_contents();
 	if(!$servlet_testing)   ob_end_clean();
 
-	$response['crowdluv_uid'] = $CL_LOGGEDIN_USER_UID;
+	$response['crowdluv_uid'] = $clRequestInformation->getLoggedInUserId();
 	//$response['crowdluv_tid'] = $clt;
 	//$response['prefname'] = $prefname;
 	//$response['prefval'] = $prefval;

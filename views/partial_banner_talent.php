@@ -10,7 +10,7 @@
 	      <li><a href="talentshare.php">Share</a></li>
 	      <li><a href="#">Feedback</a></li>
 	      <li><a href="talentdashboard.php">Settings </a></li>
-	      <li class="text-center"><img style="width:70%;"  src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebookSession->getToken();?>'></li>
+	      <li class="text-center"><img style="width:70%;"  src='https://graph.facebook.com/<?php echo $clRequestInformation->getActiveManagedBrand()['fb_pid']; ?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>'></li>
 
  		<li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown"  href="#">

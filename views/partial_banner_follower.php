@@ -8,7 +8,7 @@
     	<li><a href="shareluv.php">Share Luv</a></li>
 	    <li><a href="<?php echo BASE_URL;?>mypreferences">
 	    	My Settings 
-	    	<?php if(isset($CL_LOGGEDIN_USER_OBJ)) { ?> <img width="25px" src='https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid']; ?>/picture?access_token=<?php echo $facebookSession->getToken();?>'><?php } ?>
+	    	<?php if($clRequestInformation->getLoggedInUserObj()) { ?> <img width="25px" src='https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid']; ?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>'><?php } ?>
 	    	</a>
 		</li> 
 

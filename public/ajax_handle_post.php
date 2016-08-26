@@ -47,7 +47,7 @@
 			if(!isset($_GET['crowdluv_tid'])) {echo "crowdluv_tid not set"; exit;}
 			
 			if(! in_array($shareType, $allowed_shareTypes)) {echo "invalid share type"; exit;}
-			if($cluidt != $CL_LOGGEDIN_USER_UID) {echo "CL User ID doesnt match logged in-user"; exit;}
+			if($cluidt != $clRequestInformation->getLoggedInUserId()) {echo "CL User ID doesnt match logged in-user"; exit;}
 		break;
 		case 'createNewEvent':
 			echo "handling createNewEvent\n"; //die;
@@ -91,7 +91,7 @@
 				$shareDetails = $_POST['shareRecord']['shareDetails'];
 				//TODO:  check for necessary shareDetails based on shareType
 				$cluidt = $shareDetails['crowdluvUID'];
-				if($cluidt != $CL_LOGGEDIN_USER_UID) {$validationFailure = "CL User ID doesnt match logged in-user";  break; }
+				if($cluidt != $clRequestInformation->getLoggedInUserId()) {$validationFailure = "CL User ID doesnt match logged in-user";  break; }
 
 			}
 			//$cltidt = $_GET['crowdluv_tid'];
@@ -140,9 +140,9 @@
 				$cluidt = $_GET['crowdluv_uid'];
 				$cltidt = $_GET['crowdluv_tid'];
 
-				$result = $CL_model->recordFollowerShareCompletion($shareType, $CL_LOGGEDIN_USER_UID, $cltidt);
+				$result = $CL_model->recordFollowerShareCompletion($shareType, $clRequestInformation->getLoggedInUserId(), $cltidt);
 				$response['result']= $result;
-				$response['crowdluv_uid'] = $CL_LOGGEDIN_USER_UID;
+				$response['crowdluv_uid'] = $clRequestInformation->getLoggedInUserId();
 				$response['crowdluv_tid'] = $cltidt;
 				$response['shareType'] = $shareType;
 				break;
@@ -187,7 +187,7 @@
 
 				}
 
-				$return = $CL_model->createEvent($cl_uidt = $CL_LOGGEDIN_USER_UID,
+				$return = $CL_model->createEvent($cl_uidt = $clRequestInformation->getLoggedInUserId(),
 												 $cl_tidt = $_POST['created-for-crowdluv-tid'],
 												 $type= $_POST['type'],
 												 $title=$_POST['title'],
@@ -206,7 +206,7 @@
 			case 'getUpcomingEventsForTalent':
 				//echo "fdddddd";
 				$cl_uidt=NULL;
-				if( isset($CL_LOGGEDIN_USER_UID) && $CL_LOGGEDIN_USER_UID ) $cl_uidt = $CL_LOGGEDIN_USER_UID;
+				if( $clRequestInformation->getLoggedInUserId() && $clRequestInformation->getLoggedInUserId() ) $cl_uidt = $clRequestInformation->getLoggedInUserId();
 				$events = $CL_model->getUpcomingEventsForTalent($_POST['related_crowdluv_tid'], $cl_uidt);
 				
 				//var_dump($events);
@@ -219,7 +219,7 @@
 			case 'getEventDetails':
 
 				$cl_uidt=NULL;
-				if( isset($CL_LOGGEDIN_USER_UID) && $CL_LOGGEDIN_USER_UID ) $cl_uidt = $CL_LOGGEDIN_USER_UID;
+				if( $clRequestInformation->getLoggedInUserId() && $clRequestInformation->getLoggedInUserId() ) $cl_uidt = $clRequestInformation->getLoggedInUserId();
 				$event = $CL_model->getEventDetails($_POST['eventID'], $cl_uidt);
 				
 				$response['result'] = "ok";
@@ -251,7 +251,7 @@
 										'', 
 										null, 
 										'crowdluvtid' . $_POST['created-for-crowdluv-tid'], 
-										$CL_LOGGEDIN_USER_UID);
+										$clRequestInformation->getLoggedInUserId());
 				echo "complete";
 						
 				$response['result'] = "ok";

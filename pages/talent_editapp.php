@@ -2,20 +2,20 @@
     //require_once "../inc/cl_bootstrap.php"; 
 
     $pageTitle = "CrowdLuv";
-    $CL_SITE_SECTION = "talent";
+    $clResponseInformation->clSiteSection = "talent";
  
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
-        // if(! $CL_LOGGEDIN_USER_UID) { echo "no logged in user(?)"; exit; } 
+        // if(! $clRequestInformation->getLoggedInUserId()) { echo "no logged in user(?)"; exit; } 
 
 
     $badpatherr=false; //flag to indicate the user tried to upload an image in unsupported file format
     $vurl_err=false;  //flag to indicate whether the user requested an invalid or unavailable vanity url
     //Get the landing page settings for this talent
-    $tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+    $tlpgsettings = $CL_model->get_talent_landingpage_settings($clRequestInformation->getActiveManagedBrand()['crowdluv_tid']);
     
     
     //If this is a postback and the user has specified a new message, insert a new row into the CL db for the new msg   
-    if(isset($_POST['newmsg']) &&  $_POST['newmsg'] != ""  && ($_POST['newmsg'] != $tlpgsettings['message'])) { $CL_model->update_talent_landingpage_message($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $_POST['newmsg']);  }    
+    if(isset($_POST['newmsg']) &&  $_POST['newmsg'] != ""  && ($_POST['newmsg'] != $tlpgsettings['message'])) { $CL_model->update_talent_landingpage_message($clRequestInformation->getActiveManagedBrand()['crowdluv_tid'], $_POST['newmsg']);  }    
 
     //If this is a postback and the user is setting a new image for their landing page ...
     do if(isset($_FILES['newimg']) && basename($_FILES['newimg']['name']) != "" & basename($_FILES['newimg']['name']) != $tlpgsettings['image']) {
@@ -24,9 +24,9 @@
         if(! ($extension == "jpg" || $extension == "png")) { $badpatherr=true; break;  }
 
         //In case the file storage direcories have not been created for this talent (which should only be the case for the first few talent in the db), call the function that will create them if they dont exist
-        $CL_model->create_new_cl_talent_files($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+        $CL_model->create_new_cl_talent_files($clRequestInformation->getActiveManagedBrand()['crowdluv_tid']);
         //First, attempt to move the image into their storage folder on the server
-        $uploaddir = ROOT_PATH . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'] . '/landingpage_images/';
+        $uploaddir = ROOT_PATH . 'crowdluvdata/talent/' . $clRequestInformation->getActiveManagedBrand()['crowdluv_tid'] . '/landingpage_images/';
         $uploadfile = $uploaddir . basename($_FILES['newimg']['name']);
         //echo "uploadfile=" . $uploadfile;
         if (move_uploaded_file($_FILES['newimg']['tmp_name'], $uploadfile)) {
@@ -35,16 +35,16 @@
             echo "Possible file upload attack!\n";
         }
         //Now update the CL database to reflect the new img file name
-        $CL_model->update_talent_landingpage_image($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], basename($_FILES['newimg']['name']));        
+        $CL_model->update_talent_landingpage_image($clRequestInformation->getActiveManagedBrand()['crowdluv_tid'], basename($_FILES['newimg']['name']));        
 
 
     } while(false);   //wrap the if block in a do-while so that we can break out on bad file extensions
 
     //Get the landing page settings for this talent  (again)
-    $tlpgsettings = $CL_model->get_talent_landingpage_settings($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']);
+    $tlpgsettings = $CL_model->get_talent_landingpage_settings($clRequestInformation->getActiveManagedBrand()['crowdluv_tid']);
     //var_dump($tlpgsettings); exit;
-    if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $CL_ACTIVE_MANAGED_TALENT['fb_pid'] . "/picture?access_token=" . $facebookSession->getToken();
-    else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
+    if($tlpgsettings['image'] == "facebookprofile") $tlpimg = "https://graph.facebook.com/" . $clRequestInformation->getActiveManagedBrand()['fb_pid'] . "/picture?access_token=" . $facebookSession->getToken();
+    else if ($tlpgsettings['image'] != "" && $tlpgsettings['image'] != "default") $tlpimg = BASE_URL . 'crowdluvdata/talent/' . $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"] . '/landingpage_images/' . $tlpgsettings["image"];
     else $tlpimg = CLADDR . 'res/crowdluv_fbtab_defaulthero_820.jpg';//else $tlpimg = BASE_URL . 'crowdluvdata/default_talent_landingpage_image.jpg';
     
 
@@ -69,8 +69,8 @@
         <p>
             <?php echo CLADDR;?>
                 <input type="text" name="txt_crowdluv_vurl" id="txt_crowdluv_vurl" 
-                                value='<?php if($CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"] == ""){ echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"];}
-                                              else {echo $CL_ACTIVE_MANAGED_TALENT["crowdluv_vurl"];} ?>'>
+                                value='<?php if($clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"] == ""){ echo $clRequestInformation->getActiveManagedBrand()["crowdluv_tid"];}
+                                              else {echo $clRequestInformation->getActiveManagedBrand()["crowdluv_vurl"];} ?>'>
                 </input>
                 <button id="btnCheckAndSetVURL" class="cl-button-standout">Check and Set</button>
                 <p class="cl-textcolor-standout" id="p-vanity-url-result"></p> 

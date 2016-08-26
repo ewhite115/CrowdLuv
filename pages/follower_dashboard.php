@@ -3,24 +3,23 @@
     ////require_once "../inc/cl_bootstrap.php";
 
 
-    $CL_SITE_SECTION = "follower";
-
+  
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
 
-    $mobileStatus = $CL_model->getMobileValidityForFollower($CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] );
-    $emailStatus = $CL_model->getEmailValidityForFollower($CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] );
+    $mobileStatus = $CL_model->getMobileValidityForFollower($clRequestInformation->getLoggedInUserObj()['crowdluv_uid'] );
+    $emailStatus = $CL_model->getEmailValidityForFollower($clRequestInformation->getLoggedInUserObj()['crowdluv_uid'] );
 
 
     //Get the list of talent this user luvs 
-    $mostLuvd = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
+    $mostLuvd = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
     //re-sort the list by how many LuvPoints the fan has for each
     $scores=array();
-    foreach($mostLuvd as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); }
+    foreach($mostLuvd as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($clRequestInformation->getLoggedInUserId(), $ret_tal['crowdluv_tid']); }
     array_multisort($scores, SORT_DESC, $mostLuvd);
 
 
     //Get the list of talent this user likes 
-    $mylikes = $CL_model->getTalentsThatFollowerFacebookLikesButNotLuvs($CL_LOGGEDIN_USER_UID);
+    $mylikes = $CL_model->getTalentsThatFollowerFacebookLikesButNotLuvs($clRequestInformation->getLoggedInUserId());
 
     $likesAndLuvs = array_merge($mostLuvd, $mylikes);
 
@@ -100,7 +99,7 @@
                 <a class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">     
                     
                     <div class="talent-avatar"> 
-                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>"> 
+                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
                         <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
                     </div>
                     <div class="card-info">
@@ -116,7 +115,7 @@
                 <a class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " href="follower_all_luvs.php">     
                     
                     <div class="talent-avatar text-center"> 
-                        <img src="https://graph.facebook.com/dddddddddddd/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>"> 
+                        <img src="https://graph.facebook.com/dddddddddddd/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
                         <p class="talent-name">  More... </p>
                     </div>
                     <div class="heart-rank text-center">
@@ -162,7 +161,7 @@
                     <div class="talent-avatar "> 
                         <!-- <a href="talent/<?php echo $cltalentobj['crowdluv_vurl'];?>"> -->
                         <a href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">
-                            <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $facebookSession->getToken();?>"> 
+                            <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
                         </a>
                         
                     </div>

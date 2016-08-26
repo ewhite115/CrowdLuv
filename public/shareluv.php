@@ -20,16 +20,15 @@
     require_once "../inc/cl_bootstrap.php";
  
     
-    $CL_SITE_SECTION = "follower";
     
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
 
     //Get the list of talent this user is following, 
-    $ret_tals = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
+    $ret_tals = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
     //re-sort the list by how many LuvPoints the fan has for each
     $scores=array();
     foreach($ret_tals as $ret_tal){ 
-        $scores[] = $CL_model->calculate_follower_score_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']); 
+        $scores[] = $CL_model->calculate_follower_score_for_talent($clRequestInformation->getLoggedInUserId(), $ret_tal['crowdluv_tid']); 
     }
     array_multisort($scores, SORT_DESC, $ret_tals);
     
@@ -38,7 +37,7 @@
     foreach($ret_tals as &$ret_tal){
 
         $nowTimestamp = date("Y-m-d G:i:s", time());
-        $potentialShareRecord = [ "crowdluv_uid" => $CL_LOGGEDIN_USER_UID, 'crowdluv_tid' => $ret_tal['crowdluv_tid'], 'timestamp' => $nowTimestamp  ];
+        $potentialShareRecord = [ "crowdluv_uid" => $clRequestInformation->getLoggedInUserId(), 'crowdluv_tid' => $ret_tal['crowdluv_tid'], 'timestamp' => $nowTimestamp  ];
         
         $potentialShareRecord['share_type'] = "facebook-share-landingpage";
         $ret_tal['facebook_share_landingpage_eligibility'] = $CL_model->calculateLuvPointsEligibilityForShareRecord($potentialShareRecord);
@@ -85,7 +84,7 @@
             <?php 
                 //Display a "card" / panel for each talent
                 foreach($ret_tals as $cltalentobj){ 
-                    $rank = $CL_model->calculate_follower_rank_for_talent($CL_LOGGEDIN_USER_UID, $ret_tal['crowdluv_tid']);
+                    $rank = $CL_model->calculate_follower_rank_for_talent($clRequestInformation->getLoggedInUserId(), $ret_tal['crowdluv_tid']);
             ?>
 
                 <!-- Share Talent Card 
@@ -95,7 +94,7 @@
                 <div data-crowdluv-tid="<?php echo $cltalentobj['crowdluv_tid'];?>" class="crowdluvsection cl-talent-share-listing-card-square cl-talent-listing-card-square  text-left cl_graybackground cl_grayborder cl_darkgraybackground"> 
                 
                     <div class="talent-avatar text-center"> 
-                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
+                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
                         <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
                     </div>
              
@@ -128,7 +127,7 @@
                                 <img <?php if($cltalentobj['facebook_share_landingpage_eligibility']['eligibleLuvPoints'] == 0) echo "hidden"; ?> 
                                     style="width:50px;" 
                                     src="res/facebook-share-button.png" 
-                                    onclick="doFacebookShareDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')">
+                                    onclick="doFacebookShareDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $clRequestInformation->getLoggedInUserId();?>','<?php echo $cltalentobj['crowdluv_tid'];?>')">
                             </a>
                             <!--disabled button-->
                             <img <?php if($cltalentobj['facebook_share_landingpage_eligibility']['eligibleLuvPoints'] > 0) echo "hidden"; ?> 
@@ -153,7 +152,7 @@
                         <p2>
                             <!--enabled -->
                             <a href="#">
-                                <img <?php if($cltalentobj['facebook_send_landingpage_eligibility']['eligibleLuvPoints'] == 0) echo "hidden"; ?>  style="width:50px;" src="res/facebook-send-button.jpg" onclick="doFacebookSendDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $CL_LOGGEDIN_USER_UID;?>','<?php echo $cltalentobj['crowdluv_tid'];?>')"> 
+                                <img <?php if($cltalentobj['facebook_send_landingpage_eligibility']['eligibleLuvPoints'] == 0) echo "hidden"; ?>  style="width:50px;" src="res/facebook-send-button.jpg" onclick="doFacebookSendDialog('<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];} else {echo $cltalentobj["crowdluv_vurl"];}?>', '<?php echo $clRequestInformation->getLoggedInUserId();?>','<?php echo $cltalentobj['crowdluv_tid'];?>')"> 
                             </a>
                             <!--disabled-->
                             <img <?php if($cltalentobj['facebook_send_landingpage_eligibility']['eligibleLuvPoints'] > 0) echo "hidden"; ?> 
@@ -182,7 +181,7 @@
                                     href="https://twitter.com/share" class="twitter-share-button" 
                                     data-text="I'm following <?php echo $cltalentobj["fb_page_name"];?> on CrowdLuv. " 
                                     data-url="<?php echo CLADDR;?>talent/<?php if($cltalentobj["crowdluv_vurl"] == ""){ echo $cltalentobj["crowdluv_tid"];}
-                                                                                else {echo $cltalentobj["crowdluv_vurl"];} ?>?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>" 
+                                                                                else {echo $cltalentobj["crowdluv_vurl"];} ?>?ref_uid=<?php echo $clRequestInformation->getLoggedInUserId();?>" 
                                     data-count="none">Tweet</a>
                                 <!--   
                                 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -250,7 +249,7 @@
                 //to which talent was being shared by the user    
                 crowdluv_tid = event.target.offsetParent.getAttribute("data-crowdluv-tid");
                 console.log("calculated crowdluv_tid to be: " + crowdluv_tid);
-                recordFollowerShareCompletion("twitter-tweet-landingpage", <?php echo $CL_LOGGEDIN_USER_UID;?>, crowdluv_tid);
+                recordFollowerShareCompletion("twitter-tweet-landingpage", <?php echo $clRequestInformation->getLoggedInUserId();?>, crowdluv_tid);
                 $("#lbl-twitter-tweet-status-" + crowdluv_tid).html("<img style='width: 1.75em;' src='res/green-check-mark-2.png'>Success!")
             }
         });
@@ -263,7 +262,7 @@
 
         FB.ui({
             method: 'share',
-            href: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>",
+            href: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $clRequestInformation->getLoggedInUserId();?>",
             display: 'popup'
             },
             function(response) {
@@ -291,7 +290,7 @@
 
         FB.ui({
             method: 'send',
-            link: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $CL_LOGGEDIN_USER_UID;?>"
+            link: '<?php echo CLADDR;?>talent/' + vurl + "?ref_uid=<?php echo $clRequestInformation->getLoggedInUserId();?>"
             },
             function(response) {
             console.log("callback from fb share dialog:")

@@ -12,9 +12,9 @@
 
 	$vurl = $_GET['vurl'];
 	
-	$response = $CL_model->update_talent_landingpage_vurl($CL_ACTIVE_MANAGED_TALENT["crowdluv_tid"], $vurl);
+	$response = $CL_model->update_talent_landingpage_vurl($clRequestInformation->getActiveManagedBrand()["crowdluv_tid"], $vurl);
 	//If it was successful, update in-memory record with the new value
-    if($response['result'] == 1) {$CL_ACTIVE_MANAGED_TALENT['crowdluv_vurl'] = $response['vurl'];} 
+    if($response['result'] == 1) {$clRequestInformation->getActiveManagedBrand()['crowdluv_vurl'] = $response['vurl'];} 
         
 	//clear out the buffer so the browser only receives the json object
 	if(!$servlet_testing)	$obcontents = ob_get_contents();

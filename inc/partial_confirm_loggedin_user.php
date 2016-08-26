@@ -1,5 +1,5 @@
 <?php
-    if( !isset($CL_LOGGEDIN_USER_UID) ||  ! $CL_LOGGEDIN_USER_UID) { 
+    if( !$clRequestInformation->getLoggedInUserId() ||  ! $clRequestInformation->getLoggedInUserId()) { 
         echo "no logged in user (?)";
         require_once("inc/partial_footer.php");
         

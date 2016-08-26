@@ -1,14 +1,11 @@
 <?php 
-use Facebook\FacebookSession;
-use Facebook\FacebookRedirectLoginHelper;
-
-////require_once "../inc/cl_bootstrap.php";
-
-//$pageTitle = "CrowdLuv";
-$CL_SITE_SECTION = "home";
 
 
-if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_follower($CL_LOGGEDIN_USER_UID);
+
+$clResponseInformation->clSiteSection = "home";
+
+
+if ($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
 
 
 
@@ -52,12 +49,12 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
     
   <!--  Fan Call-to-Action   -->
   <!-- If not logged in, show the Call-to-action homepage with facebook login buttons -->
-  <?php if(! isset($CL_LOGGEDIN_USER_OBJ)){ ?>
+  <?php if(! $clRequestInformation->getLoggedInUserObj()){ ?>
     <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
       <div class="text-center crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box"  id="crowdluv_landingpage_memberlogin_notloggedin">
           <!-- <h1 class="cl-textcolor-standout cl-major-heading">For Fans</h1> -->
           <p class=""> Get your favorite acts to come to you. Share the Luv to establish yourself as the #1 fan and earn VIP perks.  </p><br>
-          <a href="<?php echo $talentLoginURL;?>"><img  class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
+          <a href="<?php echo $clFacebookHelper->getLoginUrl(); ?>"><img  class=" " src="<?php echo BASE_URL;?>res/signin-facebook.jpg" /> </a>
 
           <br> 
           <!-- User Denied Facebook Permission -->
@@ -81,10 +78,10 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         <div class="col-xs-6 col-sm-3 text-center ">
         
           <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
-          <img src="https://graph.facebook.com/<?php echo $CL_LOGGEDIN_USER_OBJ['fb_uid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>">
-          <p2 class= "cl-textcolor-default"><?php echo $CL_LOGGEDIN_USER_OBJ['firstname'] . " " . $CL_LOGGEDIN_USER_OBJ['lastname'];?></p2>
+          <img src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">
+          <p2 class= "cl-textcolor-default"><?php echo $clRequestInformation->getLoggedInUserObj()['firstname'] . " " . $clRequestInformation->getLoggedInUserObj()['lastname'];?></p2>
           <p class= "cl-textcolor-default">Manage Your CrowdLuv Profile and who you follow</p>                            
-          <?php if($CL_LOGGEDIN_USER_OBJ['deactivated']){ ?>
+          <?php if($clRequestInformation->getLoggedInUserObj()['deactivated']){ ?>
             <p class="cl-textcolor-default">You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
 
           <?php }  ?>
@@ -115,8 +112,6 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         </div>
 
 
-
-
     </div>              
                   
                     
@@ -129,10 +124,8 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
   <div class="row">
 
 
-
-
   <!-- Talent Call-To-Action  -->
-  <?php if(! isset($CL_LOGGEDIN_TALENTS_ARR) || empty($CL_LOGGEDIN_TALENTS_ARR) )  {  ?>
+  <?php if(! ($clRequestInformation->getManagedBrands())  )  {  ?>
     
     <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3" >
       <div class="text-center crowdluvsection clwhitebg crowdluv_landingpage_memberlogin_box">
@@ -164,20 +157,20 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
           
 
           <?php  //Display each of the facebook pages for which logged in user is an admin of
-          if(isset($CL_LOGGEDIN_TALENTS_ARR)){
+          if(($clRequestInformation->getManagedBrands())){
             //Check to see if any of the talents are whitelisted or not. Print out a message correspondingly 
             $anywhitelistedtalent=false;
-            foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){ if(! $cltalentobj['waitlisted']) $anywhitelistedtalent = true; break; }
+            foreach($clRequestInformation->getManagedBrands() as $cltalentobj){ if(! $cltalentobj['waitlisted']) $anywhitelistedtalent = true; break; }
             if(! $anywhitelistedtalent) { ?> <p> Thank you for your interest in CrowdLuv! You have been added to our talent waitlist, and you'll be contacted when we are accepting new talent signups.</p> <?php }
             else { ?> 
               
             <!-- Print out the talent profiles this user has access to manage -->
             <?php  } 
-            foreach($CL_LOGGEDIN_TALENTS_ARR as $cltalentobj){  ?>
+            foreach($clRequestInformation->getManagedBrands() as $cltalentobj){  ?>
               <?php if(! $cltalentobj['waitlisted']) {  ?> <a href="topcities.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>&activemanagedtalent_tid=<?php echo $cltalentobj['crowdluv_tid'];?>"> <?php } ?> 
               <div class="text-left cl_graybackground cl_grayborder talentpagelisting">
                   
-                <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $facebookSession->getToken();?>"> 
+                <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
                 <p>  <?php echo $cltalentobj['fb_page_name'];?></p>  <?php if($cltalentobj['waitlisted']) { ?> <p>(Wait-listed)</p> <?php } ?></span>
                 
               </div>        
@@ -202,7 +195,7 @@ if(isset($CL_LOGGEDIN_USER_OBJ)) $fanOfTalents = $CL_model->get_talents_for_foll
         //Click handler for the "Reactivate account" button
         $("[name=btn_reactivate_account]").click(function(){
             
-            reactivate_follower(<?php echo (isset($CL_LOGGEDIN_USER_OBJ['crowdluv_uid']) ? $CL_LOGGEDIN_USER_OBJ['crowdluv_uid'] : "no_user"); ?>, function(){
+            reactivate_follower(<?php echo (isset($clRequestInformation->getLoggedInUserObj()['crowdluv_uid']) ? $clRequestInformation->getLoggedInUserObj()['crowdluv_uid'] : "no_user"); ?>, function(){
                 window.open('<?php echo BASE_URL;?>', "_top").focus();
             });
             

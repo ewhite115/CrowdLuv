@@ -2,10 +2,10 @@
     //require_once "../inc/cl_bootstrap.php"; 
 
     
-    $CL_SITE_SECTION = "talent";
+    $clResponseInformation->clSiteSection = "talent";
 
-    if(! $CL_LOGGEDIN_USER_UID) { echo "No logged in user(?)"; exit;  } 
-    if(!isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
+    if(! $clRequestInformation->getLoggedInUserId()) { echo "No logged in user(?)"; exit;  } 
+    if(!isset($clRequestInformation->getActiveManagedBrand())) {echo "no active talent set"; exit;}
 
     include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
 
@@ -19,7 +19,7 @@
 
     <div class="fluid-row text-center">
         <div class="col-xs-10 col-xs-offset-1 crowdluvsection clwhitebg">
-            <h2> Welcome to CrowdLuv, <?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?>. None of your fans have Luv'd you yet.  Let's get you some Luv. </h2> <br>
+            <h2> Welcome to CrowdLuv, <?php echo $clRequestInformation->getActiveManagedBrand()['fb_page_name'];?>. None of your fans have Luv'd you yet.  Let's get you some Luv. </h2> <br>
             
             <h2> First, <a target="_new" href="talent_editapp.php">customize your CrowdLuv landing page</a></h2>
             <p>This is your home on CrowdLuv, where your fans can learn about what CrowdLuv is and choose to Luv you.</p>
@@ -29,11 +29,11 @@
             <br>
             <h3>Option 1 - Send your fans a link to your CrowdLuv landing page.</h3>
              <p>  You can share this link with your fans by email, Facebook, Twitter etc.  This link will bring them to your CrowdLuv landing page, where your fans can learn about CrowdLuv and Luv you.</p>
-                <a href="<?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>"><?php echo CLADDR;?>talent/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?></a>
+                <a href="<?php echo CLADDR;?>talent/<?php echo $clRequestInformation->getActiveManagedBrand()['crowdluv_tid']; ?>"><?php echo CLADDR;?>talent/<?php echo $clRequestInformation->getActiveManagedBrand()['crowdluv_tid']; ?></a>
             <br><br>
             <h3>Option 2 - Send your fans a link to directly Luv you.</h3>
             <p>This link will bypass your landing page, immediately asking your fans for permission to add you as a follower on CrowdLuv. You can share this link with your fans by email, Facebook, Twitter etc.  This link will bring them to your CrowdLuv landing page, where your fans can learn about CrowdLuv and Luv you.</p>
-                <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo CL_FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid']; ?>">Your CrowdLuv Link</a>
+                <a href="https://www.facebook.com/dialog/oauth?client_id=<?php echo CL_FB_APP_ID; ?>&scope=<?php echo CL_FB_PERMISSION_SCOPE_STRING;?>&redirect_uri=<?php echo CLADDR;?>luv/<?php echo $clRequestInformation->getActiveManagedBrand()['crowdluv_tid']; ?>">Your CrowdLuv Link</a>
 
         </div>
     </div>

@@ -1,13 +1,13 @@
 <?php 
 //require_once "../inc/cl_bootstrap.php"; 
 
-$CL_SITE_SECTION = "talent";
+$clResponseInformation->clSiteSection = "talent";
 
 
-if(! isset($CL_ACTIVE_MANAGED_TALENT)) {echo "no active talent set"; exit;}
+if(! $clRequestInformation->getActiveManagedBrand()) {echo "no active talent set"; exit;}
 if(! isset($_GET['city'])) {echo "no city passed in"; exit;  }
 $city=$_GET['city'];
-$citystats= $CL_model->get_city_stats_for_talent($CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'], $city, 5);
+$citystats= $CL_model->get_city_stats_for_talent($clRequestInformation->getActiveManagedBrand()['crowdluv_tid'], $city, 5);
 
 
 include(ROOT_PATH . 'views/partial_cl_html_leader.php'); 
@@ -83,7 +83,7 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
         $("#modal_retrievinginfo").show();  
  
         var qopts = { 
-            crowdluv_tid: "<?php echo $CL_ACTIVE_MANAGED_TALENT['crowdluv_tid'];?>", 
+            crowdluv_tid: "<?php echo $clRequestInformation->getActiveManagedBrand()['crowdluv_tid'];?>", 
             crossDomain: true,
             city: working_targetset.areaname, 
             distance: working_targetset.distance,
@@ -427,7 +427,7 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
 
     <div class="fluid-row">
         <div class="col-xs-12 crowdluvsection"> 
-            <h1>Follower Demographics in <?php echo $city;?> for <?php echo $CL_ACTIVE_MANAGED_TALENT['fb_page_name'];?> &nbsp; <img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $CL_ACTIVE_MANAGED_TALENT['fb_pid']; ?>/picture?access_token=<?php echo $facebookSession->getToken();?>'></h1>
+            <h1>Follower Demographics in <?php echo $city;?> for <?php echo $clRequestInformation->getActiveManagedBrand()['fb_page_name'];?> &nbsp; <img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $clRequestInformation->getActiveManagedBrand()['fb_pid']; ?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>'></h1>
              
         </div>
     </div>

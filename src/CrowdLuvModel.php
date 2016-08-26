@@ -12,11 +12,13 @@ class CrowdLuvModel {
 
     private $cldb="";
     private $facebookSession;
+    private $clFacebookHelper;
     public static $SHARETYPES = [ 'crowdluv-talent-landing-page', 'crowdluv-event'];
     public static $SHAREMETHODS = [ 'facebook-share', 'facebook-send', 'twitter-tweet' ];
 
     public function setDB($thedbobj){ $this->cldb = $thedbobj;  }
     public function setFacebookSession($fbs){$this->facebookSession = $fbs;}
+    public function setFacebookHelper($fbh){$this->clFacebookHelper = $fbh;}
 
 
 
@@ -53,41 +55,7 @@ class CrowdLuvModel {
 
     }
 
-
-    public function create_new_cl_follower_record_from_facebook_user_profile($follower_fbup) {
-        //pass in the JSON object returned by FB API
-        if(!$follower_fbup) return 0;
-
-        try {
-            //Update this line to insert any/all values from the user profile into db
-            $f = $follower_fbup;
-            //var_dump($f);exit;       
-            $fblocid="0"; $fblocname="Unspecified"; $clPlaceID= 0;
-            if(isset($f['location'])) {
-                $fblocid=$f['location']->id; 
-                $fblocname=$f['location']->name;
-                //Create this place in CL db if not already
-                $clPlaceID = $this->createPlaceFromFacebookPlaceID($fblocid);
-
-
-            }
-            $fbemail="Unspecified"; if(isset($f['email'])) $fbemail=$f['email'];
-            $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
-            date_default_timezone_set('America/New_York');
-            $fbbdate="1900-01-01"; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
-            $sql = "INSERT INTO follower (fb_uid,                location_fb_id,     crowluv_placeid,   location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
-                                  VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $clPlaceID . "', '"  . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
-            //echo $sql;// exit;
-            $results = $this->cldb->query($sql);
-            //var_dump($results); exit;
-            
-            
-        } catch (Exception $e) {
-            echo "Data could not be inserted to the database. " . $e;
-            return -1;
-        }
-    }
-
+ 
 
    /**
      * Write a follower record from memory into CL DB  
@@ -169,6 +137,65 @@ class CrowdLuvModel {
         }
     }
 
+
+
+ 
+   /**
+     * [getCrowdLuvUIDByFacebookProfile Retrieves or adds a CrowdLuv user based for a facebook profile]
+     * @param  [type] $fbUserProfile [facebook profiue object as provided by facebook api]
+     * @return [type]                [Crowdluv UID of user]
+     * @return null                     if exceptions
+     */
+    public function getCrowdLuvUIDByFacebookProfileObject($follower_fbup) {
+        //pass in the array /  JSON object returned by FB API
+        if(!$follower_fbup) return 0;
+        $f = $follower_fbup;
+            
+        //Check if the user exists already 0 if so, return UID.
+        $existingUID = $this->get_crowdluv_uid_by_fb_uid($f['id']);
+        if($existingUID) return $existingUID;
+
+        //Otherwise - they dont exist, so create and return.
+
+        try {
+            //Update this line to insert any/all values from the user profile into db
+            
+            $fblocid="0"; $fblocname="Unspecified"; $clPlaceID= 0;
+            if(isset($f['location'])) {
+                $fblocid=$f['location']->id; 
+                $fblocname=$f['location']->name;
+                //Create this place in CL db if not already
+                $clPlaceID = $this->createPlaceFromFacebookPlaceID($fblocid);
+
+
+            }
+            $fbemail="Unspecified"; if(isset($f['email'])) $fbemail=$f['email'];
+            $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
+            date_default_timezone_set('America/New_York');
+            $fbbdate="1900-01-01"; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
+
+            //Execute the insert
+            $sql = "INSERT INTO follower (fb_uid,                location_fb_id,     crowluv_placeid,   location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
+                                  VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $clPlaceID . "', '"  . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
+            //echo $sql;// exit;
+            $results = $this->cldb->query($sql);
+            
+            //Return the crowdluv_uid of the newly created user
+            return $this->get_crowdluv_uid_by_fb_uid($f['id']);
+            //var_dump($results); exit;
+            
+            
+            
+        } catch (Exception $e) {
+            echo "Data could not be inserted to the database. " . $e;
+            return null;
+        }
+
+
+    }
+
+
+
     /**
      * Find out the CrowdLuv User-ID for a user, based on a facebook user ID  
      * @param    int      $cl_tidt     CrowdLuv talent ID of the talent to retrieve the info about
@@ -176,7 +203,7 @@ class CrowdLuvModel {
      *                    int    0 if no user was found for the facebook UserID specified
      *                    int    -1 if there is an error with the DB query
      */
-    public function get_crowdluv_uid_by_fb_uid($follower_fb_uid){
+    private function get_crowdluv_uid_by_fb_uid($follower_fb_uid){
 
         if(!$follower_fb_uid) return 0;
         
@@ -288,13 +315,18 @@ class CrowdLuvModel {
 
     }
 
-    public function create_new_cl_talent_record_from_facebook_page_profile($talent_fbpp){
+    public function getCrowdLuvTIDByFacebookPageProfile($talent_fbpp){
         //pass in json object of the page
         //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
         if(!$talent_fbpp) return 0;
-                
-        $new_cl_tid = "";
+           
+        //Check for an existing Brand for this facebook page.  If so, return it's ID.
+        if( $existingTID = $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id)) return $existingTID;
 
+        //Otherwise, create new
+        cldbgmsg("Found new facebook page to add: " . $fbupg->id); 
+
+        $new_cl_tid = "";
         try {    
             //Insert the main record into the talent table
             $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
@@ -307,16 +339,25 @@ class CrowdLuvModel {
 
             $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id);
             $this->setDefautValuesForNewTalent($new_cl_tid);
+            return $new_cl_tid;
 
             //$results = $CL_db->query($sql);
         } catch (Exception $e) {
             echo "Failed inserting into talent table from create_new_cl_tlent_record_from_facebook_page_profile" . $e->getMessage();
             die;
-            return -1;
+            return null;
         }
+
+        return 0;
 
     }
 
+    /**
+     * [create_new_cl_talent_record_from_facebook_user_like   Takes a fb page profile from a user's 'like' and creates and new CrowdLuv brand for it.]
+     * @param  [type] $talent_fbpp [description]
+     * @return [type]              [tid of the newly created brand.]
+     * @return null                 if there was an exception
+     */
     public function create_new_cl_talent_record_from_facebook_user_like($talent_fbpp){
         //pass in json object of the page
         //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
@@ -337,9 +378,7 @@ class CrowdLuvModel {
             $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id);
 
             $this->setDefautValuesForNewTalent($new_cl_tid);
-            //Default the vanity URL to the sanitized version of their facebook page name
-            //$this->update_talent_landingpage_vurl($new_cl_tid, htmlspecialchars($talent_fbpp->name));
-            //$tmp = $this->update_talent_landingpage_vurl($new_cl_tid, $this->getVURLFromFacebookLink($talent_fbpp->link));
+
             //echo "<pre>"; var_dump($tmp);  echo "</pre>"; 
             
             // Update the crowdluv_vurl to match that of the facebook page. bypass sanitization since it should alreayd be sanitized for fb.
@@ -347,13 +386,17 @@ class CrowdLuvModel {
             // TODO:  deal with  /pages/.../####
             $this->update_talent_setting($new_cl_tid, "crowdluv_vurl", $this->getVURLFromFacebookLink($talent_fbpp->link));
 
+            //return the talent id of the newly created entry
+            return $new_cl_tid;            
+            
             //$results = $CL_db->query($sql);
         } catch (Exception $e) {
             echo "Failed inserting into talent table from create_new_cl_talent_record_from_facebook_user_like" . $e->getMessage();
             die;
-            return -1;
+            return null;
         }
 
+        return 0;
 
     }
 
@@ -1880,6 +1923,7 @@ class CrowdLuvModel {
     } //updateEventValues
 
 
+    //TODO: remove facebooksesion as an arg here.  Changed to using facebookhelper 2/17
     public function importEventsForAllTalent($facebookSession, $sinceTimestamp = 1356998400){
 
         set_time_limit(0);
@@ -1887,7 +1931,7 @@ class CrowdLuvModel {
 
         foreach($tals as $tal){
 
-            $this->importEventsForTalent($tal['crowdluv_tid'], $tal['fb_pid'], $facebookSession, $sinceTimestamp);
+            $this->importEventsForTalent($tal['crowdluv_tid'], $tal['fb_pid'], $this->facebookHelper->getFacebookSession(), $sinceTimestamp);
 
         }
 
@@ -1900,7 +1944,7 @@ class CrowdLuvModel {
         //  Loop making api call ..  
         $done=false;
         //Create the initial request object for retrieving the events
-        $request = new FacebookRequest( $facebookSession, 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
+        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
         $response = null;
         do{  
             try{          
@@ -2446,7 +2490,7 @@ class CrowdLuvModel {
 
         try { 
             // graph api request for place data
-            $request = new FacebookRequest( $this->facebookSession, 'GET', '/' . $fbPid );
+            $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fbPid );
             $response = $request->execute();
             // get response
             $fbPlace = $response->getGraphObject()->asArray();
@@ -2457,7 +2501,6 @@ class CrowdLuvModel {
            if(! isset($fbPlace['location']->state)) $fbPlace['location']->state = "";
            if(! isset($fbPlace['location']->country)) $fbPlace['location']->country = "";
            if(! isset($fbPlace['location']->zip)) $fbPlace['location']->zip = "";
-
 
             return $this->createPlace($fbPid, 
                                 $fbPlace['name'],

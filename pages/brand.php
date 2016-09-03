@@ -889,7 +889,7 @@
             }
 
             shrElgStr = "";
-            if (elgLPs) shrElgStr = " --- <img style=\"width: 1.25em;\" src=\"res/top-heart.png\">" +  "+" + elgLPs;
+            if (elgLPs) shrElgStr = " --- <img style=\"width: 1.25em;\" src=\"<?php echo BASE_URL ?>res/top-heart.png\">" +  "+" + elgLPs;
    
             line2Text = line2Text + shrElgStr;
 
@@ -923,7 +923,7 @@
 
         //console.log("dsfsa");
 
-        $.post( "ajax_handle_post.php", "ajaxPostType=getUpcomingEventsForTalent&related_crowdluv_tid=<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>",
+        $.post( "<?php echo BASE_URL ?>ajax_handle_post.php", "ajaxPostType=getUpcomingEventsForTalent&related_crowdluv_tid=<?= $clRequestInformation->getTargetBrand()['crowdluv_tid'];?>",
             function(response, status, xhr){
 
                 console.log("ajax_handle_post for getting upcomin events:");

@@ -31,7 +31,7 @@
 
     
     //Redirect to the follower dashboard/ "share luv" page. 
-    header('Location: brand.php?crowdluv_tid=' . $clRequestInformation->getTargetBrand()['crowdluv_tid'] . '&newluv=' . $tcnt );
+    header('Location: brand/' . $clRequestInformation->getTargetBrand()['crowdluv_vurl'] . '?newluv=' . $tcnt );
     exit;
 
 ?>

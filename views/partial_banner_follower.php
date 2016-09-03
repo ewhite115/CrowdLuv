@@ -4,8 +4,8 @@
 	<img width="35px" id="cl_navicon" class="threebarnav" src="<?php echo BASE_URL;?>res/3bar-nav.jpg">
 
 	<ul id="cl_nav" class="nav nav-pills ">
-    	<li><a href="follower_dashboard.php">My Most Luv'd</a></li>
-    	<li><a href="shareluv.php">Share Luv</a></li>
+    	<li><a href="<?php echo BASE_URL;?>follower_dashboard.php">My Most Luv'd</a></li>
+    	<li><a href="<?php echo BASE_URL;?>shareluv.php">Share Luv</a></li>
 	    <li><a href="<?php echo BASE_URL;?>mypreferences">
 	    	My Settings 
 	    	<?php if($clRequestInformation->getLoggedInUserObj()) { ?> <img width="25px" src='https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid']; ?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>'><?php } ?>

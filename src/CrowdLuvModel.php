@@ -1931,7 +1931,7 @@ class CrowdLuvModel {
 
         foreach($tals as $tal){
 
-            $this->importEventsForTalent($tal['crowdluv_tid'], $tal['fb_pid'], $this->facebookHelper->getFacebookSession(), $sinceTimestamp);
+            $this->importEventsForTalent($tal['crowdluv_tid'], $tal['fb_pid'], $facebookSession, $sinceTimestamp);
 
         }
 
@@ -1944,7 +1944,7 @@ class CrowdLuvModel {
         //  Loop making api call ..  
         $done=false;
         //Create the initial request object for retrieving the events
-        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
+        $request = new FacebookRequest( $facebookSession, 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
         $response = null;
         do{  
             try{          

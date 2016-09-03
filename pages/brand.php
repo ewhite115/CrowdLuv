@@ -839,7 +839,7 @@
    
 
     function onSelectEvent(eventID){
-        window.location.href = window.location.href + "&p=event&eventID=" + eventID;
+        window.location.href = window.location.href + "?p=event&eventID=" + eventID;
     }
 
 

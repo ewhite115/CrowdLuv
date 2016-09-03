@@ -133,7 +133,7 @@ if ($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_
         <p> </p>
             <p>Find out where you have the most Luv. Build relationships with your fans.  </p>    
             <br>
-            <a href="<?php echo $talentLoginURL;?>"><img  class="" src="<?php echo BASE_URL;?>res/select-facebook-pages.jpg" /></a><br>      
+            <a href="<?php echo $clFacebookHelper->getLoginURL();?>"><img  class="" src="<?php echo BASE_URL;?>res/select-facebook-pages.jpg" /></a><br>      
             
             <!-- Talent Denied Facebook Permission -->
             <?php if((isset( $_GET['fb_user_denied_permissions'] ) && $_GET['fb_user_denied_permissions'] == '1')){ ?>

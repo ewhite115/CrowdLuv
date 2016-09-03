@@ -27,8 +27,8 @@
  
     //Determine which brand profile subpage is being requested
     $profileSubPage = "main";  //default
-    if(isset($_GET['p'])) $profileSubPage = $_GET['p'];
-
+    //if(isset($_GET['p'])) $profileSubPage = $_GET['p'];
+    if(isset($clRequestInformation->routerRequest->subPage)) $profileSubPage = $clRequestInformation->routerRequest->subPage;
 
     if(isset($_GET['cmd']) && $_GET['cmd'] == "evts_all_thisbrand"){
         $CL_model->importEventsForTalent($clRequestInformation->getTargetBrand()['crowdluv_tid'] , $clRequestInformation->getTargetBrand()['fb_pid'], $clFacebookHelper->getFacebookSession());
@@ -262,7 +262,7 @@
     <div class="row">      
        <div class="col-xs-12 col-sm-10 col-sm-offset-1 clwhitebg crowdluvsection text-center">
                 
-            <a href="?">
+            <a href=".">
             <h1 class="cl-textcolor-standout">
                 <?php echo $clRequestInformation->getTargetBrand()['fb_page_name'];?>
             </h1>               
@@ -272,27 +272,27 @@
 
             <!-- **** Buttons or call-to-action -->
             <?php if($targetTalentPreferences) { ?>
-                <a href="?">
+                <a href="<?php echo BASE_URL . "brand/" . $clRequestInformation->getTargetBrand()['crowdluv_vurl']; ?>/">
                     <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
                         Overview
                     </button>                      
                 </a>
-                <a href="?p=preferences">
+                <a href="<?php echo BASE_URL . "brand/" . $clRequestInformation->getTargetBrand()['crowdluv_vurl']; ?>/preferences">
                     <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
                         Your Preferences 
                     </button>                      
                 </a>
-                <a href="?p=showyourluv">
+                <a href="<?php echo BASE_URL . "brand/" . $clRequestInformation->getTargetBrand()['crowdluv_vurl']; ?>/showyourluv">
                     <button class="cl-button-standout-narrow" name="btn_showyourluv" id="btn_showyourluv" >
                         Show Your Luv
                     </button>                      
                 </a>
-                <a href="?p=events">
+                <a href="<?php echo BASE_URL . "brand/" . $clRequestInformation->getTargetBrand()['crowdluv_vurl']; ?>/events">
                     <button class="cl-button-standout-narrow" name="btn_events" id="btn_events" >
                         Events
                     </button>                      
                 </a>
-                <a href="?p=questions">
+                <a href="<?php echo BASE_URL . "brand/" . $clRequestInformation->getTargetBrand()['crowdluv_vurl']; ?>/questions">
                     <button class="cl-button-standout-narrow" name="btn_questions" id="btn_questions" >
                         Fan Q&A
                     </button>                      
@@ -839,7 +839,7 @@
    
 
     function onSelectEvent(eventID){
-        window.location.href = window.location.href + "?p=event&eventID=" + eventID;
+        window.location.href = window.location.href + "event?eventID=" + eventID;
     }
 
 

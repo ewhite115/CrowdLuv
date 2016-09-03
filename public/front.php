@@ -29,10 +29,26 @@ $klein->with('/brand', function () use ($klein, $clRequestInformation, $clRespon
 
 	});
 
+	$klein->respond('/[:brandName]/', function ($routerRequest) use ($klein, $clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper) {
+	    
+	    $clRequestInformation->routerRequest = $routerRequest;
+	    require "../pages/brand.php";
+	    return;
+
+	});
+
 
 	$klein->respond('/[:brandName]/cometomytown', function ($routerRequest) use ($klein, $clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper)  {
 	    
 	    require "../pages/brand_cometomytown.php";
+	    return;
+
+	});
+
+	$klein->respond('/[:brandName]/[:subPage]', function ($routerRequest) use ($klein, $clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper) {
+	    
+	    $clRequestInformation->routerRequest = $routerRequest;
+	    require "../pages/brand.php";
 	    return;
 
 	});

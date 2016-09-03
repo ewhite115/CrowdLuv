@@ -18,19 +18,58 @@ $klein->respond('/', function () use($clRequestInformation, $clResponseInformati
 });
 
 
-$klein->respond('/brand/[:brandName]', function ($kleinRequest) use($clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper) {
-    
-    require "../pages/brand.php";
-    return;
+$klein->with('/brand', function () use ($klein, $clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper) {
+
+
+	$klein->respond('/[:brandName]', function ($routerRequest) use ($klein, $clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper) {
+	    
+	    $clRequestInformation->routerRequest = $routerRequest;
+	    require "../pages/brand.php";
+	    return;
+
+	});
+
+
+	$klein->respond('/[:brandName]/cometomytown', function ($routerRequest) use ($klein, $clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper)  {
+	    
+	    require "../pages/brand_cometomytown.php";
+	    return;
+
+	});
+
+
 
 });
 
-$klein->respond('/brand/[:brand]/cometomytown', function ($kleinRequest) use($clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper) {
-    
-    require "../pages/brand_cometomytown.php";
-    return;
 
-});
+
+//return;
+
+
+
+// $klein->respond('/brand/[:brandName]/event/[:eventID]', function ($routerRequest) use($clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper) {
+    
+    
+//     $clRequestInformation->routerRequest = $routerRequest;
+//     require "../pages/brand.php";
+//     return;
+
+// });
+
+// $klein->respond('/brand/[:brandName]', function ($routerRequest) use($clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper) {
+    
+//     $clRequestInformation->routerRequest = $routerRequest;
+//     require "../pages/brand.php";
+//     return;
+
+// });
+
+// $klein->respond('/brand/[:brand]/cometomytown', function ($kleinRequest) use($clRequestInformation, $clResponseInformation, $CL_model, $clFacebookHelper) {
+    
+//     require "../pages/brand_cometomytown.php";
+//     return;
+
+// });
 
 
 //Default fallback to look for a mathcing page script in the /pgaes directory

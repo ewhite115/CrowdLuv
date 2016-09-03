@@ -77,6 +77,9 @@ class CrowdLuvRequestInformation {
 		//If trgetBrand has been set as a result of a previous call to this method,  just return it to avoid repeat DB calls.
 		if (isset($this->targetBrand)) return $this->targetBrand;
 
+		//If router included the brand vurl
+		if(isset( $this->routerRequest->brandName)) $_GET['crowdluv_tid'] = $this->clModel->get_crowdluv_tid_for_crowdluv_vurl($this->routerRequest->brandName);
+
 
 		//If the user came from a vanity URL, the .htaccess file provides the vanity url as a query string. Set the crowdluv_tid querystring option based on the vanity URL
 		if(isset($_GET['crowdluv_vurl'])) $_GET['crowdluv_tid'] = $this->clModel->get_crowdluv_tid_for_crowdluv_vurl($_GET['crowdluv_vurl']);
@@ -221,6 +224,9 @@ class CrowdLuvRequestInformation {
 
 
 	}
+
+
+
 
 
 

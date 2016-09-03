@@ -4,7 +4,7 @@
 	<img width="35px" id="cl_navicon" class="threebarnav" src="<?php echo BASE_URL;?>res/3bar-nav.jpg">
 
 	<ul id="cl_nav" class="nav nav-pills ">
-    	<li><a href="<?php echo BASE_URL;?>follower_dashboard.php">My Most Luv'd</a></li>
+    	<li><a href="<?php echo BASE_URL;?>myluvs">My Most Luv'd</a></li>
     	<li><a href="<?php echo BASE_URL;?>shareluv.php">Share Luv</a></li>
 	    <li><a href="<?php echo BASE_URL;?>mypreferences">
 	    	My Settings 

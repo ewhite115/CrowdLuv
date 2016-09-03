@@ -262,7 +262,7 @@
     <div class="row">      
        <div class="col-xs-12 col-sm-10 col-sm-offset-1 clwhitebg crowdluvsection text-center">
                 
-            <a href="?p=main">
+            <a href="?">
             <h1 class="cl-textcolor-standout">
                 <?php echo $clRequestInformation->getTargetBrand()['fb_page_name'];?>
             </h1>               
@@ -272,7 +272,7 @@
 
             <!-- **** Buttons or call-to-action -->
             <?php if($targetTalentPreferences) { ?>
-                <a href="?p=main">
+                <a href="?">
                     <button class="cl-button-standout-narrow" name="btn_moreoptions" id="btn_moreoptions" >
                         Overview
                     </button>                      

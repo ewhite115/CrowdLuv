@@ -6,8 +6,9 @@ $clResponseInformation->clSiteSection = "home";
 
 
 if ($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
+if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getFutureEventListForFollower($clRequestInformation->getLoggedInUserId());
 
-
+//var_dump($futureEvents);
 
 
 //END CONTROLLER 
@@ -101,14 +102,30 @@ if ($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_
         <!-- this div fixes the links above not working on small-width layout -->
         <div class="clearfix visible-xs-inline"></div>
 
-        <div class="col-xs-12 col-sm-6 text-left center-block ">
+        <!-- Updates Panel -->
+        <div class="col-xs-12 col-sm-6 text-left center-block " style="max-height: 150px; overflow: scroll;">
 
           <h1 class="cl-textcolor-standout text-left">
-            <a href="follower_dashboard.php">Activity </a>
+            <a href="follower_dashboard.php">Updates </a>
           </h1>
           
-          <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p>
-          <br><br>
+         <!-- <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p> -->
+          
+
+        <?php foreach($futureEvents as $futureEvent){ ?>
+          <?php if ($futureEvent['type'] == "significant_release") { ?>
+              <p> <b>New Release:</b> <?php echo $futureEvent['title']; ?> </p>
+          <?php } ?>
+          <?php if ($futureEvent['type'] == "performance") { ?>
+              <p> <b>Event:</b> <?php echo $futureEvent['title']; ?> - <?php echo $futureEvent['start_time']; ?> </p>
+          <?php } ?>
+
+
+        <?php } ?>
+
+
+
+
         </div>
 
 

@@ -2317,6 +2317,59 @@ class CrowdLuvModel {
 
     }
 
+
+
+    public function getFutureEventListForFollower($cl_uidt){
+
+        $fol = $this->get_follower_object_by_uid($cl_uidt);
+
+        try {
+                     
+           $sql =
+            "SELECT event.*, place.* ";
+            //if($fol) $sql = $sql . ", (case when longitude between " . $fol['longitude'] . " - 1.5 and " . $fol['longitude'] . " + 1.5 and latitude between " . $fol['latitude'] . " - 1.5 and " . $fol['latitude'] . " + 1.5 then 1 else 0 end) as near_me ";
+            $sql = $sql . 
+            "FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                        left join follower_luvs_talent on event.related_crowdluv_tid = follower_luvs_talent.crowdluv_tid
+                        left join follower on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid
+            where follower_luvs_talent.crowdluv_uid = '" . $fol['crowdluv_uid'] . "' 
+                and 
+                    (
+                        end_time > NOW()
+                        and (longitude between " . $fol['longitude'] . " - 1.5 and " . $fol['longitude'] . " + 1.5 and latitude between " . $fol['latitude'] . " - 1.5 and " . $fol['latitude'] . " + 1.5)
+                     )
+                or
+                    (
+                        end_time > DATE_SUB(NOW(), INTERVAL 3 Month) 
+                        and type = 'significant_release'
+                    )
+                ";
+            // ORDER BY (CASE  WHEN end_time > DATE_SUB(NOW(), INTERVAL 3 Month) and type = 'significant_release' THEN 0
+            //                 WHEN end_time > NOW() and near_me = 1 THEN 1
+            //                 WHEN end_time > NOW() and near_me = 0 then 2
+            //                 WHEN end_time < NOW() then 3 END ) ASC,
+
+            //          (CASE  WHEN end_time < NOW() then end_time END) desc,
+            //          (CASE  WHEN end_time > NOW() then end_time END) asc";
+
+
+            $results = $this->cldb->prepare($sql);
+            //$results->bindParam(1, $cl_tidt);
+            //$results->bindParam(2, $cl_tidt);
+            $results->execute();
+
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        return $data;
+
+
+    }
+
+
     public function getUpcomingEventsForTalent($cl_tidt, $cl_uidt = NULL){
 
         //If a user is specified, get their location so that we can query /sort for events near them

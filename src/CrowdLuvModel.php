@@ -1825,7 +1825,7 @@ class CrowdLuvModel {
      * @param  [type] $bitEventID  [description]
      * @return [type]              [Crowdluv Event-ID of the newly created event]
      */
-    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startTime, $endTime = null, $clPlaceID = null, $moreInfoURL = null, $fbEventID = null, $bitEventID = null){
+    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startTime, $endTime = null, $clPlaceID = null, $moreInfoURL = null, $fbEventID = null, $bitEventID = null, $spotifyAlbumId = null){
 
         if($endTime == null || $endTime == "") $endTime = $startTime;
         if($startTime == $endTime) $isDateOnly = true;
@@ -1833,8 +1833,8 @@ class CrowdLuvModel {
 
         try{
             
-            $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`,  `start_time`, `end_time`, `is_date_only`, `crowdluv_placeid`, `more_info_url`, `fb_event_id`, `bit_event_id`) 
-                                            VALUES (         ?,                           ?,              ?,       ?,          ?,               ?,           ?,            ?,              ? ,               ?,             ?           , ?         )";
+            $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`,  `start_time`, `end_time`, `is_date_only`, `crowdluv_placeid`, `more_info_url`, `fb_event_id`, `bit_event_id`, `spotify_album_id`) 
+                                            VALUES (         ?,                           ?,              ?,       ?,          ?,               ?,           ?,            ?,              ? ,               ?,             ?           , ?       ,     ?  )";
             //echo $sql; return true;
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_uidt);
@@ -1849,6 +1849,8 @@ class CrowdLuvModel {
             $results->bindParam(10, $moreInfoURL);
             $results->bindParam(11, $fbEventID);
             $results->bindParam(12, $bitEventID);
+            $results->bindParam(13, $spotifyAlbumId);
+
 
             $results->execute();
             return $results;
@@ -1923,7 +1925,7 @@ class CrowdLuvModel {
     } //updateEventValues
 
 
-    //TODO: remove facebooksesion as an arg here.  Changed to using facebookhelper 2/17
+    //TODO: remove facebooksesion as an arg here.  Changed to using facebookhelper 2/17/16
     public function importEventsForAllTalent($facebookSession, $sinceTimestamp = 1356998400){
 
         set_time_limit(0);
@@ -1938,8 +1940,53 @@ class CrowdLuvModel {
     }
 
 
+    public function ImportEventJob(){
+
+        //Determine whether the last time this job was run was less than X minutes ago,   if so return
+        try {                    
+            $sql =  "SELECT * FROM talent where event_retrieval_timestamp > NOW() - 2 minutes";
+            $results = $this->cldb->prepare($sql);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data =  $results->fetchAll(PDO::FETCH_ASSOC);
+        if(sizeof($data) > 0) return;
+
+
+            
+        //Determine the X number of brands with the most 'stale' event import
+        try {                    
+            $sql =  "SELECT * FROM talent ORDER BY event_retrieval_timestamp ASC LIMIT 10";
+            $results = $this->cldb->prepare($sql);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $staleBrands = $results->fetchAll(PDO::FETCH_ASSOC);
+
+
+        //For those X brands, import their events
+        foreach($staleBrands as $staleBrand){
+
+            $this->importEventsForTalent($staleBrand['crowdluv_tid'], $staleBrand['fb_pid'], $this->facebookSession);
+
+        }
+
+
+    }
+
+
+
     public function importEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp = 1356998400){
 
+
+        $clt = $this->get_talent_object_by_tid($cl_tidt);
+        /* ***  Import Facebook Events ***/
         //We may need to make multiple FB API requests to retrieve all the events.
         //  Loop making api call ..  
         $done=false;
@@ -1979,7 +2026,7 @@ class CrowdLuvModel {
         } while (($response) && $request = $response->getRequestForNextPage());
 
 
-
+        /* **** Import Events from BandsInTown */
         $bitEvents = json_decode(file_get_contents("http://api.bandsintown.com/artists/placeholder/events.json?api_version=2.0&artist_id=fbid_" . $fb_pidt . "&app_id=crowdluv"));
         //echo "<pre>"; var_dump($bitEvents); echo "</pre>"; //die;
  
@@ -1994,9 +2041,94 @@ class CrowdLuvModel {
         } //if we got data back from api call
 
 
+        /* ** Import Album releases from Spotify **/
+        cldbgmsg("Retrieving album releases from spotify for " . $clt['fb_page_name'] );
+        //retrieve spotify albums
+        $albums = $spotifyApi->getArtistAlbums($clt['spotify_artist_id'],   {  "album_type" => "single,album", "market" => "US" }  );
+        //var_dump($albums); die;
+        //loop through the resuls and import each one
+        foreach($albums as $album){
+
+            cldbgmsg("Found spotify album to add/import: " . $album->id . ":" . $album->title . ":" . $album->datetime); 
+            //The "getArtistAlbums" api call returns simplified album objects - so,  Retrieve the full album object
+            $fullAlbum = $spotifyApi->getAlbum($album->id);
+            $this->importSpotifyAlbumRelease($fullAlbum);
+
+        }
 
 
-    }
+    } // importEventsforTalent
+
+
+
+
+
+
+
+    public function importSpotifyAlbumRelease($cl_tidt, $spotifyAlbum){
+
+        //Initialize default values
+        $clEventID = null;
+   
+        if($spotifyAlbum->album_type == "album") $releaseType = "significant_release";
+        else $releaseType = "minor_release";
+
+        //Look for an existing event with same album ID..
+        $clEventID = $this->getEventIDFromSpotifyAlbumId($spotifyAlbum->id);
+        //if we found an existing event with this album id ...
+        if($clEventID){
+            //Update basic values in the CL db with current info from spotify
+            $this->updateEventValues($clEventID,
+                                        [
+                                        'type' => $releaseType,
+                                        'title' => $spotifyAlbum->name,
+                                        'description' => $spotifyAlbum->name,
+                                        'start_time' => $spotifyAlbum->release_date,
+                                        'end_time' => $spotifyAlbum->release_date
+                                        ]  );
+
+                            
+            return $clEventID;
+
+        }
+
+
+        //add/create the event
+        cldbgmsg("Calling CreateEvent() for spotify import");
+        /*$return = $this->createEvent(0,
+                                         $cl_tidt,
+                                         $releaseType,
+                                         $spotifyAlbum->name,
+                                         $spotifyAlbum->name,
+                                         $spotifyAlbum->release_date,
+                                         $spotifyAlbum->release_date,
+                                         null,
+                                         $spotifyAlbum->href,
+                                         null,
+                                         null,
+                                         $spotifyAlbum->id
+                                         );
+        */
+       return $return;
+       
+                
+    }  // importSpotifyAlbuymRelease
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2317,6 +2449,22 @@ class CrowdLuvModel {
 
     }
 
+   public function getEventIDFromSpotifyAlbumId($spotifyAlbumId){
+
+
+        try {
+            $sql = "select id from event where spotify_album_id=" . $spotifyAlbumId;
+            $results = $this->cldb->query($sql);
+            $firstline = $results->fetch(PDO::FETCH_ASSOC);
+            if(!$firstline) return 0;
+             //echo "uid= (" . $uid . ")";
+            return $firstline['id'];
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;//exit;
+        }
+
+    }
 
 
     public function getFutureEventListForFollower($cl_uidt){

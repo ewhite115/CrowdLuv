@@ -49,23 +49,28 @@ require_once ROOT_PATH . 'vendor/autoload.php';
 //Create a CrowdLuvFacebookHelper 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
 
+//Create Spotify API Object
+$spotifyApi = new SpotifyWebAPI\SpotifyWebAPI();
+
 //Create CL_model with it's db dependency
 $CL_model = new CrowdLuvModel();
 $CL_model->setDB((new CrowdLuvDBFactory())->getCrowdLuvDB());
 $CL_model->setFacebookHelper($clFacebookHelper);
+$CL_model->setSpotifyApi($spotifyApi);
+
 
 //create a CrowdLuvRequest   object
 $clRequestInformation = new CrowdLuvRequestInformation();
 $clRequestInformation->clFacebookHelper = $clFacebookHelper;
 $clRequestInformation->clModel = $CL_model;
 
+
+
 //create a CrowdLuvResponse    object
 $clResponseInformation = new CrowdLuvResponseInformation();
 
+
  
-
-
-
 /**  Facebook Likes
   *  Check for facebook pages the user 'likes',
   *   add those pages to CL db (as new brands) if not already present
@@ -73,10 +78,15 @@ $clResponseInformation = new CrowdLuvResponseInformation();
   */
 if($clFacebookHelper->getFacebookSession() and $clFacebookHelper->isNewSession){
 	$clRequestInformation->importUserFacebookLikes();
-
 }//  Facebook likes import
 
 
+/**
+ * Run the Event-Import Job
+ *   Invoked on every page load - runs once ever N minutes to import events from
+ *     FB, BIT, Spotify
+ */
+$clRequestInformation->clModel->runEventImportJob();
 
 
 

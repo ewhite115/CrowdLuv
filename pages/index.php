@@ -114,7 +114,7 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
 
         <?php foreach($futureEvents as $futureEvent){ ?>
           <?php if ($futureEvent['type'] == "significant_release") { ?>
-              <p> <b>New Release:</b> <?php echo $futureEvent['title']; ?> </p>
+              <p> <b>New Release:</b> <?php echo $futureEvent['fb_page_name'] . " - " . $futureEvent['title']; ?> </p>
           <?php } ?>
           <?php if ($futureEvent['type'] == "performance") { ?>
               <p> <b>Event:</b> <?php echo $futureEvent['title']; ?> - <?php echo $futureEvent['start_time']; ?> </p>

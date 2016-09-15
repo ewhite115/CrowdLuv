@@ -1959,7 +1959,7 @@ class CrowdLuvModel {
      *                        It will be invoked by CL on every page load - but it will immediately return if it has been less than 2 minutes since the last run]
      * @return [null] [no return value]
      */
-    public function runEventImportJob($sinceTimestamp = 1356998400) {
+    public function runEventImportJob($sinceTimestamp = 1420070400) {
 
         //If the fb session is not active,return
         $fbs = $this->clFacebookHelper->getFacebookSession();

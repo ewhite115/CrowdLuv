@@ -1,12 +1,14 @@
 <?php     
  
-
 /**
  * cl_bootstrap
  * 		This file bootstraps the application by loading key environment variables,
  * 		initiating the model object, session/state values etc
  * 
  */
+
+
+
 //TODO:  refactor this to be part of CLResponseInformation   ?
  function cldbgmsg($debugmessage){
 
@@ -42,15 +44,18 @@ if(!defined("ROOT_PATH")) define("ROOT_PATH",$_SERVER["DOCUMENT_ROOT"] . "/../")
 
 //cl_bootstrap_configs.php will initialize additional key environment variables
 require_once ROOT_PATH . "inc/cl_bootstrap_configs.php" ;
+
 //Composer autoload.php for  package / dependencies
 require_once ROOT_PATH . 'vendor/autoload.php';
-
 
 //Create a CrowdLuvFacebookHelper 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
 
 //Create Spotify API Object
 $spotifyApi = new SpotifyWebAPI\SpotifyWebAPI();
+
+//Create CrowdLuvMusicStoryHelper
+$clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
 
 //Create CL_model with it's db dependency
 $CL_model = new CrowdLuvModel();
@@ -64,11 +69,8 @@ $clRequestInformation = new CrowdLuvRequestInformation();
 $clRequestInformation->clFacebookHelper = $clFacebookHelper;
 $clRequestInformation->clModel = $CL_model;
 
-
-
 //create a CrowdLuvResponse    object
 $clResponseInformation = new CrowdLuvResponseInformation();
-
 
  
 /**  Facebook Likes
@@ -82,11 +84,18 @@ if($clFacebookHelper->getFacebookSession() and $clFacebookHelper->isNewSession){
 
 
 /**
+ * Spotify ID Retrieval
+ *
+ */
+$clRequestInformation->clModel->runMetaDataRetrievalJob();
+
+
+/**
  * Run the Event-Import Job
- *   Invoked on every page load - runs once ever N minutes to import events from
+ *   Invoked on every page load - runs once every N minutes to import events from
  *     FB, BIT, Spotify
  */
-$clRequestInformation->clModel->runEventImportJob();
+$clRequestInformation->clModel->runEventImportJob(1470009600);
 
 
 

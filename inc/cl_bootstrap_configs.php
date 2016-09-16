@@ -15,9 +15,7 @@
 	if(!defined("DB_USER")) define("DB_USER","crowdluv");
 	if(!defined("DB_PASS")) define("DB_PASS","crowdluv");
 
-	//define("FB_APP_ID","740484335978197");
 	if(!defined("CL_FB_APP_ID")) define("CL_FB_APP_ID",$_SERVER['CL_FB_APP_ID']);
-	//define("FB_APP_SECRET","24a9bbdc678e3ffbf8ce8e506f995251");	
 	if(!defined("CL_FB_APP_SECRET")) define("CL_FB_APP_SECRET", $_SERVER['CL_FB_APP_SECRET']);	
 	
 	//This string is used when calling the FB.login in the facebook JS SDK
@@ -28,11 +26,14 @@
 	//    ??  TODO  figure out of it still uses this?
 	if(!defined("CL_FB_TALENT_PERMISSION_SCOPE_STRING")) define("CL_FB_PERMISSION_SCOPE_STRING", "'email', 'user_location', 'user_birthday', 'user_relationships'");
 
-
-
 	if(!defined("CL_FB_TALENT_PERMISSION_SCOPE_STRING")) define("CL_FB_TALENT_PERMISSION_SCOPE_STRING", "email,user_location,user_birthday,user_relationship_details,user_relationships,manage_pages");
 	
 	if(!defined("GOOGLE_MAPS_APIKEY")) define("GOOGLE_MAPS_APIKEY", "AIzaSyBc6n2vRhj6szWhvDeTtzBNY1kiDAyJMuo");
+
+	// Used for Music-Story.com API
+	if(!defined("MUSIC_STORY_CUSTOMER_KEY")) define("MUSIC_STORY_CUSTOMER_KEY", "c0e4134da7adfc08157775b78e73411791132014");
+	if(!defined("MUSIC_STORY_CUSTOMER_SECRET")) define("MUSIC_STORY_CUSTOMER_SECRET", "3be7a41b10c771103cc069969a9a642757c03d79");
+
 
 
 	date_default_timezone_set('America/New_York');

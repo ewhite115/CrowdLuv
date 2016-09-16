@@ -1940,8 +1940,8 @@ class CrowdLuvModel {
     } //updateEventValues
 
 
-    //TODO: remove facebooksesion as an arg here.  Changed to using facebookhelper 2/17/16
-    public function importEventsForAllTalent($facebookSession, $sinceTimestamp = 1356998400){
+    //TODO: remove facebooksesion as an arg here.  Changed to using facebookhelper 8/1/16
+    public function importEventsForAllTalent($facebookSession, $sinceTimestamp = 1470009600){
 
         set_time_limit(0);
         $tals = $this->getAllTalents();
@@ -1954,12 +1954,76 @@ class CrowdLuvModel {
 
     }
 
+
+    /**
+     * [runMetaDataRetrievalJob Retrieves/updates metadata for brands:  Spotify ID]
+     * @return [type] [description]
+     */
+    public function runMetaDataRetrievalJob(){
+        cldbgmsg("Invoking MetaData Retrieval Job");
+        //Artist Metadata (Music-Story) Import Job
+        //Determine whether the last Spotify-ID-Retrieval job was run within the last X minutes. 
+        try {                    
+            $sql =  "SELECT * FROM talent where timestamp_last_spotify_artist_id_retrieval > (NOW() - INTERVAL 60 minute)";
+            $results = $this->cldb->prepare($sql);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data =  $results->fetchAll(PDO::FETCH_ASSOC);
+        //echo "result of query to determine whether last metadata import job was run within x minutes";  var_dump($data); die;
+        
+        // If no results were returned, that means it has been more than N minutes since last import 
+        if(sizeof($data) == 0) {
+            cldbgmsg("Invoking Music-Story Spotify-ID Import Job");
+            //Determine the X number of brands with the most 'stale' metadata spotify ID 
+            try {                    
+                $sql =  "SELECT * FROM talent where spotify_artist_id IS NULL ORDER BY timestamp_last_spotify_artist_id_retrieval ASC LIMIT 5";
+                $results = $this->cldb->prepare($sql);
+                $results->execute();
+
+            } catch (Exception $e) {
+                echo "Data could not be retrieved from the database. " . $e;
+                exit;
+            }    
+            $staleBrands = $results->fetchAll(PDO::FETCH_ASSOC);
+
+            if(sizeof($staleBrands) > 0 ){
+                $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
+                
+                //For those X brands, import their events
+                foreach($staleBrands as $staleBrand){
+                    cldbgmsg("Attempting to retrieve spotify id for " . $staleBrand['fb_page_name']);
+                    //  Search for Spotify ID for the brand
+                    $spId = $clMusicStoryHelper->getSpotifyIdFromFacebookId($staleBrand['fb_pid']);
+                    
+                    //Update DB to reflect that a retrieval was attempted.
+                    $this->updateTableValue("talent", "timestamp_last_spotify_artist_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
+                    //Update the DB to reflect the ID that was found, if any
+                    if($spId){
+                        cldbgmsg("Found spotify ID:" . $spId);
+                        $this->updateTableValue("talent", "spotify_artist_id", "'" . $spId . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                        
+                    }   //if
+                }//foreach
+            }// if
+
+        }// Artist Metadata (Music-Story) Spotify-ID import
+
+
+    }//ruMetaDataImportJob
+
+
+
+
     /**
      * [runEventImportJob  This function serves as a periodic job to import/synchronize events from Facebook, BandsInTown, Spotify.
      *                        It will be invoked by CL on every page load - but it will immediately return if it has been less than 2 minutes since the last run]
      * @return [null] [no return value]
      */
-    public function runEventImportJob($sinceTimestamp = 1420070400) {
+    public function runEventImportJob($sinceTimestamp = 1470009600) {
 
         //If the fb session is not active,return
         $fbs = $this->clFacebookHelper->getFacebookSession();
@@ -1969,7 +2033,7 @@ class CrowdLuvModel {
         // Facebook Import Job
         // Determine whether the last FB event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_facebook_event_import > (NOW() - INTERVAL 2 minute)";
+            $sql =  "SELECT * FROM talent where timestamp_last_facebook_event_import > (NOW() - INTERVAL 60 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2008,7 +2072,7 @@ class CrowdLuvModel {
         // BandsInTown Import Job
         //Determine whether the last BIT event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_bandsintown_event_import > (NOW() - INTERVAL 2 minute)";
+            $sql =  "SELECT * FROM talent where timestamp_last_bandsintown_event_import > (NOW() - INTERVAL 60 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2024,7 +2088,7 @@ class CrowdLuvModel {
             cldbgmsg("Invoking BIT Event Import Job");
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_bandsintown_event_import ASC LIMIT 5";
+                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_bandsintown_event_import ASC LIMIT 15";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2045,7 +2109,7 @@ class CrowdLuvModel {
         // Spotify Import Job
         //Determine whether the last Spotify event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_spotify_album_import > (NOW() - INTERVAL 2 minute)";
+            $sql =  "SELECT * FROM talent where timestamp_last_spotify_album_import > (NOW() - INTERVAL 60 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2061,7 +2125,7 @@ class CrowdLuvModel {
             cldbgmsg("Invoking Spotify Album-Import Job");
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent WHERE spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC LIMIT 5";
+                $sql =  "SELECT * FROM talent WHERE spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC LIMIT 15";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2080,7 +2144,14 @@ class CrowdLuvModel {
         }//Spotify imports
 
 
+
+
     }
+
+
+
+
+
 
 
     public function importEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp = 1356998400){

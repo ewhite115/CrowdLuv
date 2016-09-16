@@ -14,8 +14,14 @@ class CrowdLuvMusicStoryHelper {
 
     private $musicStoryApi = null;
     
-
 	function __construct() {
+		
+   	}
+
+   	/** [getApi returns Music-Story API object,  creating it if needed] */
+   	private function getApi(){
+
+   		if($this->musicStoryApi) return $this->musicStoryApi;
 
 		$MSAPI = new MusicStoryApi(MUSIC_STORY_CUSTOMER_KEY, MUSIC_STORY_CUSTOMER_SECRET);
 		// if needed, change of the tokens and retrieval
@@ -25,20 +31,30 @@ class CrowdLuvMusicStoryHelper {
 		// New eventual authentication with tokens if will of re-using the same ones
 		//$MSAPI = new MusicStoryApi(MUSIC_STORY_CUSTOMER_KEY, MUSIC_STORY_CUSTOMER_SECRET  );
 		
-		$this->musicStoryApi = $MSAPI;
-		
+		return $this->musicStoryApi = $MSAPI;
+
    	}
 
-
-
+   	/**
+   	 * [getSpotifyIdFromFacebookId Uses MusicStory API to obtain a Spotify ID, given a facebook ID]
+   	 * @param  [type] $fb_pid [Facebook Page ID]
+   	 * @return [type]         [Spotify ID or null if not found.]
+   	 */
    	public function getSpotifyIdFromFacebookId($fb_pid){
 
-		$artistFromFbId = null;
-		try{ $artistFromFbId=$this->musicStoryApi->getArtist($fb_pid, 'facebook');}
-		catch(Exception $e){ return null;}
+		if (! $this->getApi() ){ return null;}
 
-		//var_dump($artistFromFbId);
-		$msArtist = $this->musicStoryApi->getArtist($artistFromFbId->current()->id);
+		$artistFromFbId = null;
+		try{ $artistFromFbId=$this->getApi()->getArtist($fb_pid, 'facebook');}
+		catch(Exception $e){ return null;}
+		//var_dump($artistFromFbId);die;
+		//If the return value is empty (either because it wasnt found or because musoc-story API was unreachable), return null
+		if(! isset($artistFromFbId)) {return null;}
+		$cur = $artistFromFbId->current();
+		if(! $cur) {return null;}
+
+		$msId = $artistFromFbId->current()->id;
+		$msArtist = $this->getApi()->getArtist($msId);
 		//var_dump($msArtist);
 		$artistSpotify = $msArtist->getConnector('spotify', []);
 		//var_dump($artistSpotify);

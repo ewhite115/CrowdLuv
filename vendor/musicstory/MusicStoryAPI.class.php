@@ -291,6 +291,8 @@ class MusicStoryApi {
 	 */
 	public function request($url, $parse = false) {
 		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , 3); 
+		curl_setopt($ch, CURLOPT_TIMEOUT, 5); //timeout in seconds
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		$answer = curl_exec($ch);

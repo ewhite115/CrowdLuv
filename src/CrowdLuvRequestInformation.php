@@ -7,6 +7,8 @@ class CrowdLuvRequestInformation {
 	
    	public $clFacebookHelper = null;
 	public $clModel = null;
+	public $clMusicStoryHelper = null;
+	public $clSpotifyHelper = null;
 
 
 	private $targetBrand = null;
@@ -179,6 +181,13 @@ class CrowdLuvRequestInformation {
 
 	public function importUserFacebookLikes(){
 
+		cldbgmsg("Invoking facebook-like import");
+
+		//This should only be run no more than once every X minutes.
+		//Check the last time this was run, and return if less than x minutes.
+        $lastRun = $this->clModel->selectTableValue("timestamp_last_facebook_like_import", "follower",  "crowdluv_uid = '" . $this->getLoggedInUserId() . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 5 minute)" );
+        if(sizeof($lastRun) > 0){ cldbgmsg("-Less than x minutes since last facebook-like import:- aborting");return;}
+
 	    //We may need to make multiple requests to get all the likes.
 	    // Loop making api call ..  
 	    $done=false;
@@ -190,21 +199,10 @@ class CrowdLuvRequestInformation {
 	          // get response
 	          $fb_user_likes = $response->getGraphObject()->asArray();
 	          //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
-	          
 	          if(isset($fb_user_likes['data']) && sizeof($fb_user_likes['data']) > 0) {  
-	              
-	              foreach ($fb_user_likes['data'] as $fbupg) {
-	                  //...See if it already exists as a talent in the CL DB
-	                  $cltid = $this->clModel->get_crowdluv_tid_by_fb_pid($fbupg->id);
-	                  //If not, and it's in an "enabled" category, add it
-	                  if(! $cltid && (in_array($fbupg->category, CrowdLuvFacebookHelper::$facebookLikeCategoriesToCreateStubsFor))) {
-	                      cldbgmsg("Found new facebook like page to add: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->category); 
-	                      $this->clModel->create_new_cl_talent_record_from_facebook_user_like($fbupg);
-	                      $cltid = $this->clModel->get_crowdluv_tid_by_fb_pid($fbupg->id);
-	                      
-	                  }
-	                  //Make sure DB is updated to reflect that this user facebook-likes the talent
-	                  if($cltid) $this->clModel->setFollower_FacebookLikes_Talent($this->getLoggedInUserId(), $cltid, 1); 
+	                foreach ($fb_user_likes['data'] as $fbupg) {
+	                  	$cltid = $this->getCrowdLuvBrandIdByFacebookId($fbupg->id);
+	              		if($cltid) $this->clModel->setFollower_FacebookLikes_Talent($this->getLoggedInUserId(), $cltid, 1); 
 
 	              }//foreach
 	          } //if we got data back fro api call
@@ -218,12 +216,130 @@ class CrowdLuvRequestInformation {
 	      //Create a new request object and start over if there are more likes
 	    } while (($response) && $request = $response->getRequestForNextPage());
 
-
-
-
-
+	    $this->clModel->updateTableValue("follower", "timestamp_last_facebook_like_import", "now()", "crowdluv_uid = '" . $this->getLoggedInUserId() . "'" );
 
 	}
+
+
+
+
+
+	/**
+	 * [getCrowdLuvBrandIdByFacebookId  Queries the model for an existing brand for the FB id. Makes call to FB api to import new brand if needed]
+	 * @param  [type] $fbId [description]
+	 * @return [type]       [CrowdLuv Brand ID of the eisting or newly-created brand]
+	 */
+	public function getCrowdLuvBrandIdByFacebookId($fbId){
+
+		//Check if the brand already exists for this FB ID.  If so, return the cl id
+		$clId = $this->clModel->get_crowdluv_tid_by_fb_pid($fbId) ;
+		if( $clId ) return $clId;
+
+		//If it doesnt exist, and it is within an allowed category, create a new brand
+		//Retrieve FB graph object for that ID
+		$fbPageObj = $this->clFacebookHelper->getFacebookGraphObjectById($fbId);	                  			
+		//var_dump($fbPageObj);die;
+		if(in_array($fbPageObj['category'], CrowdLuvFacebookHelper::$facebookLikeCategoriesToCreateStubsFor)){
+			cldbgmsg("Found a facebook page that does not have a corresponding brand -- facebook ID " . $fbId);
+			$clId = $this->clModel->createNewBrandFromFacebookPageGraphObject($fbPageObj);
+		}
+
+		//return the cl ID of the newly created brand
+		return $clId;
+
+	}
+
+
+	private function getCrowdLuvBrandBySpotifyArtistId($spId){
+
+		//Check if it already exists and return if so
+		$cltid = $this->clModel->getCrowdluvTidBySpotifyId($spId);
+		if($cltid) return $cltid;
+
+		//If we didnt find a CL Brand based on the spotify ID, try to obtain FB page ID from Music-Story 	
+  		cldbgmsg("Found a spotify artist not tied to a CL brand: " . $spId . " will query MusicStory for a corresponding FB id..");
+  		$fbId = $this->clMusicStoryHelper->getFacebookIdFromSpotifyId($spId);
+
+		//Get the CL Brand ID foir that FB id (importing as a new brand in the process if it doesnt already exist)  		
+  		if($fbId){
+      		cldbgmsg("Found an FB page corresponding to spotify id: " . $fbId);
+      		$cltid = $this->getCrowdLuvBrandIdByFacebookId($fbId);
+  		}
+	
+		//update Brand to reflect spotify id if needed
+
+
+
+		//return CL brand ID of new brand
+		return $cltid;
+		
+	}
+
+
+
+
+
+	public function importUserSpotifyFollows(){
+
+
+		cldbgmsg("Invoking Spotify-Follow Import");
+		//If there is no active Spotify Session/Token, abort
+		if(! $this->clSpotifyHelper->getSpotifyApi()){
+			cldbgmsg("-No active spotify session/token - aborting");
+			return;
+		}
+
+		//This should only be run no more than once every X minutes.
+		//Check the last time this was run, and return if less than x minutes.
+        $data = $this->clModel->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $this->getLoggedInUserId() . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 60 minute)" );
+
+        if(sizeof($data) > 0){ 
+        	cldbgmsg("-Less than x minutes since last spotify-follow import:- aborting");
+			return;
+        }
+
+	    //We may need to make multiple requests to get all the likes.
+	    // Loop making api call ..  
+	    $done=false;
+	    //Make the API call request object for retrieving user's likes
+	    $following = null;  $after = null; $i = 0;
+	    do{  
+	      	try{          
+	          
+		          // Get the next set of spotify artist the user follows
+		          cldbgmsg("making a pass");
+		          $following = $this->clSpotifyHelper->getSpotifyApi()->getUserFollowedArtists(['limit' => '10', 'after' => $after]);
+		          //echo "<pre>"; var_dump($following); echo "</pre>"; //die;
+		          if(isset($following->artists->items) && sizeof($following->artists->items) > 0) {  
+	              	
+	              	//Loop through each spotify artist that the user follows, 
+	            	foreach ($following->artists->items as $artist) {
+	                  	//Get/Create CL Brand for the SP artist 
+	                  	$cltid = $this->getCrowdLuvBrandBySpotifyArtistId($artist->id);
+	                	//If found, update db to reflect that this user spotify-follows the brand
+	                	if($cltid){
+		              		cldbgmsg('Found brand that user follows on spotify: ' . $artist->id . " -- CLtid: " . $cltid);
+		                	$this->clModel->setFollowerSpotifyFollowsBrand($this->getLoggedInUserId(), $cltid, 1); 	                		
+                		}
+
+	              	}//foreach
+	          	} //if we got data back fro api call
+
+	      	}catch (FException $e) {
+	        	cldbgmsg("Exception importing spotify likes for the user -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+	      	} 
+	      	//Create a new request and repeat if there are more 
+	      	if(isset($following->artists->cursors)) $after = $following->artists->cursors->after;
+	      
+	    } while ( $after );
+
+
+	    $this->clModel->updateTableValue("follower", "timestamp_last_spotify_follow_import", "now()", "crowdluv_uid = '" . $this->getLoggedInUserId() . "'" );
+	}
+
+
+
+
 
 
 

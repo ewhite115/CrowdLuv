@@ -20,6 +20,10 @@ class Request
      */
     protected function parseBody($body, $status)
     {
+        
+        //var_dump($body);
+        //var_dump($status);
+
         if ($status >= 200 && $status <= 299) {
             return json_decode($body, $this->returnAssoc);
         }

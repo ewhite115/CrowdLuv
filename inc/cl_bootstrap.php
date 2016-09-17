@@ -53,6 +53,7 @@ $clFacebookHelper = new CrowdLuvFacebookHelper();
 
 //Create Spotify API Object
 $spotifyApi = new SpotifyWebAPI\SpotifyWebAPI();
+$clSpotifyHelper = new CrowdLuvSpotifyHelper();
 
 //Create CrowdLuvMusicStoryHelper
 $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
@@ -68,26 +69,50 @@ $CL_model->setSpotifyApi($spotifyApi);
 $clRequestInformation = new CrowdLuvRequestInformation();
 $clRequestInformation->clFacebookHelper = $clFacebookHelper;
 $clRequestInformation->clModel = $CL_model;
+$clRequestInformation->clSpotifyHelper = $clSpotifyHelper;
+$clRequestInformation->clMusicStoryHelper = $clMusicStoryHelper;
+
 
 //create a CrowdLuvResponse    object
 $clResponseInformation = new CrowdLuvResponseInformation();
 
+
+////
+///
+///
+///
+///
+///End bootstrap
+
+
+
  
-/**  Facebook Likes
+/**  Update User's Facebook-Likes
   *  Check for facebook pages the user 'likes',
   *   add those pages to CL db (as new brands) if not already present
   *   add an entry in db indicating this user "likes" that page/talent 
   */
-if($clFacebookHelper->getFacebookSession() and $clFacebookHelper->isNewSession){
-	$clRequestInformation->importUserFacebookLikes();
-}//  Facebook likes import
+ if($clFacebookHelper->getFacebookSession()){
+ 	$clRequestInformation->importUserFacebookLikes();
+ }//  Facebook-likes import
+
+
+/**  Update User's Spotify-Follows
+  *  Check for Spotify artists the user follows,
+  *   update db indicating this user spotify-follows that brand 
+  */
+$clFacebookHelper->getFacebookSession();
+if(! $clFacebookHelper->isNewSession)  $clRequestInformation->importUserSpotifyFollows();
+
+
+
 
 
 /**
- * Spotify ID Retrieval
+ * Run the Spotify ID Retrieval Job
  *
  */
-$clRequestInformation->clModel->runMetaDataRetrievalJob();
+ $clRequestInformation->clModel->runMetaDataRetrievalJob();
 
 
 /**
@@ -101,5 +126,8 @@ $clRequestInformation->clModel->runEventImportJob(1470009600);
 
 //Look for special admin commands to execute in query string
 if(isset($_GET['cmd']) && $_GET['cmd'] == "reloadfollowerplacesfromfacebook"){ $CL_model->ReloadFollowerPlacesFromFacebook();}
+
+
+
 
 

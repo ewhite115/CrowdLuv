@@ -80,4 +80,53 @@ class CrowdLuvMusicStoryHelper {
 
 
 
+
+   	/**
+   	 * [getFacebookIdFromSpotifyId Uses MusicStory API to obtain a Fqcebook page ID ID, given a spotify artist ID]
+   	 * @param  [type] $spId [Facebook Page ID]
+   	 * @return [type]         [Facebook page ID or null if not found.]
+   	 */
+   	public function getFacebookIdFromSpotifyId($spId){
+
+		if (! $this->getApi() ){ return null;}
+
+		$artistFromSpId = null;
+		try{ $artistFromSpId=$this->getApi()->getArtist($spId, 'spotify');}
+		catch(Exception $e){ return null;}
+		//var_dump($artistFromSpId);die;
+		//If the return value is empty (either because it wasnt found or because musoc-story API was unreachable), return null
+		if(! isset($artistFromSpId)) {return null;}
+		$cur = $artistFromSpId->current();
+		if(! $cur) {return null;}
+
+		$msId = $artistFromSpId->current()->id;
+		$msArtist = $this->getApi()->getArtist($msId);
+		//var_dump($msArtist);die;
+		$artistFacebook = $msArtist->getConnector('facebook', []);
+		//var_dump($artistFacebook); die;
+
+
+		$facebookId = null;
+		$updateDate = null;
+		foreach($artistFacebook as $as){
+
+			if(strpos($as->url, "facebook.com") && ($as->update_date > $updateDate)   ) {
+				//echo "Found fb ID: " . $as->id . " updated " . $as->update_date;
+				$facebookId = $as->id;
+				$updateDate = $as->update_date;
+			}//if
+
+		}//foreach
+
+		return $facebookId;
+
+   	}//getFacebookIdForSpotifyId
+
+
+
+
+
+
+
+
 }//CrowdLuvMusicStoryHelper

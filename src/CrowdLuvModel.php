@@ -936,6 +936,37 @@ class CrowdLuvModel {
 
         return $tals;
     }
+
+
+    /**
+     * [get_talents_for_follower Returns an array of talents that the specified user "Luvs"]
+     * @param  [type] $cl_uidt [description]
+     * @return [type]          [description]
+     */
+    public function getAllBrandsForFollower($cl_uidt) {
+        
+        try {
+            $sql = "SELECT follower_luvs_talent.*, talent.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where follower.crowdluv_uid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1,$cl_uidt);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }
+        
+        $tals = $results->fetchAll(PDO::FETCH_ASSOC);
+        foreach($tals as &$tal){ 
+            $tal['score'] = $this->calculate_follower_score_for_talent($cl_uidt, $tal['crowdluv_tid']); 
+        }
+
+        //var_dump($matches);
+
+        return $tals;
+    }
+
+
+
     /**
      * [get_followers_for_talent Returns an array of user who "luv" the specified talent]
      * @param  [type] $cl_tidt [description]

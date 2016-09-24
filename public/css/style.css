@@ -615,6 +615,9 @@ h1.cl-major-heading{
     white-space: normal;  
     font-size: 1em;
     font-weight: bold;
+    height: 1.3em;
+    overflow:hidden;
+
 }
 
 

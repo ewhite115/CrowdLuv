@@ -375,7 +375,8 @@ class CrowdLuvModel {
               
                   // Get the next set of spotify artist the user follows
                   cldbgmsg("making a pass");
-                  $following = $this->clSpotifyHelper->getSpotifyApi()->getUserFollowedArtists(['limit' => '100', 'after' => $after]);
+                  try{$following = $this->clSpotifyHelper->getSpotifyApi()->getUserFollowedArtists(['limit' => '100', 'after' => $after]);}
+                  catch(Exception $e){ cldbgmsg("Exception calling spotify api in import job"); return;}
                   //echo "<pre>"; var_dump($following); echo "</pre>"; //die;
                   if(isset($following->artists->items) && sizeof($following->artists->items) > 0) {  
                     
@@ -2501,6 +2502,8 @@ class CrowdLuvModel {
 
     private function importSpotifyAlbumEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp){
 
+        if(! $this->clSpotifyHelper->getSpotifyApi()){ cldbgmsg("No spotify session/api - abortnig album import");   return;}
+
         //Set timestamp in DB for this retrieval
         $this->updateTableValue("talent", "timestamp_last_spotify_album_import", "now()", "crowdluv_tid = '" . $cl_tidt . "'" );
     
@@ -2509,7 +2512,7 @@ class CrowdLuvModel {
         //retrieve spotify albums
         $albums = "";
         try{
-            $albums = $this->spotifyApi->getArtistAlbums($clt['spotify_artist_id'],   ["album_type" => "album", "market" => "US"]  );
+            $albums = $this->clSpotifyHelper->getSpotifyApi()->getArtistAlbums($clt['spotify_artist_id'],   ["album_type" => "album", "market" => "US"]  );
         } catch(Exception $e) {
             echo "Exception calling spotify api";
             var_dump($e); die;
@@ -2519,7 +2522,7 @@ class CrowdLuvModel {
         foreach($albums->items as $album){
             //var_dump($album);die;
             //The "getArtistAlbums" api call returns simplified album objects - so,  Retrieve the full album object
-            $fullAlbum = $this->spotifyApi->getAlbum($album->id);
+            $fullAlbum = $this->clSpotifyHelper->spotifyApi->getAlbum($album->id);
             cldbgmsg("Found spotify album to add/import: " . $fullAlbum->id . ":" . $fullAlbum->name . ":" . $fullAlbum->release_date); 
             $this->importSpotifyAlbumRelease($cl_tidt, $fullAlbum);
         }

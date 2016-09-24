@@ -52,7 +52,7 @@ require_once ROOT_PATH . 'vendor/autoload.php';
 $clFacebookHelper = new CrowdLuvFacebookHelper();
 
 //Create Spotify API Object
-$spotifyApi = new SpotifyWebAPI\SpotifyWebAPI();
+//$spotifyApi = new SpotifyWebAPI\SpotifyWebAPI();
 $clSpotifyHelper = new CrowdLuvSpotifyHelper();
 
 //Create CrowdLuvMusicStoryHelper
@@ -62,7 +62,9 @@ $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
 $CL_model = new CrowdLuvModel();
 $CL_model->setDB((new CrowdLuvDBFactory())->getCrowdLuvDB());
 $CL_model->setFacebookHelper($clFacebookHelper);
-$CL_model->setSpotifyApi($spotifyApi);
+//$CL_model->setSpotifyApi($spotifyApi);
+$CL_model->setSpotifyHelper($clSpotifyHelper);
+$CL_model->setMusicStoryHelper($clMusicStoryHelper);
 
 
 //create a CrowdLuvRequest   object
@@ -87,24 +89,17 @@ $clResponseInformation = new CrowdLuvResponseInformation();
 
 
  
-/**  Update User's Facebook-Likes
-  *  Check for facebook pages the user 'likes',
-  *   add those pages to CL db (as new brands) if not already present
-  *   add an entry in db indicating this user "likes" that page/talent 
+/**  Periodically update the brands that the user Facebook-Likes, Spotify-Follows
+  *  Will only run once eveery N minutes.
+  *  Check for brands the user follows on facebook, spotify
+  *  add those to CL db (as new brands) if not already present
+  *  add an entry in db indicating this user likes/follows the brand 
   */
  if($clFacebookHelper->getFacebookSession()){
- 	$clRequestInformation->importUserFacebookLikes();
- }//  Facebook-likes import
+ 	$clRequestInformation->clModel->updateUserFacebookLikes($clRequestInformation->getLoggedInUserId());
+ 	$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
 
-
-/**  Update User's Spotify-Follows
-  *  Check for Spotify artists the user follows,
-  *   update db indicating this user spotify-follows that brand 
-  */
-$clFacebookHelper->getFacebookSession();
-if(! $clFacebookHelper->isNewSession)  $clRequestInformation->importUserSpotifyFollows();
-
-
+ }//  
 
 
 
@@ -125,7 +120,7 @@ $clRequestInformation->clModel->runEventImportJob(1470009600);
 
 
 //Look for special admin commands to execute in query string
-if(isset($_GET['cmd']) && $_GET['cmd'] == "reloadfollowerplacesfromfacebook"){ $CL_model->ReloadFollowerPlacesFromFacebook();}
+if(isset($_GET['cmd']) && $_GET['cmd'] == "reloadfollowerplacesfromfacebook"){ $CL_model->importFollowerPlacesFromFacebook();}
 
 
 

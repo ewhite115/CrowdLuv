@@ -351,7 +351,7 @@ class CrowdLuvModel {
 
         //This should only be run no more than once every X minutes.
         //Check the last time this was run, and return if less than x minutes.
-        $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 60 minute)" );
+        $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 1 minute)" );
 
         if(sizeof($data) > 0){ 
             cldbgmsg("-Less than x minutes since last spotify-follow import:- aborting");
@@ -429,7 +429,7 @@ class CrowdLuvModel {
     
     private function getVURLFromFacebookLink($fbLink){
 
-        return substr($fbLink, strlen("https://www.facebook.com/"));
+        return trim(substr($fbLink, strlen("https://www.facebook.com/")), '/');
 
 
     }
@@ -488,7 +488,7 @@ class CrowdLuvModel {
 
         //Default the vanity URL to the sanitized version of their facebook page name
         $fbPageName = $this->get_talent_object_by_tid($new_cl_tid)['fb_page_name']; 
-        $this->update_talent_landingpage_vurl($new_cl_tid, htmlspecialchars($fbPageName));
+        $this->update_talent_landingpage_vurl($new_cl_tid, str_replace("/", "", htmlspecialchars($fbPageName)));
         
         
         //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
@@ -607,7 +607,7 @@ class CrowdLuvModel {
                                 VALUES ('" . $talent_fbpp->id . "', ?)";
             cldbgmsg("Inserting new talent record based on facebook page: " . $sql);
             $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $talent_fbpp->name);
+            $results->bindParam(1, str_replace("/", "", htmlspecialchars($talent_fbpp->name)));
             //$results->bindParam(2, str_replace(" ", "-", htmlspecialchars($talent_fbpp->name)));
             $results->execute();            
 
@@ -840,6 +840,7 @@ class CrowdLuvModel {
         $cl_vurl = preg_replace('/[^a-z0-9 -]+/', '', $cl_vurl);
         $cl_vurl = str_replace(' ', '-', $cl_vurl);
         $cl_vurl = trim($cl_vurl, '-');
+        $cl_vurl = trim($cl_vurl, '/');
         //echo "Sanitized URL:" . $cl_vurl;
 
         //Default response values
@@ -1647,9 +1648,9 @@ class CrowdLuvModel {
                         (SELECT follower.location_fbname, follower.location_fb_id 
                          FROM (follower join follower_luvs_talent join talent 
                          on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid 
-                         and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
-                        where talent.crowdluv_tid=" . $cl_tidt . " 
-                        and follower.deactivated=0 
+                            and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
+                        where talent.crowdluv_tid='" . $cl_tidt . "'  
+                              and follower.deactivated='0'
                         ) 
                         as joined 
                     GROUP BY location_fbname 

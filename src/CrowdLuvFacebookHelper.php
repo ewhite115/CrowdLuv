@@ -46,7 +46,8 @@ class CrowdLuvFacebookHelper {
 	  //'Community',
 	  'Musician/band',
 	  'Musician/Band',
-	  'Author'
+	  'Author',
+	  'Artist'
 	  );
 
 

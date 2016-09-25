@@ -13,6 +13,7 @@ class CrowdLuvSpotifyHelper {
     private $spotifyApi = null;
     private $spotifySession = null;
     private $spotifyAuthorizeUrl = null;
+    private $spotifyAccessToken = null;
 
 
 	public static $spotifyPermissionScope = array(SPOTIFY_SCOPE_STRING );
@@ -60,8 +61,8 @@ class CrowdLuvSpotifyHelper {
    	public function getSpotifySession(){
 
    		//If a previous call to this method found a Spotify session, just return that existing member object.
-   		$tk = $this->spotifySession->getAccessToken();
-   		if ($tk) {return $this->spotifySession;}
+   		//$tk = $this->spotifySession->getAccessToken();
+   		if ($this->spotifyAccessToken) {return $this->spotifySession;}
 
 		//Otherwise .....
 
@@ -91,7 +92,8 @@ class CrowdLuvSpotifyHelper {
 		    // Check if the token's expiration time has passed
 		    if ( ! isset($_SESSION['spotify_token_expiration']) || $_SESSION['spotify_token_expiration'] < time() ) {
 	    	    cldbgmsg("--spotify_token from session-var expired on " . date('m/d/Y', $this->spotifySession->getTokenExpiration()));
-	      		//$this->spotifySession = null;
+	      		
+	      		$this->spotifyAccessToken = null;
 	      		$_SESSION['spotify_token'] = null;
 	      		$_SESSION['spotify_token_expiration'] = null;
 
@@ -99,6 +101,7 @@ class CrowdLuvSpotifyHelper {
 	      	else{    
 	      		cldbgmsg("--Spotify token from php session is still valid..");	
 				//Update the session Object with that token 
+				$this->spotifyAccessToken = $_SESSION['spotify_token'];
 				$this->spotifyApi->setAccessToken($_SESSION['spotify_token']);
 				return $this->spotifySession;
 			}				
@@ -115,7 +118,7 @@ class CrowdLuvSpotifyHelper {
 			if(isset($_GET['code'])){
 				cldbgmsg("-Found Spotify redirect code. Requesting token..");
 				$this->spotifySession->requestAccessToken($_GET['code']);
-				$_SESSION['spotify_token'] = $accessToken = $this->spotifySession->getAccessToken();
+				$this->spotifyAccessToken = $_SESSION['spotify_token'] = $accessToken = $this->spotifySession->getAccessToken();
 				$_SESSION['spotify_token_expiration'] = $this->spotifySession->getTokenExpiration();
 				// Set the access token on the API wrapper
 				$this->spotifyApi->setAccessToken($accessToken);

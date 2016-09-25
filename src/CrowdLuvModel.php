@@ -375,8 +375,8 @@ class CrowdLuvModel {
               
                   // Get the next set of spotify artist the user follows
                   cldbgmsg("making a pass");
-                  try{$following = $this->clSpotifyHelper->getSpotifyApi()->getUserFollowedArtists(['limit' => '100', 'after' => $after]);}
-                  catch(Exception $e){ cldbgmsg("Exception calling spotify api in import job"); return;}
+                  try{$following = $this->clSpotifyHelper->getSpotifyApi()->getUserFollowedArtists(['limit' => '50', 'after' => $after]);}
+                  catch(Exception $e){ cldbgmsg("Exception calling spotify api in import job" . $e);  return;}
                   //echo "<pre>"; var_dump($following); echo "</pre>"; //die;
                   if(isset($following->artists->items) && sizeof($following->artists->items) > 0) {  
                     
@@ -733,19 +733,17 @@ class CrowdLuvModel {
     }
 
 
-
-
     /**
      * [runMetaDataRetrievalJob Retrieves/updates metadata for brands:  Spotify ID]
      * @return [type] [description]
      */
     public function runMetaDataRetrievalJob(){
-        cldbgmsg("Invoking MetaData Retrieval Job");
+        cldbgmsg("<b>Invoking MetaData Retrieval Job</b>");
  
         //Artist Metadata (Music-Story) Import Job
         //Determine whether the last Spotify-ID-Retrieval job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_spotify_artist_id_retrieval > (NOW() - INTERVAL 60 minute)";
+            $sql =  "SELECT * FROM talent where timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 1 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -758,10 +756,10 @@ class CrowdLuvModel {
         // If any results were returned, that means it has been less than N minutes since last import 
         if(sizeof($data) > 0) { cldbgmsg("-less than x minutes since last metadata import - aborting"); return;}
 
-        cldbgmsg("Invoking Music-Story Spotify-ID Import Job");
+        //cldbgmsg("Invoking Music-Story Import Job");
         //Determine the X number of brands with the most 'stale' metadata spotify ID 
         try {                    
-            $sql =  "SELECT * FROM talent where spotify_artist_id IS NULL ORDER BY timestamp_last_spotify_artist_id_retrieval ASC LIMIT 5";
+            $sql =  "SELECT * FROM talent where (spotify_artist_id IS NULL) OR (music_story_id IS NULL) OR (youtube_channel_id IS NULL) ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 3";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -776,17 +774,34 @@ class CrowdLuvModel {
             
             //For those X brands, import their events
             foreach($staleBrands as $staleBrand){
-                cldbgmsg("Attempting to retrieve spotify id for " . $staleBrand['fb_page_name']);
-                //  Search for Spotify ID for the brand
-                $spId = $clMusicStoryHelper->getSpotifyIdFromFacebookId($staleBrand['fb_pid']);
+                cldbgmsg("Attempting to retrieve MetaData for " . $staleBrand['fb_page_name']);
+                //Retrieve metadata 
+                $metaData = $clMusicStoryHelper->getMetaDataforBrand($clMusicStoryHelper->getMusicStoryIdByFacebookId($staleBrand['fb_pid']));
                 
                 //Update DB to reflect that a retrieval was attempted.
+                $this->updateTableValue("talent", "timestamp_last_music_story_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
                 $this->updateTableValue("talent", "timestamp_last_spotify_artist_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
-                //Update the DB to reflect the ID that was found, if any
-                if($spId){
-                    cldbgmsg("Found spotify ID:" . $spId);
-                    $this->updateTableValue("talent", "spotify_artist_id", "'" . $spId . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                $this->updateTableValue("talent", "timestamp_last_youtube_channel_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
+
+                //Update the DB with the metadata that was found, if any
+                if($metaData['music-story-id']){
+                    cldbgmsg("Found Music-Story ID:" . $metaData['music-story-id']);
+                    $this->updateTableValue("talent", "music_story_id", "'" . $metaData['music-story-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
                 }   //if
+                if($metaData['spotify-artist-id']){
+                    cldbgmsg("Found spotify ID:" . $metaData['spotify-artist-id']);
+                    $this->updateTableValue("talent", "spotify_artist_id", "'" . $metaData['spotify-artist-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                }   //if
+
+                if($metaData['youtube-channel-id']){
+                    cldbgmsg("Found YouTube Channel ID:" . $metaData['youtube-channel-id']);
+                    $this->updateTableValue("talent", "youtube_channel_id", "'" . $metaData['youtube-channel-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                }   //if
+
+
+
+
+
             }//foreach
         }// if    Artist Metadata (Music-Story) Spotify-ID import
 
@@ -2341,10 +2356,10 @@ class CrowdLuvModel {
         
         // If no results were returned, that means it has been more than N minutes since last import 
         if(sizeof($data) == 0) {
-            cldbgmsg("Invoking BIT Event Import Job");
+            cldbgmsg("<b>Invoking BIT Event Import Job</b>");
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_bandsintown_event_import ASC LIMIT 3";
+                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_bandsintown_event_import ASC LIMIT 2";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2378,10 +2393,10 @@ class CrowdLuvModel {
         
         // If no results were returned, that means it has been more than N minutes since last import 
         if(sizeof($data) == 0) {
-            cldbgmsg("Invoking Spotify Album-Import Job");
+            cldbgmsg("<b>Invoking Spotify Album-Import Job</b>");
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent WHERE spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC LIMIT 5";
+                $sql =  "SELECT * FROM talent WHERE spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC LIMIT 2";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2437,7 +2452,7 @@ class CrowdLuvModel {
         $this->updateTableValue("talent", "timestamp_last_facebook_event_import", "now()", "crowdluv_tid = '" . $cl_tidt . "'" );
         
         $clt = $this->get_talent_object_by_tid($cl_tidt);
-        cldbgmsg("Invoking FB Event Import for " . $clt['fb_page_name']);
+        cldbgmsg("<b>Invoking FB Event Import for</b> " . $clt['fb_page_name']);
 
         //We may need to make multiple FB API requests to retrieve all the events.
         //  Loop making api call ..  
@@ -2508,7 +2523,7 @@ class CrowdLuvModel {
         $this->updateTableValue("talent", "timestamp_last_spotify_album_import", "now()", "crowdluv_tid = '" . $cl_tidt . "'" );
     
         $clt = $this->get_talent_object_by_tid($cl_tidt);
-        cldbgmsg("Retrieving album releases from spotify for " . $clt['fb_page_name'] );
+        cldbgmsg("<b>Retrieving album releases from spotify for </b>" . $clt['fb_page_name'] );
         //retrieve spotify albums
         $albums = "";
         try{
@@ -2522,7 +2537,7 @@ class CrowdLuvModel {
         foreach($albums->items as $album){
             //var_dump($album);die;
             //The "getArtistAlbums" api call returns simplified album objects - so,  Retrieve the full album object
-            $fullAlbum = $this->clSpotifyHelper->spotifyApi->getAlbum($album->id);
+            $fullAlbum = $this->clSpotifyHelper->getSpotifyApi()->getAlbum($album->id);
             cldbgmsg("Found spotify album to add/import: " . $fullAlbum->id . ":" . $fullAlbum->name . ":" . $fullAlbum->release_date); 
             $this->importSpotifyAlbumRelease($cl_tidt, $fullAlbum);
         }

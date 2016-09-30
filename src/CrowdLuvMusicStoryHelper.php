@@ -113,13 +113,13 @@ class CrowdLuvMusicStoryHelper {
 		$youTubeChannelId = null;
 		$updateDate = null;
 		foreach($artistYouTubeChannelObj as $ytc){
-			if(strpos($ytc->url, "facebook.com") && ($ytc->update_date > $updateDate)   ) {
+			if(strpos($ytc->url, "youtube.com") && ($ytc->update_date > $updateDate)   ) {
 				//echo "Found YouTube Channel ID: " . $ytc->id . " updated " . $ytc->update_date;
 				$youTubeChannelId = $ytc->id;
 				$updateDate = $ytc->update_date;
 			}//if
 		}//foreach
-		$metaData["youtube-channel-id"] = $facebookId;
+		$metaData["youtube-channel-id"] = $youTubeChannelId;
 
 
 

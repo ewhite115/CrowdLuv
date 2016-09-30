@@ -23,7 +23,9 @@
 
 
 
-include(ROOT_PATH . 'views/partial_cl_html_leader.php');
+
+
+    include(ROOT_PATH . 'views/partial_cl_html_leader.php');
 
 ?>
     
@@ -32,6 +34,35 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
   
 
     <!-- ***  Luvs ***  -->
+
+
+    <div class="row">
+        <div class="col-xs-6 crowdluvsection">
+            
+            <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                Facebook:
+            </h1>    
+            <?php if( $clRequestInformation->clFacebookHelper->checkFacebookPermissions($clRequestInformation->clFacebookHelper->getFacebookSession(), CrowdLuvFacebookHelper::$talentFacebookPermissionScope )){ ?>
+                <span>Connected</span><BR>
+            <?php } else { ?>
+                <p>Not Connected <a href="<?php echo $clRequestInformation->clFacebookHelper->getLoginUrl(); ?>"> Authorize Facebook Permissions </a><p>
+            <?php } ?>
+
+            <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                Spotify
+            </h1>                    
+            <?php if( $clRequestInformation->clSpotifyHelper->getSpotifySession()){ ?>
+                <span>Connected</span>
+            <?php } else { ?>
+                <p><a href="<?php echo $clRequestInformation->clSpotifyHelper->getLoginUrl(); ?>"> Connect Your Spotify Account</a><p>
+            <?php } ?>
+
+        </div>
+
+
+
+    </div>
+
 
     <div class="row">
         <div class="col-xs-12 crowdluvsection">

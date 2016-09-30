@@ -127,8 +127,7 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
         </div>
 
 
-        <a href="<?php echo $clRequestInformation->clSpotifyHelper->getLoginUrl(); ?>"> Authorize SPotify</a>
-
+ 
     </div>              
                   
                     

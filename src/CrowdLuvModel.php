@@ -2942,7 +2942,7 @@ class CrowdLuvModel {
     }
 
 
-    public function getFutureEventListForFollower($cl_uidt){
+    public function getFutureEventListForFollower($cl_uidt, $limit = NULL){
 
         $fol = $this->get_follower_object_by_uid($cl_uidt);
 
@@ -2968,15 +2968,8 @@ class CrowdLuvModel {
                         and type = 'significant_release'
                     )
                 ";
-            // ORDER BY (CASE  WHEN end_time > DATE_SUB(NOW(), INTERVAL 3 Month) and type = 'significant_release' THEN 0
-            //                 WHEN end_time > NOW() and near_me = 1 THEN 1
-            //                 WHEN end_time > NOW() and near_me = 0 then 2
-            //                 WHEN end_time < NOW() then 3 END ) ASC,
-
-            //          (CASE  WHEN end_time < NOW() then end_time END) desc,
-            //          (CASE  WHEN end_time > NOW() then end_time END) asc";
-
-
+            if($limit) $sql = $sql . " limit " . $limit; 
+   
             $results = $this->cldb->prepare($sql);
             //$results->bindParam(1, $cl_tidt);
             //$results->bindParam(2, $cl_tidt);

@@ -351,7 +351,7 @@ class CrowdLuvModel {
 
         //This should only be run no more than once every X minutes.
         //Check the last time this was run, and return if less than x minutes.
-        $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 1 minute)" );
+        $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 60 minute)" );
 
         if(sizeof($data) > 0){ 
             cldbgmsg("-Less than x minutes since last spotify-follow import:- aborting");
@@ -1493,10 +1493,14 @@ class CrowdLuvModel {
 
         //If the follower fb likes the talent, +50 luvpoints
         if($data['likes_on_facebook']) $score += 50;
+        //If the follower follows the brand on spotify, + luvpoints
+        if($data['follows_on_spotify']) $score += 50;
         //If they 'luv' the talent, Calculate how many points follower gets based on their settings for the talent
         if($data['still_following']){
             $score= $data['allow_email'] * 50 + $data['allow_sms'] * 100 + $data['will_travel_time'] / 2;
         }
+
+
 
         //Retrieve any shares the follower has done for the talent
         $data = $this->getFollowerSharesForTalent($cl_uidt, $cl_tidt);

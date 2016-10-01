@@ -310,7 +310,7 @@ class CrowdLuvModel {
 
         //This should only be run no more than once every X minutes.
         //Check the last time this was run, and return if less than x minutes.
-        $lastRun = $this->selectTableValue("timestamp_last_facebook_like_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_facebook_like_import > (NOW() - INTERVAL 60 minute)" );
+        $lastRun = $this->selectTableValue("timestamp_last_facebook_like_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_facebook_like_import > (NOW() - INTERVAL 120 minute)" );
         if(sizeof($lastRun) > 0){ cldbgmsg("-Less than x minutes since last facebook-like import:- aborting");return;}
 
         //We may need to make multiple requests to get all the likes.
@@ -351,7 +351,7 @@ class CrowdLuvModel {
         //This should only be run no more than once every X minutes.
         //Check the last time this was run, and return if less than x minutes.
         cldbgmsg("<b>Invoking Spotify-Follow Update/Import</b>");
-        $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 1 minute)" );
+        $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 180 minute)" );
 
         if(sizeof($data) > 0){ 
             cldbgmsg("-Less than x minutes since last spotify-follow import:- aborting");
@@ -1506,15 +1506,16 @@ class CrowdLuvModel {
         //  so return 0
         if(sizeof($data) == 0) return 0;
 
-        //If the follower fb likes the talent, +50 luvpoints
-        if($data['likes_on_facebook']) $score += 50;
-        //If the follower follows the brand on spotify, + luvpoints
-        if($data['follows_on_spotify']) $score += 50;
         //If they 'luv' the talent, Calculate how many points follower gets based on their settings for the talent
         if($data['still_following']){
             $score= $data['allow_email'] * 50 + $data['allow_sms'] * 100 + $data['will_travel_time'] / 2;
         }
-
+        //If the follower fb likes the talent, + luvpoints
+        if($data['likes_on_facebook']) $score += 50;
+        //If the follower follows the brand on spotify, + luvpoints
+        if($data['follows_on_spotify']) $score += 50;
+        //If the brand is one of the user's "top artists" on spotify, + points
+        if($data['spotify_top_artists_short_term'] || $data['spotify_top_artists_medium_term']) $score += 50;
 
 
         //Retrieve any shares the follower has done for the talent

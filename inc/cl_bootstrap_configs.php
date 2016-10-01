@@ -36,7 +36,6 @@
 	//Spotify API Settings
 	if(!defined("SPOTIFY_CLIENT_ID")) define("SPOTIFY_CLIENT_ID", "b037ff6f24d245f494ad09dc52add378");
 	if(!defined("SPOTIFY_CLIENT_SECRET")) define("SPOTIFY_CLIENT_SECRET", "ea18712fc9da4fe8afcf21f7d9645bdc");
-	if(!defined("SPOTIFY_SCOPE_STRING")) define("SPOTIFY_SCOPE_STRING", "'playlist-read-private','user-read-private'");
 	
 
 

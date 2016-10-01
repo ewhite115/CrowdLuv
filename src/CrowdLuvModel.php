@@ -741,9 +741,9 @@ class CrowdLuvModel {
         cldbgmsg("<b>Invoking MetaData Retrieval Job</b>");
  
         //Artist Metadata (Music-Story) Import Job
-        //Determine whether the last Spotify-ID-Retrieval job was run within the last X minutes. 
+        //Determine whether the last MetaData-Retrieval job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 1 minute)";
+            $sql =  "SELECT * FROM talent where timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 0 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -759,7 +759,8 @@ class CrowdLuvModel {
         //cldbgmsg("Invoking Music-Story Import Job");
         //Determine the X number of brands with the most 'stale' metadata spotify ID 
         try {                    
-            $sql =  "SELECT * FROM talent where (spotify_artist_id IS NULL) OR (music_story_id IS NULL) OR (youtube_channel_id IS NULL) ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 3";
+                                                //(spotify_artist_id IS NULL) OR (music_story_id IS NULL) OR (youtube_channel_id IS NULL)  OR
+            $sql =  "SELECT * FROM talent where (bandpage_id IS NULL) ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 5";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -776,39 +777,37 @@ class CrowdLuvModel {
             foreach($staleBrands as $staleBrand){
                 cldbgmsg("Attempting to retrieve MetaData for " . $staleBrand['fb_page_name']);
                 //Retrieve metadata 
-                $metaData = $clMusicStoryHelper->getMetaDataforBrand($clMusicStoryHelper->getMusicStoryIdByFacebookId($staleBrand['fb_pid']));
+                $metaData = $clMusicStoryHelper->getMetaDataForBrand($staleBrand);
                 
                 //Update DB to reflect that a retrieval was attempted.
                 $this->updateTableValue("talent", "timestamp_last_music_story_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
                 $this->updateTableValue("talent", "timestamp_last_spotify_artist_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
                 $this->updateTableValue("talent", "timestamp_last_youtube_channel_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
+                $this->updateTableValue("talent", "timestamp_last_bandpage_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
 
                 //Update the DB with the metadata that was found, if any
                 if($metaData['music-story-id']){
                     cldbgmsg("Found Music-Story ID:" . $metaData['music-story-id']);
                     $this->updateTableValue("talent", "music_story_id", "'" . $metaData['music-story-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
-                }   //if
+                }//if
                 if($metaData['spotify-artist-id']){
                     cldbgmsg("Found spotify ID:" . $metaData['spotify-artist-id']);
                     $this->updateTableValue("talent", "spotify_artist_id", "'" . $metaData['spotify-artist-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
-                }   //if
-
+                }//if
                 if($metaData['youtube-channel-id']){
                     cldbgmsg("Found YouTube Channel ID:" . $metaData['youtube-channel-id']);
                     $this->updateTableValue("talent", "youtube_channel_id", "'" . $metaData['youtube-channel-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
-                }   //if
-
-
-
-
-
+                }//if
+                if($metaData['bandpage-id']){
+                    cldbgmsg("Found bandpage ID:" . $metaData['bandpage-id']);
+                    $this->updateTableValue("talent", "bandpage_id", "'" . $metaData['bandpage-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                }//if
             }//foreach
+
         }// if    Artist Metadata (Music-Story) Spotify-ID import
 
 
-    }//ruMetaDataImportJob
-
-
+    }//runMetaDataImportJob
 
 
 

@@ -147,7 +147,7 @@ class CrowdLuvMusicStoryHelper {
 				}//if
 			}//foreach
 			$metaData["youtube-channel-id"] = $youTubeChannelId;
-			$resultMsg = "Attempted to retrieve YoutubeChannel ID for " . $brandObj['fb_page_name'] . ($youTubeChannelId ? " -Found " . $msId : " -Not found");
+			$resultMsg = "Attempted to retrieve YoutubeChannel ID for " . $brandObj['fb_page_name'] . ($youTubeChannelId ? " -Found " . $youTubeChannelId : " -Not found");
 			cldbgmsg($resultMsg);
 
 		}
@@ -165,7 +165,7 @@ class CrowdLuvMusicStoryHelper {
 				}//if
 			}//foreach
 			$metaData["bandpage-id"] = $BandPageChannelId;
-			$resultMsg = "Attempted to retrieve BandPage ID for " . $brandObj['fb_page_name'] . ($BandPageChannelId ? " -Found " . $msId : " -Not found");
+			$resultMsg = "Attempted to retrieve BandPage ID for " . $brandObj['fb_page_name'] . ($BandPageChannelId ? " -Found " . $BandPageChannelId : " -Not found");
 			cldbgmsg($resultMsg);
 
 		}

@@ -21,29 +21,9 @@
     $api = $clRequestInformation->clSpotifyHelper->getSpotifyApi();
 
 
-
-
-
-    //$following = $api->currentUserFollows('artist', ['6wQMF27xWhSyJFnO9L5mQk']);
-    //$following = $api->getUserFollowedArtists();
-    //var_dump($following);
-
-
-/*
-    try{
-
-        $clRequestInformation->clSpotifyHelper->getSpotifySession();
-        $spfollowing = $clRequestInformation->clSpotifyHelper->spotifyApi->currentUserFollows('user', 'spotify');
-
-    }
-    catch(Exception $e){echo($e);}
-    var_dump($spfollowing); //die;
-*/
-
-
-    //Redirect to the follower dashboard/ "share luv" page. 
-    //header('Location: /');
-    //exit;
+    //Redirect to the mayluvs page 
+    header('Location: /myluvs');
+    exit;
 
 ?>
 

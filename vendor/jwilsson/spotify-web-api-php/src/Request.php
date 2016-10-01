@@ -20,23 +20,19 @@ class Request
      */
     protected function parseBody($body, $status)
     {
-        
-        //var_dump($body);
-        //var_dump($status);
-
         if ($status >= 200 && $status <= 299) {
             return json_decode($body, $this->returnAssoc);
         }
 
         $body = json_decode($body);
-        $error = (isset($errorBody->error)) ? $errorBody->error : null;
+        $error = (isset($body->error)) ? $body->error : null;
 
         if (isset($error->message) && isset($error->status)) {
             // API call error
             throw new SpotifyWebAPIException($error->message, $error->status);
-        } elseif (isset($errorBody->error_description)) {
+        } elseif (isset($body->error_description)) {
             // Auth call error
-            throw new SpotifyWebAPIException($errorBody->error_description, $status);
+            throw new SpotifyWebAPIException($body->error_description, $status);
         } else {
             // Something went really wrong
             throw new SpotifyWebAPIException('An unknown error occurred.', $status);

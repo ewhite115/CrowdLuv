@@ -306,7 +306,7 @@ class CrowdLuvModel {
 
     public function updateUserFacebookLikes($clUid){
 
-        cldbgmsg("Invoking facebook-like update/import");
+        cldbgmsg("<b>Invoking facebook-like update/import</b>");
 
         //This should only be run no more than once every X minutes.
         //Check the last time this was run, and return if less than x minutes.
@@ -348,18 +348,17 @@ class CrowdLuvModel {
 
     public function updateUserSpotifyFollows($clUid){
 
-
         //This should only be run no more than once every X minutes.
         //Check the last time this was run, and return if less than x minutes.
-        $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 60 minute)" );
+        cldbgmsg("<b>Invoking Spotify-Follow Update/Import</b>");
+        $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 1 minute)" );
 
         if(sizeof($data) > 0){ 
             cldbgmsg("-Less than x minutes since last spotify-follow import:- aborting");
             return;
         }
 
-        cldbgmsg("Invoking Spotify-Follow Update/Import");
-        //If there is no active Spotify Session/Token, abort
+       //If there is no active Spotify Session/Token, abort
         if(! $this->clSpotifyHelper->getSpotifyApi()){
             cldbgmsg("-No active spotify session/token - aborting spotify-follow update job");
             return;
@@ -402,6 +401,23 @@ class CrowdLuvModel {
         } while ( $after );
 
 
+        //Retrieve the user's Top Artists and record it in DB
+        $topArtistsMediumTerm = $this->clSpotifyHelper->getSpotifyApi()->getMyTop("artists",   ["limit" => "50", "time_range" => "medium_term"] );
+        //var_dump($topArtistsMediumTerm);
+        foreach($topArtistsMediumTerm->items as $tam){
+          $cltid = $this->getCrowdLuvBrandBySpotifyArtistId($tam->id);
+          if($cltid) $this->updateTableValue("follower_luvs_talent", "spotify_top_artists_medium_term", "1", "`crowdluv_uid`='" . $clUid ."' and `crowdluv_tid`='" . $cltid . "'" );
+
+        }
+
+        $topArtistsShortTerm = $this->clSpotifyHelper->getSpotifyApi()->getMyTop("artists",   ["limit" => "50", "time_range" => "short_term"] );
+        foreach($topArtistsShortTerm->items as $tas){
+          $cltid = $this->getCrowdLuvBrandBySpotifyArtistId($tas->id);
+          if($cltid) $this->updateTableValue("follower_luvs_talent", "spotify_top_artists_short_term", "1", "`crowdluv_uid`='" . $clUid ."' and `crowdluv_tid`='" . $cltid . "'" );
+
+        }
+        
+        
         $this->updateTableValue("follower", "timestamp_last_spotify_follow_import", "now()", "crowdluv_uid = '" . $clUid . "'" );
     }
 

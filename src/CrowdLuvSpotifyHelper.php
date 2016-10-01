@@ -16,7 +16,6 @@ class CrowdLuvSpotifyHelper {
     private $spotifyAccessToken = null;
 
 
-	public static $spotifyPermissionScope = array(SPOTIFY_SCOPE_STRING );
 
 
 	function __construct() {
@@ -38,12 +37,10 @@ class CrowdLuvSpotifyHelper {
 		if(isset($this->spotifyAuthorizeUrl)) return $this->spotifyAuthorizeUrl;
 
 		//Generate an authorization URL
-		$scopes = array('playlist-read-private','user-read-private', 'user-follow-read');
+		$scopes = array('playlist-read-private', 'user-read-private', 'user-follow-read', 'user-top-read');
 		return $this->spotifyAuthorizeUrl = $this->spotifySession->getAuthorizeUrl(array('scope' => $scopes));
 
-
    	}
-
 
    	public function getSpotifyApi(){
 
@@ -52,7 +49,6 @@ class CrowdLuvSpotifyHelper {
    		if($sess ) return $this->spotifyApi;
    		else return null;
    	}
-
 
    	/**
    	 * [getSpotifySession description]

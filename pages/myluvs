@@ -124,6 +124,14 @@
                                 <img style="width:1.25em;" src='res/spotify-gray.gif'/>
                             <?php } ?>
                            
+                            <!-- Spotify-Top Artist-->
+                            <?php if($cltalentobj['spotify_top_artists_short_term'] || $cltalentobj['spotify_top_artists_medium_term']) { ?>
+                                (SpTA)
+                            <?php } else { ?>
+                                                            
+                            <?php } ?>
+
+                         
                         </p>
                         
                         

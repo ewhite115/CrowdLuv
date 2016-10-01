@@ -180,31 +180,6 @@ class CrowdLuvSpotifyHelper {
 
 
 
-   	/**
-   	 * [getManagedSpotifyPages Queires Spotify for pages managed by the logged in user]
-   	 * @return [Array] [set of pages as returned by Spotify api]
-   	 * @return null if none or exception
-   	 */
-   	public function getManagedSpotifyPages(){
-
-
-	     try{
-	        // graph api request for pages the user manages
-	        $request = new SpotifyRequest( $this->SpotifySession, 'GET', '/me/accounts' );
-	        $response = $request->execute();
-	        return $response->getGraphObject()->asArray();
-	        //echo "<pre>"; var_dump($fb_user_pages); echo "</pre>";	        
-	   
-	      } catch (SpotifyApiException $e) {        
-	        cldbgmsg("SpotifyAPIException in CrowdLuvSpotifyHelper->getManagedPages requesting page info:-------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
-	        return null;
-	      }       
-
-	      return null;
-
-   	}
-
-
 	/**
 	 * [checkSpotifyPermissions Makes graph API call to Spotify to get permissions, and returns true/false if the user has granted sufficient permissions]
 	 * @param  [SpotifySession] $fbSession [SpotifySession to use for making the API call]

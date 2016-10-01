@@ -97,14 +97,18 @@ $clResponseInformation = new CrowdLuvResponseInformation();
   */
  if($clFacebookHelper->getFacebookSession()){
  	$clRequestInformation->clModel->updateUserFacebookLikes($clRequestInformation->getLoggedInUserId());
- 	$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
 
  }//  
+
+ if($clFacebookHelper->getFacebookSession() && ! $clFacebookHelper->isNewSession && $clSpotifyHelper->getSpotifyApi()){
+ 	$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
+}
+
 
 
 
 /**
- * Run the Spotify ID Retrieval Job
+ * Run the Metadata Retrieval Job
  *
  */
  $clRequestInformation->clModel->runMetaDataRetrievalJob();

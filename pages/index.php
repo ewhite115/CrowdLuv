@@ -111,7 +111,7 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
           
          <!-- <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p> -->
           
-
+        <?php if(!$futureEvents){ echo "No updates"; }  ?>
         <?php foreach($futureEvents as $futureEvent){ ?>
           <?php if ($futureEvent['type'] == "significant_release") { ?>
               <p> <b>New Release:</b> <?php echo $futureEvent['fb_page_name'] . " - " . $futureEvent['title']; ?> </p>

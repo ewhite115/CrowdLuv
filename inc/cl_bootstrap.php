@@ -50,21 +50,21 @@ require_once ROOT_PATH . 'vendor/autoload.php';
 
 //Create a CrowdLuvFacebookHelper 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
-
-//Create Spotify API Object
-//$spotifyApi = new SpotifyWebAPI\SpotifyWebAPI();
+//Create Spotify Helper
 $clSpotifyHelper = new CrowdLuvSpotifyHelper();
-
 //Create CrowdLuvMusicStoryHelper
 $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
+//Create CrowdLuvYouTubeHelper
+$clYouTubeHelper = new CrowdLuvYouTubeHelper();
 
-//Create CL_model with it's db dependency
+//Create CL_model with it's dependencies
 $CL_model = new CrowdLuvModel();
 $CL_model->setDB((new CrowdLuvDBFactory())->getCrowdLuvDB());
 $CL_model->setFacebookHelper($clFacebookHelper);
 //$CL_model->setSpotifyApi($spotifyApi);
 $CL_model->setSpotifyHelper($clSpotifyHelper);
 $CL_model->setMusicStoryHelper($clMusicStoryHelper);
+$CL_model->setYouTubeHelper($clYouTubeHelper);
 
 
 //create a CrowdLuvRequest   object
@@ -88,9 +88,10 @@ $clResponseInformation = new CrowdLuvResponseInformation();
 
 
 
+
  
 /**  Periodically update the brands that the user Facebook-Likes, Spotify-Follows
-  *  Will only run once eveery N minutes.
+  *  Will only run once every N minutes.
   *  Check for brands the user follows on facebook, spotify
   *  add those to CL db (as new brands) if not already present
   *  add an entry in db indicating this user likes/follows the brand 

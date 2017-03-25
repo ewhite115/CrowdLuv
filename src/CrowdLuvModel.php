@@ -16,6 +16,7 @@ class CrowdLuvModel {
     private $spotifyApi;
     private $clSpotifyHelper;
     private $clMusicStoryHelper;
+    private $clYouTubeHelper;
 
     public static $SHARETYPES = [ 'crowdluv-talent-landing-page', 'crowdluv-event'];
     public static $SHAREMETHODS = [ 'facebook-share', 'facebook-send', 'twitter-tweet' ];
@@ -25,8 +26,8 @@ class CrowdLuvModel {
     public function setFacebookHelper($fbh){ $this->clFacebookHelper = $fbh;   }
     public function setSpotifyApi($sp){ $this->spotifyApi = $sp;   }
     public function setSpotifyHelper($sp){ $this->clSpotifyHelper = $sp;   }
- 
     public function setMusicStoryHelper($ms){ $this->clMusicStoryHelper = $ms;   }
+    public function setYouTubeHelper($yt){ $this->clYouTubeHelper = $yt;   }
 
 
     public function updateTableValue($table, $col, $val, $where){
@@ -2193,16 +2194,15 @@ class CrowdLuvModel {
      * @param  [type] $bitEventID  [description]
      * @return [type]              [Crowdluv Event-ID of the newly created event]
      */
-    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startTime, $endTime = null, $clPlaceID = null, $moreInfoURL = null, $fbEventID = null, $bitEventID = null, $spotifyAlbumId = null){
+    public function createEvent($cl_uidt, $cl_tidt, $type, $title, $description, $startTime, $endTime = null, $clPlaceID = null, $moreInfoURL = null, $fbEventID = null, $bitEventID = null, $spotifyAlbumId = null, $youTubeId = null){
 
         if($endTime == null || $endTime == "") $endTime = $startTime;
         if($startTime == $endTime) $isDateOnly = true;
 
-
         try{
             
-            $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`,  `start_time`, `end_time`, `is_date_only`, `crowdluv_placeid`, `more_info_url`, `fb_event_id`, `bit_event_id`, `spotify_album_id`) 
-                                            VALUES (         ?,                           ?,              ?,       ?,          ?,               ?,           ?,            ?,              ? ,               ?,             ?           , ?       ,     ?  )";
+            $sql = "INSERT INTO `crowdluv`.`event` (`created_by_crowdluv_uid`, `related_crowdluv_tid`, `type`, `title`, `description`,  `start_time`, `end_time`, `is_date_only`, `crowdluv_placeid`, `more_info_url`, `fb_event_id`, `bit_event_id`, `spotify_album_id`, `youtube_video_id`) 
+                                            VALUES (         ?,                           ?,              ?,       ?,          ?,               ?,           ?,            ?,              ? ,               ?,             ?           , ?       ,     ? ,                     ?    )";
             //echo $sql; return true;
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $cl_uidt);
@@ -2218,7 +2218,7 @@ class CrowdLuvModel {
             $results->bindParam(11, $fbEventID);
             $results->bindParam(12, $bitEventID);
             $results->bindParam(13, $spotifyAlbumId);
-
+            $results->bindParam(14, $youTubeId);
 
             $results->execute();
             return $results;
@@ -2442,16 +2442,59 @@ class CrowdLuvModel {
         else { cldbgmsg("-Time interval for Spotify-Album Import has not lapsed.");}
 
 
+        // YouTube-Video Event Import Job
+        cldbgmsg("<b>Import Job: YouTube-Uploads Events</b>");
+        // Determine whether the last YT event import job was run within the last X minutes. 
+        try {                    
+            $sql =  "SELECT * FROM talent where timestamp_last_youtube_uploads_import > (NOW() - INTERVAL 10 minute)";
+            $results = $this->cldb->prepare($sql);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data =  $results->fetchAll(PDO::FETCH_ASSOC);
+        //echo "result of query to determine whether last import job was run within x minutes";  var_dump($data); die;
+        
+        // If no results were returned, that means it has been more than N minutes since last import 
+        if(sizeof($data) == 0) {
+
+            //Determine the X number of brands with the most 'stale' import
+            try {                    
+                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_youtube_uploads_import ASC LIMIT 2";
+                $results = $this->cldb->prepare($sql);
+                $results->execute();
+
+            } catch (Exception $e) {
+                echo "Data could not be retrieved from the database. " . $e;
+                exit;
+            }    
+            $staleBrands = $results->fetchAll(PDO::FETCH_ASSOC);
+            //echo "stalebrand(youtube):";  var_dump($staleBrands); die;
+            
+            //For those X brands, import their events
+            foreach($staleBrands as $staleBrand){
+                //  Import YouTube uploads
+                $this->importYouTubeUploadsForTalent($staleBrand, $sinceTimestamp);
+                
+            }
+        }//YouTube imports
+        else { cldbgmsg("-Time interval for YT-Upload Import has not lapsed.");}
 
 
     }
 
 
 
-
-
-
-
+    /**
+     * [importEventsForTalent  -  This is used when called ad-hoc from command-line]
+     * @param  [type]  $cl_tidt         [description]
+     * @param  [type]  $fb_pidt         [description]
+     * @param  [type]  $facebookSession [description]
+     * @param  integer $sinceTimestamp  [description]
+     * @return [type]                   [description]
+     */
     public function importEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp = 1356998400){
 
         //  Import Facebook Events
@@ -2460,9 +2503,11 @@ class CrowdLuvModel {
         $this->importBandsInTownEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp);
         // Import Album releases from Spotify 
         $this->importSpotifyAlbumEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp);
-
+        // Import YouTube videos 
+        $this->importYouTubeUploadsForTalent($this->get_talent_object_by_tid($cl_tidt), $sinceTimestamp);
 
     } // importEventsforTalent
+
 
     /**
      * [importFacebookEventsForTalent   Import Facebook Events for a given talent, since a given timestamp]
@@ -2570,6 +2615,38 @@ class CrowdLuvModel {
         }
 
     }
+
+    private function importYouTubeUploadsForTalent($clBrandObj, $sinceTimestamp){
+
+        //Set timestamp in DB for this retrieval
+        $this->updateTableValue("talent", "timestamp_last_youtube_uploads_import", "now()", "crowdluv_tid = '" . $clBrandObj['crowdluv_tid'] . "'" );
+        //echo "-Invoking YT-Upload Import for " . $clBrandObj['fb_page_name'];
+        cldbgmsg("-Invoking YT-Upload Import for " . $clBrandObj['fb_page_name']);
+
+        //Get the list of recent uploads 
+        try{
+            //Attempt to search for uploads based on:
+            //  1:  YouTube Channel ID,  if it exists in our DB
+            //  2:  Username = crowdluv_vurl
+            //  3:  Username  =crowdluv_vurlVEVO
+            $ytUn[0] = $clBrandObj['crowdluv_vurl'];
+            $ytUn[1] = $clBrandObj['crowdluv_vurl'] . 'vevo';
+            $recentVideos = $this->clYouTubeHelper->getRecentUploads( [$clBrandObj['youtube_channel_id']], $ytUn,'3');  ;
+        } catch(Exception $e) {
+            echo "Exception calling Youtube api";
+            var_dump($e); die;
+        }
+        //var_dump($recentVideos); die;
+        if( ! $recentVideos) { cldbgmsg("--No recent videos found."); return; }
+        //loop through the resuls and import each one
+        foreach($recentVideos as $recentVideo){
+            cldbgmsg("--Found YouTube upload to add/import: " . $recentVideo['contentDetails']['videoId'] . ":" . $recentVideo['snippet']['title'] . ":" . $recentVideo['contentDetails']['videoPublishedAt']); 
+            $this->importYouTubeUpload($clBrandObj['crowdluv_tid'], $recentVideo);
+        }
+
+    }
+
+
 
     /**
      * [importFacebookEvent  Imports a new event into CL db (or updates an existing event) based on a facebook event]
@@ -2680,7 +2757,7 @@ class CrowdLuvModel {
         
         $clEventID = $this->createEvent(0,         //created by 0 for system-generated
                                      $cl_tidt,  
-                                         'other',   //event type
+                                         'performance',   //event type
                                          $fbEvent->name,
                                          $fbEvent->description,
                                          $fbEvent->start_time,
@@ -2794,15 +2871,15 @@ class CrowdLuvModel {
         cldbgmsg("---Calling CreateEvent() for bit import");
         $return = $this->createEvent(0,
                                      $cl_tidt,
-                                         'performance',
+                                         'performance',   //Type
                                          $bitEvent->title,
                                          $bitEvent->description,
                                          $bitEvent->datetime,
                                          $bitEvent->end_time,
-                                         $clPlaceID,
-                                         $bitEvent->facebook_rsvp_url,
-                                         null,
-                                         $bitEvent->id);
+                                         $clPlaceID,     //PlaceId
+                                         $bitEvent->facebook_rsvp_url,    //URL
+                                         NULL,   //FB Id
+                                         $bitEvent->id);     //BIT Id
         
        return $return;
                 
@@ -2850,26 +2927,77 @@ class CrowdLuvModel {
                                              $spotifyAlbum->name,
                                              $spotifyAlbum->release_date,
                                              $spotifyAlbum->release_date,
-                                             null,
-                                             $spotifyAlbum->href,
-                                             null,
-                                             null,
-                                             $spotifyAlbum->id
+                                             NULL,   //PlaceID
+                                             $spotifyAlbum->href,   //URL
+                                             NULL,    //FB ID
+                                             NULL,      //BIT ID
+                                             $spotifyAlbum->id    //SP Id
                                              );
             
             return $return;
         }
       
-       
                 
     }  // importSpotifyAlbumRelease
 
 
 
 
-    private function getBasicEventDetails($eventID, $cl_uidt = NULL){
+    public function importYouTubeUpload($cl_tidt, $recentVideo){
 
-        
+        //Initialize default values
+        $clEventID = null;
+        $releaseType = "youtube_video";
+
+        //Look for an existing event with same album ID..
+        $clEventID = $this->getEventIDFromYouTubeVideoId($recentVideo['contentDetails']['videoId']);
+        //if we found an existing event with this album id ...
+        if($clEventID){
+            cldbgmsg("---It is an existing video - updating");
+            //Update basic values in the CL db with current info from spotify
+            $this->updateEventValues($clEventID,
+                                        [
+                                        'type' => $releaseType,
+                                        'title' => $recentVideo['snippet']['title'],
+                                        'description' => $recentVideo['snippet']['description'],
+                                        'start_time' =>   $recentVideo['contentDetails']['videoPublishedAt'],
+                                        'end_time' => $recentVideo['contentDetails']['videoPublishedAt']
+                                        ]  );
+                 
+            return $clEventID;
+
+        }
+        else{
+            //add/create the event
+            cldbgmsg("---It is a new youtube video. Calling CreateEvent() for youtube import");
+            $return = $this->createEvent(0,
+                                             $cl_tidt,
+                                             $releaseType,
+                                             $recentVideo['snippet']['title'],
+                                             $recentVideo['snippet']['description'],
+                                             $recentVideo['contentDetails']['videoPublishedAt'], //startTime
+                                             $recentVideo['contentDetails']['videoPublishedAt'], //endTime
+                                             NULL,  //PlaceId 
+                                             "https://www.youtube.com/watch?v=" . $recentVideo['contentDetails']['videoId'],  //URL
+                                             NULL,  //Facebook ID
+                                             NULL,  //BIT Id
+                                             NULL,   //Spotify ID
+                                             $recentVideo['contentDetails']['videoId']   //YouTube ID
+                                             );
+            
+            return $return;
+        }
+      
+                
+    }  // importSpotifyAlbumRelease
+
+
+
+
+
+
+    private function getBasicEventDetails($eventID, $cl_uidt = NULL){
+ 
         try {
             $sql = "SELECT follower.firstname, follower.lastname, event.*, place.* 
                     FROM (follower join event) left JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
@@ -2960,8 +3088,26 @@ class CrowdLuvModel {
             return -1;//exit;
         }
 
+    }
+
+
+   public function getEventIDFromYouTubeVideoId($youTubeVideoId){
+
+        try {
+            $sql = "select id from event where `youtube_video_id` = '" . $youTubeVideoId . "'";
+            $results = $this->cldb->query($sql);
+            $firstline = $results->fetch(PDO::FETCH_ASSOC);
+            if(!$firstline) return 0;
+             //echo "uid= (" . $uid . ")";
+            return $firstline['id'];
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;//exit;
+        }
+
 
     }
+
 
 
     public function getFutureEventListForFollower($cl_uidt, $limit = NULL){
@@ -2989,7 +3135,12 @@ class CrowdLuvModel {
                         end_time > DATE_SUB(NOW(), INTERVAL 3 Month) 
                         and type = 'significant_release'
                     )
-                ";
+                or
+                    (
+                        end_time > DATE_SUB(NOW(), INTERVAL 2 Month) 
+                        and type = 'youtube_video'
+                    )
+            ORDER BY (follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term) DESC, event.start_time";
             if($limit) $sql = $sql . " limit " . $limit; 
    
             $results = $this->cldb->prepare($sql);

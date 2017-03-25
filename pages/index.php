@@ -6,7 +6,7 @@ $clResponseInformation->clSiteSection = "home";
 
 
 if ($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
-if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getFutureEventListForFollower($clRequestInformation->getLoggedInUserId(), 10);
+if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getFutureEventListForFollower($clRequestInformation->getLoggedInUserId(), 500);
 
 //var_dump($futureEvents);
 
@@ -114,10 +114,13 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
         <?php if(!$futureEvents){ echo "No updates"; }  ?>
         <?php foreach($futureEvents as $futureEvent){ ?>
           <?php if ($futureEvent['type'] == "significant_release") { ?>
-              <p> <b>New Release:</b> <?php echo $futureEvent['fb_page_name'] . " - " . $futureEvent['title']; ?> </p>
+              <p> <b>New Release:</b> <?php echo $futureEvent['fb_page_name'] ?> - <a target="_new"  href="<?php echo $futureEvent['more_info_url'];?>"> <?php echo $futureEvent['title']; ?> </a></p>
           <?php } ?>
           <?php if ($futureEvent['type'] == "performance") { ?>
-              <p> <b>Event:</b> <?php echo $futureEvent['title']; ?> - <?php echo $futureEvent['start_time']; ?> </p>
+              <p> <b>Event:</b> <a target="_new" href="<?php echo $futureEvent['more_info_url'];?>"> <?php echo $futureEvent['title']; ?> </a> - <?php echo $futureEvent['start_time']; ?> </p>
+          <?php } ?>
+          <?php if ($futureEvent['type'] == "youtube_video") { ?>
+              <p> <b>YouTube Video:</b> <?php echo $futureEvent['fb_page_name']?> - <a target="_new"  href="<?php echo $futureEvent['more_info_url'];?>"> <?php echo  $futureEvent['title']; ?></a> </p>
           <?php } ?>
 
 

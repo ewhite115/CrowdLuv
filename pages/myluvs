@@ -1,5 +1,6 @@
 <?php 
-
+ 
+    
 
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
     //Get the list of talent this user luvs 
@@ -32,30 +33,40 @@
 <BR>
 
   
-
-    <!-- ***  Luvs ***  -->
-
+    <!-- Account connections -->
 
     <div class="row">
         <div class="col-xs-6 crowdluvsection">
             
+            <!-- Facebook Account Connection Status -->
             <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
                 Facebook:
             </h1>    
             <?php if( $clRequestInformation->clFacebookHelper->checkFacebookPermissions($clRequestInformation->clFacebookHelper->getFacebookSession(), CrowdLuvFacebookHelper::$talentFacebookPermissionScope )){ ?>
-                <span>Connected</span><BR>
+                <span>Connected</span>
             <?php } else { ?>
-                <p>Not Connected <a href="<?php echo $clRequestInformation->clFacebookHelper->getLoginUrl(); ?>"> Authorize Facebook Permissions </a><p>
+                <span>Not Connected <a href="<?php echo $clRequestInformation->clFacebookHelper->getLoginUrl(); ?>"> Authorize Facebook Permissions </a><span>
             <?php } ?>
-
+            <!-- Spotify Account Connection Status -->
             <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
-                Spotify
+                |  Spotify:
             </h1>                    
             <?php if( $clRequestInformation->clSpotifyHelper->getSpotifySession()){ ?>
                 <span>Connected</span>
             <?php } else { ?>
-                <p><a href="<?php echo $clRequestInformation->clSpotifyHelper->getLoginUrl(); ?>"> Connect Your Spotify Account</a><p>
+                <span><a href="<?php echo $clRequestInformation->clSpotifyHelper->getLoginUrl(); ?>"> Connect Your Spotify Account</a><span>
             <?php } ?>
+
+            <!-- YouTube Account Connection Statue -->
+            <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                |  YouTube: 
+            </h1>                    
+            <?php if( $clRequestInformation->clYouTubeHelper->getYouTubeSession()){ ?>
+                <span>Connected</span>
+            <?php } else { ?>
+                <span><a href="<?php echo $clRequestInformation->clYouTubeHelper->getAuthUrl(); ?>"> Connect Your YouTube Account</a><span>
+            <?php } ?>
+
 
         </div>
 
@@ -63,6 +74,9 @@
 
     </div>
 
+
+
+    <!-- ***  Luvs ***  -->
 
     <div class="row">
         <div class="col-xs-12 crowdluvsection">

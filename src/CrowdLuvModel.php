@@ -2911,7 +2911,8 @@ class CrowdLuvModel {
                                         'title' => $spotifyAlbum->name,
                                         'description' => $spotifyAlbum->name,
                                         'start_time' => $spotifyAlbum->release_date,
-                                        'end_time' => $spotifyAlbum->release_date
+                                        'end_time' => $spotifyAlbum->release_date,
+                                        'more_info_url' => $spotifyAlbum->external_urls->spotify
                                         ]  );
                  
             return $clEventID;
@@ -2928,7 +2929,7 @@ class CrowdLuvModel {
                                              $spotifyAlbum->release_date,
                                              $spotifyAlbum->release_date,
                                              NULL,   //PlaceID
-                                             $spotifyAlbum->href,   //URL
+                                             $spotifyAlbum->external_urls->spotify,   //URL
                                              NULL,    //FB ID
                                              NULL,      //BIT ID
                                              $spotifyAlbum->id    //SP Id

@@ -6,7 +6,7 @@ $clResponseInformation->clSiteSection = "home";
 
 
 if ($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
-if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getFutureEventListForFollower($clRequestInformation->getLoggedInUserId());
+if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getFutureEventListForFollower($clRequestInformation->getLoggedInUserId(), 10);
 
 //var_dump($futureEvents);
 
@@ -124,11 +124,10 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
         <?php } ?>
 
 
-
-
         </div>
 
 
+ 
     </div>              
                   
                     

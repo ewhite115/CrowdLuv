@@ -45,7 +45,9 @@ class CrowdLuvFacebookHelper {
 	public static $facebookLikeCategoriesToCreateStubsFor = array (
 	  //'Community',
 	  'Musician/band',
-	  'Author'
+	  'Musician/Band',
+	  'Author',
+	  'Artist'
 	  );
 
 
@@ -121,7 +123,7 @@ class CrowdLuvFacebookHelper {
 		      cldbgmsg("Checking for new facebook session from redirect");
 		      $facebookSession = $this->facebookLoginHelper->getSessionFromRedirect();
 		      //echo "facebooksession from redirect:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
-		      if($facebookSession) cldbgmsg("Found new facebook session from redirect");
+		      if($facebookSession)  cldbgmsg("Found new facebook session from redirect"); 
 		      //If no new session from redirect, see if there is a new session set on the client side 
 		      //  facebook javascript SDK
 		      if($facebookSession === null) {
@@ -307,6 +309,22 @@ class CrowdLuvFacebookHelper {
 	    return true;
 	}//ChekFacebookPermissions
 
+
+
+
+	public function getFacebookGraphObjectById($fbId){
+
+		//echo "gfbo " . $fbId;
+		$request = new FacebookRequest( $this->getFacebookSession(), 'GET', '/' . $fbId );
+
+    	$response = $request->execute();
+	    // get response
+	    $fbObject = $response->getGraphObject()->asArray();
+	    //echo "<pre>"; var_dump($fbObject); echo "</pre>"; die;
+
+	    return $fbObject;
+
+	}
 
 
 

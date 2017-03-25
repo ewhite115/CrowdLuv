@@ -7,6 +7,8 @@ class CrowdLuvRequestInformation {
 	
    	public $clFacebookHelper = null;
 	public $clModel = null;
+	public $clMusicStoryHelper = null;
+	public $clSpotifyHelper = null;
 
 
 	private $targetBrand = null;
@@ -173,57 +175,6 @@ class CrowdLuvRequestInformation {
 
 
 	} //getactivemgBrand
-
-
-
-
-	public function importUserFacebookLikes(){
-
-	    //We may need to make multiple requests to get all the likes.
-	    // Loop making api call ..  
-	    $done=false;
-	    //Create the initial request object for retrieving user's likes
-	    $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/me/likes?fields=id,name,category,link&limit=100' );
-	    do{  
-	      try{          
-	          $response = $request->execute();
-	          // get response
-	          $fb_user_likes = $response->getGraphObject()->asArray();
-	          //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
-	          
-	          if(isset($fb_user_likes['data']) && sizeof($fb_user_likes['data']) > 0) {  
-	              
-	              foreach ($fb_user_likes['data'] as $fbupg) {
-	                  //...See if it already exists as a talent in the CL DB
-	                  $cltid = $this->clModel->get_crowdluv_tid_by_fb_pid($fbupg->id);
-	                  //If not, and it's in an "enabled" category, add it
-	                  if(! $cltid && (in_array($fbupg->category, CrowdLuvFacebookHelper::$facebookLikeCategoriesToCreateStubsFor))) {
-	                      cldbgmsg("Found new facebook like page to add: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->category); 
-	                      $this->clModel->create_new_cl_talent_record_from_facebook_user_like($fbupg);
-	                      $cltid = $this->clModel->get_crowdluv_tid_by_fb_pid($fbupg->id);
-	                      
-	                  }
-	                  //Make sure DB is updated to reflect that this user facebook-likes the talent
-	                  if($cltid) $this->clModel->setFollower_FacebookLikes_Talent($this->getLoggedInUserId(), $cltid, 1); 
-
-	              }//foreach
-	          } //if we got data back fro api call
-
-	      }catch (FacebookApiException $e) {
-	        cldbgmsg("FacebookAPIException requesting /me/likes -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
-	        $fb_user_likes = null;
-	        //we should still be able to proceed, since the rest of the pages do not rely on 
-	        //  fb_user_likes, and should continue to use the talent array in the session var
-	      } 
-	      //Create a new request object and start over if there are more likes
-	    } while (($response) && $request = $response->getRequestForNextPage());
-
-
-
-
-
-
-	}
 
 
 

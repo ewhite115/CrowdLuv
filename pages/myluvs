@@ -3,22 +3,29 @@
 
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
     //Get the list of talent this user luvs 
-    $mostLuvd = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
-    //re-sort the list by how many LuvPoints the fan has for each
-    $scores=array();
-    foreach($mostLuvd as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($clRequestInformation->getLoggedInUserId(), $ret_tal['crowdluv_tid']); }
-    array_multisort($scores, SORT_DESC, $mostLuvd);
+    // $mostLuvd = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
+    // //re-sort the list by how many LuvPoints the fan has for each
+    // $scores=array();
+    // foreach($mostLuvd as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($clRequestInformation->getLoggedInUserId(), $ret_tal['crowdluv_tid']); }
+    // array_multisort($scores, SORT_DESC, $mostLuvd);
 
-    //Get the list of talent this user likes 
-    $mylikes = $CL_model->getTalentsThatFollowerFacebookLikesButNotLuvs($clRequestInformation->getLoggedInUserId());
+    // //Get the list of talent this user likes 
+    // $mylikes = $CL_model->getTalentsThatFollowerFacebookLikesButNotLuvs($clRequestInformation->getLoggedInUserId());
 
-    $likesAndLuvs = array_merge($mostLuvd, $mylikes);
-
-
+    // $likesAndLuvs = array_merge($mostLuvd, $mylikes);
 
 
 
-include(ROOT_PATH . 'views/partial_cl_html_leader.php');
+    $allBrandsForUser = $clRequestInformation->clModel->getAllBrandsForFollower($clRequestInformation->getLoggedInUserId());
+    $scores2=array();
+    foreach($allBrandsForUser as &$ret_tal2){ $scores2[] = $ret_tal2['score'] = $CL_model->calculate_follower_score_for_talent($clRequestInformation->getLoggedInUserId(), $ret_tal2['crowdluv_tid']); }
+    array_multisort($scores2, SORT_DESC, $allBrandsForUser);
+
+
+
+
+
+    include(ROOT_PATH . 'views/partial_cl_html_leader.php');
 
 ?>
     
@@ -27,6 +34,35 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
   
 
     <!-- ***  Luvs ***  -->
+
+
+    <div class="row">
+        <div class="col-xs-6 crowdluvsection">
+            
+            <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                Facebook:
+            </h1>    
+            <?php if( $clRequestInformation->clFacebookHelper->checkFacebookPermissions($clRequestInformation->clFacebookHelper->getFacebookSession(), CrowdLuvFacebookHelper::$talentFacebookPermissionScope )){ ?>
+                <span>Connected</span><BR>
+            <?php } else { ?>
+                <p>Not Connected <a href="<?php echo $clRequestInformation->clFacebookHelper->getLoginUrl(); ?>"> Authorize Facebook Permissions </a><p>
+            <?php } ?>
+
+            <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                Spotify
+            </h1>                    
+            <?php if( $clRequestInformation->clSpotifyHelper->getSpotifySession()){ ?>
+                <span>Connected</span>
+            <?php } else { ?>
+                <p><a href="<?php echo $clRequestInformation->clSpotifyHelper->getLoginUrl(); ?>"> Connect Your Spotify Account</a><p>
+            <?php } ?>
+
+        </div>
+
+
+
+    </div>
+
 
     <div class="row">
         <div class="col-xs-12 crowdluvsection">
@@ -43,7 +79,8 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
 
         <div class="col-xs-12  crowdluvsection clwhitebg cl-grayborder">
           
-            <?php foreach($likesAndLuvs as $cltalentobj){  ?>              
+            <?php //foreach($likesAndLuvs as $cltalentobj){
+                    foreach($allBrandsForUser as $cltalentobj){  ?>              
                 
                 <div class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " >     
                     
@@ -61,24 +98,40 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
                             <a class="inline-block" href="/brand/<?php echo $cltalentobj['crowdluv_vurl'];?>">
                               <?php echo $cltalentobj['fb_page_name'];?>  
                             </a>
-                            <br>
+                            <span>  - (<?php echo $cltalentobj['score'];?>)<span> 
                             
+                        <p>
+
                             <!-- Luv   -->
-                            <p>
                             <?php if($cltalentobj['still_following']) { ?>
                                 <img style="width:1.25em;" src='res/top-heart.png'/>
-                            <?php } 
-                                 else { ?>
+                            <?php } else { ?>
+                                                            
                                 <img style="width:1.25em;" src='res/top-heart-gray.png'/>
                             <?php } ?>
-                            <span>
-                                <?php echo $cltalentobj['score'];?> 
-                            <span> 
-                            </p>
-                            <!-- Like -->
-                            <img style="width:1.25em;" src='res/FB-ThumbsUp_50.png'/>
+                           
+                            <!-- Facebook-Like -->
+                            <?php if($cltalentobj['likes_on_facebook']) {  ?>  
+                             <img style="width:1.25em;" src='res/FB-ThumbsUp_50.png'/> 
+                            <?php } else  {  ?>
+                            <img style="width:1.25em;" src='res/FB-ThumbsUp_50_gray.png'/> <?php } ?> 
+                            
+                            <!-- Spotify-Follow -->
+                            <?php if($cltalentobj['follows_on_spotify']) { ?>
+                                <img style="width:1.25em;" src='res/spotify-green.ico'/>
+                            <?php } else { ?>
+                                                            
+                                <img style="width:1.25em;" src='res/spotify-gray.gif'/>
+                            <?php } ?>
+                           
+                            <!-- Spotify-Top Artist-->
+                            <?php if($cltalentobj['spotify_top_artists_short_term'] || $cltalentobj['spotify_top_artists_medium_term']) { ?>
+                                (SpTA)
+                            <?php } else { ?>
+                                                            
+                            <?php } ?>
 
-
+                         
                         </p>
                         
                         

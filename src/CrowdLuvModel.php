@@ -14,6 +14,8 @@ class CrowdLuvModel {
     private $facebookSession;
     private $clFacebookHelper;
     private $spotifyApi;
+    private $clSpotifyHelper;
+    private $clMusicStoryHelper;
 
     public static $SHARETYPES = [ 'crowdluv-talent-landing-page', 'crowdluv-event'];
     public static $SHAREMETHODS = [ 'facebook-share', 'facebook-send', 'twitter-tweet' ];
@@ -22,8 +24,12 @@ class CrowdLuvModel {
     public function setFacebookSession($fbs){$this->facebookSession = $fbs;}
     public function setFacebookHelper($fbh){ $this->clFacebookHelper = $fbh;   }
     public function setSpotifyApi($sp){ $this->spotifyApi = $sp;   }
+    public function setSpotifyHelper($sp){ $this->clSpotifyHelper = $sp;   }
+ 
+    public function setMusicStoryHelper($ms){ $this->clMusicStoryHelper = $ms;   }
 
-    private function updateTableValue($table, $col, $val, $where){
+
+    public function updateTableValue($table, $col, $val, $where){
         
          try {
             $sql = "update " . $table . " set " . $col . " =" . $val . " where " . $where;
@@ -40,6 +46,27 @@ class CrowdLuvModel {
     }
 
 
+    public function selectTableValue($col, $table, $where){
+        
+         try {
+            $sql = "select " . $col . " from " . $table . " where " . $where;
+            $results = $this->cldb->prepare($sql);
+            $results->execute();
+            return $results->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return 0;
+        }
+        return null;
+    }
+
+
+
+
+
+
+
 /**************
     
     Follower  Creation, Update, Retrieve, Deactivate
@@ -47,28 +74,6 @@ class CrowdLuvModel {
     ********************/
 
 
-    public function ReloadFollowerPlacesFromFacebook(){
-
-       try {
-            $sql = "SELECT * FROM follower";
-            $results = $this->cldb->prepare($sql);
-            //$results->bindParam(1,$cl_tidt);
-            $results->execute();
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database." . $e;
-            return -1;
-        }
-        
-        $fols = $results->fetchAll(PDO::FETCH_ASSOC);
-        //var_dump($fols);
-        foreach($fols as $fol){
-            $clPlace = $this->createPlaceFromFacebookPlaceID($fol['location_fb_id']);
-            $this->update_follower_setting($fol['crowdluv_uid'], 'crowdluv_placeid', $clPlace['crowdluv_placeid']);
-        }
-                
-        return true;
-
-    }
 
  
 
@@ -299,6 +304,124 @@ class CrowdLuvModel {
     }
 
 
+    public function updateUserFacebookLikes($clUid){
+
+        cldbgmsg("<b>Invoking facebook-like update/import</b>");
+
+        //This should only be run no more than once every X minutes.
+        //Check the last time this was run, and return if less than x minutes.
+        $lastRun = $this->selectTableValue("timestamp_last_facebook_like_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_facebook_like_import > (NOW() - INTERVAL 120 minute)" );
+        if(sizeof($lastRun) > 0){ cldbgmsg("-Less than x minutes since last facebook-like import:- aborting");return;}
+
+        //We may need to make multiple requests to get all the likes.
+        // Loop making api call ..  
+        $done=false;
+        //Create the initial request object for retrieving user's likes
+        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/me/likes?fields=id,name,category,link&limit=200' );
+        do{  
+          try{          
+              $response = $request->execute();
+              // get response
+              $fb_user_likes = $response->getGraphObject()->asArray();
+              //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
+              if(isset($fb_user_likes['data']) && sizeof($fb_user_likes['data']) > 0) {  
+                    foreach ($fb_user_likes['data'] as $fbupg) {
+                        $cltid = $this->getCrowdLuvBrandIdByFacebookId($fbupg->id);
+                        if($cltid) $this->setFollower_FacebookLikes_Talent($clUid, $cltid, 1); 
+
+                  }//foreach
+              } //if we got data back fro api call
+
+          }catch (FacebookApiException $e) {
+            cldbgmsg("FacebookAPIException requesting /me/likes -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+            $fb_user_likes = null;
+            //we should still be able to proceed, since the rest of the pages do not rely on 
+            //  fb_user_likes, and should continue to use the talent array in the session var
+          } 
+          //Create a new request object and start over if there are more likes
+        } while (($response) && $request = $response->getRequestForNextPage());
+
+        $this->updateTableValue("follower", "timestamp_last_facebook_like_import", "now()", "crowdluv_uid = '" . $clUid . "'" );
+
+    }
+
+
+    public function updateUserSpotifyFollows($clUid){
+
+        //This should only be run no more than once every X minutes.
+        //Check the last time this was run, and return if less than x minutes.
+        cldbgmsg("<b>Invoking Spotify-Follow Update/Import</b>");
+        $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 180 minute)" );
+
+        if(sizeof($data) > 0){ 
+            cldbgmsg("-Less than x minutes since last spotify-follow import:- aborting");
+            return;
+        }
+
+       //If there is no active Spotify Session/Token, abort
+        if(! $this->clSpotifyHelper->getSpotifyApi()){
+            cldbgmsg("-No active spotify session/token - aborting spotify-follow update job");
+            return;
+        }
+
+        //We may need to make multiple requests to get all the likes.
+        // Loop making api call ..  
+        $done=false;
+        //Make the API call request object for retrieving user's likes
+        $following = null;  $after = null; $i = 0;
+        do{  
+            try{          
+              
+                  // Get the next set of spotify artist the user follows
+                  cldbgmsg("making a pass");
+                  try{$following = $this->clSpotifyHelper->getSpotifyApi()->getUserFollowedArtists(['limit' => '50', 'after' => $after]);}
+                  catch(Exception $e){ cldbgmsg("Exception calling spotify api in import job" . $e);  return;}
+                  //echo "<pre>"; var_dump($following); echo "</pre>"; //die;
+                  if(isset($following->artists->items) && sizeof($following->artists->items) > 0) {  
+                    
+                    //Loop through each spotify artist that the user follows, 
+                    foreach ($following->artists->items as $artist) {
+                        //Get/Create CL Brand for the SP artist 
+                        $cltid = $this->getCrowdLuvBrandBySpotifyArtistId($artist->id);
+                        //If found, update db to reflect that this user spotify-follows the brand
+                        if($cltid){
+                            cldbgmsg('Found brand that user follows on spotify: ' . $artist->id . " -- CLtid: " . $cltid);
+                            $this->setFollowerSpotifyFollowsBrand($clUid, $cltid, 1);                          
+                        }
+
+                    }//foreach
+                } //if we got data back fro api call
+
+            }catch (FException $e) {
+                cldbgmsg("Exception importing spotify likes for the user -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+            } 
+            //Create a new request and repeat if there are more 
+            if(isset($following->artists->cursors)) $after = $following->artists->cursors->after;
+          
+        } while ( $after );
+
+
+        //Retrieve the user's Top Artists and record it in DB
+        $topArtistsMediumTerm = $this->clSpotifyHelper->getSpotifyApi()->getMyTop("artists",   ["limit" => "50", "time_range" => "medium_term"] );
+        //var_dump($topArtistsMediumTerm);
+        foreach($topArtistsMediumTerm->items as $tam){
+          $cltid = $this->getCrowdLuvBrandBySpotifyArtistId($tam->id);
+          if($cltid) $this->updateTableValue("follower_luvs_talent", "spotify_top_artists_medium_term", "1", "`crowdluv_uid`='" . $clUid ."' and `crowdluv_tid`='" . $cltid . "'" );
+
+        }
+
+        $topArtistsShortTerm = $this->clSpotifyHelper->getSpotifyApi()->getMyTop("artists",   ["limit" => "50", "time_range" => "short_term"] );
+        foreach($topArtistsShortTerm->items as $tas){
+          $cltid = $this->getCrowdLuvBrandBySpotifyArtistId($tas->id);
+          if($cltid) $this->updateTableValue("follower_luvs_talent", "spotify_top_artists_short_term", "1", "`crowdluv_uid`='" . $clUid ."' and `crowdluv_tid`='" . $cltid . "'" );
+
+        }
+        
+        
+        $this->updateTableValue("follower", "timestamp_last_spotify_follow_import", "now()", "crowdluv_uid = '" . $clUid . "'" );
+    }
+
+
 
 
 
@@ -319,53 +442,14 @@ class CrowdLuvModel {
      * 
      */
 
-       
-
-
-
+    
     private function getVURLFromFacebookLink($fbLink){
 
-        return substr($fbLink, strlen("https://www.facebook.com/"));
+        return trim(substr($fbLink, strlen("https://www.facebook.com/")), '/');
 
 
     }
 
-    public function getCrowdLuvTIDByFacebookPageProfile($talent_fbpp){
-        //pass in json object of the page
-        //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
-        if(!$talent_fbpp) return 0;
-           
-        //Check for an existing Brand for this facebook page.  If so, return it's ID.
-        if( $existingTID = $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id)) return $existingTID;
-
-        //Otherwise, create new
-        cldbgmsg("Found new facebook page to add: " . $fbupg->id); 
-
-        $new_cl_tid = "";
-        try {    
-            //Insert the main record into the talent table
-            $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
-                                VALUES ('" . $talent_fbpp->id . "', ?)";
-            cldbgmsg("Inserting new talent record based on facebook page: " . $sql);
-            $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $talent_fbpp->name);
-            //$results->bindParam(2, str_replace(" ", "-", htmlspecialchars($talent_fbpp->name)));
-            $results->execute();            
-
-            $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id);
-            $this->setDefautValuesForNewTalent($new_cl_tid);
-            return $new_cl_tid;
-
-            //$results = $CL_db->query($sql);
-        } catch (Exception $e) {
-            echo "Failed inserting into talent table from create_new_cl_tlent_record_from_facebook_page_profile" . $e->getMessage();
-            die;
-            return null;
-        }
-
-        return 0;
-
-    }
 
     /**
      * [create_new_cl_talent_record_from_facebook_user_like   Takes a fb page profile from a user's 'like' and creates and new CrowdLuv brand for it.]
@@ -373,24 +457,24 @@ class CrowdLuvModel {
      * @return [type]              [tid of the newly created brand.]
      * @return null                 if there was an exception
      */
-    public function create_new_cl_talent_record_from_facebook_user_like($talent_fbpp){
+    public function createNewBrandFromFacebookPageGraphObject($talent_fbpp){
         //pass in json object of the page
         //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
         if(!$talent_fbpp) return 0;
                 
         $new_cl_tid = "";
-
+        cldbgmsg("Inserting new talent record based on facebook Page Object");
+        
         try {
             
             //Insert the main record into the talent table
             $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
-                                VALUES ('" . $talent_fbpp->id . "', ?)";
-            cldbgmsg("Inserting new talent record based on facebook user-like: " . $sql);
+                                VALUES ('" . $talent_fbpp['id'] . "', ?)";
+            
             $results = $this->cldb->prepare($sql);
-            $results->bindParam(1, $talent_fbpp->name);
-            //$results->bindParam(2, str_replace(" ", "-", htmlspecialchars($talent_fbpp->name)));
+            $results->bindParam(1, $talent_fbpp['name']);
             $results->execute();            
-            $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id);
+            $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
 
             $this->setDefautValuesForNewTalent($new_cl_tid);
 
@@ -399,7 +483,7 @@ class CrowdLuvModel {
             // Update the crowdluv_vurl to match that of the facebook page. bypass sanitization since it should alreayd be sanitized for fb.
             // TODO:  deal with the case where the vurl is already taken
             // TODO:  deal with  /pages/.../####
-            $this->update_talent_setting($new_cl_tid, "crowdluv_vurl", $this->getVURLFromFacebookLink($talent_fbpp->link));
+            $this->update_talent_setting($new_cl_tid, "crowdluv_vurl", $this->getVURLFromFacebookLink($talent_fbpp['link']));
 
             //return the talent id of the newly created entry
             return $new_cl_tid;            
@@ -420,7 +504,7 @@ class CrowdLuvModel {
 
         //Default the vanity URL to the sanitized version of their facebook page name
         $fbPageName = $this->get_talent_object_by_tid($new_cl_tid)['fb_page_name']; 
-        $this->update_talent_landingpage_vurl($new_cl_tid, htmlspecialchars($fbPageName));
+        $this->update_talent_landingpage_vurl($new_cl_tid, str_replace("/", "", htmlspecialchars($fbPageName)));
         
         
         //Create a stub entry in the talent_landingpage table to capture initial landing page settings for this new talent       
@@ -440,6 +524,197 @@ class CrowdLuvModel {
         if (!file_exists(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt)) mkdir(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt, 0777, true);
         if (!file_exists(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt . '/landingpage_images')) mkdir(ROOT_PATH . '/crowdluvdata/talent/' . $cl_tidt . '/landingpage_images', 0777, true); 
     }
+
+
+
+
+    /**
+     * Retrieve information about a CrowdLuv talent from CL database  
+     * @param    int    $cl_tidt     CrowdLuv talent ID of the talent to retrieve the info about
+     * @return   mixed      An array or int    
+     *           array      an array containing the DB fields for the talent matching the specified talent ID (cl_tidt)
+     *           int     0 if no talent is found with the TalentID specified
+     *           int     -1 if there is a problem with the DB query
+     *                    
+     */
+    public function get_talent_object_by_tid($cl_tidt){
+
+        try {
+            $sql = "select * from talent where crowdluv_tid=" . $cl_tidt;
+            //echo $sql;
+            $results = $this->cldb->query($sql);
+            $firstline = $results->fetch(PDO::FETCH_ASSOC);
+            if(!$firstline) return 0;
+            //$tid = $firstline['crowdluv_tid'];
+            //echo "uid= (" . $uid . ")";
+            return $firstline;
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;//exit;
+        }
+
+    }
+
+    //TODO   change to provate and only call getCrowdLuvBrandIdByFacebookId
+    public function get_crowdluv_tid_by_fb_pid($follower_fb_pid){
+
+        try {
+            $sql = "select crowdluv_tid from talent where fb_pid=" . $follower_fb_pid . " LIMIT 0, 30 ";
+            $results = $this->cldb->query($sql);
+            $firstline = $results->fetch(PDO::FETCH_ASSOC);
+             if(!$firstline) return 0;
+             $tid = $firstline['crowdluv_tid'];
+            //echo "uid= (" . $uid . ")";
+            return $tid;
+        } catch (Exception $e) {
+            cldbgmsg("Exception retrieving crowdluv_tid by fb_pid " . $e);
+            return 0;//exit;
+        }
+        return 0;
+    }
+
+
+
+
+
+    /**
+     * [getCrowdLuvBrandIdByFacebookId  Queries the model for an existing brand for the FB id. Makes call to FB api to import new brand if needed]
+     * @param  [type] $fbId [description]
+     * @return [type]       [CrowdLuv Brand ID of the eisting or newly-created brand]
+     */
+    public function getCrowdLuvBrandIdByFacebookId($fbId){
+
+        //Check if the brand already exists for this FB ID.  If so, return the cl id
+        $clId = $this->get_crowdluv_tid_by_fb_pid($fbId) ;
+        if( $clId ) return $clId;
+
+        //If it doesnt exist, and it is within an allowed category, create a new brand
+        //Retrieve FB graph object for that ID
+        $fbPageObj = $this->clFacebookHelper->getFacebookGraphObjectById($fbId);                                
+        //var_dump($fbPageObj);die;
+        if(in_array($fbPageObj['category'], CrowdLuvFacebookHelper::$facebookLikeCategoriesToCreateStubsFor)){
+            cldbgmsg("Found a facebook page that does not have a corresponding brand -- facebook ID " . $fbId);
+            $clId = $this->createNewBrandFromFacebookPageGraphObject($fbPageObj);
+        }
+
+        //return the cl ID of the newly created brand
+        return $clId;
+
+    }
+
+
+
+
+    public function getCrowdLuvTIDByFacebookPageProfile($talent_fbpp){
+        //pass in json object of the page
+        //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
+        if(!$talent_fbpp) return 0;
+           
+        //Check for an existing Brand for this facebook page.  If so, return it's ID.
+        if( $existingTID = $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id)) return $existingTID;
+
+        //Otherwise, create new
+        cldbgmsg("Found new facebook page to add: " . $fbupg->id); 
+
+        $new_cl_tid = "";
+        try {    
+            //Insert the main record into the talent table
+            $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
+                                VALUES ('" . $talent_fbpp->id . "', ?)";
+            cldbgmsg("Inserting new talent record based on facebook page: " . $sql);
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1, str_replace("/", "", htmlspecialchars($talent_fbpp->name)));
+            //$results->bindParam(2, str_replace(" ", "-", htmlspecialchars($talent_fbpp->name)));
+            $results->execute();            
+
+            $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id);
+            $this->setDefautValuesForNewTalent($new_cl_tid);
+            return $new_cl_tid;
+
+            //$results = $CL_db->query($sql);
+        } catch (Exception $e) {
+            echo "Failed inserting into talent table from create_new_cl_tlent_record_from_facebook_page_profile" . $e->getMessage();
+            die;
+            return null;
+        }
+
+        return 0;
+
+    }
+
+
+
+    private function getCrowdluvTidBySpotifyId($spotifyId){
+
+        try {
+            $sql = "select crowdluv_tid from talent where spotify_artist_id= '" . $spotifyId . "'";
+            $results = $this->cldb->query($sql);
+            $firstline = $results->fetch(PDO::FETCH_ASSOC);
+             if(!$firstline) return 0;
+             $tid = $firstline['crowdluv_tid'];
+            //echo "uid= (" . $uid . ")";
+            return $tid;
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            return -1;//exit;
+        }
+
+    }
+
+
+
+    public function getCrowdLuvBrandBySpotifyArtistId($spId){
+
+        //Check if it already exists and return if so
+        $cltid = $this->getCrowdluvTidBySpotifyId($spId);
+        if($cltid) return $cltid;
+
+        //If we didnt find a CL Brand based on the spotify ID, try to obtain FB page ID from Music-Story    
+        cldbgmsg("Found a spotify artist not tied to a CL brand: " . $spId . " will query MusicStory for a corresponding FB id..");
+        $fbId = $this->clMusicStoryHelper->getFacebookIdFromSpotifyId($spId);
+
+        //Get the CL Brand ID foir that FB id (importing as a new brand in the process if it doesnt already exist)          
+        if($fbId){
+            cldbgmsg("Found an FB page corresponding to spotify id: " . $fbId);
+            $cltid = $this->getCrowdLuvBrandIdByFacebookId($fbId);
+        }
+    
+        //update Brand to reflect spotify id if needed
+
+
+
+        //return CL brand ID of new brand
+        return $cltid;
+        
+    }
+
+
+    public function getAllTalents(){
+
+        try {
+            $sql = "SELECT * FROM talent";
+            $results = $this->cldb->prepare($sql);
+            //$results->bindParam(1,$cl_uidt);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }
+        
+        $tals = $results->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($tals);
+
+        return $tals;
+
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -473,68 +748,83 @@ class CrowdLuvModel {
 
     }
 
+
     /**
-     * Retrieve information about a CrowdLuv talent from CL database  
-     * @param    int    $cl_tidt     CrowdLuv talent ID of the talent to retrieve the info about
-     * @return   mixed      An array or int    
-     *           array      an array containing the DB fields for the talent matching the specified talent ID (cl_tidt)
-     *           int     0 if no talent is found with the TalentID specified
-     *           int     -1 if there is a problem with the DB query
-     *                    
+     * [runMetaDataRetrievalJob Retrieves/updates metadata for brands:  Spotify ID]
+     * @return [type] [description]
      */
-    public function get_talent_object_by_tid($cl_tidt){
-
-        try {
-            $sql = "select * from talent where crowdluv_tid=" . $cl_tidt;
-            //echo $sql;
-            $results = $this->cldb->query($sql);
-            $firstline = $results->fetch(PDO::FETCH_ASSOC);
-            if(!$firstline) return 0;
-            //$tid = $firstline['crowdluv_tid'];
-            //echo "uid= (" . $uid . ")";
-            return $firstline;
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            return -1;//exit;
-        }
-
-    }
-
-    public function get_crowdluv_tid_by_fb_pid($follower_fb_pid){
-
-        try {
-            $sql = "select crowdluv_tid from talent where fb_pid=" . $follower_fb_pid . " LIMIT 0, 30 ";
-            $results = $this->cldb->query($sql);
-            $firstline = $results->fetch(PDO::FETCH_ASSOC);
-             if(!$firstline) return 0;
-             $tid = $firstline['crowdluv_tid'];
-            //echo "uid= (" . $uid . ")";
-            return $tid;
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            return -1;//exit;
-        }
-    }
-
-
-    public function getAllTalents(){
-
-        try {
-            $sql = "SELECT * FROM talent";
+    public function runMetaDataRetrievalJob(){
+        cldbgmsg("<b>Invoking MetaData Retrieval Job</b>");
+ 
+        //Artist Metadata (Music-Story) Import Job
+        //Determine whether the last MetaData-Retrieval job was run within the last X minutes. 
+        try {                    
+            $sql =  "SELECT * FROM talent where timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 0 minute)";
             $results = $this->cldb->prepare($sql);
-            //$results->bindParam(1,$cl_uidt);
             $results->execute();
+
         } catch (Exception $e) {
             echo "Data could not be retrieved from the database. " . $e;
             exit;
-        }
-        
-        $tals = $results->fetchAll(PDO::FETCH_ASSOC);
-        //var_dump($tals);
+        }    
+        $data =  $results->fetchAll(PDO::FETCH_ASSOC);
+        //echo "result of query to determine whether last metadata import job was run within x minutes";  var_dump($data); die;
+        // If any results were returned, that means it has been less than N minutes since last import 
+        if(sizeof($data) > 0) { cldbgmsg("-less than x minutes since last metadata import - aborting"); return;}
 
-        return $tals;
+        //cldbgmsg("Invoking Music-Story Import Job");
+        //Determine the X number of brands with the most 'stale' metadata spotify ID 
+        try {                    
+                                                //(spotify_artist_id IS NULL) OR (music_story_id IS NULL) OR (youtube_channel_id IS NULL)  OR
+            $sql =  "SELECT * FROM talent where (bandpage_id IS NULL) ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 5";
+            $results = $this->cldb->prepare($sql);
+            $results->execute();
 
-    }
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $staleBrands = $results->fetchAll(PDO::FETCH_ASSOC);
+
+        if(sizeof($staleBrands) > 0 ){
+            $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
+            
+            //For those X brands, import their events
+            foreach($staleBrands as $staleBrand){
+                cldbgmsg("Attempting to retrieve MetaData for " . $staleBrand['fb_page_name']);
+                //Retrieve metadata 
+                $metaData = $clMusicStoryHelper->getMetaDataForBrand($staleBrand);
+                
+                //Update DB to reflect that a retrieval was attempted.
+                $this->updateTableValue("talent", "timestamp_last_music_story_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
+                $this->updateTableValue("talent", "timestamp_last_spotify_artist_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
+                $this->updateTableValue("talent", "timestamp_last_youtube_channel_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
+                $this->updateTableValue("talent", "timestamp_last_bandpage_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
+
+                //Update the DB with the metadata that was found, if any
+                if($metaData['music-story-id']){
+                    cldbgmsg("Found Music-Story ID:" . $metaData['music-story-id']);
+                    $this->updateTableValue("talent", "music_story_id", "'" . $metaData['music-story-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                }//if
+                if($metaData['spotify-artist-id']){
+                    cldbgmsg("Found spotify ID:" . $metaData['spotify-artist-id']);
+                    $this->updateTableValue("talent", "spotify_artist_id", "'" . $metaData['spotify-artist-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                }//if
+                if($metaData['youtube-channel-id']){
+                    cldbgmsg("Found YouTube Channel ID:" . $metaData['youtube-channel-id']);
+                    $this->updateTableValue("talent", "youtube_channel_id", "'" . $metaData['youtube-channel-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                }//if
+                if($metaData['bandpage-id']){
+                    cldbgmsg("Found bandpage ID:" . $metaData['bandpage-id']);
+                    $this->updateTableValue("talent", "bandpage_id", "'" . $metaData['bandpage-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                }//if
+            }//foreach
+
+        }// if    Artist Metadata (Music-Story) Spotify-ID import
+
+
+    }//runMetaDataImportJob
+
 
 
 
@@ -565,6 +855,7 @@ class CrowdLuvModel {
         $cl_vurl = preg_replace('/[^a-z0-9 -]+/', '', $cl_vurl);
         $cl_vurl = str_replace(' ', '-', $cl_vurl);
         $cl_vurl = trim($cl_vurl, '-');
+        $cl_vurl = trim($cl_vurl, '/');
         //echo "Sanitized URL:" . $cl_vurl;
 
         //Default response values
@@ -722,7 +1013,6 @@ class CrowdLuvModel {
     }
 
 
-
     /**
      * [setFollowerLuvsTalent Update DB to indicate whether a follower "facebook likes" a talent. Will create an entry in the follower_luvs_talent table if necessary]
      * @param [type] $cl_uidt   [description]
@@ -746,6 +1036,32 @@ class CrowdLuvModel {
         }
         
     }
+
+    
+    /**
+     * [setFollowerSpotifyFollowsBrand Update DB to indicate whether a user follows a brand on spotfy. Will create an entry in the follower_luvs_talent table if necessary]
+     * @param [type] $cl_uidt   [description]
+     * @param [type] $cl_tidt   [description]
+     * @param [type] $stillLuvs [description]
+     */
+    public function setFollowerSpotifyFollowsBrand($cl_uidt, $cl_tidt, $stillLikes){
+        
+        try{
+            //Call this method to create a follower -> brand entry.  (this will do nothing if it already exists)
+            $this->createFollowerLuvsTalentEntry($cl_uidt, $cl_tidt);
+            //update the 'likes_on_facebook' column
+            $sql = "update follower_luvs_talent set follows_on_spotify=" . $stillLikes . " where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
+            //echo $sql; 
+            $results = $this->cldb->query($sql);
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database." . $e;
+            exit;
+        }
+        
+    }
+
+
 
     /**
      * [createFollowerLuvsTalentEntry Creates an entry in the follower_luvs_talent table. 
@@ -872,6 +1188,37 @@ class CrowdLuvModel {
 
         return $tals;
     }
+
+
+    /**
+     * [get_talents_for_follower Returns an array of talents that the specified user "Luvs"]
+     * @param  [type] $cl_uidt [description]
+     * @return [type]          [description]
+     */
+    public function getAllBrandsForFollower($cl_uidt) {
+        
+        try {
+            $sql = "SELECT follower_luvs_talent.*, talent.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where follower.crowdluv_uid=?";
+            $results = $this->cldb->prepare($sql);
+            $results->bindParam(1,$cl_uidt);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }
+        
+        $tals = $results->fetchAll(PDO::FETCH_ASSOC);
+        foreach($tals as &$tal){ 
+            $tal['score'] = $this->calculate_follower_score_for_talent($cl_uidt, $tal['crowdluv_tid']); 
+        }
+
+        //var_dump($matches);
+
+        return $tals;
+    }
+
+
+
     /**
      * [get_followers_for_talent Returns an array of user who "luv" the specified talent]
      * @param  [type] $cl_tidt [description]
@@ -1159,12 +1506,17 @@ class CrowdLuvModel {
         //  so return 0
         if(sizeof($data) == 0) return 0;
 
-        //If the follower fb likes the talent, +50 luvpoints
-        if($data['likes_on_facebook']) $score += 50;
         //If they 'luv' the talent, Calculate how many points follower gets based on their settings for the talent
         if($data['still_following']){
             $score= $data['allow_email'] * 50 + $data['allow_sms'] * 100 + $data['will_travel_time'] / 2;
         }
+        //If the follower fb likes the talent, + luvpoints
+        if($data['likes_on_facebook']) $score += 50;
+        //If the follower follows the brand on spotify, + luvpoints
+        if($data['follows_on_spotify']) $score += 50;
+        //If the brand is one of the user's "top artists" on spotify, + points
+        if($data['spotify_top_artists_short_term'] || $data['spotify_top_artists_medium_term']) $score += 50;
+
 
         //Retrieve any shares the follower has done for the talent
         $data = $this->getFollowerSharesForTalent($cl_uidt, $cl_tidt);
@@ -1316,9 +1668,9 @@ class CrowdLuvModel {
                         (SELECT follower.location_fbname, follower.location_fb_id 
                          FROM (follower join follower_luvs_talent join talent 
                          on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid 
-                         and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
-                        where talent.crowdluv_tid=" . $cl_tidt . " 
-                        and follower.deactivated=0 
+                            and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid) 
+                        where talent.crowdluv_tid='" . $cl_tidt . "'  
+                              and follower.deactivated='0'
                         ) 
                         as joined 
                     GROUP BY location_fbname 
@@ -1940,8 +2292,8 @@ class CrowdLuvModel {
     } //updateEventValues
 
 
-    //TODO: remove facebooksesion as an arg here.  Changed to using facebookhelper 2/17/16
-    public function importEventsForAllTalent($facebookSession, $sinceTimestamp = 1356998400){
+    //TODO: remove facebooksesion as an arg here.  Changed to using facebookhelper 8/1/16
+    public function importEventsForAllTalent($facebookSession, $sinceTimestamp = 1470009600){
 
         set_time_limit(0);
         $tals = $this->getAllTalents();
@@ -1954,12 +2306,16 @@ class CrowdLuvModel {
 
     }
 
+
+
+
+
     /**
      * [runEventImportJob  This function serves as a periodic job to import/synchronize events from Facebook, BandsInTown, Spotify.
      *                        It will be invoked by CL on every page load - but it will immediately return if it has been less than 2 minutes since the last run]
      * @return [null] [no return value]
      */
-    public function runEventImportJob($sinceTimestamp = 1356998400) {
+    public function runEventImportJob($sinceTimestamp = 1470009600) {
 
         //If the fb session is not active,return
         $fbs = $this->clFacebookHelper->getFacebookSession();
@@ -1969,7 +2325,7 @@ class CrowdLuvModel {
         // Facebook Import Job
         // Determine whether the last FB event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_facebook_event_import > (NOW() - INTERVAL 2 minute)";
+            $sql =  "SELECT * FROM talent where timestamp_last_facebook_event_import > (NOW() - INTERVAL 10 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -1985,7 +2341,7 @@ class CrowdLuvModel {
 
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_facebook_event_import ASC LIMIT 5";
+                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_facebook_event_import ASC LIMIT 2";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2008,7 +2364,7 @@ class CrowdLuvModel {
         // BandsInTown Import Job
         //Determine whether the last BIT event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_bandsintown_event_import > (NOW() - INTERVAL 2 minute)";
+            $sql =  "SELECT * FROM talent where timestamp_last_bandsintown_event_import > (NOW() - INTERVAL 10 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2021,10 +2377,10 @@ class CrowdLuvModel {
         
         // If no results were returned, that means it has been more than N minutes since last import 
         if(sizeof($data) == 0) {
-            cldbgmsg("Invoking BIT Event Import Job");
+            cldbgmsg("<b>Invoking BIT Event Import Job</b>");
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_bandsintown_event_import ASC LIMIT 5";
+                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_bandsintown_event_import ASC LIMIT 2";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2045,7 +2401,7 @@ class CrowdLuvModel {
         // Spotify Import Job
         //Determine whether the last Spotify event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_spotify_album_import > (NOW() - INTERVAL 2 minute)";
+            $sql =  "SELECT * FROM talent where timestamp_last_spotify_album_import > (NOW() - INTERVAL 10 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2058,10 +2414,10 @@ class CrowdLuvModel {
         
         // If no results were returned, that means it has been more than N minutes since last import 
         if(sizeof($data) == 0) {
-            cldbgmsg("Invoking Spotify Album-Import Job");
+            cldbgmsg("<b>Invoking Spotify Album-Import Job</b>");
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent WHERE spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC LIMIT 5";
+                $sql =  "SELECT * FROM talent WHERE spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC LIMIT 2";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2080,7 +2436,14 @@ class CrowdLuvModel {
         }//Spotify imports
 
 
+
+
     }
+
+
+
+
+
 
 
     public function importEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp = 1356998400){
@@ -2110,7 +2473,7 @@ class CrowdLuvModel {
         $this->updateTableValue("talent", "timestamp_last_facebook_event_import", "now()", "crowdluv_tid = '" . $cl_tidt . "'" );
         
         $clt = $this->get_talent_object_by_tid($cl_tidt);
-        cldbgmsg("Invoking FB Event Import for " . $clt['fb_page_name']);
+        cldbgmsg("<b>Invoking FB Event Import for</b> " . $clt['fb_page_name']);
 
         //We may need to make multiple FB API requests to retrieve all the events.
         //  Loop making api call ..  
@@ -2175,15 +2538,17 @@ class CrowdLuvModel {
 
     private function importSpotifyAlbumEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp){
 
+        if(! $this->clSpotifyHelper->getSpotifyApi()){ cldbgmsg("No spotify session/api - abortnig album import");   return;}
+
         //Set timestamp in DB for this retrieval
         $this->updateTableValue("talent", "timestamp_last_spotify_album_import", "now()", "crowdluv_tid = '" . $cl_tidt . "'" );
     
         $clt = $this->get_talent_object_by_tid($cl_tidt);
-        cldbgmsg("Retrieving album releases from spotify for " . $clt['fb_page_name'] );
+        cldbgmsg("<b>Retrieving album releases from spotify for </b>" . $clt['fb_page_name'] );
         //retrieve spotify albums
         $albums = "";
         try{
-            $albums = $this->spotifyApi->getArtistAlbums($clt['spotify_artist_id'],   ["album_type" => "album", "market" => "US"]  );
+            $albums = $this->clSpotifyHelper->getSpotifyApi()->getArtistAlbums($clt['spotify_artist_id'],   ["album_type" => "album", "market" => "US"]  );
         } catch(Exception $e) {
             echo "Exception calling spotify api";
             var_dump($e); die;
@@ -2193,7 +2558,7 @@ class CrowdLuvModel {
         foreach($albums->items as $album){
             //var_dump($album);die;
             //The "getArtistAlbums" api call returns simplified album objects - so,  Retrieve the full album object
-            $fullAlbum = $this->spotifyApi->getAlbum($album->id);
+            $fullAlbum = $this->clSpotifyHelper->getSpotifyApi()->getAlbum($album->id);
             cldbgmsg("Found spotify album to add/import: " . $fullAlbum->id . ":" . $fullAlbum->name . ":" . $fullAlbum->release_date); 
             $this->importSpotifyAlbumRelease($cl_tidt, $fullAlbum);
         }
@@ -2593,7 +2958,7 @@ class CrowdLuvModel {
     }
 
 
-    public function getFutureEventListForFollower($cl_uidt){
+    public function getFutureEventListForFollower($cl_uidt, $limit = NULL){
 
         $fol = $this->get_follower_object_by_uid($cl_uidt);
 
@@ -2619,15 +2984,8 @@ class CrowdLuvModel {
                         and type = 'significant_release'
                     )
                 ";
-            // ORDER BY (CASE  WHEN end_time > DATE_SUB(NOW(), INTERVAL 3 Month) and type = 'significant_release' THEN 0
-            //                 WHEN end_time > NOW() and near_me = 1 THEN 1
-            //                 WHEN end_time > NOW() and near_me = 0 then 2
-            //                 WHEN end_time < NOW() then 3 END ) ASC,
-
-            //          (CASE  WHEN end_time < NOW() then end_time END) desc,
-            //          (CASE  WHEN end_time > NOW() then end_time END) asc";
-
-
+            if($limit) $sql = $sql . " limit " . $limit; 
+   
             $results = $this->cldb->prepare($sql);
             //$results->bindParam(1, $cl_tidt);
             //$results->bindParam(2, $cl_tidt);
@@ -2875,6 +3233,29 @@ class CrowdLuvModel {
         
     }
 
+
+    public function importFollowerPlacesFromFacebook(){
+
+       try {
+            $sql = "SELECT * FROM follower";
+            $results = $this->cldb->prepare($sql);
+            //$results->bindParam(1,$cl_tidt);
+            $results->execute();
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database." . $e;
+            return -1;
+        }
+        
+        $fols = $results->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($fols);
+        foreach($fols as $fol){
+            $clPlace = $this->createPlaceFromFacebookPlaceID($fol['location_fb_id']);
+            $this->update_follower_setting($fol['crowdluv_uid'], 'crowdluv_placeid', $clPlace['crowdluv_placeid']);
+        }
+                
+        return true;
+
+    }
 
 
     /**

@@ -131,16 +131,21 @@
                             <img style="width:1.25em;" src='res/FB-ThumbsUp_50_gray.png'/> <?php } ?> 
                             
                             <!-- Spotify-Follow -->
-                            <?php if($cltalentobj['follows_on_spotify']) { ?>
+                            <?php 
+                            //Display colored spotify badge if user follows on spotify
+                            if($cltalentobj['follows_on_spotify']) { ?>
                                 <img style="width:1.25em;" src='res/spotify-green.ico'/>
-                            <?php } else { ?>
-                                                            
+                            <?php 
+                            }
+                            //If we have a spotify id for the brand but the user isnt following, display non-colored badge
+                            else if ($cltalentobj['spotify_artist_id']){ ?>
                                 <img style="width:1.25em;" src='res/spotify-gray.gif'/>
                             <?php } ?>
+
                            
                             <!-- Spotify-Top Artist-->
                             <?php if($cltalentobj['spotify_top_artists_short_term'] || $cltalentobj['spotify_top_artists_medium_term']) { ?>
-                                (SpTA)
+                                [SpTA]
                             <?php } else { ?>
                                                             
                             <?php } ?>

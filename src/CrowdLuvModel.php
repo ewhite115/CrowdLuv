@@ -1597,6 +1597,8 @@ class CrowdLuvModel {
         if($data['follows_on_spotify']) $score += 50;
         //If the brand is one of the user's "top artists" on spotify, + points
         if($data['spotify_top_artists_short_term'] || $data['spotify_top_artists_medium_term']) $score += 50;
+        //If the user subscribes to the brand on youTube  +points
+        if($data['subscribes_on_youtube']) $score += 50;
 
 
         //Retrieve any shares the follower has done for the talent

@@ -74,6 +74,7 @@ class CrowdLuvFacebookHelper {
    		if (isset($this->facebookSession)) {
    		 return $this->facebookSession;
    		}
+	    cldbgmsg("<b>Checking for Facebook Session</b>");
 
 		//Otherwise .....
 		
@@ -98,17 +99,17 @@ class CrowdLuvFacebookHelper {
 		   */   
 		if ( isset( $_SESSION ) && isset( $_SESSION['fb_token'] ) ) {
 		    // create new fb session object from saved access_token
-		    cldbgmsg("Found fb_token in session");
+		    cldbgmsg("-Found fb_token in session");
 		    $facebookSession = new FacebookSession( $_SESSION['fb_token'] );
 		    // validate the access_token to make sure it's still valid
 		    try {
 		      if ( !$facebookSession->validate() ) {
-		        cldbgmsg("fb_token in session no longer valid");
+		        cldbgmsg("-fb_token in session no longer valid");
 		        $facebookSession = null;
 		      }
 		    } catch ( Exception $e ) {
 		      // catch any exceptions, nullify the session variable if encountered
-		      cldbgmsg("Exception validating fb_token found in session" . $e);
+		      cldbgmsg("-Exception validating fb_token found in session" . $e);
 		      $facebookSession = null;
 		    }
 		}  
@@ -120,16 +121,16 @@ class CrowdLuvFacebookHelper {
 		if ( !isset( $facebookSession ) || $facebookSession === null ) {
 		    try {
 		      //Check for a new sessions coming from a redirect
-		      cldbgmsg("Checking for new facebook session from redirect");
+		      cldbgmsg("-Checking for new facebook session from redirect");
 		      $facebookSession = $this->facebookLoginHelper->getSessionFromRedirect();
 		      //echo "facebooksession from redirect:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
 		      if($facebookSession)  cldbgmsg("Found new facebook session from redirect"); 
 		      //If no new session from redirect, see if there is a new session set on the client side 
 		      //  facebook javascript SDK
 		      if($facebookSession === null) {
-		          cldbgmsg("checking for new facebook session from javascript SDK");
+		          cldbgmsg("-checking for new facebook session from javascript SDK");
 		          $this->facebookJavascriptLoginHelper->getSession();
-		          if($facebookSession) cldbgmsg("Found new facebook session from Javascript SDK");
+		          if($facebookSession) cldbgmsg("-Found new facebook session from Javascript SDK");
 		      }
 		      //echo "facebooksession from javascript:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
 		      //If this was in fact a newly-logged-in session, get facebook Permissions, check for minimums
@@ -162,7 +163,7 @@ class CrowdLuvFacebookHelper {
  		}  
  		
 	  	if ($facebookSession) {  
-	      cldbgmsg("Active Facebook session with token<br>" . $facebookSession->getToken());
+	      cldbgmsg("-Active Facebook session with token<br>" . $facebookSession->getToken());
 	      //cldbgmsg("Active Facebook session <br>" . $facebookSession);
 
 	      // save the facebook session token to persistent session storage 
@@ -197,7 +198,7 @@ class CrowdLuvFacebookHelper {
         }
 		catch (FacebookApiException $e) {
             //error_log($e);
-            cldbgmsg("FacebookAPIException in cl_init.php requesting new user info:  " . $e);// var_dump($e);
+            cldbgmsg("-FacebookAPIException in cl_init.php requesting new user info:  " . $e);// var_dump($e);
             $fb_user = null;
         }
         return null;                   

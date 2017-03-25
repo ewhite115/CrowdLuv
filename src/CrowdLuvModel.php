@@ -51,6 +51,7 @@ class CrowdLuvModel {
         
          try {
             $sql = "select " . $col . " from " . $table . " where " . $where;
+            //echo $sql;
             $results = $this->cldb->prepare($sql);
             $results->execute();
             return $results->fetchAll(PDO::FETCH_ASSOC);
@@ -307,7 +308,7 @@ class CrowdLuvModel {
 
     public function updateUserFacebookLikes($clUid){
 
-        cldbgmsg("<b>Import Job: User Facebook-likes</b>");
+        cldbgmsg("<b>User Update/Import Job: Facebook-likes</b>");
 
         //This should only be run no more than once every X minutes.
         //Check the last time this was run, and return if less than x minutes.
@@ -347,13 +348,61 @@ class CrowdLuvModel {
     }
 
 
+
+    /**
+     * [updateUserYouTubeSubscriptions -  Retrieves a list of the users' YouTube subscriptions,  and updates their follower settings to reflect which Brands they are following]
+     * @param  [type] $clUid [description]
+     * @return [type]        [description]
+     */
+    public function updateUserYouTubeSubscriptions($clUid){
+
+        //This should only be run no more than once every X minutes.
+        //Check the last time this was run, and return if less than x minutes.
+        cldbgmsg("<b>User Update/Import Job: YouTube-Subscriptions</b>");
+        $data = $this->selectTableValue("timestamp_last_youtube_subscription_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_youtube_subscription_import > (NOW() - INTERVAL 180 minute)" );
+        if(sizeof($data) > 0){ 
+            cldbgmsg("-YouTube-Subscription-Import time interval has not lapsed -- aborting");
+            return;
+        }
+
+        //Retrieve the list of subscriptions for the user
+        $ytSubs = $this->clYouTubeHelper->getSubscriptionListForCurrentUser();
+        //var_dump($ytSubs); die;
+        cldbgmsg("-Retrieved " . sizeof($ytSubs) . " Subscriptions for user");
+ 
+        //Remove 'Vevo' from the end of any of the channel title names and store into a new array of channel titles
+        $ytChannelTitles = "";        
+        foreach ($ytSubs as $ytSub) {
+            $ytChannelTitles[] = $this->sanitizeCrowdluvVUrl(preg_replace('/VEVO$/i', '', $ytSub['snippet']['title']));
+        }
+      
+        //Expand the array of channel names into a string for use in sql query
+        $values = "'" . implode("','", $ytChannelTitles) . "'";
+        //var_dump($values);die;
+        //Retrieve list of brands who vurl matches one of these titles
+        
+        $brandObjs = $this->selectTableValue("*", "talent", "crowdluv_vurl IN (" . $values .  ")");
+        cldbgmsg("-Mapped " . sizeof($brandObjs) . " Subscriptions to CL Brands");
+        //var_dump($brandObjs);die;
+
+        //Update the db to reflect those subscriptions
+        foreach ($brandObjs as $brandObj) { $this->setFollowerYouTubeSubscribesBrand($clUid, $brandObj['crowdluv_tid'], '1'); }        
+
+        //Update the timestamp up this update
+        $this->updateTableValue("follower", "timestamp_last_youtube_subscription_import", "now()", "crowdluv_uid = '" . $clUid . "'" );
+        
+
+    } 
+
+
+
+
     public function updateUserSpotifyFollows($clUid){
 
         //This should only be run no more than once every X minutes.
         //Check the last time this was run, and return if less than x minutes.
-        cldbgmsg("<b>Spotify-Follow Update/Import</b>");
+        cldbgmsg("<b>User Update/Import Job - Spotify-Follow</b>");
         $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 180 minute)" );
-
         if(sizeof($data) > 0){ 
             cldbgmsg("-Spotify import time internval has not lapsed -- aborting");
             return;
@@ -755,12 +804,14 @@ class CrowdLuvModel {
      * @return [type] [description]
      */
     public function runMetaDataRetrievalJob(){
+                
         cldbgmsg("<b>Import Job: MetaData Retrieval </b>");
  
+
         //Artist Metadata (Music-Story) Import Job
         //Determine whether the last MetaData-Retrieval job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 12 hour)";
+            $sql =  "SELECT * FROM talent where timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 48 hour)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -777,7 +828,7 @@ class CrowdLuvModel {
         //Determine the X number of brands with the most 'stale' metadata spotify ID 
         try {                    
                                                 //(spotify_artist_id IS NULL) OR (music_story_id IS NULL) OR (youtube_channel_id IS NULL)  OR
-            $sql =  "SELECT * FROM talent where (bandpage_id IS NULL) ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 15";
+            $sql =  "SELECT * FROM talent where (bandpage_id IS NULL) ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 10";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -843,6 +894,15 @@ class CrowdLuvModel {
  */
 
 
+    private function sanitizeCrowdluvVUrl($cl_vurl){
+        $cl_vurl = strtolower($cl_vurl);
+        $cl_vurl = preg_replace('/[^a-z0-9 -]+/', '', $cl_vurl);
+        $cl_vurl = str_replace(' ', '-', $cl_vurl);
+        $cl_vurl = trim($cl_vurl, '-');
+        $cl_vurl = trim($cl_vurl, '/');
+        return $cl_vurl;
+    }
+
 
     /**
      * [update_talent_landingpage_vurl Attempts to update the vanity URL for a talent. Returns a response object with a result code and description]
@@ -853,11 +913,8 @@ class CrowdLuvModel {
     public function update_talent_landingpage_vurl($cl_tid, $cl_vurl){
 
         //Sanitize the string, removing special chars and replacing spaces with hyphens
-        $cl_vurl = strtolower($cl_vurl);
-        $cl_vurl = preg_replace('/[^a-z0-9 -]+/', '', $cl_vurl);
-        $cl_vurl = str_replace(' ', '-', $cl_vurl);
-        $cl_vurl = trim($cl_vurl, '-');
-        $cl_vurl = trim($cl_vurl, '/');
+        $cl_vurl = $this->sanitizeCrowdluvVUrl($cl_vurl);
+
         //echo "Sanitized URL:" . $cl_vurl;
 
         //Default response values
@@ -1063,6 +1120,30 @@ class CrowdLuvModel {
         
     }
 
+    /**
+     * [setFollowerYouTubeSubscribesBrand Update DB to indicate whether a user subscribes to a brand on YouTube. Will create an entry in the follower_luvs_talent table if necessary]
+     * @param [type] $cl_uidt   [description]
+     * @param [type] $cl_tidt   [description]
+     * @param [type] $stillLuvs [description]
+     */
+    public function setFollowerYouTubeSubscribesBrand($cl_uidt, $cl_tidt, $stillLikes){
+        
+        try{
+            //Call this method to create a follower -> brand entry.  (this will do nothing if it already exists)
+            $this->createFollowerLuvsTalentEntry($cl_uidt, $cl_tidt);
+            //update the 'subscribes_on_youtube' column
+            $sql = "update follower_luvs_talent set subscribes_on_youtube=" . $stillLikes . " where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
+            //echo $sql; 
+            $results = $this->cldb->query($sql);
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database." . $e;
+            exit;
+        }
+        
+    }
+
+
 
 
     /**
@@ -1097,8 +1178,6 @@ class CrowdLuvModel {
         }
         
     }
-
-
 
 
 
@@ -2480,7 +2559,7 @@ class CrowdLuvModel {
                 
             }
         }//YouTube imports
-        else { cldbgmsg("-Time interval for YT-Upload Import has not lapsed.");}
+        else { cldbgmsg("-Time interval for YT-Upload Event Import has not lapsed.");}
 
 
     }
@@ -2488,7 +2567,7 @@ class CrowdLuvModel {
 
 
     /**
-     * [importEventsForTalent  -  This is used when called ad-hoc from command-line]
+     * [importEventsForTalent  -  This is used when called ad-hoc from command-line - does not check how much time has lapsed since the last run]
      * @param  [type]  $cl_tidt         [description]
      * @param  [type]  $fb_pidt         [description]
      * @param  [type]  $facebookSession [description]
@@ -2631,7 +2710,7 @@ class CrowdLuvModel {
             //  3:  Username  =crowdluv_vurlVEVO
             $ytUn[0] = $clBrandObj['crowdluv_vurl'];
             $ytUn[1] = $clBrandObj['crowdluv_vurl'] . 'vevo';
-            $recentVideos = $this->clYouTubeHelper->getRecentUploads( [$clBrandObj['youtube_channel_id']], $ytUn,'3');  ;
+            $recentVideos = $this->clYouTubeHelper->getRecentUploadsForBrand( [$clBrandObj['youtube_channel_id']], $ytUn,'3');  ;
         } catch(Exception $e) {
             echo "Exception calling Youtube api";
             var_dump($e); die;

@@ -9,6 +9,7 @@ class CrowdLuvRequestInformation {
 	public $clModel = null;
 	public $clMusicStoryHelper = null;
 	public $clSpotifyHelper = null;
+	public $clYouTubeHelper = null;
 
 
 	private $targetBrand = null;

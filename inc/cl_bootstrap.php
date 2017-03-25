@@ -73,6 +73,7 @@ $clRequestInformation->clFacebookHelper = $clFacebookHelper;
 $clRequestInformation->clModel = $CL_model;
 $clRequestInformation->clSpotifyHelper = $clSpotifyHelper;
 $clRequestInformation->clMusicStoryHelper = $clMusicStoryHelper;
+$clRequestInformation->clYouTubeHelper = $clYouTubeHelper;
 
 
 //create a CrowdLuvResponse    object
@@ -90,22 +91,26 @@ $clResponseInformation = new CrowdLuvResponseInformation();
 
 
  
-/**  Periodically update the brands that the user Facebook-Likes, Spotify-Follows
+/** Update/Synchronize follow_luvs_talent for this user
+  * Periodically update the brands that the user Facebook-Likes, Spotify-Follows
   *  Will only run once every N minutes.
   *  Check for brands the user follows on facebook, spotify
-  *  add those to CL db (as new brands) if not already present
   *  add an entry in db indicating this user likes/follows the brand 
+  *  Add/create new brands if not already present
   */
+ //Update Facebook-Likes
  if($clFacebookHelper->getFacebookSession()){
  	$clRequestInformation->clModel->updateUserFacebookLikes($clRequestInformation->getLoggedInUserId());
 
  }//  
-
+ //Update Spotify-Follows
  if($clFacebookHelper->getFacebookSession() && ! $clFacebookHelper->isNewSession && $clSpotifyHelper->getSpotifyApi()){
- 	$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
+ 	//$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
 }
-
-
+//Update YouTube Subscriptions
+ if($clYouTubeHelper->getYouTubeSession() && ! $clFacebookHelper->isNewSession && $clYouTubeHelper->getApi()){
+	$clRequestInformation->clModel->updateUserYouTubeSubscriptions($clRequestInformation->getLoggedInUserId());
+}
 
 
 /**

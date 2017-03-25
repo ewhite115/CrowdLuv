@@ -10,14 +10,37 @@ class CrowdLuvYouTubeHelper {
 
     private $youTubeApi = null;
     private $client = null;
+    private $authUrl = null;
 
 	function __construct() {
 
 		$this->client = new Google_Client();
 		$this->client->setApplicationName("CrowdLuv");
-		$this->client->setDeveloperKey(GOOGLE_MAPS_APIKEY);
+		//$this->client->setDeveloperKey(GOOGLE_MAPS_APIKEY);
+		$this->client->setClientId(GOOGLE_OAUTH_CLIENTID);
+		$this->client->setClientSecret(GOOGLE_OAUTH_SECRET);
+
+		$this->client->setScopes('https://www.googleapis.com/auth/youtube');
+		$redirect = "http://localhost:8001/myluvs?ytauth";
+		$this->client->setRedirectUri($redirect);		
 		$this->youTubeApi = new Google_Service_YouTube($this->client);
+
+   	}
+
+
+   	public function getAuthUrl(){
+
+   		//if it was previously generated, return it
+   		if($this->authUrl) return $this->authUrl;
+
 		
+		$state = mt_rand();
+		$this->client->setState($state);
+		$_SESSION['youtubestate'] = $state;
+
+		//set the member object and return
+		return ($this->authUrl = $this->client->createAuthUrl());
+
    	}
 
    	/** [getApi returns API object,  creating it if needed] */
@@ -26,13 +49,50 @@ class CrowdLuvYouTubeHelper {
    	}
 
 
+   	public function getYouTubeSession(){
+
+		//If a previous call to this method found a session, just return that existing member object.
+   		
+
+   		// Check if an auth token exists for the required scopes
+		$tokenSessionKey = 'youtube_token-' . $this->client->prepareScopes();
+		if (isset($_GET['code']) && isset($_GET['ytauth']) ) {
+
+			//Google API doesnt allow redirecting to IP, so the redirect is set to 'localhost' fror devleopment.
+			//  Therefore, do an additional redirect back to the correct address, preserving query string
+		  	if ($_SERVER['HTTP_HOST'] == "localhost:8001") {
+		        header("Location:" . CLADDR . "myluvs?" . $_SERVER['QUERY_STRING']);
+		        exit;   
+		  	}
+		  	if ( strval($_SESSION['youtubestate']) !== strval($_GET['state'])) {
+		    	die('The session state did not match.');
+		  	}
+		  	$this->client->authenticate($_GET['code']);
+		  	$_SESSION[$tokenSessionKey] = $this->client->getAccessToken();
+		  	header('Location: myluvs' );
+		}
+		if (isset($_SESSION[$tokenSessionKey])) {
+		  $this->client->setAccessToken($_SESSION[$tokenSessionKey]);
+		}
+		// Check to ensure that the access token was successfully acquired.
+		if ($this->client->getAccessToken()) {
+		  return ($_SESSION[$tokenSessionKey] = $this->client->getAccessToken());
+		}
+
+
+		return null;
+
+   	}
+
+
+
    	/**
-   	 * [getRecentVideosForYouTubeId Returns an array of YouTube Video objects for videos posted in the last $months]
+   	 * [getRecentVideosForBrand Returns an array of YouTube Video objects for videos posted in the last $months]
    	 * @param  [array] $ytChannelIds [array of YouTube channel ID's]
    	 * @param  [array] $ytUserNames [array of YouTube Usernames]
    	 * @return [array] [Array of YouTube PlaylistItems]
    	 */
-   	public function getRecentUploads($ytChannelIds, $ytUsernames, $months){
+   	public function getRecentUploadsForBrand($ytChannelIds, $ytUsernames, $months){
 
    		$recentVideos = "";
    		$ytChannelList = "";
@@ -97,11 +157,37 @@ class CrowdLuvYouTubeHelper {
 			} //foreach
 		}
 
-
 		return $recentVideos;
    	} 
 
 
+   	public function getSubscriptionListForCurrentUser(){
+
+   		$ytSubsList = [];
+   		$nextPageToken = "";
+
+   		//Retrieve 50 subscriptions at a time from the YouTube API, and loop/merge until all have been retried
+   		do{
+			// Attempt the API call to retrieve sub lst
+			$ytResponse="";
+			try{$ytResponse = $this->getApi()->subscriptions->listSubscriptions('snippet', ['mine' => 'true', 'maxResults' => '50', 'pageToken' => $nextPageToken]);}
+			catch(Google_Service_Exception $e) {
+	     	   cldbgmsg("--Exception calling Youtube api");
+	    	   //continue;
+	    	   var_dump($e); die;
+	        }
+	        //var_dump($ytResponse);
+	        //If there were subscriptions returned, merge them into a combined list
+	        if(isset($ytResponse->items)) { $ytSubsList = array_merge($ytSubsList, $ytResponse->items); }
+
+	        
+	        //If there was a "nextPageToken" value returned (ie there were mre than 50 subscriptions), repeat
+	    } while ( isset($ytResponse->nextPageToken) && ($nextPageToken = $ytResponse->nextPageToken));
+
+		//var_dump($ytSubsList); die;
+        return  $ytSubsList;
+
+   	}
 
 
 

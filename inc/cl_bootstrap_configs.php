@@ -29,6 +29,13 @@
 	//Google MapAPI Settings
 	if(!defined("GOOGLE_MAPS_APIKEY")) define("GOOGLE_MAPS_APIKEY", "AIzaSyBc6n2vRhj6szWhvDeTtzBNY1kiDAyJMuo");
 
+	if(!defined("GOOGLE_OAUTH_CLIENTID")) define("GOOGLE_OAUTH_CLIENTID", "214918842475-lg5gjhamu3us5biub677t2laointbd12.apps.googleusercontent.com");
+	if(!defined("GOOGLE_OAUTH_SECRET")) define("GOOGLE_OAUTH_SECRET", "U2flTomAZKgNeRoga56sUqq0");
+	
+	
+
+
+
 	// Music-Story.com API Settings
 	// crowdluv:  ewhite115@gmail
 	// if(!defined("MUSIC_STORY_CUSTOMER_KEY")) define("MUSIC_STORY_CUSTOMER_KEY", "c0e4134da7adfc08157775b78e73411791132014");

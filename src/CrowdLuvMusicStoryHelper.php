@@ -151,6 +151,8 @@ class CrowdLuvMusicStoryHelper {
 			cldbgmsg($resultMsg);
 
 		}
+	
+		/*
 		if(! $brandObj['bandpage_id']){
 			//Retrieve BandPage Channel ID
 			$artistBandPageChannelObj = $msArtist->getConnector('bandpage', []);
@@ -169,6 +171,8 @@ class CrowdLuvMusicStoryHelper {
 			cldbgmsg($resultMsg);
 
 		}
+		*/
+	
 
 		return $metaData;
 

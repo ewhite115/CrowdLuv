@@ -60,6 +60,8 @@ class CrowdLuvSpotifyHelper {
    		//$tk = $this->spotifySession->getAccessToken();
    		if ($this->spotifyAccessToken) {return $this->spotifySession;}
 
+		cldbgmsg("<b>Checking for Spotify Session..</b>");
+
 		//Otherwise .....
 
 		/** Check for Spotify Permissions Denied & Redirect
@@ -79,7 +81,7 @@ class CrowdLuvSpotifyHelper {
 		/** look for a previously saved Spotify token in this session
 		   * 
 		   */   
-	    cldbgmsg("Checking for spotify token in php session..");	    
+	    cldbgmsg("-Checking for spotify token in php session..");	    
 		if ( isset( $_SESSION ) && isset( $_SESSION['spotify_token'] ) ) {
 		    cldbgmsg("-Found spotify_token in session.  Validating ....");	    
 			
@@ -110,7 +112,7 @@ class CrowdLuvSpotifyHelper {
 		$this->isNewSession = false;  // This flag will be used later to conditionally execute code only if it's a 'new' session
 	    try {
 	     	//Check for a new sessions coming from a redirect
-	      	cldbgmsg("Checking for new Spotify session from redirect");
+	      	cldbgmsg("-Checking for new Spotify session from redirect");
 			if(isset($_GET['code'])){
 				cldbgmsg("-Found Spotify redirect code. Requesting token..");
 				$this->spotifySession->requestAccessToken($_GET['code']);
@@ -165,7 +167,7 @@ class CrowdLuvSpotifyHelper {
         }
 		catch (SpotifyApiException $e) {
             //error_log($e);
-            cldbgmsg("SpotifyAPIException in cl_init.php requesting new user info:  " . $e);// var_dump($e);
+            cldbgmsg("-SpotifyAPIException in cl_init.php requesting new user info:  " . $e);// var_dump($e);
             $fb_user = null;
         }
         return null;                   

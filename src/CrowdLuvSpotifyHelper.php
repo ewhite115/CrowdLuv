@@ -24,7 +24,7 @@ class CrowdLuvSpotifyHelper {
 		$this->spotifyApi = new SpotifyWebAPI\SpotifyWebAPI();
 
 		//Instantiate a JWilsson Spotify API Session object
-		$this->spotifySession = new SpotifyWebAPI\Session(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, CLADDR . "spotifycallback.php" );
+		$this->spotifySession = new SpotifyWebAPI\Session(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, CLADDR . "spotifycallback.php?spotifyauth" );
 
    	}
 
@@ -113,7 +113,7 @@ class CrowdLuvSpotifyHelper {
 	    try {
 	     	//Check for a new sessions coming from a redirect
 	      	cldbgmsg("-Checking for new Spotify session from redirect");
-			if(isset($_GET['code'])){
+			if(isset($_GET['code']) && isset($_GET['spotifyauth'])){
 				cldbgmsg("-Found Spotify redirect code. Requesting token..");
 				$this->spotifySession->requestAccessToken($_GET['code']);
 				$this->spotifyAccessToken = $_SESSION['spotify_token'] = $accessToken = $this->spotifySession->getAccessToken();

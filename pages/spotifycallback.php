@@ -7,17 +7,6 @@
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
  
     
-
-    //$session = new SpotifyWebAPI\Session(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, CLADDR . "spotifycallback.php" );
-    // Request a access token using the code from Spotify
-    //$session->requestAccessToken($_GET['code']);
-    //$accessToken = $session->getAccessToken();
-
-
-    //$api = new SpotifyWebAPI\SpotifyWebAPI(); 
-    // Set the access token on the API wrapper
-    //$api->setAccessToken($accessToken);
-
     $api = $clRequestInformation->clSpotifyHelper->getSpotifyApi();
 
 
@@ -28,9 +17,7 @@
 ?>
 
 
-
 <?php 
-
 
 
 $clResponseInformation->clSiteSection = "home";

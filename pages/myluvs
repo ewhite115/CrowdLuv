@@ -145,6 +145,15 @@
                                                             
                             <?php } ?>
 
+
+                            <!-- YouTube Subscriber-->
+                            <?php if($cltalentobj['subscribes_on_youtube']) { ?>
+                                [Yt]
+                            <?php } else { ?>
+                                                            
+                            <?php } ?>
+
+
                          
                         </p>
                         

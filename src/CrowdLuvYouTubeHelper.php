@@ -98,22 +98,28 @@ class CrowdLuvYouTubeHelper {
    		$ytChannelList = "";
 
    		foreach($ytChannelIds as $ytChannelId){
-			//Get the id of the 'uploads' playlist for the channel
+			
+			//Query the YT API for the Channel listing
 			try{$ytChannelList = $this->getApi()->channels->listChannels('contentDetails', ['id' => $ytChannelId]);}
 			catch(Google_Service_Exception $e) {
          	   cldbgmsg("--Exception calling Youtube api");
         	   continue; //var_dump($e); die;
             }
-        
+        	
 			//var_dump($ytChannelList);
-			if(!$ytChannelList || sizeof($ytChannelList->items) ==0) continue;
+			if(!$ytChannelList || sizeof($ytChannelList->items) ==0) { cldbgmsg("-ChannelList was empty when searching for channelID"); continue;}
+			
+			//Get the id of the 'uploads' playlist for the channel
 			$ytChannelListContentDetail = $ytChannelList->items[0]->contentDetails;
 			//var_dump($ytChannelListContentDetail); 
 			$ytUploadsPlaylistId = $ytChannelListContentDetail->relatedPlaylists['uploads'];
 			//var_dump($ytUploadsPlaylistId);
+			cldbgmsg("-Found Playlist ID for uploads: " . $ytUploadsPlaylistId);
+			
 			//Get a listing of the items on that playlist
 			$ytPlaylistItems = $this->getApi()->playlistItems->listPlaylistItems('snippet,contentDetails', ['playlistId' => $ytUploadsPlaylistId, 'maxResults' => '50']   )->items;
-			$recentVideos = null;
+			cldbgmsg("-Found " . sizeof($ytPlaylistItems) .  " Playlist items");
+			
 			foreach ($ytPlaylistItems as $ytPlaylistItem) {
 				//var_dump($ytPlaylistItem);	
 				$dateInterval = date_diff((new DateTime()),	(new DateTime($ytPlaylistItem['contentDetails']['videoPublishedAt'])));
@@ -129,21 +135,29 @@ class CrowdLuvYouTubeHelper {
 
    		foreach($ytUsernames as $ytUsername){
    			//echo "search for videos for " . $ytUsername;
-			//Get the id of the 'uploads' playlist for the channel
+			
+   			//skip usernames that have a '/'  (to avoid searching for brands based on 'pages/')
+   			if(strpos('$ytUsername', "'")) continue;
+
 			try{$ytChannelList = $this->getApi()->channels->listChannels('contentDetails', ['forUsername' => $ytUsername]);}
 			catch(Google_Service_Exception $e) {
          	   cldbgmsg("--Exception calling Youtube api");
-        	   continue; //var_dump($e); die;
+        	   var_dump($e); //die;
+        	   continue; 
             }
 			//var_dump($ytChannelList);
-			if(!$ytChannelList || sizeof($ytChannelList->items) ==0) continue;
+			if(!$ytChannelList || sizeof($ytChannelList->items) ==0) { cldbgmsg("-ChannelList was empty when searching for username " . $ytUsername); continue;}
+			
+			//Get the id of the 'uploads' playlist for the channel
 			$ytChannelListContentDetail = $ytChannelList->items[0]->contentDetails;
 			//var_dump($ytChannelListContentDetail); 
 			$ytUploadsPlaylistId = $ytChannelListContentDetail->relatedPlaylists['uploads'];
-			//var_dump($ytUploadsPlaylistId);
+			cldbgmsg("-Found Playlist ID for uploads for username " . $ytUsername . ": " . $ytUploadsPlaylistId);
+			
 			//Get a listing of the items on that playlist
 			$ytPlaylistItems = $this->getApi()->playlistItems->listPlaylistItems('snippet,contentDetails', ['playlistId' => $ytUploadsPlaylistId, 'maxResults' => '50']   )->items;
-			$recentVideos = null;
+			cldbgmsg("-Found " . sizeof($ytPlaylistItems) .  " Playlist items");
+
 			foreach ($ytPlaylistItems as $ytPlaylistItem) {
 				//var_dump($ytPlaylistItem);	
 				$dateInterval = date_diff((new DateTime()),	(new DateTime($ytPlaylistItem['contentDetails']['videoPublishedAt'])));

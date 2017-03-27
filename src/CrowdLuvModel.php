@@ -2712,7 +2712,14 @@ class CrowdLuvModel {
             //  3:  Username  =crowdluv_vurlVEVO
             $ytUn[0] = $clBrandObj['crowdluv_vurl'];
             $ytUn[1] = $clBrandObj['crowdluv_vurl'] . 'vevo';
-            $recentVideos = $this->clYouTubeHelper->getRecentUploadsForBrand( [$clBrandObj['youtube_channel_id']], $ytUn,'3');  ;
+            $ytUn[2] = $clBrandObj['crowdluv_vurl'] . 'music';
+            $ytUn[3] = $clBrandObj['crowdluv_vurl'] . 'official';
+            $ytUn[4] = str_replace(' ', '', $clBrandObj['fb_page_name']);
+            $ytUn[5] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'vevo';
+            $ytUn[6] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'music';
+            $ytUn[7] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'official';
+
+            $recentVideos = $this->clYouTubeHelper->getRecentUploadsForBrand( [$clBrandObj['youtube_channel_id']], $ytUn,'3');  
         } catch(Exception $e) {
             echo "Exception calling Youtube api";
             var_dump($e); die;
@@ -3214,12 +3221,12 @@ class CrowdLuvModel {
                      )
                 or
                     (
-                        end_time > DATE_SUB(NOW(), INTERVAL 3 Month) 
+                        end_time > DATE_SUB(NOW(), INTERVAL 12 Month) 
                         and type = 'significant_release'
                     )
                 or
                     (
-                        end_time > DATE_SUB(NOW(), INTERVAL 2 Month) 
+                        end_time > DATE_SUB(NOW(), INTERVAL 12 Month) 
                         and type = 'youtube_video'
                     )
             ORDER BY (follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term) DESC, event.start_time";

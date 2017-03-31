@@ -138,7 +138,7 @@ class CrowdLuvYouTubeHelper {
    			//echo "search for videos for " . $ytUsername;
 			
    			//skip usernames that have a '/'  (to avoid searching for brands based on 'pages/')
-   			if(strpos('$ytUsername', "'")) continue;
+   			if(strpos($ytUsername, "/")) continue;
 
 			try{$ytChannelList = $this->getApi()->channels->listChannels('contentDetails', ['forUsername' => $ytUsername]);}
 			catch(Google_Service_Exception $e) {

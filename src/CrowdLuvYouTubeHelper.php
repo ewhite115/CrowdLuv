@@ -20,6 +20,7 @@ class CrowdLuvYouTubeHelper {
 		$this->client->setClientId(GOOGLE_OAUTH_CLIENTID);
 		$this->client->setClientSecret(GOOGLE_OAUTH_SECRET);
 
+		$this->client->setAccessType("offline");
 		$this->client->setScopes('https://www.googleapis.com/auth/youtube');
 		$redirect = "http://localhost:8001/myluvs?ytauth";
 		$this->client->setRedirectUri($redirect);		

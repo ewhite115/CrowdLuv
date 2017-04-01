@@ -250,7 +250,7 @@ class CrowdLuvYouTubeHelper {
 
 			//Get the full snippet and contentDetails
 			$ytVideoList = "";
-			try{$ytVideoList = $this->getApi()->videos->listVideos('snippet,contentDetails', ['id' => $ytVideoIds ]);}
+			try{$ytVideoList = $this->getApi()->videos->listVideos('snippet,contentDetails,statistics', ['id' => $ytVideoIds ]);}
 			catch(Google_Service_Exception $e) {
          	   cldbgmsg("--Exception calling Youtube api");
         	   var_dump($e); //die;
@@ -264,7 +264,8 @@ class CrowdLuvYouTubeHelper {
 			}
 
             foreach ($ytVideoList->items as $ytVideo) {
-            	$relatedVideos[] = $ytVideo;
+            	//Filter out videos with a low view count
+            	if($ytVideo['statistics']['viewCount'] > 15000) $relatedVideos[] = $ytVideo;
             }
 
             return $relatedVideos;

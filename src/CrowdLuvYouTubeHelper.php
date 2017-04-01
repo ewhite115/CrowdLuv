@@ -223,7 +223,8 @@ class CrowdLuvYouTubeHelper {
    			if(strpos($clBrandObj['fb_page_name'], "/")) return;
 
    			$publishedAfter = "2016-04-01T00:00:00Z";
-			try{$ytSearchResult = $this->getApi()->search->listSearch('snippet', ['type' => 'video', 'maxResults' => '5', 'q' => $clBrandObj['fb_page_name'] . ' -topic', 'publishedAfter' => $publishedAfter ]);}
+   			$videoCategoryId="10";
+			try{$ytSearchResult = $this->getApi()->search->listSearch('snippet', ['type' => 'video', 'maxResults' => '5', 'q' => $clBrandObj['fb_page_name'], 'publishedAfter' => $publishedAfter, 'videoCategoryId' => $videoCategoryId , 'order' => 'viewCount'] );}
 			catch(Google_Service_Exception $e) {
          	   cldbgmsg("--Exception calling Youtube api");
         	   var_dump($e); //die;

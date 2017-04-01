@@ -2525,16 +2525,20 @@ class CrowdLuvModel {
 
         // YouTube-Video Event Import Job
         cldbgmsg("<b>Import Job: YouTube-Uploads Events</b>");
-        // Determine whether the last YT event import job was run within the last X minutes. 
-        try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_youtube_uploads_import > (NOW() - INTERVAL 10 minute)";
-            $results = $this->cldb->prepare($sql);
-            $results->execute();
+        
+        if(! $this->clYouTubeHelper->getYouTubeSession()) {cldbgmsg("YouTubeAPI Session ull - aborting");}
+        else{
+            // Determine whether the last YT event import job was run within the last X minutes. 
+            try {                    
+                $sql =  "SELECT * FROM talent where timestamp_last_youtube_uploads_import > (NOW() - INTERVAL 10 minute)";
+                $results = $this->cldb->prepare($sql);
+                $results->execute();
 
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            exit;
-        }    
+            } catch (Exception $e) {
+                echo "Data could not be retrieved from the database. " . $e;
+                exit;
+            }    
+        }
         $data =  $results->fetchAll(PDO::FETCH_ASSOC);
         //echo "result of query to determine whether last import job was run within x minutes";  var_dump($data); die;
         

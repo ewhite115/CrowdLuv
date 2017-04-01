@@ -2568,6 +2568,7 @@ class CrowdLuvModel {
         else { cldbgmsg("-Time interval for YT-Upload Event Import has not lapsed.");}
 
 
+
     }
 
 
@@ -2709,34 +2710,30 @@ class CrowdLuvModel {
         cldbgmsg("-Invoking YT-Upload Import for " . $clBrandObj['fb_page_name']);
 
         //Get the list of recent uploads 
-        try{
-            //Attempt to search for uploads based on:
-            //  1:  YouTube Channel ID,  if it exists in our DB
-            //  2:  Username = crowdluv_vurl
-            //  3:  Username  =crowdluv_vurlVEVO
-            $ytUn[0] = $clBrandObj['crowdluv_vurl'];
-            $ytUn[1] = $clBrandObj['crowdluv_vurl'] . 'vevo';
-            $ytUn[2] = $clBrandObj['crowdluv_vurl'] . 'music';
-            $ytUn[3] = $clBrandObj['crowdluv_vurl'] . 'official';
-            $ytUn[4] = str_replace(' ', '', $clBrandObj['fb_page_name']);
-            $ytUn[5] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'vevo';
-            $ytUn[6] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'music';
-            $ytUn[7] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'official';
 
-            $recentVideos = $this->clYouTubeHelper->getRecentUploadsForBrand( [$clBrandObj['youtube_channel_id']], $ytUn,'3');  
-        } catch(Exception $e) {
-            echo "Exception calling Youtube api";
-            var_dump($e); die;
+        $recentVideos = $this->clYouTubeHelper->getRecentUploadsForBrand($clBrandObj);  
+
+        if( ! $recentVideos) { cldbgmsg("--No recent videos found."); }
+        else{
+            //loop through the resuls and import each one
+            foreach($recentVideos as $recentVideo){
+                cldbgmsg("--Found YouTube upload to add/import: " . $recentVideo['contentDetails']['videoId'] . ":" . $recentVideo['snippet']['title'] . ":" . $recentVideo['contentDetails']['videoPublishedAt']); 
+                $this->importYouTubeVideoFromPlaylistItem($clBrandObj['crowdluv_tid'], $recentVideo);
+            }
         }
-        //var_dump($recentVideos); die;
-        if( ! $recentVideos) { cldbgmsg("--No recent videos found."); return; }
-        //loop through the resuls and import each one
-        foreach($recentVideos as $recentVideo){
-            cldbgmsg("--Found YouTube upload to add/import: " . $recentVideo['contentDetails']['videoId'] . ":" . $recentVideo['snippet']['title'] . ":" . $recentVideo['contentDetails']['videoPublishedAt']); 
-            $this->importYouTubeUpload($clBrandObj['crowdluv_tid'], $recentVideo);
+        
+        //Retrieve related videos for the Brand from YouTube and import to CL
+        $relatedVideos = $this->clYouTubeHelper->getRelatedVideosForBrand($clBrandObj);  
+        if( ! $relatedVideos) { cldbgmsg("--No related videos found."); }
+        else{
+            //loop through the resuls and import each one
+            foreach($relatedVideos as $relatedVideo){
+                cldbgmsg("--Found Related YouTube video to add/import: " . $relatedVideo['contentDetails']['videoId'] . ":" . $relatedVideo['snippet']['title'] . ":" . $relatedVideo['contentDetails']['videoPublishedAt']); 
+                $this->importYouTubeVideoFromVideoObject($clBrandObj['crowdluv_tid'], $relatedVideo);
+            }
         }
 
-    }
+    }//importyoutube
 
 
 
@@ -3036,7 +3033,7 @@ class CrowdLuvModel {
 
 
 
-    public function importYouTubeUpload($cl_tidt, $recentVideo){
+    public function importYouTubeVideoFromPlaylistItem($cl_tidt, $recentVideo){
 
         //Initialize default values
         $clEventID = null;
@@ -3074,7 +3071,7 @@ class CrowdLuvModel {
                                              "https://www.youtube.com/watch?v=" . $recentVideo['contentDetails']['videoId'],  //URL
                                              NULL,  //Facebook ID
                                              NULL,  //BIT Id
-                                             NULL,   //Spotify ID
+                                             NULL,  //Spotify ID
                                              $recentVideo['contentDetails']['videoId']   //YouTube ID
                                              );
             
@@ -3082,8 +3079,56 @@ class CrowdLuvModel {
         }
       
                 
-    }  // importSpotifyAlbumRelease
+    }  // importYouTube
 
+
+    public function importYouTubeVideoFromVideoObject($cl_tidt, $recentVideo){
+
+        //Initialize default values
+        $clEventID = null;
+        $releaseType = "youtube_video";
+
+        //Look for an existing event with same album ID..
+        $clEventID = $this->getEventIDFromYouTubeVideoId($recentVideo['id']);
+        //if we found an existing event with this album id ...
+        if($clEventID){
+            cldbgmsg("---It is an existing video - updating");
+            //Update basic values in the CL db with current info from spotify
+            $this->updateEventValues($clEventID,
+                                        [
+                                        'type' => $releaseType,
+                                        'title' => $recentVideo['snippet']['title'],
+                                        'description' => $recentVideo['snippet']['description'],
+                                        'start_time' =>   $recentVideo['snippet']['publishedAt'],
+                                        'end_time' => $recentVideo['snippet']['publishedAt']
+                                        ]  );
+                 
+            return $clEventID;
+
+        }
+        else{
+            //add/create the event
+            cldbgmsg("---It is a new youtube video. Calling CreateEvent() for youtube import");
+            $return = $this->createEvent(0,
+                                             $cl_tidt,
+                                             $releaseType,
+                                             $recentVideo['snippet']['title'],
+                                             $recentVideo['snippet']['description'],
+                                             $recentVideo['snippet']['publishedAt'], //startTime
+                                             $recentVideo['snippet']['publishedAt'], //endTime
+                                             NULL,  //PlaceId 
+                                             "https://www.youtube.com/watch?v=" . $recentVideo['id'],  //URL
+                                             NULL,  //Facebook ID
+                                             NULL,  //BIT Id
+                                             NULL,  //Spotify ID
+                                             $recentVideo['id']   //YouTube ID
+                                             );
+            
+            return $return;
+        }
+      
+                
+    }  // importYouTube
 
 
 
@@ -3240,7 +3285,6 @@ class CrowdLuvModel {
             //$results->bindParam(1, $cl_tidt);
             //$results->bindParam(2, $cl_tidt);
             $results->execute();
-
 
         } catch (Exception $e) {
             echo "Data could not be retrieved from the database. " . $e;

@@ -19,7 +19,6 @@ class CrowdLuvYouTubeHelper {
 		//$this->client->setDeveloperKey(GOOGLE_MAPS_APIKEY);
 		$this->client->setClientId(GOOGLE_OAUTH_CLIENTID);
 		$this->client->setClientSecret(GOOGLE_OAUTH_SECRET);
-
 		$this->client->setAccessType("offline");
 		$this->client->setScopes('https://www.googleapis.com/auth/youtube');
 		$redirect = "http://localhost:8001/myluvs?ytauth";
@@ -54,7 +53,6 @@ class CrowdLuvYouTubeHelper {
 
 		//If a previous call to this method found a session, just return that existing member object.
    		
-
    		// Check if an auth token exists for the required scopes
 		$tokenSessionKey = 'youtube_token-' . $this->client->prepareScopes();
 		if (isset($_GET['code']) && isset($_GET['ytauth']) ) {
@@ -80,11 +78,35 @@ class CrowdLuvYouTubeHelper {
 		  return ($_SESSION[$tokenSessionKey] = $this->client->getAccessToken());
 		}
 
-
 		return null;
 
    	}
 
+
+   	public function getRecentUploadsForBrand($clBrandObj){
+
+        try{
+            //Attempt to search for uploads based on:
+            //  1:  YouTube Channel ID,  if it exists in our DB
+            //  2:  Username = crowdluv_vurl
+            //  3:  Username  =crowdluv_vurlVEVO
+            $ytUn[0] = $clBrandObj['crowdluv_vurl'];
+            $ytUn[1] = $clBrandObj['crowdluv_vurl'] . 'vevo';
+            $ytUn[2] = $clBrandObj['crowdluv_vurl'] . 'music';
+            $ytUn[3] = $clBrandObj['crowdluv_vurl'] . 'official';
+            $ytUn[4] = str_replace(' ', '', $clBrandObj['fb_page_name']);
+            $ytUn[5] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'vevo';
+            $ytUn[6] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'music';
+            $ytUn[7] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'official';
+
+            $recentVideos = $this->getRecentUploadsForChannel( [$clBrandObj['youtube_channel_id']], $ytUn,'300');  
+        } catch(Exception $e) {
+            echo "Exception calling Youtube api";
+            var_dump($e); die;
+        }
+        //var_dump($recentVideos); die;
+
+   	}
 
 
    	/**
@@ -93,10 +115,15 @@ class CrowdLuvYouTubeHelper {
    	 * @param  [array] $ytUserNames [array of YouTube Usernames]
    	 * @return [array] [Array of YouTube PlaylistItems]
    	 */
-   	public function getRecentUploadsForBrand($ytChannelIds, $ytUsernames, $months){
+   	private function getRecentUploadsForChannel($ytChannelIds, $ytUsernames, $months){
+
+   		//If we dont have a session, return null
+   		if(! $this->getYouTubeSession()) return null;
 
    		$recentVideos = "";
    		$ytChannelList = "";
+
+
 
    		foreach($ytChannelIds as $ytChannelId){
 			
@@ -174,6 +201,75 @@ class CrowdLuvYouTubeHelper {
 
 		return $recentVideos;
    	} 
+
+
+   	/**
+   	 * [getRelatedVideosForBrand   Queries outube api search.list to find YouTube videos for the brand (not necessarily on the brand's own channel)   ]
+   	 * @param  [type] $clBrandObj [description]
+   	 * @return [type]             [description]
+   	 */
+   	public function getRelatedVideosForBrand($clBrandObj){
+
+
+			//If we dont have a session, return null
+			if(! $this->getYouTubeSession()) return null;
+
+
+   			$relatedVideos = "";
+
+   			//echo "search for related videos for " . $ytUsername;
+			
+   			//skip usernames that have a '/'  (to avoid searching for brands based on 'pages/')
+   			if(strpos($clBrandObj['fb_page_name'], "/")) return;
+
+   			$publishedAfter = "2016-04-01T00:00:00Z";
+			try{$ytSearchResult = $this->getApi()->search->listSearch('snippet', ['type' => 'video', 'maxResults' => '5', 'q' => $clBrandObj['fb_page_name'] . ' -topic', 'publishedAfter' => $publishedAfter ]);}
+			catch(Google_Service_Exception $e) {
+         	   cldbgmsg("--Exception calling Youtube api");
+        	   var_dump($e); //die;
+        	   return; 
+            }
+			//var_dump($ytSearchResult); die;
+			if(!$ytSearchResult || sizeof($ytSearchResult->items) ==0) { 
+				cldbgmsg("-Search Result was empty when searching for for " . $clBrandObj['fb_page_name'] ); 
+				return;
+			}
+			
+			//Get the id of the 'uploads' playlist for the channel
+			$ytSearchResultItems = $ytSearchResult->items;
+			//var_dump($ytSearchResultItems); die;
+	
+			//Compile a comma-separated list of the video ID's
+			$ytVideoIds = "";
+			foreach ($ytSearchResultItems as $ytSearchResultItem) {
+				$ytVideoIds = $ytVideoIds . ","	. $ytSearchResultItem['id']['videoId'];
+
+			} //foreach
+			//var_dump($ytVideoIds); die;
+
+			//Get the full snippet and contentDetails
+			$ytVideoList = "";
+			try{$ytVideoList = $this->getApi()->videos->listVideos('snippet,contentDetails', ['id' => $ytVideoIds ]);}
+			catch(Google_Service_Exception $e) {
+         	   cldbgmsg("--Exception calling Youtube api");
+        	   var_dump($e); //die;
+        	   continue; 
+            }
+            //var_dump($ytVideoList);die;
+
+			if(!$ytVideoList || sizeof($ytVideoList->items) == 0) { 
+				cldbgmsg("-Search Result was empty when searching for related videos for " . $clBrandObj['fb_page_name']); 
+				return;
+			}
+
+            foreach ($ytVideoList->items as $ytVideo) {
+            	$relatedVideos[] = $ytVideo;
+            }
+
+            return $relatedVideos;
+
+   	} 
+
 
 
    	public function getSubscriptionListForCurrentUser(){

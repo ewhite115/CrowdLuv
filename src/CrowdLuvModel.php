@@ -2408,7 +2408,7 @@ class CrowdLuvModel {
         cldbgmsg("<b>Import Job: FB Events</b>");
         // Determine whether the last FB event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_facebook_event_import > (NOW() - INTERVAL 10 minute)";
+            $sql =  "SELECT * FROM talent where disabled = 0 and timestamp_last_facebook_event_import > (NOW() - INTERVAL 10 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2424,7 +2424,7 @@ class CrowdLuvModel {
 
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_facebook_event_import ASC LIMIT 2";
+                $sql =  "SELECT * FROM talent WHERE disabled = 0 ORDER BY timestamp_last_facebook_event_import ASC LIMIT 2";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2450,7 +2450,7 @@ class CrowdLuvModel {
         cldbgmsg("<b>Import Job: BIT Events</b>");
         //Determine whether the last BIT event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_bandsintown_event_import > (NOW() - INTERVAL 10 minute)";
+            $sql =  "SELECT * FROM talent where disabled = 0 and timestamp_last_bandsintown_event_import > (NOW() - INTERVAL 10 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2465,7 +2465,7 @@ class CrowdLuvModel {
         if(sizeof($data) == 0) {
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_bandsintown_event_import ASC LIMIT 2";
+                $sql =  "SELECT * FROM talent where disabled=0 ORDER BY timestamp_last_bandsintown_event_import ASC LIMIT 2";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2488,7 +2488,7 @@ class CrowdLuvModel {
         cldbgmsg("<b>Import Job: Spotify Albums</b>");
         //Determine whether the last Spotify event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_spotify_album_import > (NOW() - INTERVAL 10 minute)";
+            $sql =  "SELECT * FROM talent where disabled = 0 and timestamp_last_spotify_album_import > (NOW() - INTERVAL 10 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2503,7 +2503,7 @@ class CrowdLuvModel {
         if(sizeof($data) == 0) {
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent WHERE spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC LIMIT 2";
+                $sql =  "SELECT * FROM talent WHERE disabled = 0 and spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC LIMIT 2";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2530,7 +2530,7 @@ class CrowdLuvModel {
         else{
             // Determine whether the last YT event import job was run within the last X minutes. 
             try {                    
-                $sql =  "SELECT * FROM talent where timestamp_last_youtube_uploads_import > (NOW() - INTERVAL 10 minute)";
+                $sql =  "SELECT * FROM talent where disabled = 0 and timestamp_last_youtube_uploads_import > (NOW() - INTERVAL 0 minute)";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2547,7 +2547,7 @@ class CrowdLuvModel {
 
             //Determine the X number of brands with the most 'stale' import
             try {                    
-                $sql =  "SELECT * FROM talent ORDER BY timestamp_last_youtube_uploads_import ASC LIMIT 2";
+                $sql =  "SELECT * FROM talent where disabled = 0 ORDER BY timestamp_last_youtube_uploads_import ASC LIMIT 25";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 

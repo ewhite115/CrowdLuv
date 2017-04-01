@@ -518,8 +518,8 @@ class CrowdLuvModel {
         try {
             
             //Insert the main record into the talent table
-            $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name) 
-                                VALUES ('" . $talent_fbpp['id'] . "', ?)";
+            $sql = "INSERT INTO talent (    fb_pid,                 fb_page_name, fb_is_verified) 
+                                VALUES ('" . $talent_fbpp['id'] . "', ?,           '" . $talent_fbpp['is_verified'] . "'     )";
             
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $talent_fbpp['name']);
@@ -638,11 +638,11 @@ class CrowdLuvModel {
         $clId = $this->get_crowdluv_tid_by_fb_pid($fbId) ;
         if( $clId ) return $clId;
 
-        //If it doesnt exist, and it is within an allowed category, create a new brand
+        //If it doesnt exist- If it is within an allowed category and a verified fb page, create a new brand
         //Retrieve FB graph object for that ID
         $fbPageObj = $this->clFacebookHelper->getFacebookGraphObjectById($fbId);                                
         //var_dump($fbPageObj);die;
-        if(in_array($fbPageObj['category'], CrowdLuvFacebookHelper::$facebookLikeCategoriesToCreateStubsFor)){
+        if(  $fbPageObj['is_verified']  &&  in_array($fbPageObj['category'], CrowdLuvFacebookHelper::$facebookLikeCategoriesToCreateStubsFor)){
             cldbgmsg("-Found a facebook page that does not have a corresponding brand -- facebook ID " . $fbId);
             $clId = $this->createNewBrandFromFacebookPageGraphObject($fbPageObj);
         }

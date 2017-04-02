@@ -313,10 +313,10 @@ class CrowdLuvFacebookHelper {
 
 
 
-	public function getFacebookGraphObjectById($fbId){
+	public function getFacebookGraphObjectById($fbId, $fields){
 
 		//echo "gfbo " . $fbId;
-		$request = new FacebookRequest( $this->getFacebookSession(), 'GET', '/' . $fbId );
+		$request = new FacebookRequest( $this->getFacebookSession(), 'GET', '/' . $fbId . '?fields=' . $fields );
 
     	$response = $request->execute();
 	    // get response

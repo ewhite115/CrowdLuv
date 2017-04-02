@@ -319,7 +319,7 @@ class CrowdLuvModel {
         // Loop making api call ..  
         $done=false;
         //Create the initial request object for retrieving user's likes
-        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/me/likes?fields=id,name,category,link&limit=200' );
+        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/me/likes?fields=id,name,category,is_verified,link&limit=200' );
         do{  
           try{          
               $response = $request->execute();
@@ -640,10 +640,10 @@ class CrowdLuvModel {
 
         //If it doesnt exist- If it is within an allowed category and a verified fb page, create a new brand
         //Retrieve FB graph object for that ID
-        $fbPageObj = $this->clFacebookHelper->getFacebookGraphObjectById($fbId);                                
+        $fbPageObj = $this->clFacebookHelper->getFacebookGraphObjectById($fbId, "id,name,category,is_verified,link");                                
         //var_dump($fbPageObj);die;
         if(  $fbPageObj['is_verified']  &&  in_array($fbPageObj['category'], CrowdLuvFacebookHelper::$facebookLikeCategoriesToCreateStubsFor)){
-            cldbgmsg("-Found a facebook page that does not have a corresponding brand -- facebook ID " . $fbId);
+            cldbgmsg("-Found a facebook page that does not have a corresponding brand -- facebook ID " . $fbId . " - " . $fbPageObj['name'] );
             $clId = $this->createNewBrandFromFacebookPageGraphObject($fbPageObj);
         }
 

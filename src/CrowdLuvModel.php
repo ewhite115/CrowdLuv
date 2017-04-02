@@ -3360,12 +3360,15 @@ class CrowdLuvModel {
 
 
             $where = "follower_luvs_talent.crowdluv_uid = '" . $fol['crowdluv_uid'] . "' 
-                         and 
+                        and 
                             (
                                 type in ('"  . implode("','", $eventTypes) . "')
                                 and 
                                 end_time > DATE_ADD(NOW(), INTERVAL " . $endInterval . ") 
-                            ) ";
+                            )
+                        and event.title not like '%deluxe%' 
+                        and event.title not like '%(Extended%' 
+                        GROUP BY event.title ";
             
             $where = $where . " ORDER BY " . $orderBy;     
             // $where = $where . " ORDER BY ";

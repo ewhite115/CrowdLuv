@@ -51,7 +51,7 @@ class CrowdLuvModel {
         
          try {
             $sql = "select " . $col . " from " . $table . " where " . $where;
-            //echo $sql;
+            //if(isset($debugPrint) && $debugPrint) echo $sql;
             $results = $this->cldb->prepare($sql);
             $results->execute();
             return $results->fetchAll(PDO::FETCH_ASSOC);
@@ -2547,7 +2547,7 @@ class CrowdLuvModel {
 
             //Determine the X number of brands with the most 'stale' import
             try {                    
-                $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified ORDER BY timestamp_last_youtube_uploads_import ASC LIMIT 50";
+                $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified ORDER BY timestamp_last_youtube_uploads_import ASC LIMIT 1";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -3248,14 +3248,14 @@ class CrowdLuvModel {
 
 
 
-    public function getFutureEventListForFollower($cl_uidt, $limit = NULL){
+    public function getCombinedEventListForFollower($cl_uidt, $limit = NULL){
 
         $fol = $this->get_follower_object_by_uid($cl_uidt);
 
         try {
                      
            $sql =
-            "SELECT talent.*, event.*, place.* ";
+            "SELECT talent.fb_pid as fb_pageid, talent.*, event.*, place.* ";
             //if($fol) $sql = $sql . ", (case when longitude between " . $fol['longitude'] . " - 1.5 and " . $fol['longitude'] . " + 1.5 and latitude between " . $fol['latitude'] . " - 1.5 and " . $fol['latitude'] . " + 1.5 then 1 else 0 end) as near_me ";
             $sql = $sql . 
             "FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
@@ -3263,7 +3263,7 @@ class CrowdLuvModel {
                         left join follower on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid
                         left join talent on talent.crowdluv_tid = follower_luvs_talent.crowdluv_tid
             where follower_luvs_talent.crowdluv_uid = '" . $fol['crowdluv_uid'] . "' 
-                and 
+                and (
                     (
                         end_time > NOW()
                         and (longitude between " . $fol['longitude'] . " - 1.25 and " . $fol['longitude'] . " + 1.25 and latitude between " . $fol['latitude'] . " - 1.25 and " . $fol['latitude'] . " + 1.25)
@@ -3277,6 +3277,7 @@ class CrowdLuvModel {
                     (
                         end_time > DATE_SUB(NOW(), INTERVAL 12 Month) 
                         and type = 'youtube_video'
+                    )
                     )
             ORDER BY (follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term) DESC, event.start_time";
             if($limit) $sql = $sql . " limit " . $limit; 
@@ -3295,6 +3296,93 @@ class CrowdLuvModel {
 
 
     }
+
+
+
+
+    public function getUpcomingEventListForFollower($cl_uidt, $limit = NULL){
+
+        $fol = $this->get_follower_object_by_uid($cl_uidt);
+
+        try {
+                     
+           $sql =
+            "SELECT talent.fb_pid as fb_pageid, talent.*, event.*, place.* ";
+            //if($fol) $sql = $sql . ", (case when longitude between " . $fol['longitude'] . " - 1.5 and " . $fol['longitude'] . " + 1.5 and latitude between " . $fol['latitude'] . " - 1.5 and " . $fol['latitude'] . " + 1.5 then 1 else 0 end) as near_me ";
+            $sql = $sql . 
+            "FROM event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                        left join follower_luvs_talent on event.related_crowdluv_tid = follower_luvs_talent.crowdluv_tid
+                        left join follower on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid
+                        left join talent on talent.crowdluv_tid = follower_luvs_talent.crowdluv_tid
+            where follower_luvs_talent.crowdluv_uid = '" . $fol['crowdluv_uid'] . "' 
+                and 
+                    (
+                        end_time > NOW()
+                        and (longitude between " . $fol['longitude'] . " - 1.25 and " . $fol['longitude'] . " + 1.25 and latitude between " . $fol['latitude'] . " - 1.25 and " . $fol['latitude'] . " + 1.25)
+                     )
+            ORDER BY (follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term) DESC, event.start_time";
+            if($limit) $sql = $sql . " limit " . $limit; 
+   
+            $results = $this->cldb->prepare($sql);
+            //$results->bindParam(1, $cl_tidt);
+            //$results->bindParam(2, $cl_tidt);
+            $results->execute();
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
+        $data = $results->fetchAll(PDO::FETCH_ASSOC);
+        return $data;
+
+
+    }
+
+
+
+    public function getEventsForFollower($clUid, $eventTypes, $endInterval, $orderBy, $limit ){
+
+            $fol = $this->get_follower_object_by_uid($clUid);
+
+            $col = "talent.fb_pid as fb_pageid, 
+                    talent.*,
+                    event.*,
+                    place.*, 
+                    (10 * follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term) as luvWeighting,
+                    (rand() * (( 10 * follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term))) as randomizedLuvWeighting, 
+                    (DATEDIFF(NOW(), event.start_time) / (1 *( 10 * follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term))) as luvWeightedAge";
+
+
+            $table = "event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
+                        left join follower_luvs_talent on event.related_crowdluv_tid = follower_luvs_talent.crowdluv_tid
+                        left join follower on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid
+                        left join talent on talent.crowdluv_tid = follower_luvs_talent.crowdluv_tid";
+
+
+            $where = "follower_luvs_talent.crowdluv_uid = '" . $fol['crowdluv_uid'] . "' 
+                         and 
+                            (
+                                type in ('"  . implode("','", $eventTypes) . "')
+                                and 
+                                end_time > DATE_ADD(NOW(), INTERVAL " . $endInterval . ") 
+                            ) ";
+            
+            $where = $where . " ORDER BY " . $orderBy;     
+            // $where = $where . " ORDER BY ";
+            // if($randomizedLuvWeighting) $where = $where . " randomizedLuvWeighting DESC, ";
+            // $where = $where . " luvWeightedAge ASC ";
+            
+
+            if($limit) $where = $where . " LIMIT " . $limit; 
+
+        //var_dump$sql; die;
+
+        return $this->selectTableValue($col, $table, $where);
+
+
+
+    }
+
 
 
     public function getUpcomingEventsForTalent($cl_tidt, $cl_uidt = NULL){

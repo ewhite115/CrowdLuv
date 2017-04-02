@@ -3,7 +3,6 @@
     ////require_once "../inc/cl_bootstrap.php";
 
 
-  
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
 
     $mobileStatus = $CL_model->getMobileValidityForFollower($clRequestInformation->getLoggedInUserObj()['crowdluv_uid'] );
@@ -11,20 +10,26 @@
 
 
     //Get the list of talent this user luvs 
-    $mostLuvd = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
+    //$mostLuvd = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
     //re-sort the list by how many LuvPoints the fan has for each
-    $scores=array();
-    foreach($mostLuvd as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($clRequestInformation->getLoggedInUserId(), $ret_tal['crowdluv_tid']); }
-    array_multisort($scores, SORT_DESC, $mostLuvd);
+    //$scores=array();
+    //foreach($mostLuvd as &$ret_tal){ $scores[] = $ret_tal['score'] = $CL_model->calculate_follower_score_for_talent($clRequestInformation->getLoggedInUserId(), $ret_tal['crowdluv_tid']); }
+    //array_multisort($scores, SORT_DESC, $mostLuvd);
 
 
     //Get the list of talent this user likes 
-    $mylikes = $CL_model->getTalentsThatFollowerFacebookLikesButNotLuvs($clRequestInformation->getLoggedInUserId());
+    //$mylikes = $CL_model->getTalentsThatFollowerFacebookLikesButNotLuvs($clRequestInformation->getLoggedInUserId());
 
-    $likesAndLuvs = array_merge($mostLuvd, $mylikes);
+    //$likesAndLuvs = array_merge($mostLuvd, $mylikes);
 
 
+    if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getUpcomingEventListForFollower($clRequestInformation->getLoggedInUserId(), 500);
 
+    if ($clRequestInformation->getLoggedInUserObj()) $newReleases = $CL_model->getEventsForFollower($clRequestInformation->getLoggedInUserId(), ['significant_release', 'minor_release'], "-6 month", "luvWeightedAge ASC", 25);
+
+    if ($clRequestInformation->getLoggedInUserObj()) $youTubeHighlights = $CL_model->getEventsForFollower($clRequestInformation->getLoggedInUserId(), ['youtube_video'], "-2 month", "randomizedLuvWeighting DESC", 5);
+    if ($clRequestInformation->getLoggedInUserObj()) $youTubeExtendedList = $CL_model->getEventsForFollower($clRequestInformation->getLoggedInUserId(), ['youtube_video'], "-6 month", "luvWeightedAge ASC",  50);
+    //var_dump($futureEvents[0]);die;
 
     include(ROOT_PATH . 'views/partial_cl_html_leader.php');
 
@@ -77,131 +82,106 @@
 
 
 
-<!-- ***  Luvs ***  -->
+<!-- ***  Header ***  -->
 
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1 crowdluvsection">
-            <img src='res/top-heart.png'/>
+           
             <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
-                My Most Luv'd
+                LaLaLa
             </h1>
             
         </div>
     </div>
 
-<!-- <?php /*
-    <div class="cl-full-width-row crowdluvsection clwhitebg cl-grayborder">
-
-        <div class="cl-talent-listing-card-container-single-row">
-          
-            <?php foreach($mostLuvd as $cltalentobj){  ?>              
-                
-                <a class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">     
-                    
-                    <div class="talent-avatar"> 
-                        <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
-                        <p class="talent-name">  <?php echo $cltalentobj['fb_page_name'];?>  </p>
-                    </div>
-                    <div class="card-info">
-                        <img src='res/top-heart.png'/>
-                        <p class="follower-rank">Your Rank</p>
-                    </div>
-
-                    <div class="text-center extra-info crowdluvsection "> <p><?php echo $cltalentobj['score'];?> Luvs</p>  </div>
-                                                
-                </a> 
-            <?php } ?>
-            
-                <a class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " href="follower_all_luvs.php">     
-                    
-                    <div class="talent-avatar text-center"> 
-                        <img src="https://graph.facebook.com/dddddddddddd/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
-                        <p class="talent-name">  More... </p>
-                    </div>
-                    <div class="heart-rank text-center">
-                        <img src='res/top-heart.png'/>
-                        <p class="follower-rank">See all Luvs</p>
-                    </div>
-
-                    <div class="extra-info crowdluvsection"> <p></p>  </div>
-                                                
-                </a> 
-
-        </div>
-
-
-
-    </div>
-   
-   */ ?> -->
-  
-
-  
-<!-- ***  Likes ***  -->
-    <!--
-    <div class="row">
-        <div class="col-xs-10 col-xs-offset-1 crowdluvsection">
-            <img src='res/FB-ThumbsUp_50.png'/>
-            <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
-                My Likes
-            </h1>
-            <a href="follower_all_talents.php"><span> (See all...)</span></a>
-        </div>
-    </div>
-    -->
 
      <div class="row ">
 
-        <div class="col-xs-12    crowdluvsection clwhitebg cl-grayborder">
+        <!--  Events -->
+        <div class="col-xs-10 col-xs-offset-1 col-sm-5   crowdluvsection clwhitebg cl-grayborder">
           
-            <?php foreach($likesAndLuvs as $cltalentobj){  ?>              
+             <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                Events
+            </h1>
+            <div style="height: 30em;overflow-y: scroll">
+            <?php if(!$futureEvents){ echo "No updates"; }  ?>
+            <?php foreach($futureEvents as $futureEvent){ ?>
                 
-                <div class="cl-talent-listing-card text-left cl_graybackground cl_grayborder " >     
-                    
-                    <div class="talent-avatar "> 
-                        <!-- <a href="talent/<?php echo $cltalentobj['crowdluv_vurl'];?>"> -->
-                        <a href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">
-                            <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
-                        </a>
-                        
-                    </div>
+                <p>
+                   <?php if ($futureEvent['type'] == "performance") { ?>
+                        <img style="display:inline;width:2.5em" src="https://graph.facebook.com/<?php echo $futureEvent['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> </span>
+                        <a target="_new" href="<?php echo $futureEvent['more_info_url'];?>"> <?php echo $futureEvent['title']; ?> </a> - <?php echo $futureEvent['start_time']; ?> 
+                    <?php } ?>
 
-                    <div class="card-info">
-                        <p class="talent-name">
-                            <a class="inline-block" href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">
-                              <?php echo $cltalentobj['fb_page_name'];?>  
-                            </a>
-                            <br>
-                            
-                            <!-- Luv   -->
-                            <p>
-                            <?php if($cltalentobj['still_following']) { ?>
-                                <img style="width:1.25em;" src='res/top-heart.png'/>
-                            <?php } 
-                                 else { ?>
-                                <img style="width:1.25em;" src='res/top-heart-gray.png'/>
-                            <?php } ?>
-                            <span>
-                                <?php echo $cltalentobj['score'];?> 
-                            <span> 
-                            </p>
-                            <!-- Like -->
-                            <img style="width:1.25em;" src='res/FB-ThumbsUp_50.png'/>
+                </p>
 
-
-                        </p>
-                        
-                        
-                    </div>
-
-                    
-                                                
-                </div> 
             <?php } ?>
-            
-       
+            </div>
+                         
+        </div>
+
+        <!--  Release -->
+        <div class="col-xs-10 col-xs-offset-1 col-sm-5 col-sm-offset-0 crowdluvsection clwhitebg cl-grayborder">
+        
+
+             <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                Releases
+            </h1>
+
+            <div style="height: 30em;overflow-y: scroll">
+            <?php if(!$newReleases){ echo "No updates"; }  ?>
+            <?php foreach($newReleases as $newContent){ ?>
+                <p>                
+                    <?php if ($newContent['type'] == "significant_release") { ?>
+                        <img style="display:inline;width:2.5em" src="https://graph.facebook.com/<?php echo $newContent['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> </span>
+                         <b>New Release:</b> <?php echo $newContent['fb_page_name'] ?> - <a target="_new"  href="<?php echo $newContent['more_info_url'];?>"> <?php echo $newContent['title']; ?> </a>
+                    <?php } ?>
+               </p>
+
+            <?php } ?>
+                         
+            </div>
 
         </div>
+
+
+        <!--  YouTube Videos -->
+        <div class="col-xs-10 col-xs-offset-1 col-sm-5  crowdluvsection clwhitebg cl-grayborder">
+          
+
+             <h1 class="cl-major-heading cl-textcolor-standout" style="display:inline-block;">
+                YouTube
+            </h1>          
+            <div style="height: 15em;overflow-y: scroll">
+            <?php if(!$youTubeHighlights){ echo "No updates"; }  ?>
+            <p>   Recommended</p>
+
+            <?php foreach($youTubeHighlights as $newContent){ ?>                
+                <p>        
+                    <?php if ($newContent['type'] == "youtube_video") { ?>
+                        <img style="display:inline;width:2.5em" src="https://graph.facebook.com/<?php echo $newContent['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> </span> 
+                        <?php echo $newContent['fb_page_name']?> - <a target="_new"  href="<?php echo $newContent['more_info_url'];?>"> <?php echo  $newContent['title']; ?></a> - <?php echo $newContent['start_time']; ?> 
+                    <?php } ?>
+                </p>
+
+            <?php } ?>
+            </div>
+            <div style="height: 15em;overflow-y: scroll">
+            <p>New</p>
+            <?php foreach($youTubeExtendedList as $newContent){ ?>                
+                <p>        
+                    <?php if ($newContent['type'] == "youtube_video") { ?>
+                        <img style="display:inline;width:2.5em" src="https://graph.facebook.com/<?php echo $newContent['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> </span> 
+                        <?php echo $newContent['fb_page_name']?> - <a target="_new"  href="<?php echo $newContent['more_info_url'];?>"> <?php echo  $newContent['title']; ?></a> - <?php echo $newContent['start_time']; ?> 
+                    <?php } ?>
+                </p>
+
+            <?php } ?>
+            </div>             
+            </div>
+
+        </div>
+
 
 
 

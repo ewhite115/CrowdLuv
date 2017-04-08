@@ -154,6 +154,11 @@ class CrowdLuvFacebookHelper {
 		      echo "FacebookRequestException getting session in CrowdLuvFacebookHelper->getFacebookSession()";
 		      echo "<pre>"; var_dump($ex); echo "</pre>";
 		      die;
+		    } 
+		    catch( Facebook\FacebookSDKException $ex ) {
+		      echo "FacebookSDKException getting session in CrowdLuvFacebookHelper->getFacebookSession()";
+		      echo "<pre>"; var_dump($ex); echo "</pre>";
+		      die;
 		    } catch( Exception $ex ) {
 		      // When validation fails or other local issues
 		      echo "Exception getting session in CrowdLuvFacebookHelper->getFacebookSession()";

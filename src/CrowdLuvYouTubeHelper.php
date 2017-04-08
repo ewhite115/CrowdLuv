@@ -30,7 +30,7 @@ class CrowdLuvYouTubeHelper {
 		$this->tokenSessionKey = 'youtube_token-' . $this->client->prepareScopes();
 
 		if($clUserObj['youtube_access_token']) $this->client->setAccessToken($clUserObj['youtube_access_token']);
-		if($clUserObj['youtube_refresh_token']) $this->refreshToken = $clUserObj['youtube_access_token'];
+		if($clUserObj['youtube_refresh_token']) $this->refreshToken = $clUserObj['youtube_refresh_token'];
 
    	}
 
@@ -94,12 +94,9 @@ class CrowdLuvYouTubeHelper {
 		}
 		//check if the token has expired, and refresh if so
 		if ($this->client->getAccessToken() && $this->client->isAccessTokenExpired() ) {
-			echo "Youtube token is expired"; die;
-			//To-Do:  if YT sdk doesnt auto-refresh, 
-			//$this->client->refreshToken($this->refreshToken);
-
+			cldbgmsg("Youtube token is expired. Attempting to refresh...");// die;
+			$this->client->refreshToken($this->refreshToken);
 		}
-
 		// Check to ensure that the access token was successfully acquired and it hasnt expired.
 		if ($this->client->getAccessToken() && ! $this->client->isAccessTokenExpired() ) {
 		  return ($_SESSION[$this->tokenSessionKey] = $this->client->getAccessToken());

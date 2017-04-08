@@ -105,6 +105,11 @@ class CrowdLuvModel {
 
     }
 
+
+    public function updateFollowerSetting($cl_uidt, $prefname, $prefval){
+        return $this->update_follower_setting($cl_uidt, $prefname, $prefval);
+    }
+
    /**
      * Write a single preference setting for follower into CL DB  
      * @param    object      $cl_fobj     Object containing the CrowdLuv follower fields to be written into CrowdLuv DB. Field keys correspond to DB schema columns
@@ -115,6 +120,7 @@ class CrowdLuvModel {
     public function update_follower_setting($cl_uidt, $prefname, $prefval){
         
         $allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms', 'deactivated', 'crowdluv_placeid'];
+        $allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms', 'deactivated', 'crowdluv_placeid', 'youtube_access_token', 'youtube_refresh_token'];
         if(! in_array($prefname, $allowed_prefnames)) {return 0;}
         if(! isset($prefval) || $prefval == "") {return 0;}
 

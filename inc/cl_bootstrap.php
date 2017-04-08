@@ -54,8 +54,7 @@ $clFacebookHelper = new CrowdLuvFacebookHelper();
 $clSpotifyHelper = new CrowdLuvSpotifyHelper();
 //Create CrowdLuvMusicStoryHelper
 $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
-//Create CrowdLuvYouTubeHelper
-$clYouTubeHelper = new CrowdLuvYouTubeHelper();
+
 
 //Create CL_model with it's dependencies
 $CL_model = new CrowdLuvModel();
@@ -64,7 +63,6 @@ $CL_model->setFacebookHelper($clFacebookHelper);
 //$CL_model->setSpotifyApi($spotifyApi);
 $CL_model->setSpotifyHelper($clSpotifyHelper);
 $CL_model->setMusicStoryHelper($clMusicStoryHelper);
-$CL_model->setYouTubeHelper($clYouTubeHelper);
 
 
 //create a CrowdLuvRequest   object
@@ -73,8 +71,11 @@ $clRequestInformation->clFacebookHelper = $clFacebookHelper;
 $clRequestInformation->clModel = $CL_model;
 $clRequestInformation->clSpotifyHelper = $clSpotifyHelper;
 $clRequestInformation->clMusicStoryHelper = $clMusicStoryHelper;
-$clRequestInformation->clYouTubeHelper = $clYouTubeHelper;
 
+//Create CrowdLuvYouTubeHelper
+$clYouTubeHelper = new CrowdLuvYouTubeHelper($clRequestInformation->getLoggedInUserObj());
+$clRequestInformation->clYouTubeHelper = $clYouTubeHelper;
+$CL_model->setYouTubeHelper($clYouTubeHelper);
 
 //create a CrowdLuvResponse    object
 $clResponseInformation = new CrowdLuvResponseInformation();
@@ -107,9 +108,26 @@ $clResponseInformation = new CrowdLuvResponseInformation();
  if($clFacebookHelper->getFacebookSession() && ! $clFacebookHelper->isNewSession && $clSpotifyHelper->getSpotifyApi()){
  	//$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
 }
-//Update YouTube Subscriptions
- if($clYouTubeHelper->getYouTubeSession() && ! $clFacebookHelper->isNewSession && $clYouTubeHelper->getApi()){
+// YouTube:  If there is an active YouTube session for the user, 
+if($clYouTubeHelper->getYouTubeSession() && ! $clFacebookHelper->isNewSession && $clYouTubeHelper->getApi()){
+  // run the job that periodically updates their YouTube Subscriptions
 	$clRequestInformation->clModel->updateUserYouTubeSubscriptions($clRequestInformation->getLoggedInUserId());
+
+  $ytCreds = json_decode($clYouTubeHelper->getYouTubeSession());
+  //var_dump($ytCreds);
+  //if a new access_token has been obtained for the user, update it in the DB
+  if( isset($ytCreds) && $ytCreds != $clRequestInformation->getLoggedInUserObj()['youtube_access_token']) {
+        //echo "updating yt acc token";
+        $clRequestInformation->clModel->updateFollowerSetting( $clRequestInformation->getLoggedInUserId(), "youtube_access_token", $clYouTubeHelper->getYouTubeSession());
+  }
+  //if a new refresh_token has been obtained for the user, update it in the DB
+  if( isset($ytCreds->refresh_token) && $ytCreds->refresh_token != $clRequestInformation->getLoggedInUserObj()['youtube_refresh_token']){
+        //echo "updating yt refr token";
+        $clRequestInformation->clModel->updateFollowerSetting( $clRequestInformation->getLoggedInUserId(), "youtube_refresh_token",$ytCreds->refresh_token);
+  }
+
+
+
 }
 
 

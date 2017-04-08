@@ -11,8 +11,10 @@ class CrowdLuvYouTubeHelper {
     private $youTubeApi = null;
     private $client = null;
     private $authUrl = null;
+    private $tokenSessionKey = null;
+    private $refreshToken = null;
 
-	function __construct() {
+	function __construct($clUserObj) {
 
 		$this->client = new Google_Client();
 		$this->client->setApplicationName("CrowdLuv");
@@ -20,10 +22,15 @@ class CrowdLuvYouTubeHelper {
 		$this->client->setClientId(GOOGLE_OAUTH_CLIENTID);
 		$this->client->setClientSecret(GOOGLE_OAUTH_SECRET);
 		$this->client->setAccessType("offline");
+		$this->client->setApprovalPrompt('force');
 		$this->client->setScopes('https://www.googleapis.com/auth/youtube');
 		$redirect = "http://localhost:8001/myluvs?ytauth";
 		$this->client->setRedirectUri($redirect);		
 		$this->youTubeApi = new Google_Service_YouTube($this->client);
+		$this->tokenSessionKey = 'youtube_token-' . $this->client->prepareScopes();
+
+		if($clUserObj['youtube_access_token']) $this->client->setAccessToken($clUserObj['youtube_access_token']);
+		if($clUserObj['youtube_refresh_token']) $this->refreshToken = $clUserObj['youtube_access_token'];
 
    	}
 
@@ -52,9 +59,13 @@ class CrowdLuvYouTubeHelper {
    	public function getYouTubeSession(){
 
 		//If a previous call to this method found a session, just return that existing member object.
+		
+		if ($this->client->getAccessToken() && ! $this->client->isAccessTokenExpired() ) {
+		  return ($_SESSION[$this->tokenSessionKey] = $this->client->getAccessToken());
+		}
    		
-   		// Check if an auth token exists for the required scopes
-		$tokenSessionKey = 'youtube_token-' . $this->client->prepareScopes();
+   		// Check the querystring for code indicating the user has been redirected back to CL after authenticating
+		
 		if (isset($_GET['code']) && isset($_GET['ytauth']) ) {
 
 			//Google API doesnt allow redirecting to IP, so the redirect is set to 'localhost' fror devleopment.
@@ -66,16 +77,32 @@ class CrowdLuvYouTubeHelper {
 		  	if ( strval($_SESSION['youtubestate']) !== strval($_GET['state'])) {
 		    	die('The session state did not match.');
 		  	}
-		  	$this->client->authenticate($_GET['code']);
-		  	$_SESSION[$tokenSessionKey] = $this->client->getAccessToken();
+		  	$credentials = $this->client->authenticate($_GET['code']);
+		  	echo "YT Credentials:";	var_dump($credentials);
+		  	// TODO:  Save the refresh token for later use (?)
+
+		  	$_SESSION[$this->tokenSessionKey] = $this->client->getAccessToken();
+		  	//echo "YT Acess Token:";
+		  	//var_dump($this->client->getAccessToken());
+
 		  	header('Location: myluvs' );
 		}
-		if (isset($_SESSION[$tokenSessionKey])) {
-		  $this->client->setAccessToken($_SESSION[$tokenSessionKey]);
+		//If we have an Access Token (either previously stored durin this session, or just obtained on this load)
+			//then set the client object to use that token
+		if (isset($_SESSION[$this->tokenSessionKey])) {
+		  $this->client->setAccessToken($_SESSION[$this->tokenSessionKey]);
 		}
+		//check if the token has expired, and refresh if so
+		if ($this->client->getAccessToken() && $this->client->isAccessTokenExpired() ) {
+			echo "Youtube token is expired"; die;
+			//To-Do:  if YT sdk doesnt auto-refresh, 
+			//$this->client->refreshToken($this->refreshToken);
+
+		}
+
 		// Check to ensure that the access token was successfully acquired and it hasnt expired.
 		if ($this->client->getAccessToken() && ! $this->client->isAccessTokenExpired() ) {
-		  return ($_SESSION[$tokenSessionKey] = $this->client->getAccessToken());
+		  return ($_SESSION[$this->tokenSessionKey] = $this->client->getAccessToken());
 		}
 
 		return null;
@@ -99,7 +126,7 @@ class CrowdLuvYouTubeHelper {
             $ytUn[6] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'music';
             $ytUn[7] = str_replace(' ', '', $clBrandObj['fb_page_name']) . 'official';
 
-            $recentVideos = $this->getRecentUploadsForChannel( [$clBrandObj['youtube_channel_id']], $ytUn,'300');  
+            $recentVideos = $this->getRecentUploadsForChannel( [$clBrandObj['youtube_channel_id']], $ytUn,'6');  
         } catch(Exception $e) {
             echo "Exception calling Youtube api";
             var_dump($e); die;

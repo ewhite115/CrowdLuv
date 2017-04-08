@@ -73,8 +73,8 @@ class CrowdLuvYouTubeHelper {
 		if (isset($_SESSION[$tokenSessionKey])) {
 		  $this->client->setAccessToken($_SESSION[$tokenSessionKey]);
 		}
-		// Check to ensure that the access token was successfully acquired.
-		if ($this->client->getAccessToken()) {
+		// Check to ensure that the access token was successfully acquired and it hasnt expired.
+		if ($this->client->getAccessToken() && ! $this->client->isAccessTokenExpired() ) {
 		  return ($_SESSION[$tokenSessionKey] = $this->client->getAccessToken());
 		}
 

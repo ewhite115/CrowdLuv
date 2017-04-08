@@ -139,3 +139,10 @@
 
 <div class="container" id="content">
  
+
+<?php 
+  if ($clResponseInformation->clSiteSection == "follower") include(ROOT_PATH . 'views/partial_follower_account_connections.php'); ?>
+
+
+
+

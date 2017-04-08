@@ -5,8 +5,6 @@
 
     include(ROOT_PATH . 'inc/partial_confirm_loggedin_user.php');
 
-    $mobileStatus = $CL_model->getMobileValidityForFollower($clRequestInformation->getLoggedInUserObj()['crowdluv_uid'] );
-    $emailStatus = $CL_model->getEmailValidityForFollower($clRequestInformation->getLoggedInUserObj()['crowdluv_uid'] );
 
 
     //Get the list of talent this user luvs 

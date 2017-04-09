@@ -17,6 +17,7 @@ class CrowdLuvFacebookHelper {
     private $facebookLoginHelper = null;
     private $facebookJavascriptLoginHelper = null;
     private $talentLoginURL = null;
+    public static $pageFieldsToImport = "id,name,category,best_page,bio,description,is_community_page,is_unclaimed,is_verified,name_with_location_descriptor,username,website,link"; //verification_status,
 
 
 	//TODO:  figure out how we intially ask user//followers for only perms 
@@ -333,7 +334,20 @@ class CrowdLuvFacebookHelper {
 	}
 
 
+	public function getFacebookPageObjectByNameSearch($name){
 
+		$reqString = "/search?type=page&q=" . $name . "&fields=" . CrowdLuvFacebookHelper::$pageFieldsToImport;
+				//id,name,best_page,bio,description,is_community_page,is_unclaimed,is_verified,name_with_location_descriptor,username,verification_status,website";
+		$request = new FacebookRequest( $this->getFacebookSession(), 'GET', $reqString );
+
+    	$response = $request->execute();
+	    // get response
+	    $fbObject = $response->getGraphObject()->asArray();
+	    //echo "<pre>"; var_dump($fbObject); echo "</pre>"; die;
+
+	    return $fbObject;
+
+	}
 
 
 

@@ -150,7 +150,6 @@ if($clYouTubeHelper->getYouTubeSession() && ! $clFacebookHelper->isNewSession &&
 
 
 
-}
 
 
 /**

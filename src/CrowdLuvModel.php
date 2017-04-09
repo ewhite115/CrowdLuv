@@ -815,58 +815,37 @@ class CrowdLuvModel {
                 
         //Artist Metadata (Music-Story) Import Job
         cldbgmsg("<b>Import Job: MetaData Retrieval </b>");
-
-
+        
         //Determine whether the last MetaData-Retrieval job was run within the last X minutes. 
-        try {                    
-            $sql =  "SELECT * FROM talent where timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 48 hour)";
-            $results = $this->cldb->prepare($sql);
-            $results->execute();
-
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            exit;
-        }    
-        $data =  $results->fetchAll(PDO::FETCH_ASSOC);
-        //echo "result of query to determine whether last metadata import job was run within x minutes";  var_dump($data); die;
+        $data = $this->selectTableValue("*", 
+                                "talent",  
+                                "timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 48 hour)"
+                                );
+                    //echo "result of query to determine whether last metadata import job was run within x minutes";  var_dump($data); die;
         // If any results were returned, that means it has been less than N minutes since last import 
         if(sizeof($data) > 0) { cldbgmsg("-Time interval has not lapsed - aborting"); return;}
 
-        //Determine the X number of brands with the most 'stale' metadata spotify ID 
-        try {                    
-                                                //(spotify_artist_id IS NULL) OR (music_story_id IS NULL) OR (youtube_channel_id IS NULL)  OR
-            $sql =  "SELECT * 
-                     FROM talent 
-                     where (fb_is_verified = 1) and (disabled = 0) 
-                     ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 20";
-            $results = $this->cldb->prepare($sql);
-            $results->execute();
-
-        } catch (Exception $e) {
-            echo "Data could not be retrieved from the database. " . $e;
-            exit;
-        }    
-        $staleBrands = $results->fetchAll(PDO::FETCH_ASSOC);
+        //Determine the X number of brands with the most 'stale' metadata 
+        $staleBrands = $this->selectTableValue(
+                            "*",  
+                            "talent",
+                            "(fb_is_verified = 1) 
+                              and (disabled = 0) 
+                            ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 20");
 
         if(sizeof($staleBrands) > 0 ){
-            //$this->clBrandMetaDataHelper = new CrowdLuvBrandMetaDataHelper();
             
-            //For those X brands, import their events
+            //For those X brands, do a metadata retrieval
             foreach($staleBrands as $staleBrand){
                 cldbgmsg("-Attempting to retrieve MetaData for " . $staleBrand['fb_page_name']);
                 //Retrieve metadata 
                 $metaData = $this->clBrandMetaDataHelper->getMetaDataForBrand($staleBrand);
                 
                 //Update DB to reflect that a retrieval was attempted.
-                //$this->updateTableValue("talent", "timestamp_last_music_story_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
                 $this->updateTableValue("talent", "timestamp_last_spotify_artist_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
                 $this->updateTableValue("talent", "timestamp_last_youtube_channel_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
 
                 //Update the DB with the metadata that was found, if any
-                // if($metaData['music-story-id']){
-                //     //cldbgmsg("Found Music-Story ID:" . $metaData['music-story-id']);
-                //     $this->updateTableValue("talent", "music_story_id", "'" . $metaData['music-story-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
-                // }//if
                 if($metaData['spotify-artist-id']){
                     //cldbgmsg("Found spotify ID:" . $metaData['spotify-artist-id']);
                     $this->updateTableValue("talent", "spotify_artist_id", "'" . $metaData['spotify-artist-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
@@ -878,7 +857,7 @@ class CrowdLuvModel {
 
             }//foreach
 
-        }// if    Artist Metadata (Music-Story) Spotify-ID import
+        }// if    Artist Metadata import
 
 
     }//runMetaDataImportJob

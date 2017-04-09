@@ -50,6 +50,7 @@ require_once ROOT_PATH . 'vendor/autoload.php';
 
 //Create a CrowdLuvFacebookHelper 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
+
 //Create CrowdLuvMusicStoryHelper
 $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
 
@@ -103,8 +104,9 @@ $clResponseInformation = new CrowdLuvResponseInformation();
   *  add an entry in db indicating this user likes/follows the brand 
   *  Add/create new brands if not already present
   */
- //Update Facebook-Likes
- if($clFacebookHelper->getFacebookSession()){
+
+// Facebook:   Update Facebook-Likes
+if($clFacebookHelper->getFacebookSession()){
  	$clRequestInformation->clModel->updateUserFacebookLikes($clRequestInformation->getLoggedInUserId());
 
 }//  
@@ -125,6 +127,7 @@ if($clFacebookHelper->getFacebookSession() && ! $clFacebookHelper->isNewSession 
   //Update which brands the user follows on SP
  	//$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
 }
+
 // YouTube:  If there is an active YouTube session for the user, 
 if($clYouTubeHelper->getYouTubeSession() && ! $clFacebookHelper->isNewSession && $clYouTubeHelper->getApi()){
   // run the job that periodically updates their YouTube Subscriptions
@@ -142,6 +145,8 @@ if($clYouTubeHelper->getYouTubeSession() && ! $clFacebookHelper->isNewSession &&
         //echo "updating yt refr token";
         $clRequestInformation->clModel->updateFollowerSetting( $clRequestInformation->getLoggedInUserId(), "youtube_refresh_token",$ytCreds->refresh_token);
   }
+
+}
 
 
 

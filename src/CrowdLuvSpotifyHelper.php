@@ -179,9 +179,6 @@ class CrowdLuvSpotifyHelper {
             $fb_user = null;
         }
         return null;                   
-
-
-
    	}//getSpotifyuserprofile
 
 
@@ -216,6 +213,28 @@ class CrowdLuvSpotifyHelper {
 	    return true;
 	}//ChekSpotifyPermissions
 
+
+
+
+   	/**
+   	 * [getArtistObjectByNameSearch Uses Spotify Search endpoint to retrieve and return anspotiy Artist object]
+   	 * @param  [type] $name [String describing the name to search for]
+   	 * @return [Object]       [Spotify 'Artist' object - returns the first result]
+   	 */
+   	public function getArtistObjectByNameSearch($name){
+
+   		$searchResult = $this->getSpotifyApi()->search($name, 'artist', ['market' => 'us']);
+   		//var_dump($searchResult->artists->items[0]);die;
+
+   		if(! isset($searchResult->artists->items) || sizeof( $searchResult->artists->items ) < 1  ) return null;
+
+   		$artistObj = $this->getSpotifyApi()->getArtist( $searchResult->artists->items[0]->id);
+
+   		//var_dump($artistObj); die;
+
+   		return $artistObj;
+
+   	}
 
 
 

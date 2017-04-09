@@ -16,7 +16,9 @@ class CrowdLuvModel {
     private $spotifyApi;
     private $clSpotifyHelper;
     private $clMusicStoryHelper;
+    private $clBrandMetaDataHelper;
     private $clYouTubeHelper;
+
 
     public static $SHARETYPES = [ 'crowdluv-talent-landing-page', 'crowdluv-event'];
     public static $SHAREMETHODS = [ 'facebook-share', 'facebook-send', 'twitter-tweet' ];
@@ -27,6 +29,7 @@ class CrowdLuvModel {
     public function setSpotifyApi($sp){ $this->spotifyApi = $sp;   }
     public function setSpotifyHelper($sp){ $this->clSpotifyHelper = $sp;   }
     public function setMusicStoryHelper($ms){ $this->clMusicStoryHelper = $ms;   }
+    public function setBrandMetaDataHelper($md){ $this->clBrandMetaDataHelper = $md;   }
     public function setYouTubeHelper($yt){ $this->clYouTubeHelper = $yt;   }
 
 
@@ -472,7 +475,6 @@ class CrowdLuvModel {
 
         }
         
-        
         $this->updateTableValue("follower", "timestamp_last_spotify_follow_import", "now()", "crowdluv_uid = '" . $clUid . "'" );
     }
 
@@ -645,7 +647,8 @@ class CrowdLuvModel {
 
         //If it doesnt exist- If it is within an allowed category and a verified fb page, create a new brand
         //Retrieve FB graph object for that ID
-        $fbPageObj = $this->clFacebookHelper->getFacebookGraphObjectById($fbId, "id,name,category,is_verified,link");                                
+        //$fbPageObj = $this->clFacebookHelper->getFacebookGraphObjectById($fbId, "id,name,category,is_verified,link");                                
+        $fbPageObj = $this->clFacebookHelper->getFacebookGraphObjectById($fbId, CrowdLuvFacebookHelper::$pageFieldsToImport); 
         //var_dump($fbPageObj);die;
         if(  $fbPageObj['is_verified']  &&  in_array($fbPageObj['category'], CrowdLuvFacebookHelper::$facebookLikeCategoriesToCreateStubsFor)){
             cldbgmsg("-Found a facebook page that does not have a corresponding brand -- facebook ID " . $fbId . " - " . $fbPageObj['name'] );
@@ -810,10 +813,10 @@ class CrowdLuvModel {
      */
     public function runMetaDataRetrievalJob(){
                 
-        cldbgmsg("<b>Import Job: MetaData Retrieval </b>");
- 
-
         //Artist Metadata (Music-Story) Import Job
+        cldbgmsg("<b>Import Job: MetaData Retrieval </b>");
+
+
         //Determine whether the last MetaData-Retrieval job was run within the last X minutes. 
         try {                    
             $sql =  "SELECT * FROM talent where timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 48 hour)";
@@ -829,11 +832,13 @@ class CrowdLuvModel {
         // If any results were returned, that means it has been less than N minutes since last import 
         if(sizeof($data) > 0) { cldbgmsg("-Time interval has not lapsed - aborting"); return;}
 
-        //cldbgmsg("Invoking Music-Story Import Job");
         //Determine the X number of brands with the most 'stale' metadata spotify ID 
         try {                    
                                                 //(spotify_artist_id IS NULL) OR (music_story_id IS NULL) OR (youtube_channel_id IS NULL)  OR
-            $sql =  "SELECT * FROM talent where (bandpage_id IS NULL) ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 10";
+            $sql =  "SELECT * 
+                     FROM talent 
+                     where (fb_is_verified = 1) and (disabled = 0) 
+                     ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 20";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -844,25 +849,24 @@ class CrowdLuvModel {
         $staleBrands = $results->fetchAll(PDO::FETCH_ASSOC);
 
         if(sizeof($staleBrands) > 0 ){
-            $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
+            //$this->clBrandMetaDataHelper = new CrowdLuvBrandMetaDataHelper();
             
             //For those X brands, import their events
             foreach($staleBrands as $staleBrand){
-                cldbgmsg("Attempting to retrieve MetaData for " . $staleBrand['fb_page_name']);
+                cldbgmsg("-Attempting to retrieve MetaData for " . $staleBrand['fb_page_name']);
                 //Retrieve metadata 
-                $metaData = $clMusicStoryHelper->getMetaDataForBrand($staleBrand);
+                $metaData = $this->clBrandMetaDataHelper->getMetaDataForBrand($staleBrand);
                 
                 //Update DB to reflect that a retrieval was attempted.
-                $this->updateTableValue("talent", "timestamp_last_music_story_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
+                //$this->updateTableValue("talent", "timestamp_last_music_story_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
                 $this->updateTableValue("talent", "timestamp_last_spotify_artist_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
                 $this->updateTableValue("talent", "timestamp_last_youtube_channel_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
-                //$this->updateTableValue("talent", "timestamp_last_bandpage_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
 
                 //Update the DB with the metadata that was found, if any
-                if($metaData['music-story-id']){
-                    //cldbgmsg("Found Music-Story ID:" . $metaData['music-story-id']);
-                    $this->updateTableValue("talent", "music_story_id", "'" . $metaData['music-story-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
-                }//if
+                // if($metaData['music-story-id']){
+                //     //cldbgmsg("Found Music-Story ID:" . $metaData['music-story-id']);
+                //     $this->updateTableValue("talent", "music_story_id", "'" . $metaData['music-story-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
+                // }//if
                 if($metaData['spotify-artist-id']){
                     //cldbgmsg("Found spotify ID:" . $metaData['spotify-artist-id']);
                     $this->updateTableValue("talent", "spotify_artist_id", "'" . $metaData['spotify-artist-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
@@ -871,11 +875,7 @@ class CrowdLuvModel {
                     //cldbgmsg("Found YouTube Channel ID:" . $metaData['youtube-channel-id']);
                     $this->updateTableValue("talent", "youtube_channel_id", "'" . $metaData['youtube-channel-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
                 }//if
-                /*if($metaData['bandpage-id']){
-                    //cldbgmsg("Found bandpage ID:" . $metaData['bandpage-id']);
-                    $this->updateTableValue("talent", "bandpage_id", "'" . $metaData['bandpage-id'] . "'", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'");
-                }//if
-                */
+
             }//foreach
 
         }// if    Artist Metadata (Music-Story) Spotify-ID import

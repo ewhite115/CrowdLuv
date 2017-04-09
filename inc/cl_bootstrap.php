@@ -50,7 +50,6 @@ require_once ROOT_PATH . 'vendor/autoload.php';
 
 //Create a CrowdLuvFacebookHelper 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
-
 //Create CrowdLuvMusicStoryHelper
 $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
 
@@ -60,7 +59,6 @@ $CL_model = new CrowdLuvModel();
 $CL_model->setDB((new CrowdLuvDBFactory())->getCrowdLuvDB());
 $CL_model->setFacebookHelper($clFacebookHelper);
 $CL_model->setMusicStoryHelper($clMusicStoryHelper);
-
 
 //create a CrowdLuvRequest   object
 $clRequestInformation = new CrowdLuvRequestInformation();
@@ -73,12 +71,17 @@ $clYouTubeHelper = new CrowdLuvYouTubeHelper($clRequestInformation->getLoggedInU
 $clRequestInformation->clYouTubeHelper = $clYouTubeHelper;
 $CL_model->setYouTubeHelper($clYouTubeHelper);
 
-
 //Create Spotify Helper
 $clSpotifyHelper = new CrowdLuvSpotifyHelper($clRequestInformation->getLoggedInUserObj());
 $CL_model->setSpotifyHelper($clSpotifyHelper);
 $clRequestInformation->clSpotifyHelper = $clSpotifyHelper;
 
+//Create CrowdLuvBrandMetaDataStoryHelper
+$clBrandMetaDataHelper = new CrowdLuvBrandMetaDataHelper();
+$clBrandMetaDataHelper->clFacebookHelper = $clFacebookHelper;
+$clBrandMetaDataHelper->clYouTubeHelper = $clYouTubeHelper;
+$clBrandMetaDataHelper->clSpotifyHelper = $clSpotifyHelper;
+$CL_model->setBrandMetaDataHelper($clBrandMetaDataHelper);
 
 
 

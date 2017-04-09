@@ -12,19 +12,26 @@ class CrowdLuvSpotifyHelper {
  
     private $spotifyApi = null;
     private $spotifySession = null;
+    private $retrievalAttemptFlag = false; //Used to indicate whether an attempt has been made to retrieve the session, so that we dont keep doing it
     private $spotifyAuthorizeUrl = null;
     private $spotifyAccessToken = null;
+    private $spotifyAccessTokenExpiration = null;
+    private $spotifyRefreshToken = null;
 
 
 
-
-	function __construct() {
+	function __construct($clUserObj) {
 
 		//Instantionate the JWilsson Spotify API Object
 		$this->spotifyApi = new SpotifyWebAPI\SpotifyWebAPI();
 
 		//Instantiate a JWilsson Spotify API Session object
 		$this->spotifySession = new SpotifyWebAPI\Session(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, CLADDR . "spotifycallback.php?spotifyauth" );
+
+		//If there is an existing stored refresh token for the user, capture it for use if needed when retrieving session/api
+		if($clUserObj['spotify_access_token']) $this->spotifyAccessToken = $clUserObj['spotify_access_token']; 
+		if($clUserObj['spotify_access_token_expiration']) $this->spotifyAccessTokenExpiration = $clUserObj['spotify_access_token_expiration'];
+		if($clUserObj['spotify_refresh_token']) $this->spotifyRefreshToken = $clUserObj['spotify_refresh_token'];
 
    	}
 
@@ -50,6 +57,12 @@ class CrowdLuvSpotifyHelper {
    		else return null;
    	}
 
+   	public function getSpotifyAccessToken(){
+
+   		return $this->spotifyAccessToken;
+   	}
+
+
    	/**
    	 * [getSpotifySession description]
    	 * @return [SpotifySession] [looks for a Spotify Session and returns a SpotifySession object if found,  null if not]
@@ -57,8 +70,8 @@ class CrowdLuvSpotifyHelper {
    	public function getSpotifySession(){
 
    		//If a previous call to this method found a Spotify session, just return that existing member object.
-   		//$tk = $this->spotifySession->getAccessToken();
-   		if ($this->spotifyAccessToken) {return $this->spotifySession;}
+  		if ($this->retrievalAttemptFlag) {return $this->spotifySession;}
+  		$this->retrievalAttemptFlag = true;
 
 		cldbgmsg("<b>Checking for Spotify Session..</b>");
 
@@ -74,77 +87,72 @@ class CrowdLuvSpotifyHelper {
 		   * a flad to include explanation that the permission are required
 		   */
 		if((isset( $_GET['error'] ) && $_GET['error'] == 'access_denied')){
-		     header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
-		     die(); 
+		    header('Location: ' . CLADDR . "?sp_user_denied_permissions=1" );
+		    die(); 
 		}
    		
 		/** look for a previously saved Spotify token in this session
 		   * 
 		   */   
-	    cldbgmsg("-Checking for spotify token in php session..");	    
-		if ( isset( $_SESSION ) && isset( $_SESSION['spotify_token'] ) ) {
-		    cldbgmsg("-Found spotify_token in session.  Validating ....");	    
+	    cldbgmsg("-Checking for stored spotify token..");	    
+		if ( $this->spotifyAccessToken ) {
+		    cldbgmsg("-Found stored spotify_token.  Validating ....");	    
 			
 			//Validate the token (check if it has past it's expiration date)
-			//$tokExp = $_SESSION['spotify_token_expiration'];
 		    // Check if the token's expiration time has passed
-		    if ( ! isset($_SESSION['spotify_token_expiration']) || $_SESSION['spotify_token_expiration'] < time() ) {
-	    	    cldbgmsg("--spotify_token from session-var expired on " . date('m/d/Y', $this->spotifySession->getTokenExpiration()));
-	      		
-	      		$this->spotifyAccessToken = null;
-	      		$_SESSION['spotify_token'] = null;
-	      		$_SESSION['spotify_token_expiration'] = null;
-
+		    if ( ! $this->spotifyAccessTokenExpiration || $this->spotifyAccessTokenExpiration < time() ) {
+	    	    cldbgmsg("-- stored spotify token expired on " . date('m/d/Y', $this->spotifyAccessTokenExpiration));	      		
+	    	    //refresh it autmatically
+				$this->spotifySession->refreshAccessToken($this->spotifyRefreshToken);
+				cldbgmsg("-Refreshed spotify token with new expiration of " . date('m/d/Y', $this->spotifyAccessTokenExpiration) );
+			    $this->isNewSession = true;
+			    	      	
 	      	}
 	      	else{    
-	      		cldbgmsg("--Spotify token from php session is still valid..");	
-				//Update the session Object with that token 
-				$this->spotifyAccessToken = $_SESSION['spotify_token'];
-				$this->spotifyApi->setAccessToken($_SESSION['spotify_token']);
+	      		cldbgmsg("--Stored Spotify token is still valid..");	
+				//Update the api Object with that token 
+				$this->spotifyApi->setAccessToken($this->spotifyAccessToken);
 				return $this->spotifySession;
 			}				
 
 		}  
-		cldbgmsg("-Did not find spotify token in php session..");	
-
-		//We didnt find a previously saved session token, so check to see if this is a new 
-			//spotify login from a redirect
-		$this->isNewSession = false;  // This flag will be used later to conditionally execute code only if it's a 'new' session
-	    try {
-	     	//Check for a new sessions coming from a redirect
-	      	cldbgmsg("-Checking for new Spotify session from redirect");
-			if(isset($_GET['code']) && isset($_GET['spotifyauth'])){
-				cldbgmsg("-Found Spotify redirect code. Requesting token..");
-				$this->spotifySession->requestAccessToken($_GET['code']);
-				$this->spotifyAccessToken = $_SESSION['spotify_token'] = $accessToken = $this->spotifySession->getAccessToken();
-				$_SESSION['spotify_token_expiration'] = $this->spotifySession->getTokenExpiration();
-				// Set the access token on the API wrapper
-				$this->spotifyApi->setAccessToken($accessToken);
-         	    cldbgmsg("-Obtained new token with expiration of " . date('m/d/Y', $this->spotifySession->getTokenExpiration()) );
-			    $this->isNewSession = true;
+		else{
+			cldbgmsg("-Did not find stored spotify token..");	
+			//We didnt find a previously saved session token, so check to see if this is a new 
+				//spotify login from a redirect
+			$this->isNewSession = false;  // This flag will be used later to conditionally execute code only if it's a 'new' session
+		    try {
+		     	//Check for a new sessions coming from a redirect
+		      	cldbgmsg("-Checking for new Spotify session from redirect");
+				if(isset($_GET['code']) && isset($_GET['spotifyauth'])){
+					cldbgmsg("-Found Spotify redirect code. Requesting token..");
+					$this->spotifySession->requestAccessToken($_GET['code']);
+	         	    cldbgmsg("-Obtained new token with expiration of " . date('m/d/Y', $this->spotifySession->getTokenExpiration()));	
+				    $this->isNewSession = true;
+					
+				}
+				else{
+					cldbgmsg("-Did not find Spotify redirect code.");
+					
+				}	    
+		    } catch( Exception $ex ) {
+			      // When validation fails or other local issues
+			      echo "Exception getting session in CrowdLuvSpotifyHelper->getSpotifySession()";
+			      echo "<pre>"; var_dump($ex); echo "</pre>";
+			      die;
 			}
-			else{
-				cldbgmsg("-Did not find Spotify redirect code.");
-				
-			}	    
-	    } catch( Exception $ex ) {
-		      // When validation fails or other local issues
-		      echo "Exception getting session in CrowdLuvSpotifyHelper->getSpotifySession()";
-		      echo "<pre>"; var_dump($ex); echo "</pre>";
-		      die;
+			     
 		}
-		  
- 		/*
-	  	if ($this->spotifySession->getAccessToken()) {  
-	      cldbgmsg("Active Spotify session with token " . $this->spotifySession->getAccessToken());
-	      //cldbgmsg("Active Spotify session <br>" . $this->spotifySession);
-	      // save the Spotify session token to persistent session storage 
-	      $_SESSION['spotify_token'] = $this->spotifySession->getAccessToken();
 
-	  	}*/
+		$this->spotifyAccessToken = $this->spotifySession->getAccessToken();
+		$this->spotifyAccessTokenExpiration = $this->spotifySession->getTokenExpiration();
+		// Set the access token on the API wrapper
+		$this->spotifyApi->setAccessToken($this->spotifyAccessToken);
 
-	  	
- 		//return $this->spotifySession; 
+	    if($this->spotifyAccessToken) return $this->spotifySession;
+	    else return null;
+
+
 
    	}  //getSpotifySession
 

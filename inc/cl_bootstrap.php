@@ -50,8 +50,6 @@ require_once ROOT_PATH . 'vendor/autoload.php';
 
 //Create a CrowdLuvFacebookHelper 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
-//Create Spotify Helper
-$clSpotifyHelper = new CrowdLuvSpotifyHelper();
 //Create CrowdLuvMusicStoryHelper
 $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
 
@@ -60,8 +58,6 @@ $clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
 $CL_model = new CrowdLuvModel();
 $CL_model->setDB((new CrowdLuvDBFactory())->getCrowdLuvDB());
 $CL_model->setFacebookHelper($clFacebookHelper);
-//$CL_model->setSpotifyApi($spotifyApi);
-$CL_model->setSpotifyHelper($clSpotifyHelper);
 $CL_model->setMusicStoryHelper($clMusicStoryHelper);
 
 
@@ -69,13 +65,21 @@ $CL_model->setMusicStoryHelper($clMusicStoryHelper);
 $clRequestInformation = new CrowdLuvRequestInformation();
 $clRequestInformation->clFacebookHelper = $clFacebookHelper;
 $clRequestInformation->clModel = $CL_model;
-$clRequestInformation->clSpotifyHelper = $clSpotifyHelper;
 $clRequestInformation->clMusicStoryHelper = $clMusicStoryHelper;
 
 //Create CrowdLuvYouTubeHelper
 $clYouTubeHelper = new CrowdLuvYouTubeHelper($clRequestInformation->getLoggedInUserObj());
 $clRequestInformation->clYouTubeHelper = $clYouTubeHelper;
 $CL_model->setYouTubeHelper($clYouTubeHelper);
+
+
+//Create Spotify Helper
+$clSpotifyHelper = new CrowdLuvSpotifyHelper($clRequestInformation->getLoggedInUserObj());
+$CL_model->setSpotifyHelper($clSpotifyHelper);
+$clRequestInformation->clSpotifyHelper = $clSpotifyHelper;
+
+
+
 
 //create a CrowdLuvResponse    object
 $clResponseInformation = new CrowdLuvResponseInformation();
@@ -103,9 +107,22 @@ $clResponseInformation = new CrowdLuvResponseInformation();
  if($clFacebookHelper->getFacebookSession()){
  	$clRequestInformation->clModel->updateUserFacebookLikes($clRequestInformation->getLoggedInUserId());
 
- }//  
- //Update Spotify-Follows
- if($clFacebookHelper->getFacebookSession() && ! $clFacebookHelper->isNewSession && $clSpotifyHelper->getSpotifyApi()){
+}//  
+
+// Spotify:  check for session, update stored tokens
+if($clFacebookHelper->getFacebookSession() && ($clSpotifyHelper->getSpotifySession())){  
+  //Store the user's spotify access tokens if it changed
+  if($clSpotifyHelper->getSpotifyAccessToken() != $clRequestInformation->getLoggedInUserObj()['spotify_access_token']) {
+        cldbgmsg("updating user's stored spotify AccessToken");
+        $clRequestInformation->clModel->updateFollowerSetting( $clRequestInformation->getLoggedInUserId(), "spotify_access_token", $clSpotifyHelper->getSpotifyAccessToken() );
+        $clRequestInformation->clModel->updateFollowerSetting( $clRequestInformation->getLoggedInUserId(), "spotify_access_token_expiration", $clRequestInformation->clSpotifyHelper->getSpotifySession()->getTokenExpiration());
+
+  }
+}
+
+//Spotify:  Update Spotify-Follows
+if($clFacebookHelper->getFacebookSession() && ! $clFacebookHelper->isNewSession && $clSpotifyHelper->getSpotifyApi()){
+  //Update which brands the user follows on SP
  	//$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
 }
 // YouTube:  If there is an active YouTube session for the user, 

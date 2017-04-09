@@ -119,9 +119,8 @@ class CrowdLuvModel {
      */
     public function update_follower_setting($cl_uidt, $prefname, $prefval){
         
-        $allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms', 'deactivated', 'crowdluv_placeid'];
-        $allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms', 'deactivated', 'crowdluv_placeid', 'youtube_access_token', 'youtube_refresh_token'];
-        if(! in_array($prefname, $allowed_prefnames)) {return 0;}
+        //$allowed_prefnames = ['firstname', 'lastname', 'email', 'mobile', 'allow_cl_email', 'allow_cl_sms', 'deactivated', 'crowdluv_placeid', 'youtube_access_token', 'youtube_refresh_token', 'spotify_access_token', 'spotify_refresh_token'];
+        //if(! in_array($prefname, $allowed_prefnames)) {return 0;}
         if(! isset($prefval) || $prefval == "") {return 0;}
 
         try {

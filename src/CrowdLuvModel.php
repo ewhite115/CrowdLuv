@@ -1593,6 +1593,8 @@ class CrowdLuvModel {
         if($data['likes_on_facebook']) $score += 50;
         //If the follower follows the brand on spotify, + luvpoints
         if($data['follows_on_spotify']) $score += 50;
+        //If the follower has saved tracks for the brand on spotify, + luvpoints
+        if($data['savedtrack_on_spotify']) $score += 10;
         //If the brand is one of the user's "top artists" on spotify, + points
         if($data['spotify_top_artists_short_term'] || $data['spotify_top_artists_medium_term']) $score += 50;
         //If the user subscribes to the brand on youTube  +points

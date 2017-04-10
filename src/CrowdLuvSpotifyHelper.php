@@ -215,6 +215,45 @@ class CrowdLuvSpotifyHelper {
 
 
 
+	/**
+	 * [getAllUserFollowedArtists Retrieves full list of artists the user is following]
+	 * @return [type] [description]
+	 */
+	public function getAllUserFollowedArtists(){
+
+
+		$followedArtists = null;
+        //We may need to make multiple requests to get all the likes.
+        // Loop making api call ..  
+        $done=false;
+        //Make the API call request object for retrieving user's likes
+        $following = null;  $after = null; $i = 0;
+        do{  
+            try{                        
+                  // Get the next set of spotify artist the user follows
+                  cldbgmsg("making a pass");
+                  try{$following = $this->getSpotifyApi()->getUserFollowedArtists(['limit' => '50', 'after' => $after]);}
+                  catch(Exception $e){ cldbgmsg("Exception calling spotify api in import job" . $e);  return;}
+                  //echo "<pre>"; var_dump($following); echo "</pre>"; //die;
+                  if(isset($following->artists->items) && sizeof($following->artists->items) > 0) {  
+                    //Loop through each spotify artist that the user follows, 
+                    foreach ($following->artists->items as $artist) {
+						$followedArtists[] = $artist;
+                    }//foreach
+                } //if we got data back fro api call
+
+            }catch (Exception $e) {cldbgmsg("Exception importing spotify likes for the user -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); } 
+            //Create a new request and repeat if there are more 
+            if(isset($following->artists->cursors)) $after = $following->artists->cursors->after;
+          
+        } while ( $after );
+
+        return $followedArtists;
+
+
+	}
+
+
 
    	/**
    	 * [getArtistObjectByNameSearch Uses Spotify Search endpoint to retrieve and return anspotiy Artist object]

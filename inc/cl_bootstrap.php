@@ -121,14 +121,13 @@ if($clFacebookHelper->getFacebookSession() && ($clSpotifyHelper->getSpotifySessi
         cldbgmsg("updating user's stored spotify AccessToken");
         $clRequestInformation->clModel->updateFollowerSetting( $clRequestInformation->getLoggedInUserId(), "spotify_access_token", $clSpotifyHelper->getSpotifyAccessToken() );
         $clRequestInformation->clModel->updateFollowerSetting( $clRequestInformation->getLoggedInUserId(), "spotify_access_token_expiration", $clRequestInformation->clSpotifyHelper->getSpotifySession()->getTokenExpiration());
-
   }
 }
 
 //Spotify:  Update Spotify-Follows
 if($clFacebookHelper->getFacebookSession() && ! $clFacebookHelper->isNewSession && $clSpotifyHelper->getSpotifyApi()){
   //Update which brands the user follows on SP
- 	//$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
+ 	$clRequestInformation->clModel->updateUserSpotifyFollows($clRequestInformation->getLoggedInUserId());
 }
 
 // YouTube:  If there is an active YouTube session for the user, 

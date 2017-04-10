@@ -345,6 +345,7 @@ class CrowdLuvFacebookHelper {
 	    $fbObject = $response->getGraphObject()->asArray();
 	    //echo "<pre>"; var_dump($fbObject); echo "</pre>"; die;
 
+	    if( ! isset($fbObject['data'])  || sizeof($fbObject['data']) ==0 ) return null;
 	    return $fbObject['data'][0];
 
 	}

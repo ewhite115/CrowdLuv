@@ -44,7 +44,7 @@ class CrowdLuvSpotifyHelper {
 		if(isset($this->spotifyAuthorizeUrl)) return $this->spotifyAuthorizeUrl;
 
 		//Generate an authorization URL
-		$scopes = array('playlist-read-private', 'user-read-private', 'user-follow-read', 'user-top-read');
+		$scopes = array('playlist-read-private', 'user-read-private', 'user-follow-read', 'user-top-read', 'user-library-read');
 		return $this->spotifyAuthorizeUrl = $this->spotifySession->getAuthorizeUrl(array('scope' => $scopes));
 
    	}
@@ -70,7 +70,10 @@ class CrowdLuvSpotifyHelper {
    	public function getSpotifySession(){
 
    		//If a previous call to this method found a Spotify session, just return that existing member object.
-  		if ($this->retrievalAttemptFlag) {return $this->spotifySession;}
+  		if ($this->retrievalAttemptFlag) {
+  			if(strlen($this->spotifyAccessToken) < 2) return null;
+	    	else return $this->spotifySession;
+  		}
   		$this->retrievalAttemptFlag = true;
 
 		cldbgmsg("<b>Checking for Spotify Session..</b>");
@@ -133,6 +136,7 @@ class CrowdLuvSpotifyHelper {
 				}
 				else{
 					cldbgmsg("-Did not find Spotify redirect code.");
+
 					
 				}	    
 		    } catch( Exception $ex ) {
@@ -149,8 +153,10 @@ class CrowdLuvSpotifyHelper {
 		// Set the access token on the API wrapper
 		$this->spotifyApi->setAccessToken($this->spotifyAccessToken);
 
-	    if($this->spotifyAccessToken) return $this->spotifySession;
-	    else return null;
+	    //echo  "spat"; var_dump($this->spotifyAccessToken);
+	    if(strlen($this->spotifyAccessToken) < 2) return null;
+	    else return $this->spotifySession;
+
 
 
 
@@ -252,6 +258,49 @@ class CrowdLuvSpotifyHelper {
 
 
 	}
+
+
+	public function getUserSavedTracksArtists(){
+
+
+		$allSavedTracks = null;
+		$allArtists = null;
+        //We may need to make multiple requests to get all the likes.
+        // Loop making api call ..  
+        $done=false;
+        //Make the API call request object for retrieving user's likes
+        $limit = '50'; $offset=0;
+        do{  
+            try{                        
+                  // Get the next set of spotify artist the user follows
+                  cldbgmsg("making a pass");
+                  try{$savedTracks = $this->getSpotifyApi()->getMySavedTracks(['limit' => $limit, 'offset' => $offset]);}
+                  catch(Exception $e){ cldbgmsg("Exception calling spotify api for getmysavedtracks()" . $e);  return;}
+                  //echo "<pre>"; var_dump($savedTracks); echo "</pre>"; die;
+
+                  if(isset($savedTracks->items) && sizeof($savedTracks->items) > 0) {  
+                    //Loop through each spotify artist that the user follows, 
+                    foreach ($savedTracks->items as $savedTrack) {
+						$allSavedTracks[] = $savedTrack;
+						//echo "<pre>"; var_dump($savedTrack); var_dump($savedTrack->track->artists); echo "</pre><hr>"; 
+						foreach($savedTrack->track->artists as $artist){
+							$allArtists[] = $artist;
+						}
+                    }//foreach
+                } //if we got data back fro api call
+
+            }catch (Exception $e) {cldbgmsg("Exception importing spotify likes for the user -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); } 
+            //Create a new request and repeat if there are more 
+            
+          
+        } while ( ($offset += $limit) < 100 );
+
+		//echo "<pre>"; var_dump($allArtists); echo "</pre><hr>"; die;
+
+        return $allArtists;
+
+	}
+
 
 
 

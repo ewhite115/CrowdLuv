@@ -417,68 +417,57 @@ class CrowdLuvModel {
         }
 
        //If there is no active Spotify Session/Token, abort
-        if(! $this->clSpotifyHelper->getSpotifyApi()){
-            cldbgmsg("-No active spotify session/token - aborting spotify-follow update job");
-            return;
-        }
+        if(! $this->clSpotifyHelper->getSpotifyApi()){ cldbgmsg("-No active spotify session/token - aborting spotify-follow update job");return;}
+        
+        
+ 
+        $followedArtists = $this->clSpotifyHelper->getAllUserFollowedArtists();
+        foreach ($followedArtists as $artist) {
+            //Get/Create CL Brand for the SP artist 
+            $cltid = $this->getCrowdLuvBrandBySpotifyArtist($artist);
+            //If found, update db to reflect that this user spotify-follows the brand
+            if($cltid){
+                cldbgmsg('-Found brand that user follows on spotify: ' . $artist->name . ':' . $artist->id . " -- CLtid: " . $cltid);
+                $this->setFollowerSpotifyFollowsBrand($clUid, $cltid, 1);                          
+            }
 
-        //We may need to make multiple requests to get all the likes.
-        // Loop making api call ..  
-        $done=false;
-        //Make the API call request object for retrieving user's likes
-        $following = null;  $after = null; $i = 0;
-        do{  
-            try{          
-              
-                  // Get the next set of spotify artist the user follows
-                  cldbgmsg("making a pass");
-                  try{$following = $this->clSpotifyHelper->getSpotifyApi()->getUserFollowedArtists(['limit' => '50', 'after' => $after]);}
-                  catch(Exception $e){ cldbgmsg("Exception calling spotify api in import job" . $e);  return;}
-                  //echo "<pre>"; var_dump($following); echo "</pre>"; //die;
-                  if(isset($following->artists->items) && sizeof($following->artists->items) > 0) {  
-                    
-                    //Loop through each spotify artist that the user follows, 
-                    foreach ($following->artists->items as $artist) {
-                        //Get/Create CL Brand for the SP artist 
-                        $cltid = $this->getCrowdLuvBrandBySpotifyArtistId($artist->id);
-                        //If found, update db to reflect that this user spotify-follows the brand
-                        if($cltid){
-                            cldbgmsg('-Found brand that user follows on spotify: ' . $artist->id . " -- CLtid: " . $cltid);
-                            $this->setFollowerSpotifyFollowsBrand($clUid, $cltid, 1);                          
-                        }
-
-                    }//foreach
-                } //if we got data back fro api call
-
-            }catch (FException $e) {
-                cldbgmsg("Exception importing spotify likes for the user -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
-            } 
-            //Create a new request and repeat if there are more 
-            if(isset($following->artists->cursors)) $after = $following->artists->cursors->after;
-          
-        } while ( $after );
+        }//foreach
 
 
         //Retrieve the user's Top Artists and record it in DB
         $topArtistsMediumTerm = $this->clSpotifyHelper->getSpotifyApi()->getMyTop("artists",   ["limit" => "50", "time_range" => "medium_term"] );
         //var_dump($topArtistsMediumTerm);
         foreach($topArtistsMediumTerm->items as $tam){
-          $cltid = $this->getCrowdLuvBrandBySpotifyArtistId($tam->id);
+          $cltid = $this->getCrowdLuvBrandBySpotifyArtist($tam);
           if($cltid) $this->updateTableValue("follower_luvs_talent", "spotify_top_artists_medium_term", "1", "`crowdluv_uid`='" . $clUid ."' and `crowdluv_tid`='" . $cltid . "'" );
 
         }
 
         $topArtistsShortTerm = $this->clSpotifyHelper->getSpotifyApi()->getMyTop("artists",   ["limit" => "50", "time_range" => "short_term"] );
         foreach($topArtistsShortTerm->items as $tas){
-          $cltid = $this->getCrowdLuvBrandBySpotifyArtistId($tas->id);
+          $cltid = $this->getCrowdLuvBrandBySpotifyArtist($tas);
           if($cltid) $this->updateTableValue("follower_luvs_talent", "spotify_top_artists_short_term", "1", "`crowdluv_uid`='" . $clUid ."' and `crowdluv_tid`='" . $cltid . "'" );
 
         }
         
+
+        // Retrieve all artists for the last 200 tracks the user added to their library
+        $followedArtists = $this->clSpotifyHelper->getUserSavedTracksArtists();
+        foreach ($followedArtists as $artist) {
+            //Get/Create CL Brand for the SP artist 
+            $cltid = $this->getCrowdLuvBrandBySpotifyArtist($artist);
+            //If found, update db to reflect that this user spotify-follows the brand
+            if($cltid){
+                cldbgmsg('-Found brand that user savedtrack on spotify: ' . $artist->name . ':' . $artist->id . " -- CLtid: " . $cltid);
+                $this->setFollowerSpotifySavedTrackBrand($clUid, $cltid, 1);                          
+            }
+
+        }//foreach
+
+
+
         $this->updateTableValue("follower", "timestamp_last_spotify_follow_import", "now()", "crowdluv_uid = '" . $clUid . "'" );
     }
-
-
 
 
 
@@ -719,25 +708,33 @@ class CrowdLuvModel {
 
     }
 
+    // public function getCrowdLuvBrandBySpotifyArtistID($spId){
 
+    //     //Check if it already exists in DB, and return if so
+    //     $cltid = $this->getCrowdluvTidBySpotifyId($spId);
+    //     if($cltid) return $cltid;
 
-    public function getCrowdLuvBrandBySpotifyArtistId($spId){
+    // }
 
-        //Check if it already exists and return if so
-        $cltid = $this->getCrowdluvTidBySpotifyId($spId);
+    public function getCrowdLuvBrandBySpotifyArtist($spArtist){
+
+        //Check if it already exists in DB, and return if so
+        $cltid = $this->getCrowdluvTidBySpotifyId($spArtist->id);
         if($cltid) return $cltid;
 
-        //If we didnt find a CL Brand based on the spotify ID, try to obtain FB page ID from Music-Story    
-        cldbgmsg("-Found a spotify artist not tied to a CL brand: " . $spId . " will query MusicStory for a corresponding FB id..");
-        $fbId = $this->clMusicStoryHelper->getFacebookIdFromSpotifyId($spId);
-
+        //If we didnt find a CL Brand based on the spotify ID, 
+            //  search for an FB page by the artist's name    
+        cldbgmsg("-Found a spotify artist not tied to a CL brand: " . $spArtist->name . ":" . $spArtist->id . " - will query fb for a corresponding page..");
+        $fbObj = $this->clFacebookHelper->getFacebookPageObjectByNameSearch($spArtist->name);
+        //echo "<pre>"; var_dump($fbObj); echo "</pre>"; die;
         //Get the CL Brand ID foir that FB id (importing as a new brand in the process if it doesnt already exist)          
-        if($fbId){
-            cldbgmsg("-Found an FB page corresponding to spotify id: " . $fbId);
-            $cltid = $this->getCrowdLuvBrandIdByFacebookId($fbId);
+        if($fbObj){
+            cldbgmsg("-Found an FB page corresponding to spotify id: " . $fbObj->id);
+            $cltid = $this->getCrowdLuvBrandIdByFacebookId($fbObj->id);
         }
     
         //update Brand to reflect spotify id if needed
+        $this->update_talent_setting($cltid, "spotify_artist_id", $spArtist->id);
 
 
 
@@ -1103,6 +1100,23 @@ class CrowdLuvModel {
         }
         
     }
+
+
+    public function setFollowerSpotifySavedTrackBrand($cl_uidt, $cl_tidt, $stillLikes){
+        
+        try{
+            //Call this method to create a follower -> brand entry.  (this will do nothing if it already exists)
+            $this->createFollowerLuvsTalentEntry($cl_uidt, $cl_tidt);
+            $sql = "update follower_luvs_talent set savedtrack_on_spotify=" . $stillLikes . " where crowdluv_uid=" . $cl_uidt . " and crowdluv_tid=" . $cl_tidt;
+            $results = $this->cldb->query($sql);
+
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database." . $e;
+            exit;
+        }
+        
+    }
+
 
     /**
      * [setFollowerYouTubeSubscribesBrand Update DB to indicate whether a user subscribes to a brand on YouTube. Will create an entry in the follower_luvs_talent table if necessary]

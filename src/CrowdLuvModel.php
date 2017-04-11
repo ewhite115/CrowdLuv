@@ -368,38 +368,25 @@ class CrowdLuvModel {
         //Check the last time this was run, and return if less than x minutes.
         cldbgmsg("<b>User Update/Import Job: YouTube-Subscriptions</b>");
         $data = $this->selectTableValue("timestamp_last_youtube_subscription_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_youtube_subscription_import > (NOW() - INTERVAL 180 minute)" );
-        if(sizeof($data) > 0){ 
-            cldbgmsg("-YouTube-Subscription-Import time interval has not lapsed -- aborting");
-            return;
-        }
+        if(sizeof($data) > 0){ cldbgmsg("-YouTube-Subscription-Import time interval has not lapsed -- aborting"); return;}
 
         //Retrieve the list of subscriptions for the user
         $ytSubs = $this->clYouTubeHelper->getSubscriptionListForCurrentUser();
         //var_dump($ytSubs); die;
         cldbgmsg("-Retrieved " . sizeof($ytSubs) . " Subscriptions for user");
  
-        //Remove 'Vevo' from the end of any of the channel title names and store into a new array of channel titles
-        $ytChannelTitles = "";        
         foreach ($ytSubs as $ytSub) {
-            $ytChannelTitles[] = $this->sanitizeCrowdluvVUrl(preg_replace('/VEVO$/i', '', $ytSub['snippet']['title']));
+            //var_dump($ytSub); continue;
+            $clBrandObj = $this->getCrowdLuvBrandByYouTubeChannelId($ytSub['snippet']['resourceId']['channelId']);
+            if($clBrandObj){
+                cldbgmsg("-Found subscription to CL Brand " . $clBrandObj['fb_page_name'] );
+                $this->setFollowerYouTubeSubscribesBrand($clUid, $clBrandObj['crowdluv_tid'], 1);                    
+            }
         }
-      
-        //Expand the array of channel names into a string for use in sql query
-        $values = "'" . implode("','", $ytChannelTitles) . "'";
-        //var_dump($values);die;
-        //Retrieve list of brands who vurl matches one of these titles
-        
-        $brandObjs = $this->selectTableValue("*", "talent", "crowdluv_vurl IN (" . $values .  ")");
-        cldbgmsg("-Mapped " . sizeof($brandObjs) . " Subscriptions to CL Brands");
-        //var_dump($brandObjs);die;
-
-        //Update the db to reflect those subscriptions
-        foreach ($brandObjs as $brandObj) { $this->setFollowerYouTubeSubscribesBrand($clUid, $brandObj['crowdluv_tid'], '1'); }        
 
         //Update the timestamp up this update
         $this->updateTableValue("follower", "timestamp_last_youtube_subscription_import", "now()", "crowdluv_uid = '" . $clUid . "'" );
         
-
     } 
 
 

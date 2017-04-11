@@ -237,7 +237,7 @@ class CrowdLuvSpotifyHelper {
         do{  
             try{                        
                   // Get the next set of spotify artist the user follows
-                  cldbgmsg("making a pass");
+                  //cldbgmsg("making a pass");
                   try{$following = $this->getSpotifyApi()->getUserFollowedArtists(['limit' => '50', 'after' => $after]);}
                   catch(Exception $e){ cldbgmsg("Exception calling spotify api in import job" . $e);  return;}
                   //echo "<pre>"; var_dump($following); echo "</pre>"; //die;
@@ -302,8 +302,6 @@ class CrowdLuvSpotifyHelper {
 	}
 
 
-
-
    	/**
    	 * [getArtistObjectByNameSearch Uses Spotify Search endpoint to retrieve and return anspotiy Artist object]
    	 * @param  [type] $name [String describing the name to search for]
@@ -311,6 +309,8 @@ class CrowdLuvSpotifyHelper {
    	 */
    	public function getArtistObjectByNameSearch($name){
 
+   		$spApi = $this->getSpotifyApi();
+   		if(!isset($spApi)) return null;
    		$searchResult = $this->getSpotifyApi()->search($name, 'artist', ['market' => 'us']);
    		//var_dump($searchResult->artists->items[0]);die;
 

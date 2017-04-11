@@ -744,6 +744,15 @@ class CrowdLuvModel {
     }
 
 
+    private function getCrowdluvBrandByYouTubeChannelId($ytChannelId){
+
+        
+        $ret = $this->selectTableValue("*", "talent", "youtube_channel_id= '" . $ytChannelId . "'");
+        if( ! $ret || sizeof($ret)==0) return null;
+        return $ret[0];
+
+    }
+
     public function getAllTalents(){
 
         try {
@@ -816,7 +825,7 @@ class CrowdLuvModel {
         //Determine whether the last MetaData-Retrieval job was run within the last X minutes. 
         $data = $this->selectTableValue("*", 
                                 "talent",  
-                                "timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 48 hour)"
+                                "timestamp_last_music_story_id_retrieval > (NOW() - INTERVAL 2 hour)"
                                 );
                     //echo "result of query to determine whether last metadata import job was run within x minutes";  var_dump($data); die;
         // If any results were returned, that means it has been less than N minutes since last import 
@@ -828,7 +837,8 @@ class CrowdLuvModel {
                             "talent",
                             "(fb_is_verified = 1) 
                               and (disabled = 0) 
-                            ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 20");
+                              and youtube_channel_id is null 
+                            ORDER BY timestamp_last_music_story_id_retrieval ASC LIMIT 5");
 
         if(sizeof($staleBrands) > 0 ){
             
@@ -839,6 +849,7 @@ class CrowdLuvModel {
                 $metaData = $this->clBrandMetaDataHelper->getMetaDataForBrand($staleBrand);
                 
                 //Update DB to reflect that a retrieval was attempted.
+                $this->updateTableValue("talent", "timestamp_last_music_story_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
                 $this->updateTableValue("talent", "timestamp_last_spotify_artist_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
                 $this->updateTableValue("talent", "timestamp_last_youtube_channel_id_retrieval", "now()", "crowdluv_tid = '" . $staleBrand['crowdluv_tid'] . "'" );
 
@@ -855,6 +866,7 @@ class CrowdLuvModel {
             }//foreach
 
         }// if    Artist Metadata import
+
 
 
     }//runMetaDataImportJob
@@ -2530,7 +2542,7 @@ class CrowdLuvModel {
         else{
             // Determine whether the last YT event import job was run within the last X minutes. 
             try {                    
-                $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_youtube_uploads_import > (NOW() - INTERVAL 0 minute)";
+                $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_youtube_uploads_import > (NOW() - INTERVAL 10 minute)";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 

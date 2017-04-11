@@ -62,6 +62,9 @@ class CrowdLuvBrandMetaDataHelper {
 		if(!$brandObj['youtube_channel_id']){
 
 			$youTubeChannelId = null;			
+			$ytChannelSnippet = $this->clYouTubeHelper->findChannelSnippetForBrand($brandObj);
+			$youTubeChannelId = $ytChannelSnippet['channelId'];
+			//var_dump($youTubeChannelId);die;
 
 			$metaData["youtube-channel-id"] = $youTubeChannelId;
 			$resultMsg = "--Attempted to retrieve YoutubeChannel ID for " . $brandObj['fb_page_name'] . ($youTubeChannelId ? " -Found " . $youTubeChannelId : " -Not found");
@@ -69,7 +72,6 @@ class CrowdLuvBrandMetaDataHelper {
 
 		}
 	
-
 
 		return $metaData;
 

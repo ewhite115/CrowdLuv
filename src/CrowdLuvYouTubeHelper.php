@@ -107,6 +107,66 @@ class CrowdLuvYouTubeHelper {
    	}
 
 
+   	/**
+   	 * [findChannelForBrand    Uses the YouTube search.list endpoint to search for a YouTube channel for a given brand  ]
+   	 * @param  [type] $clBrandObj [description]
+   	 * @return [type]             [description]
+   	 */
+   	public function findChannelSnippetForBrand($clBrandObj){
+
+		//If we dont have a session, return null
+		if(! $this->getYouTubeSession()) return null;
+
+		//echo "search for channels for " . $clBrandObj['fb_page_name'];
+	
+		//skip usernames that have a '/'  (to avoid searching for brands based on 'pages/')
+		if(strpos($clBrandObj['fb_page_name'], "/")) return;
+
+   		//Perform a search.list.  Dont include " -topic" since it seems to reduce valid results, and we only import chnnels with matching titl anyway  		   		
+		$query = $clBrandObj['fb_page_name'];
+		//Account for categories..
+		$channelTopicId="/m/04rlf";
+		try{$ytSearchResult = $this->getApi()->search->listSearch('snippet', 
+														['type' => 'channel',
+														 'maxResults' => '10',
+														 'q' => $query, 
+														 //'relevanceLanguage' => 'en', 
+														 'topicId' => $channelTopicId, 
+														 'order' => 'relevance'] );}
+		catch(Google_Service_Exception $e) {
+     	   cldbgmsg("--Exception calling Youtube api"); var_dump($e); return; 
+        }
+		//var_dump($ytSearchResult); die;
+		
+        //If there were no results, return null
+		if(!$ytSearchResult || sizeof($ytSearchResult->items) ==0) { 
+			cldbgmsg("-Search Result was empty when searching for for " . $clBrandObj['fb_page_name'] ); 
+			return null;
+		}
+		
+		//Search the resulting channels for the first one that matches
+		$ytSearchResultItems = $ytSearchResult->items;
+		//var_dump($ytSearchResultItems); die;
+		$ytChannelSnippet = null;
+		foreach ($ytSearchResultItems as $ytSearchResult) {
+			if( strtolower($ytSearchResult['snippet']['title']) == strtolower($clBrandObj['fb_page_name']) 
+			 	|| strtolower($ytSearchResult['snippet']['title']) == strtolower($clBrandObj['fb_page_name']) . "vevo"
+				|| strtolower(str_replace(' ', '', $ytSearchResult['snippet']['title'])) == strtolower(str_replace(' ', '', $clBrandObj['fb_page_name'])) 
+				|| strtolower(str_replace(' ', '', $ytSearchResult['snippet']['title'])) == strtolower(str_replace(' ', '', $clBrandObj['fb_page_name']) . "vevo" ) 
+				|| strtolower(str_replace(' ', '', $ytSearchResult['snippet']['title'])) == strtolower(str_replace(' ', '', $clBrandObj['fb_page_name']) . "music" )
+				|| strtolower(str_replace(' ', '', $ytSearchResult['snippet']['title'])) == strtolower(str_replace(' ', '', $clBrandObj['crowdluv_vurl'])) ) {
+				 $ytChannelSnippet = $ytSearchResult['snippet']; break;
+			}
+
+		} //foreach
+		//var_dump($ytChannelSnippet); die;
+
+     
+        return $ytChannelSnippet;
+
+   	}
+
+
    	public function getRecentUploadsForBrand($clBrandObj){
 
         try{

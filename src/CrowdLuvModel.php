@@ -398,10 +398,7 @@ class CrowdLuvModel {
         //Check the last time this was run, and return if less than x minutes.
         cldbgmsg("<b>User Update/Import Job - Spotify-Follow</b>");
         $data = $this->selectTableValue("timestamp_last_spotify_follow_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_spotify_follow_import > (NOW() - INTERVAL 180 minute)" );
-        if(sizeof($data) > 0){ 
-            cldbgmsg("-Spotify import time internval has not lapsed -- aborting");
-            return;
-        }
+        if(sizeof($data) > 0){ cldbgmsg("-Spotify import time internval has not lapsed -- aborting");return;}
 
        //If there is no active Spotify Session/Token, abort
         if(! $this->clSpotifyHelper->getSpotifyApi()){ cldbgmsg("-No active spotify session/token - aborting spotify-follow update job");return;}
@@ -414,7 +411,7 @@ class CrowdLuvModel {
             $cltid = $this->getCrowdLuvBrandBySpotifyArtist($artist);
             //If found, update db to reflect that this user spotify-follows the brand
             if($cltid){
-                cldbgmsg('-Found brand that user follows on spotify: ' . $artist->name . ':' . $artist->id . " -- CLtid: " . $cltid);
+                //cldbgmsg('-Found brand that user follows on spotify: ' . $artist->name . ':' . $artist->id . " -- CLtid: " . $cltid);
                 $this->setFollowerSpotifyFollowsBrand($clUid, $cltid, 1);                          
             }
 
@@ -716,7 +713,7 @@ class CrowdLuvModel {
         //echo "<pre>"; var_dump($fbObj); echo "</pre>"; die;
         //Get the CL Brand ID foir that FB id (importing as a new brand in the process if it doesnt already exist)          
         if($fbObj){
-            cldbgmsg("-Found an FB page corresponding to spotify id: " . $fbObj->id);
+            cldbgmsg("-Found an FB page corresponding to spotify artist. FBID=" . $fbObj->id);
             $cltid = $this->getCrowdLuvBrandIdByFacebookId($fbObj->id);
         }
     

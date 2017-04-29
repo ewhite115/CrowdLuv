@@ -45,7 +45,7 @@ class CrowdLuvSpotifyHelper {
 
 		//Generate an authorization URL
 		$scopes = array('playlist-read-private', 'user-read-private', 'user-follow-read', 'user-top-read', 'user-library-read');
-		return $this->spotifyAuthorizeUrl = $this->spotifySession->getAuthorizeUrl(array('scope' => $scopes));
+		return $this->spotifyAuthorizeUrl = $this->spotifySession->getAuthorizeUrl(array('scope' => $scopes, 'show_dialog' => true ));
 
    	}
 

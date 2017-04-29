@@ -180,7 +180,8 @@ class CrowdLuvModel {
         //pass in the array /  JSON object returned by FB API
         if(!$follower_fbup) return 0;
         $f = $follower_fbup;
-            
+        //echo "<pre>";    var_dump($f);    echo "</pre>";
+        
         //Check if the user exists already 0 if so, return UID.
         $existingUID = $this->get_crowdluv_uid_by_fb_uid($f['id']);
         if($existingUID) return $existingUID;
@@ -200,14 +201,14 @@ class CrowdLuvModel {
 
             }
             $fbemail="Unspecified"; if(isset($f['email'])) $fbemail=$f['email'];
-            $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=$f['relationship_status'];
+            $fbrltsp="Unspecified"; if(isset($f['relationship_status'])) $fbrltsp=  mysql_real_escape_string($f['relationship_status']);
             date_default_timezone_set('America/New_York');
             $fbbdate="1900-01-01"; if(isset($f['birthday'])) $fbbdate= date('Y-m-d', strtotime($f['birthday']));
 
             //Execute the insert
-            $sql = "INSERT INTO follower (fb_uid,                location_fb_id,     crowluv_placeid,   location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
-                                  VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $clPlaceID . "', '"  . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
-            //echo $sql;// exit;
+            $sql = "INSERT INTO follower (fb_uid,                location_fb_id,     crowdluv_placeid,   location_fbname,                    firstname,                lastname,                  email,                          gender,     birthdate,            fb_relationship_status,  signupdate)
+                                  VALUES ('" . $f['id'] . "', '" . $fblocid . "', '" . $clPlaceID['crowdluv_placeid'] . "', '"  . $fblocname . "', '" . $f['first_name']   . "', '" . $f['last_name']    . "', '" . $fbemail  . "', '" . $f['gender'] . "', '" . $fbbdate . "', '" . $fbrltsp . "', '" . date('Y-m-d') . "')";
+            //echo $sql;//exit;
             $results = $this->cldb->query($sql);
             
             //Return the crowdluv_uid of the newly created user
@@ -645,7 +646,7 @@ class CrowdLuvModel {
         if( $existingTID = $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id)) return $existingTID;
 
         //Otherwise, create new
-        cldbgmsg("-Found new facebook page to add: " . $fbupg->id); 
+        cldbgmsg("-Found new facebook page to add: " . $talent_fbpp->id); 
 
         $new_cl_tid = "";
         try {    

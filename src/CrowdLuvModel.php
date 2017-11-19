@@ -2613,7 +2613,7 @@ class CrowdLuvModel {
         //  Loop making api call ..  
         $done=false;
         //Create the initial request object for retrieving the events
-        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,location,start_time,end_time,is_date_only,venue' );
+        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,start_time,end_time,place' );
         $response = null;
         do{  
             try{          
@@ -2751,12 +2751,12 @@ class CrowdLuvModel {
         //First,  see if the fb event has a venue specified -
         $clPlace = null;
         $clPlaceID = 0;
-        if(isset($fbEvent->venue)) {
+        if(isset($fbEvent->place)) {
             //  If yes, and the fb venue has an id -- look up or create it in cl db
-            if(isset($fbEvent->venue->id)){
+            if(isset($fbEvent->place->id)){
             
-                if(! ($clPlace = $this->getPlaceFromFacebookPlaceID($fbEvent->venue->id)))
-                    $clPlace = $this->createPlaceFromFacebookPlaceID($fbEvent->venue->id);
+                if(! ($clPlace = $this->getPlaceFromFacebookPlaceID($fbEvent->place->id)))
+                    $clPlace = $this->createPlaceFromFacebookPlaceID($fbEvent->place->id);
 
                 //TODO:  check if there is an existing Place that doesnt 
                 //      have an FB venue ID but is probably the same venue 
@@ -3558,11 +3558,11 @@ class CrowdLuvModel {
 
         try { 
             // graph api request for place data
-            $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fbPid );
+            $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fbPid . '?fields=id,name,location' );
             $response = $request->execute();
             // get response
             $fbPlace = $response->getGraphObject()->asArray();
-            //echo "<pre> Response to facebook graph cal /<placeid> :"; var_dump($fbPlace); echo "</pre>"; die;
+            //echo "<pre> Response to facebook graph call /<placeid> :"; var_dump($fbPlace); echo "</pre>"; die;
             
            if(! isset($fbPlace['location']->street)) $fbPlace['location']->street = "";
            if(! isset($fbPlace['location']->city)) $fbPlace['location']->city = "";
@@ -3835,6 +3835,7 @@ function vincentyGreatCircleDistance(
 
 
 }
+
 
 
 

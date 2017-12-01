@@ -722,7 +722,6 @@ class CrowdLuvModel {
         $this->update_talent_setting($cltid, "spotify_artist_id", $spArtist->id);
 
 
-
         //return CL brand ID of new brand
         return $cltid;
         
@@ -1274,7 +1273,9 @@ class CrowdLuvModel {
     public function getAllBrandsForFollower($cl_uidt) {
         
         try {
-            $sql = "SELECT follower_luvs_talent.*, talent.* FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid where follower.crowdluv_uid=?";
+            $sql = "SELECT follower_luvs_talent.*, talent.* 
+                    FROM follower join follower_luvs_talent join talent on follower.crowdluv_uid = follower_luvs_talent.crowdluv_uid and follower_luvs_talent.crowdluv_tid = talent.crowdluv_tid 
+                    WHERE follower.crowdluv_uid=? and talent.disabled=0";
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1,$cl_uidt);
             $results->execute();
@@ -2401,11 +2402,16 @@ class CrowdLuvModel {
         if(  ! isset( $fbs  ))     { return null; } 
 
 
-        // Facebook Event Import Job
+        // Facebook Event Import Job   ***************
         cldbgmsg("<b>Import Job: FB Events</b>");
         // Determine whether the last FB event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_facebook_event_import > (NOW() - INTERVAL 10 minute)";
+            $sql =  "SELECT * 
+                     FROM talent 
+                     where disabled = 0 
+                        and fb_is_verified 
+                        and timestamp_last_facebook_event_import > (NOW() - INTERVAL 11 minute)";
+
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2421,7 +2427,10 @@ class CrowdLuvModel {
 
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent WHERE disabled = 0 and fb_is_verified ORDER BY timestamp_last_facebook_event_import ASC LIMIT 2";
+                $sql =  "SELECT * 
+                         FROM talent 
+                         WHERE disabled = 0 and fb_is_verified ORDER BY timestamp_last_facebook_event_import ASC 
+                         LIMIT 10";
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2443,11 +2452,14 @@ class CrowdLuvModel {
 
 
 
-        // BandsInTown Import Job
+
+        // BandsInTown Import Job  ***********
         cldbgmsg("<b>Import Job: BIT Events</b>");
         //Determine whether the last BIT event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_bandsintown_event_import > (NOW() - INTERVAL 10 minute)";
+            $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_bandsintown_event_import > 
+                        (NOW() - INTERVAL 5 minute)";
+
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2462,7 +2474,9 @@ class CrowdLuvModel {
         if(sizeof($data) == 0) {
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent where disabled=0 and fb_is_verified ORDER BY timestamp_last_bandsintown_event_import ASC LIMIT 2";
+                $sql =  "SELECT * FROM talent where disabled=0 and fb_is_verified ORDER BY timestamp_last_bandsintown_event_import ASC 
+                         LIMIT 2";
+
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2481,11 +2495,14 @@ class CrowdLuvModel {
         else { cldbgmsg("-Time interval for BandsInTown-Event Import has not lapsed.");}
 
 
-        // Spotify Import Job
+
+
+        // Spotify Import Job  ********
         cldbgmsg("<b>Import Job: Spotify Albums</b>");
         //Determine whether the last Spotify event import job was run within the last X minutes. 
         try {                    
-            $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_spotify_album_import > (NOW() - INTERVAL 10 minute)";
+            $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_spotify_album_import > 
+                        (NOW() - INTERVAL 7 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2500,7 +2517,9 @@ class CrowdLuvModel {
         if(sizeof($data) == 0) {
             //Determine the X number of brands with the most 'stale' event import
             try {                    
-                $sql =  "SELECT * FROM talent WHERE disabled = 0 and fb_is_verified and spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC LIMIT 2";
+                $sql =  "SELECT * FROM talent WHERE disabled = 0 and fb_is_verified and spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC 
+                    LIMIT 3";
+
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2520,14 +2539,18 @@ class CrowdLuvModel {
         else { cldbgmsg("-Time interval for Spotify-Album Import has not lapsed.");}
 
 
-        // YouTube-Video Event Import Job
+
+
+        // YouTube-Video Event Import Job  ********
         cldbgmsg("<b>Import Job: YouTube-Uploads Events</b>");
         
         if(! $this->clYouTubeHelper->getYouTubeSession()) {cldbgmsg("YouTubeAPI Session ull - aborting");}
         else{
             // Determine whether the last YT event import job was run within the last X minutes. 
             try {                    
-                $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_youtube_uploads_import > (NOW() - INTERVAL 10 minute)";
+                $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_youtube_uploads_import > 
+                            (NOW() - INTERVAL 3 minute)";
+
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -2544,7 +2567,9 @@ class CrowdLuvModel {
 
             //Determine the X number of brands with the most 'stale' import
             try {                    
-                $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified ORDER BY timestamp_last_youtube_uploads_import ASC LIMIT 1";
+                $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified ORDER BY timestamp_last_youtube_uploads_import ASC 
+                            LIMIT 3";
+
                 $results = $this->cldb->prepare($sql);
                 $results->execute();
 
@@ -3366,7 +3391,8 @@ class CrowdLuvModel {
                         and event.title not like '%deluxe%' 
                         and event.title not like '%(Extended%' 
                         GROUP BY event.title ";
-            
+ 
+
             $where = $where . " ORDER BY " . $orderBy;     
             // $where = $where . " ORDER BY ";
             // if($randomizedLuvWeighting) $where = $where . " randomizedLuvWeighting DESC, ";
@@ -3832,6 +3858,7 @@ function vincentyGreatCircleDistance(
       $angle = atan2(sqrt($a), $b);
       return $angle * $earthRadius;
 }
+
 
 
 }

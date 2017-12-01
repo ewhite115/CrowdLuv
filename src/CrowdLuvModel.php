@@ -778,7 +778,7 @@ class CrowdLuvModel {
      */
     public function update_talent_setting($cl_tidt, $prefname, $prefval){
         
-        $allowed_prefnames = ['crowdluv_tid', 'fb_pid', 'fb_page_name', 'waitlisted', 'crowdluv_vurl'];
+        $allowed_prefnames = ['crowdluv_tid', 'fb_pid', 'fb_page_name', 'waitlisted', 'crowdluv_vurl', 'spotify_artist_id'];
         if(! in_array($prefname, $allowed_prefnames)) {return 0;}
         if(! isset($prefval) || $prefval == "") {return 0;}
 

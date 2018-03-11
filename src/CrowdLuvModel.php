@@ -3362,7 +3362,9 @@ class CrowdLuvModel {
 
 
 
-    public function getEventsForFollower($clUid, $eventTypes, $endInterval, $orderBy, $limit ){
+ //((DATEDIFF(NOW(), event.creation_timestamp) BETWEEN 1 and 20)) or (DATEDIFF(NOW(), event.start_time) between 1 and 20)) as is_new_this_week,
+
+    public function getEventsForFollower($clUid, $eventCriteria, $orderBy, $limit ){
 
             $fol = $this->get_follower_object_by_uid($clUid);
 
@@ -3370,9 +3372,39 @@ class CrowdLuvModel {
                     talent.*,
                     event.*,
                     place.*, 
+                    (  
+                        (DATEDIFF(NOW(), event.creation_timestamp) < 1.75)
+                         and
+                        (event.type = 'performance')
+                    )
+                    or 
+                    (
+                        (DATEDIFF(NOW(), event.start_time) < 1.75)
+                        and
+                        (event.type != 'performance')
+                    ) 
+                     as is_new_today,
+                    
+
+                    (  
+                        (DATEDIFF(NOW(), event.creation_timestamp) < 10)
+                         and
+                        (event.type = 'performance')
+                    )
+                    or 
+                    (
+                        (DATEDIFF(NOW(), event.start_time) < 10)
+                        and
+                        (event.type != 'performance')
+                    ) 
+                     as is_new_this_week,
+                    
+
+
                     (10 * follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term) as luvWeighting,
                     (rand() * (( 10 * follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term))) as randomizedLuvWeighting, 
-                    (DATEDIFF(NOW(), event.start_time) / (1 *( 10 * follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term))) as luvWeightedAge";
+                    (DATEDIFF(NOW(), event.start_time) / (1 *( 10 * follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term))) as luvWeightedAge,
+                    (rand() * (DATEDIFF(NOW(), event.start_time) / (1 *( 10 * follower_luvs_talent.still_following + follower_luvs_talent.likes_on_facebook + follower_luvs_talent.follows_on_spotify + follower_luvs_talent.spotify_top_artists_short_term)))) as randomizedLuvWeightedAge ";
 
 
             $table = "event LEFT JOIN place on event.crowdluv_placeid = place.crowdluv_placeid 
@@ -3381,12 +3413,33 @@ class CrowdLuvModel {
                         left join talent on talent.crowdluv_tid = follower_luvs_talent.crowdluv_tid";
 
 
+            //  Type, interval, distance
+
+                                // type in ('"  . implode("','", $eventTypes) . "')
+                                // and 
+                                // end_time > DATE_ADD(NOW(), INTERVAL " . $endInterval . ") 
+                        
+
             $where = "follower_luvs_talent.crowdluv_uid = '" . $fol['crowdluv_uid'] . "' 
                         and 
-                            (
-                                type in ('"  . implode("','", $eventTypes) . "')
-                                and 
-                                end_time > DATE_ADD(NOW(), INTERVAL " . $endInterval . ") 
+                            (";
+
+                    //Add the critera for each event type
+                    foreach($eventCriteria as $criteria){
+                        $where = $where . "(
+                                           type = '" . $criteria['type'] . "' 
+                                           and
+                                           end_time > DATE_ADD(NOW(), INTERVAL " . $criteria['endInterval'] . ") 
+                                         ";
+                        //if a distance is specifiied, include it
+                        if(isset($criteria['distance']))
+                            $where = $where . " and (longitude between " . $fol['longitude'] . " - 1.25 and " . $fol['longitude'] . " + 1.25 and latitude between " . $fol['latitude'] . " - 1.25 and " . $fol['latitude'] . " + 1.25)  ";
+
+                        $where = $where . ") or ";
+                    }
+
+            $where = $where . " 0 ";  //to account for the leftover "or" that gets crated by the for loop above
+            $where = $where . " 
                             )
                         and event.title not like '%deluxe%' 
                         and event.title not like '%(Extended%' 

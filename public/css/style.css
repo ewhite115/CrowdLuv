@@ -154,6 +154,12 @@ h1.cl-major-heading{
 }
 
 
+.cl-landing-page-panel h1.cl-landing-page-panel-heading {
+    margin-bottom: .7em;
+    margin-top: .2em;
+    font-size: 1.5em;
+
+}
 
 
 /* ******* Modals    */
@@ -479,9 +485,11 @@ h1.cl-major-heading{
     margin-bottom: .8em;
     padding-top: 3.5%;
     padding-bottom: 15%;
+    background-attachment:fixed;
     background-image: url("../res/concert-audience-stock1214.jpg");
     background-repeat: no-repeat;
-    background-position: center center;
+    /*background-position: center center;*/
+    background-position: -0px -300px;
     background-size: cover;
     /* background-attachment: fixed; */
 
@@ -577,17 +585,87 @@ h1.cl-major-heading{
 .cl-talent-listing-card-container-single-row {
     white-space: nowrap;
     overflow-x: scroll;
-    height:11em;
+    height:16.9em;
+    border-color: gray;
     /*width:103.5%;*/
     /*margin-left: -15px;*/
-    margin: 0 8.333%;
-
+    /*margin: 0 8.333%;*/
     
 }
 
-.cl-talent-listing-card {
+
+.cl-card-vertical {
     
-    width: 22em;
+    width: 14em;
+    height: 14.75em;
+    margin-right: .6em;
+    margin-bottom: .6em;
+
+    display: inline-block;
+    vertical-align: top;
+    position:relative;
+
+}
+
+.cl-card-vertical img.card-header-image {
+
+    max-width: 100%;
+    height: 7.8em;
+    display:block;
+    margin:auto;
+    border-color: darkgray;
+   
+}
+
+
+
+.cl-card-vertical img.brand-avatar {
+
+    /*max-width: 25%;*/
+    width:2.75em;
+    display:inline-block
+   
+}
+
+.cl-card-vertical h1 {
+    white-space: normal;  
+    font-size: .95em;
+    font-weight: bold;
+    height: 3em;
+    overflow:hidden;
+
+}
+
+.cl-card-vertical.cl-event h1.cl-event-date, .cl-event-title  {
+    /*text-align: center;*/
+    height: auto;
+    font-size: .9em;
+}
+
+.cl-card-vertical.cl-event h1.cl-event-date  {
+    text-align: center;
+    height: auto;
+    font-size: 1.1em;
+    margin-top: .9em;
+}
+
+
+
+.cl-card-vertical .brand-name, .cl-card-vertical .elapsed-time {
+    
+    font-weight: bold;
+    font-size: .75em;
+    color: #6c6c70;
+}
+
+
+
+
+
+
+.cl-card-horizontal {
+    
+    width: 20em;
     height: 6.25em;
     margin-right: .6em;
     margin-bottom: .6em;
@@ -596,50 +674,49 @@ h1.cl-major-heading{
     vertical-align: top;
     position:relative;
 
-    
 }
 
-.cl-talent-listing-card .talent-avatar {
+
+.cl-card-horizontal .brand-avatar {
     /*width:50%;
     height:60%;*/
     display: inline-block;
     /*margin-right: 5px;*/
 
 }
-.cl-talent-listing-card .talent-avatar img {
-    /*width:75%;  */
-    height: 6.25em;
+.cl-card-horizontal .brand-avatar img {
+    
+    height: 6.2em;
 }
 
-.cl-talent-listing-card .talent-name {
-    white-space: normal;  
+.cl-card-horizontal .brand-name {
+    /*white-space: normal;  */
     font-size: 1em;
     font-weight: bold;
-    height: 1.3em;
-    overflow:hidden;
+    /*height: 1.3em;*/
+    /*overflow:hidden;*/
 
 }
 
-
-.cl-talent-listing-card .card-info {
-    width:45%;
+.cl-card-horizontal .brand-info {
+    width:65%;
     height:60%;
     display: inline-block;
     vertical-align: top;
 
     
 }
-.cl-talent-listing-card .card-info img {
+.cl-card-horizontal .brand-info img {
     /*width:50%;*/
     /*padding: .8em 0;*/
 
 }
 
 
-.cl-talent-listing-card .extra-info {
+.cl-card-horizontal .extra-info {
     
     text-decoration: none;
-    position: absolute;
+    /*position: absolute;*/
     bottom:0;
     width: 100%;
 }

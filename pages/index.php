@@ -1,12 +1,32 @@
 <?php 
 
-
-
 $clResponseInformation->clSiteSection = "home";
 
 
-if ($clRequestInformation->getLoggedInUserObj()) $fanOfTalents = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
-if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getFutureEventListForFollower($clRequestInformation->getLoggedInUserId(), 500);
+if ($clRequestInformation->getLoggedInUserObj()){
+
+  $fanOfTalents = $CL_model->get_talents_for_follower($clRequestInformation->getLoggedInUserId());
+  //$futureEvents = $CL_model->getCombinedEventListForFollower($clRequestInformation->getLoggedInUserId(), 10);
+
+  $combinedEvents = $CL_model->getEventsForFollower(
+                      $clRequestInformation->getLoggedInUserId(),
+                      [
+                        ['type' => 'significant_release' , 'endInterval' => '-6 month'],
+                        ['type' => 'performance' , 'endInterval' => '1 day', 'distance' => '1.25'],
+                        ['type' => 'youtube_video' , 'endInterval' => '-6 month']
+                      ],
+                      "is_new_today DESC, randomizedLuvWeighting DESC", 
+                      //"event.type ASC, luvWeighting DESC, event.start_time", 
+                      25);
+
+  // $newReleases = $CL_model->getEventsForFollower($clRequestInformation->getLoggedInUserId(), ['significant_release', 'minor_release'], "-9 month", "luvWeightedAge ASC", 25);
+  // $youTubeHighlights = $CL_model->getEventsForFollower($clRequestInformation->getLoggedInUserId(), ['youtube_video'], "-2 month", "randomizedLuvWeighting DESC", 5);
+  // $youTubeExtendedList = $CL_model->getEventsForFollower($clRequestInformation->getLoggedInUserId(), ['youtube_video'], "-6 month", "luvWeightedAge ASC",  50);
+  
+}
+
+
+
 
 //var_dump($futureEvents);
 
@@ -46,8 +66,13 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
  </div>
 
 
+<!-- This div is used to indicate the original position of the scrollable fixed div. -->
+
+
 <div class="row">
-    
+ 
+
+
   <!--  Fan Call-to-Action   -->
   <!-- If not logged in, show the Call-to-action homepage with facebook login buttons -->
   <?php if(! $clRequestInformation->getLoggedInUserObj()){ ?>
@@ -70,64 +95,158 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
   <?php } else { ?>  
 
   <!--  Fan logged-in homepage panel  -->
-  <div class="col-xs-12 col-ms-12 crowdluvsection clwhitebg">
+  <div class="col-xs-12 col-ms-12 crowdluvsection clwhitebg cl-landing-page-panel">
         
             
     <div class="row">       
         
+        <!--  Who Do You Luv -->
         <a href="myluvs">
-        <div class="col-xs-6 col-sm-3 text-center ">
+        <div class="col-xs-12 col-sm-3 col-md-2 text-center center-block">
         
-          <h1 class="cl-textcolor-standout">Who Do You Luv?</h1>
-          <img src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">
-          <p2 class= "cl-textcolor-default"><?php echo $clRequestInformation->getLoggedInUserObj()['firstname'] . " " . $clRequestInformation->getLoggedInUserObj()['lastname'];?></p2>
-          <p class= "cl-textcolor-default">Manage Your CrowdLuv Profile and who you follow</p>                            
-          <?php if($clRequestInformation->getLoggedInUserObj()['deactivated']){ ?>
-            <p class="cl-textcolor-default">You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
+          <h1 class="cl-landing-page-panel-heading cl-textcolor-standout ">Who Do You Luv?</h1>
 
-          <?php }  ?>
-        
+          <div class="cl-card-vertical cl_graybackground cl_grayborder">
+            <img class="card-header-image" src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?type=large&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">
+            <h1><?php echo $clRequestInformation->getLoggedInUserObj()['firstname'] . " " . $clRequestInformation->getLoggedInUserObj()['lastname'];?></h1>
+            <p class= "cl-textcolor-default" >Manage Your CrowdLuv Profile and who you follow</p>                            
+            <?php if($clRequestInformation->getLoggedInUserObj()['deactivated']){ ?>
+              <p class="cl-textcolor-default">You have deactivated your account. Click here to re-activate.</p> <button type="button" name="btn_reactivate_account">Reactivate Account</button>
+
+            <?php }  ?>
+          </div>          
         </div>
         </a> 
 
+
+
+
+
+        <!-- Things to Do Panel -->
+        <div class="col-xs-12 col-sm-4  center-block " >
+          <h1 class="cl-landing-page-panel-heading cl-textcolor-standout text-center">
+            <a href="follower_dashboard.php">Things to Do</a>
+          </h1>
+     
+          <div class="cl-talent-listing-card-container-single-row">
+           
+               <!-- <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p> -->
+                
+              <?php if(!$combinedEvents){ echo "No updates"; }  ?>
+              <?php foreach($combinedEvents as $event){ ?>
+
+                <?php if ($event['type'] == "performance") { ?>
+                    <!-- <p> <b>Event:</b> <a target="_new" href="<?php echo $event['more_info_url'];?>"> <?php echo $event['title']; ?> </a> - <?php echo $event['start_time']; ?> </p> -->
+
+                          <div class="cl-card-vertical cl-event text-left cl_graybackground cl_grayborder " >     
+                              
+                              <a target="_new"  href="<?php echo $event['more_info_url'];?>">
+                                  <div style="background-color: darkgray; ">
+                                  <img class="card-header-image" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=large&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">                             
+                                  </div>
+                                  <h1 class="cl-event-title"> <?php echo  $event['title'];?> </h1>
+                              </a> 
+                              
+                              <!-- <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">   -->
+                              <span class="brand-name"><?php  echo $event['fb_page_name'];?> </span>
+                              <span class="elapsed-time"><?php  echo ($event['is_new_today'] ? " -New today!" : ($event['is_new_this_week'] ? " -New this week!" : " -Not new" )); ?> </span>
+                             
+                             
+                              <h1 class="cl-event-date"><?php echo   date('D, F d', strtotime($event['start_time'])); ?> </h1> 
+                          </div> 
+
+                <?php } ?>
+              <?php } ?>
+
+              <div class="cl-card-vertical text-left cl_graybackground cl_grayborder " >               
+                  <a href="follower_dashboard.php">
+                      <!-- <img class="card-header-image" src="https://img.youtube.com/vi/<?php echo $event['youtube_video_id'];?>/mqdefault.jpg">                              -->
+                      <h1>See More ...</h1>
+                  </a>
+              </div> 
+
+        </div>
+        </div>
+
+        <!-- New Stuff Panel -->
+        <div class="col-xs-12 col-sm-4 center-block " >
+          <h1 class="cl-landing-page-panel-heading cl-textcolor-standout text-center ">
+            <a href="follower_dashboard.php">New Stuff </a>
+          </h1>
+     
+          <div class="cl-talent-listing-card-container-single-row">
+           
+               <!-- <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p> -->
+                
+              <?php if(!$combinedEvents){ echo "No updates"; }  ?>
+              <?php foreach($combinedEvents as $event){ ?>
+
+                <?php if ($event['type'] == "significant_release") { ?>
+                    <!-- <p> <b>Recent Release:</b> <?php echo $event['fb_page_name'] ?> - <a target="_new"  href="<?php echo $event['more_info_url'];?>"> <?php echo $event['title']; ?> </a></p> -->
+
+                     <div class="cl-card-vertical text-left cl_graybackground cl_grayborder " >               
+                          <p> <b>Recent Release:</b> <?php echo $event['fb_page_name'] ?> 
+                          <a target="_new"  href="<?php echo $event['more_info_url'];?>">
+                                <img class="card-header-image" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">                             
+                              <h1><?php echo  $event['title']; ?></h1>
+                          </a>
+                          <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">  
+                          <p class="brand-name">  <?php echo $event['fb_page_name'];?> </p>  
+                          <p class="elapsed-time"> <?php echo   $CL_model->timeElapsedString( $event['start_time']); ?>   </p>                             
+                      </div> 
+
+
+                <?php } ?>
+                <?php if ($event['type'] == "youtube_video") { ?>
+                    <!-- <p> <b>YouTube Video:</b> <?php echo $event['fb_page_name']?> - <a target="_new"  href="<?php echo $event['more_info_url'];?>"> <?php echo  $event['title']; ?></a> </p> -->
+
+                      <div class="cl-card-vertical text-left cl_graybackground cl_grayborder " >               
+                          <a target="_new"  href="<?php echo $event['more_info_url'];?>">
+                              <img class="card-header-image" src="https://img.youtube.com/vi/<?php echo $event['youtube_video_id'];?>/mqdefault.jpg">                             
+                              <h1><?php  echo $event['title']; ?></h1>
+                          </a>
+                          <!-- <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">   -->
+                          <p class="brand-name"><?php echo  $event['fb_page_name'];?> - <?php echo   $CL_model->timeElapsedString( $event['start_time']); ?>   </p> 
+                          <p class="brand-name"><?php echo  ($event['is_new_today'] ? " - New today!" : ($event['is_new_this_week'] ? " -New this week!" : " -Not new" )); ?>  </p> 
+ 
+                      </div> 
+
+                <?php } ?>
+
+              <?php } ?>
+
+                      <div class="cl-card-vertical text-left cl_graybackground cl_grayborder " >               
+                          <a href="follower_dashboard.php">
+                              <!-- <img class="card-header-image" src="https://img.youtube.com/vi/<?php echo $event['youtube_video_id'];?>/mqdefault.jpg">                              -->
+                              <h1>See More ...</h1>
+                          </a>
+                      </div> 
+
+
+        </div>
+        </div>
+
+
+
+
+
+
+
+
+
         <a href='shareluv.php'> 
-        <div class="col-xs-6 col-sm-3 text-center">
-          <h1 class="cl-textcolor-standout">Show Your Luv </h1>
+        <div class="col-xs-6 col-sm-2 text-center">
+          <h1 class="cl-landing-page-panel-heading cl-textcolor-standout">Show Your Luv </h1>
           <img src="res/top-heart.png">
           <p class="cl-textcolor-default">Build Luv. Become the #1 fan</p>
           <br><br>
         </div>
         </a>
+
         
         <!-- this div fixes the links above not working on small-width layout -->
         <div class="clearfix visible-xs-inline"></div>
 
-        <!-- Updates Panel -->
-        <div class="col-xs-12 col-sm-6 text-left center-block " style="max-height: 150px; overflow: scroll;">
-
-          <h1 class="cl-textcolor-standout text-left">
-            <a href="follower_dashboard.php">Updates </a>
-          </h1>
-          
-         <!-- <p>You Luv <?php echo count($fanOfTalents);?> of your favorite acts. </p> -->
-          
-        <?php if(!$futureEvents){ echo "No updates"; }  ?>
-        <?php foreach($futureEvents as $futureEvent){ ?>
-          <?php if ($futureEvent['type'] == "significant_release") { ?>
-              <p> <b>New Release:</b> <?php echo $futureEvent['fb_page_name'] ?> - <a target="_new"  href="<?php echo $futureEvent['more_info_url'];?>"> <?php echo $futureEvent['title']; ?> </a></p>
-          <?php } ?>
-          <?php if ($futureEvent['type'] == "performance") { ?>
-              <p> <b>Event:</b> <a target="_new" href="<?php echo $futureEvent['more_info_url'];?>"> <?php echo $futureEvent['title']; ?> </a> - <?php echo $futureEvent['start_time']; ?> </p>
-          <?php } ?>
-          <?php if ($futureEvent['type'] == "youtube_video") { ?>
-              <p> <b>YouTube Video:</b> <?php echo $futureEvent['fb_page_name']?> - <a target="_new"  href="<?php echo $futureEvent['more_info_url'];?>"> <?php echo  $futureEvent['title']; ?></a> </p>
-          <?php } ?>
-
-
-        <?php } ?>
-
-
-        </div>
 
 
  
@@ -139,7 +258,18 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
   <?php }  ?>
   </div>
 
-  <br>
+
+
+
+
+
+
+
+
+
+  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>  <br><BR><BR>
+ 
+
   <div class="row">
 
 
@@ -171,8 +301,8 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
 
       <div class="col-xs-12 col-ms-12 clwhitebg" >
         <div class="crowdluvsection crowdluv_landingpage_memberlogin_box">
-          <h1 class="cl-textcolor-standout" >Your CrowdLuv Talent Profiles </h1>        
-          <p></p>
+          <h1 class="cl-textcolor-standout" >Your CrowdLuv Brand Profiles </h1>        
+          <p> Select a CrowdLuv Brand profile and connect with your fans</p> 
           
 
           <?php  //Display each of the facebook pages for which logged in user is an admin of
@@ -187,21 +317,26 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
             <?php  } 
             foreach($clRequestInformation->getManagedBrands() as $cltalentobj){  ?>
               <?php if(! $cltalentobj['waitlisted']) {  ?> <a href="topcities.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>&activemanagedtalent_tid=<?php echo $cltalentobj['crowdluv_tid'];?>"> <?php } ?> 
-              <div class="text-left cl_graybackground cl_grayborder talentpagelisting">
+              <div class=" cl-card-horizontal text-left cl_graybackground cl_grayborder ">
                   
-                <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
-                <p>  <?php echo $cltalentobj['fb_page_name'];?></p>  <?php if($cltalentobj['waitlisted']) { ?> <p>(Wait-listed)</p> <?php } ?></span>
-                
+                <div class="brand-avatar">
+                  <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
+                </div>
+                <div class="brand-info">
+                  <p class="brand-name">  <?php echo $cltalentobj['fb_page_name'];?></p>  <?php if($cltalentobj['waitlisted']) { ?> <p>(Wait-listed)</p> <?php } ?></span>
+                </div>
               </div>        
               <?php if(! $cltalentobj['waitlisted']) { ?> </a> <?php } ?>
 
             <?php } ?>
-            <p> Select a CrowdLuv talent profile and connect with your fans</p> 
+            
           <?php } ?>
         </div>
       </div>   
   <?php } ?>  
 </div>
+
+
 
 
 
@@ -217,9 +352,10 @@ if ($clRequestInformation->getLoggedInUserObj()) $futureEvents = $CL_model->getF
             reactivate_follower(<?php echo (isset($clRequestInformation->getLoggedInUserObj()['crowdluv_uid']) ? $clRequestInformation->getLoggedInUserObj()['crowdluv_uid'] : "no_user"); ?>, function(){
                 window.open('<?php echo BASE_URL;?>', "_top").focus();
             });
+
+
             
         });
-
 
 
 

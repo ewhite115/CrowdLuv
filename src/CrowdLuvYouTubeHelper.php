@@ -18,7 +18,8 @@ class CrowdLuvYouTubeHelper {
 
 		$this->client = new Google_Client();
 		$this->client->setApplicationName("CrowdLuv");
-		//$this->client->setDeveloperKey(GOOGLE_MAPS_APIKEY);
+		//Set the developer Key for Simple API requests (when there is no authenticated user)
+		$this->client->setDeveloperKey(GOOGLE_APIKEY);		
 		$this->client->setClientId(GOOGLE_OAUTH_CLIENTID);
 		$this->client->setClientSecret(GOOGLE_OAUTH_SECRET);
 		$this->client->setAccessType("offline");
@@ -31,6 +32,7 @@ class CrowdLuvYouTubeHelper {
 
 		if($clUserObj['youtube_access_token']) $this->client->setAccessToken($clUserObj['youtube_access_token']);
 		if($clUserObj['youtube_refresh_token']) $this->refreshToken = $clUserObj['youtube_refresh_token'];
+
 
    	}
 
@@ -201,12 +203,8 @@ class CrowdLuvYouTubeHelper {
    	 */
    	private function getRecentUploadsForChannel($ytChannelIds, $ytUsernames, $months){
 
-   		//If we dont have a session, return null
-   		if(! $this->getYouTubeSession()) return null;
-
    		$recentVideos = "";
    		$ytChannelList = "";
-
 
 
    		foreach($ytChannelIds as $ytChannelId){
@@ -214,7 +212,7 @@ class CrowdLuvYouTubeHelper {
 			//Query the YT API for the Channel listing
 			try{$ytChannelList = $this->getApi()->channels->listChannels('contentDetails', ['id' => $ytChannelId]);}
 			catch(Google_Service_Exception $e) {
-         	   cldbgmsg("--Exception calling Youtube api");
+         	   cldbgmsg("--Exception calling Youtube api " . $e);
         	   continue; //var_dump($e); die;
             }
         	
@@ -253,7 +251,7 @@ class CrowdLuvYouTubeHelper {
 
 			try{$ytChannelList = $this->getApi()->channels->listChannels('contentDetails', ['forUsername' => $ytUsername]);}
 			catch(Google_Service_Exception $e) {
-         	   cldbgmsg("--Exception calling Youtube api");
+         	   cldbgmsg("--Exception calling Youtube api. " . $e);
         	   var_dump($e); //die;
         	   continue; 
             }
@@ -295,10 +293,6 @@ class CrowdLuvYouTubeHelper {
    	public function getRelatedVideosForBrand($clBrandObj){
 
 
-			//If we dont have a session, return null
-			if(! $this->getYouTubeSession()) return null;
-
-
    			$relatedVideos = "";
 
    			//echo "search for related videos for " . $ytUsername;
@@ -310,7 +304,7 @@ class CrowdLuvYouTubeHelper {
    			$videoCategoryId="10";
 			try{$ytSearchResult = $this->getApi()->search->listSearch('snippet', ['type' => 'video', 'maxResults' => '5', 'q' => $clBrandObj['fb_page_name'], 'publishedAfter' => $publishedAfter, 'videoCategoryId' => $videoCategoryId , 'order' => 'viewCount'] );}
 			catch(Google_Service_Exception $e) {
-         	   cldbgmsg("--Exception calling Youtube api");
+         	   cldbgmsg("--Exception calling Youtube api " . $e);
         	   var_dump($e); //die;
         	   return; 
             }
@@ -336,7 +330,7 @@ class CrowdLuvYouTubeHelper {
 			$ytVideoList = "";
 			try{$ytVideoList = $this->getApi()->videos->listVideos('snippet,contentDetails,statistics', ['id' => $ytVideoIds ]);}
 			catch(Google_Service_Exception $e) {
-         	   cldbgmsg("--Exception calling Youtube api");
+         	   cldbgmsg("--Exception calling Youtube api " . $e);
         	   var_dump($e); //die;
         	   continue; 
             }

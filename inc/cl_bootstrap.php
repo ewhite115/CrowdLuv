@@ -156,21 +156,6 @@ if($clYouTubeHelper->getYouTubeSession() && ! $clFacebookHelper->isNewSession &&
 
 
 
-/**
- * Run the Metadata Retrieval Job
- *
- */
- $clRequestInformation->clModel->runMetaDataRetrievalJob();
-
-
-/**
- * Run the Event-Import Job
- *   Invoked on every page load - runs once every N minutes to import events from
- *     FB, BIT, Spotify
- */
-$clRequestInformation->clModel->runEventImportJob(1470009600);
-
-
 
 //Look for special admin commands to execute in query string
 if(isset($_GET['cmd']) && $_GET['cmd'] == "reloadfollowerplacesfromfacebook"){ $CL_model->importFollowerPlacesFromFacebook();}

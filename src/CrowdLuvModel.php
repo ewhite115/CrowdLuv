@@ -2496,7 +2496,6 @@ class CrowdLuvModel {
 
 
 
-
         // Spotify Import Job  ********
         cldbgmsg("<b>Import Job: Spotify Albums</b>");
         //Determine whether the last Spotify event import job was run within the last X minutes. 
@@ -2539,26 +2538,20 @@ class CrowdLuvModel {
         else { cldbgmsg("-Time interval for Spotify-Album Import has not lapsed.");}
 
 
-
-
         // YouTube-Video Event Import Job  ********
-        cldbgmsg("<b>Import Job: YouTube-Uploads Events</b>");
-        
-        if(! $this->clYouTubeHelper->getYouTubeSession()) {cldbgmsg("YouTubeAPI Session ull - aborting");}
-        else{
-            // Determine whether the last YT event import job was run within the last X minutes. 
-            try {                    
-                $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_youtube_uploads_import > 
-                            (NOW() - INTERVAL 3 minute)";
+        cldbgmsg("<b>Import Job: YouTube-Uploads Events</b>");       
+        //Check when the import was last run
+        try {                    
+            $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_youtube_uploads_import > 
+                        (NOW() - INTERVAL 3 minute)";
 
-                $results = $this->cldb->prepare($sql);
-                $results->execute();
+            $results = $this->cldb->prepare($sql);
+            $results->execute();
 
-            } catch (Exception $e) {
-                echo "Data could not be retrieved from the database. " . $e;
-                exit;
-            }    
-        }
+        } catch (Exception $e) {
+            echo "Data could not be retrieved from the database. " . $e;
+            exit;
+        }    
         $data =  $results->fetchAll(PDO::FETCH_ASSOC);
         //echo "result of query to determine whether last import job was run within x minutes";  var_dump($data); die;
         
@@ -2586,9 +2579,9 @@ class CrowdLuvModel {
                 $this->importYouTubeUploadsForTalent($staleBrand, $sinceTimestamp);
                 
             }
-        }//YouTube imports
+        }
         else { cldbgmsg("-Time interval for YT-Upload Event Import has not lapsed.");}
-
+        // end YouTube imports
 
 
     }

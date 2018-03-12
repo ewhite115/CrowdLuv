@@ -68,6 +68,24 @@ class CrowdLuvFacebookHelper {
    	}
 
    	/**
+   	 * [makeAppSession Makes this instance use an App Session (when there is no logged in user)]
+   	 * @return [type] [description]
+   	 */
+   	public function setAsAppSession(){
+   		$this->facebookSession = FacebookSession::newAppSession();
+
+		try {
+		  $this->facebookSession->validate();
+		} catch (FacebookRequestException $ex) {
+		  // Session not valid, Graph API returned an exception with the reason.
+		  echo $ex->getMessage();
+		} catch (\Exception $ex) {
+		  // Graph API returned info, but it may mismatch the current app or have expired.
+		  echo $ex->getMessage();
+		}
+   	}
+
+   	/**
    	 * [getFacebookSession description]
    	 * @return [FacebookSession] [looks for a Facebook Session and returns a FacebookSession object if found,  null if not]
    	 */

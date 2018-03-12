@@ -12,6 +12,8 @@ class CrowdLuvResponseInformation {
 	//Default the OG description to a generic phrase
 	public $clOpenGraphDescription = "CrowdLuv lets you decide where your favorite acts should come next";
 
+	public $clDiagnostics;
+
 
 }
 

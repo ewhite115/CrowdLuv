@@ -12,11 +12,10 @@
 //TODO:  refactor this to be part of CLResponseInformation   ?
  function cldbgmsg($debugmessage){
 
-    $_SESSION["debugmsgs"][] = $debugmessage;
+    global $clDiagnostics;
+    $clDiagnostics->addDebugMessage($_SESSION["debugmsgs"][] = $debugmessage);
 
   }
-  if(isset($_COOKIE["PHPSESSID"])) { cldbgmsg("COOKIE['PHPSESSID'] = " . $_COOKIE["PHPSESSID"]) ;} else { cldbgmsg("PHPSEESID cookie doesnt exist");}//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
-
 
 //The following is for compatibility with writing session files on AWS
 //TODO: (?) sessions won't work if we have to scale up to using multiple EC2 instances, so
@@ -47,6 +46,10 @@ require_once ROOT_PATH . "inc/cl_bootstrap_configs.php" ;
 
 //Composer autoload.php for  package / dependencies
 require_once ROOT_PATH . 'vendor/autoload.php';
+
+$clDiagnostics = new CrowdLuvDiagnostics();
+
+if(isset($_COOKIE["PHPSESSID"])) { cldbgmsg("COOKIE['PHPSESSID'] = " . $_COOKIE["PHPSESSID"]) ;} else { cldbgmsg("PHPSEESID cookie doesnt exist");}//. "; Cookie[fbsr]=" . $_COOKIE['fbsr_740484335978197'] . "<BR>";
 
 //Create a CrowdLuvFacebookHelper 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
@@ -87,6 +90,7 @@ $CL_model->setBrandMetaDataHelper($clBrandMetaDataHelper);
 
 //create a CrowdLuvResponse    object
 $clResponseInformation = new CrowdLuvResponseInformation();
+$clResponseInformation->clDiagnostics = $clDiagnostics;
 
 
 ////

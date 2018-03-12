@@ -26,27 +26,27 @@
 	if(!defined("CL_FB_TALENT_PERMISSION_SCOPE_STRING")) define("CL_FB_PERMISSION_SCOPE_STRING", "'email', 'user_location', 'user_birthday', 'user_relationships'");
 	if(!defined("CL_FB_TALENT_PERMISSION_SCOPE_STRING")) define("CL_FB_TALENT_PERMISSION_SCOPE_STRING", "email,user_location,user_birthday,user_relationship_details,user_relationships,manage_pages");
 
-	//Google MapAPI Settings
-	if(!defined("GOOGLE_MAPS_APIKEY")) define("GOOGLE_MAPS_APIKEY", "AIzaSyBc6n2vRhj6szWhvDeTtzBNY1kiDAyJMuo");
+	//Google API Settings
+	if(!defined("GOOGLE_MAPS_APIKEY")) define("GOOGLE_MAPS_APIKEY", $_SERVER['GOOGLE_MAPS_APIKEY']);
+	if(!defined("GOOGLE_APIKEY")) define("GOOGLE_APIKEY", $_SERVER['GOOGLE_APIKEY']);
 
-	if(!defined("GOOGLE_OAUTH_CLIENTID")) define("GOOGLE_OAUTH_CLIENTID", "214918842475-lg5gjhamu3us5biub677t2laointbd12.apps.googleusercontent.com");
-	if(!defined("GOOGLE_OAUTH_SECRET")) define("GOOGLE_OAUTH_SECRET", "U2flTomAZKgNeRoga56sUqq0");
-	
-	
-
+	if(!defined("GOOGLE_OAUTH_CLIENTID")) define("GOOGLE_OAUTH_CLIENTID", $_SERVER['GOOGLE_OAUTH_CLIENTID']);
+	if(!defined("GOOGLE_OAUTH_SECRET")) define("GOOGLE_OAUTH_SECRET", $_SERVER['GOOGLE_OAUTH_SECRET']);
 
 
-	// Music-Story.com API Settings
+
+/*	// Music-Story.com API Settings
 	// crowdluv:  ewhite115@gmail
 	// if(!defined("MUSIC_STORY_CUSTOMER_KEY")) define("MUSIC_STORY_CUSTOMER_KEY", "c0e4134da7adfc08157775b78e73411791132014");
 	// if(!defined("MUSIC_STORY_CUSTOMER_SECRET")) define("MUSIC_STORY_CUSTOMER_SECRET", "3be7a41b10c771103cc069969a9a642757c03d79");
 	// edwhite42:  edwhite42@gmail
 	if(!defined("MUSIC_STORY_CUSTOMER_KEY")) define("MUSIC_STORY_CUSTOMER_KEY", "4cb2725c6feb2313a31705b1cfb742a89cd181c6");
 	if(!defined("MUSIC_STORY_CUSTOMER_SECRET")) define("MUSIC_STORY_CUSTOMER_SECRET", "2db2638b05dea8bdc88441b7a9c10bc0a2034323");
+*/
 
 	//Spotify API Settings
-	if(!defined("SPOTIFY_CLIENT_ID")) define("SPOTIFY_CLIENT_ID", "b037ff6f24d245f494ad09dc52add378");
-	if(!defined("SPOTIFY_CLIENT_SECRET")) define("SPOTIFY_CLIENT_SECRET", "ea18712fc9da4fe8afcf21f7d9645bdc");
+	if(!defined("SPOTIFY_CLIENT_ID")) define("SPOTIFY_CLIENT_ID", $_SERVER['SPOTIFY_CLIENT_ID']);
+	if(!defined("SPOTIFY_CLIENT_SECRET")) define("SPOTIFY_CLIENT_SECRET", $_SERVER['SPOTIFY_CLIENT_SECRET']);
 	
 
 

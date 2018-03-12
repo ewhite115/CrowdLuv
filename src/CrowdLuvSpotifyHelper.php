@@ -35,6 +35,14 @@ class CrowdLuvSpotifyHelper {
 
    	}
 
+   	public function setAsClientCredentialSession()  {
+   		$this->spotifySession->requestCredentialsToken();
+   		$this->retrievalAttemptFlag = true;
+		$this->spotifyAccessToken = $this->spotifySession->getAccessToken();
+		$this->spotifyApi->setAccessToken($this->spotifyAccessToken);
+
+   	}
+
    	/**
    	 * [getLoginUrl description]
    	 * @return [String] [URL for Spotify login]
@@ -60,6 +68,7 @@ class CrowdLuvSpotifyHelper {
    	public function getSpotifyAccessToken(){
 
    		return $this->spotifyAccessToken;
+
    	}
 
 

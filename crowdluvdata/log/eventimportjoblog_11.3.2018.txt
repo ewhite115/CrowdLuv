@@ -1,0 +1,977 @@
+COOKIE['PHPSESSID'] = 6otnlfcgs3oav0520gv4rb9la4
+<b>Checking for Facebook Session</b>
+-Found fb_token in session
+-Active Facebook session with token<br>EAAWTUJFrWZAwBAETtzErf2G0359hlIvbcZAPUFSlOCUxvhGLlZCxZAuxrha8XJZAZCk03163E2QZCxQTaPObVLf0H2mts9Iy0f5Pk4w9RWNvLZCLGUA1eIB7Oc0SnGmkuY9nHxSeQyRoxNlRdizudDZCgoybBgFc9BogZD
+<b>User Update/Import Job: Facebook-likes</b>
+-Less than x minutes since last facebook-like import:- aborting
+<b>Checking for Spotify Session..</b>
+-Checking for stored spotify token..
+-Found stored spotify_token.  Validating ....
+--Stored Spotify token is still valid..
+<b>User Update/Import Job - Spotify-Follow</b>
+-Spotify import time internval has not lapsed -- aborting
+<b>User Update/Import Job: YouTube-Subscriptions</b>
+-YouTube-Subscription-Import time interval has not lapsed -- aborting
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+-Time interval for FB-Event Import has not lapsed.
+<b>Import Job: BIT Events</b>
+-Time interval for BandsInTown-Event Import has not lapsed.
+<b>Import Job: Spotify Albums</b>
+-Time interval for Spotify-Album Import has not lapsed.
+<b>Import Job: YouTube-Uploads Events</b>
+-Time interval for YT-Upload Event Import has not lapsed.
+COOKIE['PHPSESSID'] = 6otnlfcgs3oav0520gv4rb9la4
+<b>Checking for Facebook Session</b>
+-Found fb_token in session
+-Active Facebook session with token<br>EAAWTUJFrWZAwBAETtzErf2G0359hlIvbcZAPUFSlOCUxvhGLlZCxZAuxrha8XJZAZCk03163E2QZCxQTaPObVLf0H2mts9Iy0f5Pk4w9RWNvLZCLGUA1eIB7Oc0SnGmkuY9nHxSeQyRoxNlRdizudDZCgoybBgFc9BogZD
+<b>User Update/Import Job: Facebook-likes</b>
+-Less than x minutes since last facebook-like import:- aborting
+<b>Checking for Spotify Session..</b>
+-Checking for stored spotify token..
+-Found stored spotify_token.  Validating ....
+--Stored Spotify token is still valid..
+<b>User Update/Import Job - Spotify-Follow</b>
+-Spotify import time internval has not lapsed -- aborting
+<b>User Update/Import Job: YouTube-Subscriptions</b>
+-YouTube-Subscription-Import time interval has not lapsed -- aborting
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+-Time interval for FB-Event Import has not lapsed.
+<b>Import Job: BIT Events</b>
+-Time interval for BandsInTown-Event Import has not lapsed.
+<b>Import Job: Spotify Albums</b>
+-Time interval for Spotify-Album Import has not lapsed.
+<b>Import Job: YouTube-Uploads Events</b>
+-Time interval for YT-Upload Event Import has not lapsed.
+COOKIE['PHPSESSID'] = 6otnlfcgs3oav0520gv4rb9la4
+<b>Checking for Facebook Session</b>
+-Found fb_token in session
+-Active Facebook session with token<br>EAAWTUJFrWZAwBAETtzErf2G0359hlIvbcZAPUFSlOCUxvhGLlZCxZAuxrha8XJZAZCk03163E2QZCxQTaPObVLf0H2mts9Iy0f5Pk4w9RWNvLZCLGUA1eIB7Oc0SnGmkuY9nHxSeQyRoxNlRdizudDZCgoybBgFc9BogZD
+<b>User Update/Import Job: Facebook-likes</b>
+-Less than x minutes since last facebook-like import:- aborting
+<b>Checking for Spotify Session..</b>
+-Checking for stored spotify token..
+-Found stored spotify_token.  Validating ....
+--Stored Spotify token is still valid..
+<b>User Update/Import Job - Spotify-Follow</b>
+-Spotify import time internval has not lapsed -- aborting
+<b>User Update/Import Job: YouTube-Subscriptions</b>
+-YouTube-Subscription-Import time interval has not lapsed -- aborting
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+-Time interval for FB-Event Import has not lapsed.
+<b>Import Job: BIT Events</b>
+-Time interval for BandsInTown-Event Import has not lapsed.
+<b>Import Job: Spotify Albums</b>
+-Time interval for Spotify-Album Import has not lapsed.
+<b>Import Job: YouTube-Uploads Events</b>
+-Time interval for YT-Upload Event Import has not lapsed.
+CrowdLuv Diagnostics...<br>1520813927
+COOKIE['PHPSESSID'] = 6otnlfcgs3oav0520gv4rb9la4
+<b>Checking for Facebook Session</b>
+-Found fb_token in session
+-Active Facebook session with token<br>EAAWTUJFrWZAwBAETtzErf2G0359hlIvbcZAPUFSlOCUxvhGLlZCxZAuxrha8XJZAZCk03163E2QZCxQTaPObVLf0H2mts9Iy0f5Pk4w9RWNvLZCLGUA1eIB7Oc0SnGmkuY9nHxSeQyRoxNlRdizudDZCgoybBgFc9BogZD
+<b>User Update/Import Job: Facebook-likes</b>
+-Less than x minutes since last facebook-like import:- aborting
+<b>Checking for Spotify Session..</b>
+-Checking for stored spotify token..
+-Found stored spotify_token.  Validating ....
+--Stored Spotify token is still valid..
+<b>User Update/Import Job - Spotify-Follow</b>
+-Spotify import time internval has not lapsed -- aborting
+<b>User Update/Import Job: YouTube-Subscriptions</b>
+-YouTube-Subscription-Import time interval has not lapsed -- aborting
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+<b>Invoking FB Event Import for</b> Bastille
+--Found facebook event to add/update: 136497817034607:SOLD OUT l Bastille l KKL l Luzern:2018-04-20T20:00:00+0200
+--Found facebook event to add/update: 132298510884458:Bastille | Berlin:2018-04-19T19:00:00+0200
+--Found facebook event to add/update: 459530051116640:Bastille Reorchestrated in Grote Zaal | TivoliVredenburg:2018-04-18T19:00:00+0200
+--Found facebook event to add/update: 143993599590741:Bastille: Reorchestrated:2018-04-14T19:00:00+0100
+--Found facebook event to add/update: 849497018557251:Bastille:2018-04-13T19:00:00+0100
+--Found facebook event to add/update: 176241026450119:Bastille Reorchestrated:2018-04-10T19:00:00+0100
+<b>Invoking FB Event Import for</b> Copeland
+<b>Invoking FB Event Import for</b> HAIM
+--Found facebook event to add/update: 2057168297939882:HAIM at Sentrum Scene:2018-06-21T19:00:00+0200
+--Found facebook event to add/update: 220686505164618:HAIM at Annexet:2018-06-20T19:00:00+0200
+--Found facebook event to add/update: 149934892360235:HAIM at Tap1:2018-06-19T19:00:00+0200
+--Found facebook event to add/update: 1898515220459878:HAIM at Paradiso:2018-06-18T19:00:00+0200
+--Found facebook event to add/update: 362932297525662:HAIM at Alexandra Palace:2018-06-16T19:00:00+0100
+--Found facebook event to add/update: 2014267082165970:HAIM at Alexandra Palace:2018-06-15T19:00:00+0100
+--Found facebook event to add/update: 172876850004055:HAIM at Olympia:2018-06-12T19:00:00+0100
+--Found facebook event to add/update: 1883961641674658:HAIM at O2 Apollo:2018-06-11T19:00:00+0100
+--Found facebook event to add/update: 148108522665891:HAIM at O2 Academy Glasgow:2018-06-10T19:00:00+0100
+--Found facebook event to add/update: 131374317681390:HAIM at Columbiahalle:2018-06-08T19:00:00+0200
+--Found facebook event to add/update: 1995627084030930:HAIM at Stodola:2018-06-07T19:00:00+0200
+--Found facebook event to add/update: 148928122458364:HAIM at E-Werk:2018-06-05T19:00:00+0200
+--Found facebook event to add/update: 1736862759714704:HAIM at X-tra:2018-06-04T19:00:00+0200
+--Found facebook event to add/update: 157106211754061:HAIM at Fabrique:2018-06-03T19:00:00+0200
+--Found facebook event to add/update: 152121038694152:HAIM with Maggie Rogers and Lizzo at Red Rocks:2018-05-28T19:00:00-0600
+--Found facebook event to add/update: 1975119746141939:HAIM with Lizzo at Palace Theatre:2018-05-15T18:00:00-0500
+--Found facebook event to add/update: 1139059032894856:HAIM with Lizzo at Palace Theatre:2018-05-14T19:00:00-0500
+--Found facebook event to add/update: 1975111826085731:HAIM with Lizzo at Aragon Ballroom:2018-05-12T19:30:00-0500
+--Found facebook event to add/update: 1806862096279645:HAIM with Lizzo at Aragon Ballroom:2018-05-11T19:30:00-0500
+--Found facebook event to add/update: 1764510593844789:HAIM with Lizzo at Uptown Theater:2018-05-10T19:00:00-0500
+--Found facebook event to add/update: 144684259572119:HAIM with Lizzo at The Fillmore Detroit:2018-05-08T19:00:00-0400
+--Found facebook event to add/update: 140138093345735:HAIM with Lizzo at Massey Hall:2018-05-07T19:00:00-0400
+--Found facebook event to add/update: 261094607761122:HAIM with Lizzo at Radio City Music Hall:2018-05-05T20:00:00-0400
+--Found facebook event to add/update: 194399374633716:HAIM with Lizzo at Radio City Music Hall:2018-05-04T20:00:00-0400
+--Found facebook event to add/update: 1331256463646669:HAIM with Lizzo at Agganis Arena:2018-05-03T19:30:00-0400
+--Found facebook event to add/update: 148971335822533:HAIM with Lizzo at The Anthem:2018-05-01T19:00:00-0400
+--Found facebook event to add/update: 1792186087482111:HAIM with Lizzo at War Memorial Auditorium:2018-04-29T19:00:00-0500
+--Found facebook event to add/update: 534770470231420:HAIM with Lizzo at Coca-Cola Roxy:2018-04-28T20:00:00-0400
+--Found facebook event to add/update: 1174903629309068:HAIM with Lizzo at South Side Ballroom:2018-04-26T20:00:00-0500
+--Found facebook event to add/update: 1582619951831226:HAIM with Lizzo at Revention Music Center:2018-04-25T19:00:00-0500
+--Found facebook event to add/update: 194084207842048:HAIM with Lizzo at Stubb's Austin:2018-04-24T19:00:00-0500
+--Found facebook event to add/update: 131931267613219:Coachella:2018-04-21T00:00:00-0700
+--Found facebook event to add/update: 2009752762598611:HAIM with Lizzo at The Observatory:2018-04-19T19:00:00-0700
+--Found facebook event to add/update: 134360257367963:Coachella:2018-04-14T00:00:00-0700
+--Found facebook event to add/update: 1792891974340809:HAIM with Lizzo at Pearl Concert Theater at the Palms:2018-04-13T20:00:00-0700
+--Found facebook event to add/update: 188626218421018:HAIM:2018-04-11T20:00:00-0700
+--Found facebook event to add/update: 741633889365069:HAIM with Lizzo at The Santa Barbara Bowl:2018-04-07T19:00:00-0700
+--Found facebook event to add/update: 536921510010502:HAIM with Lizzo at Greek Theatre at UC Berkeley:2018-04-06T20:00:00-0700
+--Found facebook event to add/update: 148998082359700:HAIM at Washington Music Theater:2018-04-04T20:00:00-0700
+--Found facebook event to add/update: 214535422453457:HAIM with Lizzo at Arlene Schnitzer Concert Hall:2018-04-03T19:00:00-0700
+--Found facebook event to add/update: 138772130134157:2018 MusiCares Person Of The Year: Fleetwood Mac:2018-01-26T19:30:00-0500
+<b>Invoking FB Event Import for</b> Crystalyne
+<b>Invoking FB Event Import for</b> Rihanna
+<b>Invoking FB Event Import for</b> Kaskade
+--Found facebook event to add/update: 2034991443411624:Kaskade at X Games Minneapolis 2018:2018-07-20T22:30:00-0500
+--Found facebook event to add/update: 117960105639241:X Games Minneapolis 2018:2018-07-19T09:00:00-0500
+--Found facebook event to add/update: 557336537933594:FVDED In The Park 2018:2018-07-06T13:00:00-0700
+--Found facebook event to add/update: 1897771463808413:Spring Awakening Music Festival 2018 - Official:2018-06-08T13:00:00-0500
+--Found facebook event to add/update: 1982889248641676:Spring Awakening Festival:2018-06-08T00:00:00-0500
+--Found facebook event to add/update: 1604390409657902:Kaskade:2018-05-25T21:00:00-0500
+--Found facebook event to add/update: 190262598372747:Kaskade at JEWEL Nightclub:2018-05-19T22:30:00-0700
+--Found facebook event to add/update: 2042392459379403:Kaskade at Wet Republic:2018-05-18T11:00:00-0700
+--Found facebook event to add/update: 2069842716580090:EDC Las Vegas 2018:2018-05-18T10:00:00-0700
+--Found facebook event to add/update: 1583906018396322:Kaskade at Wet Republic:2018-05-05T11:00:00-0700
+--Found facebook event to add/update: 220983558471780:Kaskade at Wet Republic:2018-04-28T11:00:00-0700
+--Found facebook event to add/update: 1967376620257698:Kaskade at Wet Republic:2018-04-07T11:00:00-0700
+--Found facebook event to add/update: 2053284618225303:Kaskade at OMNIA NIGHTCLUB:2018-03-31T22:30:00-0700
+--Found facebook event to add/update: 1140122822791377:Kaskade at Hakkasan:2018-03-23T22:30:00-0700
+--Found facebook event to add/update: 161598707920591:Steve Aoki with Kaskade, We Are GTA, NGHTMRE, Slander, JOYRYDE, Kryoman at Ultra Music Festival:2018-03-23T19:00:00-0400
+--Found facebook event to add/update: 195513634374393:Sun Soaked Miami:2018-03-22T12:00:00-0400
+--Found facebook event to add/update: 148071069242778:Kaskade at Hakkasan:2018-03-16T22:30:00-0700
+--Found facebook event to add/update: 326698864489853:Kaskade at OMNIA San Diego:2018-02-24T21:00:00-0800
+--Found facebook event to add/update: 188996645011450:Crush Arizona 2018:2018-02-17T17:00:00-0700
+--Found facebook event to add/update: 134461880572585:Kaskade with RL Grime at Lumber Exchange Building:2018-02-02T22:00:00-0600
+--Found facebook event to add/update: 145694656090937:Kaskade / Saturday January 20th / Spire:2018-01-20T21:00:00-0600
+<b>Invoking FB Event Import for</b> Cash Cash
+--Found facebook event to add/update: 1537417242968989:Coachella Music and Arts Festival - Weekend 2:2018-04-20T11:00:00-0700
+--Found facebook event to add/update: 131405881009392:Therapy Thursdays: Cash Cash at SKY SLC:2018-04-05T21:30:00-0600
+--Found facebook event to add/update: 2114204405481684:Cash Cash at Premier Nightclub:2018-03-17T22:00:00-0400
+<b>Invoking FB Event Import for</b> Tritonal
+--Found facebook event to add/update: 738525923017695:Tritonal: 10 Years Of Enhanced Music Tour at Stereo Live Houston:2018-07-21T22:00:00-0500
+--Found facebook event to add/update: 324547714719746:Tritonal: 10 Years of Enhanced Music Tour at Stereo Live Dallas:2018-07-20T22:00:00-0500
+--Found facebook event to add/update: 156148555043501:Tritonal at Mosaic - Kansas City:2018-07-13T21:00:00-0500
+--Found facebook event to add/update: 206066080133679:Tritonal 10 Years of Enhanced Tour - Presented by Electric Palms:2018-07-07T20:00:00-1000
+--Found facebook event to add/update: 324666258041134:Tritonal at UNIUN Nightclub - Toronto:2018-06-15T22:00:00-0400
+--Found facebook event to add/update: 198030244028443:Tritonal / Union Hall / Edmonton:2018-06-02T21:00:00-0600
+--Found facebook event to add/update: 326847244494668:Tritonal presents 10 Years of Enhanced 2008 - 2018:2018-06-01T21:00:00-0600
+--Found facebook event to add/update: 875121086003485:Tritonal 10 Years of Enhanced Tour / Emo's 5.19:2018-05-19T20:00:00-0500
+--Found facebook event to add/update: 371533853310412:Tritonal at Rev Ultra Lounge - SIMshows.com:2018-04-21T22:00:00-0500
+--Found facebook event to add/update: 808529269330315:Tritonal at Royale - Boston:2018-04-20T22:00:00-0400
+--Found facebook event to add/update: 349435985541528:Tritonal at Necto:2018-04-19T20:00:00-0400
+--Found facebook event to add/update: 978558852307987:Tritonal at 45 East - Portland, OR:2018-04-14T22:00:00-0700
+--Found facebook event to add/update: 1216677095130351:Tritonal - Marquee Dayclub:2018-04-14T11:00:00-0700
+--Found facebook event to add/update: 1852901384722250:TRITONAL at 1015 FOLSOM:2018-04-13T22:00:00-0700
+--Found facebook event to add/update: 1823275414351602:Tritonal at Beta Nightclub - Denver:2018-04-12T21:00:00-0600
+--Found facebook event to add/update: 1608074342617311:Tritonal - #Seasons2018 Closing Party:2018-04-01T22:00:00-0700
+--Found facebook event to add/update: 216159495614361:Tritonal Presents Ten Years of Enhanced:2018-03-23T22:00:00-0700
+--Found facebook event to add/update: 1810500465635014:Tritonal - Marquee Dayclub:2018-03-23T11:00:00-0700
+--Found facebook event to add/update: 330550054106852:Tritonal:2018-03-02T23:00:00-0500
+--Found facebook event to add/update: 772830922911706:Tritonal at Academy:2018-02-17T22:00:00-0800
+--Found facebook event to add/update: 242501409620652:Tritonal:2018-01-27T22:00:00-0500
+--Found facebook event to add/update: 147798055950063:Tritonal:2018-01-19T21:00:00-0800
+--Found facebook event to add/update: 172431100028240:Therapy Thursdays: Tritonal at SKY SLC:2018-01-18T21:30:00-0700
+--Found facebook event to add/update: 368808920234683:Tritonal:2018-01-13T23:00:00-0500
+<b>Invoking FB Event Import for</b> Michael Lewis
+<b>Invoking FB Event Import for</b> Kesha
+--Found facebook event to add/update: 126735784778957:The Adventures of Kesha and Macklemore:2018-08-05T19:00:00-0400
+--Found facebook event to add/update: 1653716854685400:The Adventures of Kesha and Macklemore:2018-08-04T19:00:00-0400
+--Found facebook event to add/update: 153833792008121:The Adventures of Kesha and Macklemore:2018-08-02T19:00:00-0400
+--Found facebook event to add/update: 1969145226436170:The Adventures of Kesha and Macklemore:2018-08-01T19:00:00-0400
+--Found facebook event to add/update: 311050229410235:The Adventures of Kesha and Macklemore:2018-07-30T20:00:00-0400
+--Found facebook event to add/update: 2085091695052091:The Adventures of Kesha and Macklemore:2018-07-28T19:00:00-0400
+--Found facebook event to add/update: 267706937089267:The Adventures of Kesha and Macklemore:2018-07-27T19:00:00-0400
+--Found facebook event to add/update: 521685014868669:The Adventures of Kesha and Macklemore:2018-07-25T19:00:00-0400
+--Found facebook event to add/update: 278662862658823:The Adventures of Kesha and Macklemore:2018-07-24T19:00:00-0400
+--Found facebook event to add/update: 167209930693094:The Adventures of Kesha and Macklemore:2018-07-22T19:00:00-0400
+--Found facebook event to add/update: 176109233127797:The Adventures of Kesha and Macklemore:2018-07-21T19:00:00-0400
+--Found facebook event to add/update: 1940129916315705:The Adventures of Kesha and Macklemore:2018-07-19T19:00:00-0400
+--Found facebook event to add/update: 1499128406801303:The Adventures of Kesha and Macklemore:2018-07-18T19:00:00-0400
+--Found facebook event to add/update: 205878486649553:The Adventures of Kesha and Macklemore:2018-07-16T19:00:00-0400
+--Found facebook event to add/update: 1352766734845925:The Adventures of Kesha and Macklemore:2018-07-14T19:00:00-0500
+--Found facebook event to add/update: 529889164045013:The Adventures of Kesha and Macklemore:2018-07-13T19:00:00-0500
+--Found facebook event to add/update: 1664780413610454:The Adventures of Kesha and Macklemore:2018-07-11T19:00:00-0400
+--Found facebook event to add/update: 375838036219728:The Adventures of Kesha and Macklemore:2018-07-10T19:00:00-0500
+--Found facebook event to add/update: 540260933020600:Kesha live in Grand Rapids, MI - July 06:2018-07-06T19:00:00-0400
+--Found facebook event to add/update: 195468017891005:80/35 Music Festival:2018-07-06T16:00:00-0500
+--Found facebook event to add/update: 981325635352188:Kesha live in Oklahoma City, OK - July 02:2018-07-02T19:30:00-0500
+--Found facebook event to add/update: 321568184914198:Kesha live in Prior Lake, MN - June 30:2018-06-30T20:00:00-0500
+--Found facebook event to add/update: 213684125847911:Kesha live in Sioux City, IA - June 29:2018-06-29T20:00:00-0500
+--Found facebook event to add/update: 1904014923241981:The Adventures of Kesha and Macklemore:2018-06-26T19:00:00-0500
+--Found facebook event to add/update: 1492591910857916:The Adventures of Kesha and Macklemore:2018-06-25T19:00:00-0500
+--Found facebook event to add/update: 103664487093065:The Adventures of Kesha and Macklemore:2018-06-23T19:00:00-0500
+--Found facebook event to add/update: 893054287536977:The Adventures of Kesha and Macklemore:2018-06-22T19:00:00-0500
+--Found facebook event to add/update: 196333054259571:The Adventures of Kesha and Macklemore:2018-06-20T19:00:00-0500
+--Found facebook event to add/update: 373593349720072:The Adventures of Kesha and Macklemore:2018-06-17T19:00:00-0600
+--Found facebook event to add/update: 409530589465601:The Adventures of Kesha and Macklemore:2018-06-16T17:30:00-0600
+--Found facebook event to add/update: 1966847753581486:The Adventures of Kesha and Macklemore:2018-06-14T19:00:00-0700
+--Found facebook event to add/update: 1599170500148365:The Adventures of Kesha and Macklemore:2018-06-12T19:00:00-0700
+--Found facebook event to add/update: 555629894772932:The Adventures of Kesha and Macklemore:2018-06-09T19:00:00-0700
+--Found facebook event to add/update: 1067542703397905:The Adventures of Kesha and Macklemore:2018-06-08T19:00:00-0700
+--Found facebook event to add/update: 1497973770317488:The Adventures of Kesha and Macklemore:2018-06-06T19:00:00-0700
+--Found facebook event to add/update: 1032319640256983:Kesha live in Tokyo:2018-04-17T19:00:00+0900
+--Found facebook event to add/update: 159833344759901:All For The Hall:2018-02-13T20:30:00-0500
+--Found facebook event to add/update: 553399168342688:Kesha live in Dubai, UAE - Feb 09:2018-02-09T19:00:00+0400
+<b>Import Job: BIT Events</b>
+-Time interval for BandsInTown-Event Import has not lapsed.
+<b>Import Job: Spotify Albums</b>
+-Time interval for Spotify-Album Import has not lapsed.
+<b>Import Job: YouTube-Uploads Events</b>
+-Invoking YT-Upload Import for LFO
+-Found Playlist ID for uploads: UUsOG_jowQJ-N-vEIPAj_cow
+-Found 2 Playlist items
+-ChannelList was empty when searching for username LFO-227410300689171
+-ChannelList was empty when searching for username LFO-227410300689171vevo
+-ChannelList was empty when searching for username LFO-227410300689171music
+-ChannelList was empty when searching for username LFO-227410300689171official
+-Found Playlist ID for uploads for username LFO: UUo_Cvz8HFWoymzPTrvIyabQ
+-Found 3 Playlist items
+-ChannelList was empty when searching for username LFOvevo
+-ChannelList was empty when searching for username LFOmusic
+-ChannelList was empty when searching for username LFOofficial
+--No recent videos found.
+--Found Related YouTube video to add/import: :Ganja White Night - LFO Requiem [Official Music Video]:
+---It is an existing video - updating
+--Found Related YouTube video to add/import: :Joyner Lucas - Black magic (LFO'S):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :LFO | Devin's Surgery | Update 2:
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Korg Volca Bass - LFO Tricks Part 2:
+---It is an existing video - updating
+--Found Related YouTube video to add/import: :LFO | Devin's Surgery | Update 1:
+---It is a new youtube video. Calling CreateEvent() for youtube import
+-Invoking YT-Upload Import for Lost Kings
+-Found Playlist ID for uploads: UUF3s4ooLLORy4cKr_HgTozA
+-Found 33 Playlist items
+-ChannelList was empty when searching for username wearelostkings
+-ChannelList was empty when searching for username wearelostkingsvevo
+-ChannelList was empty when searching for username wearelostkingsmusic
+-ChannelList was empty when searching for username wearelostkingsofficial
+-Found Playlist ID for uploads for username LostKings: UU154IjrUApuZ00iaaAIqeog
+-Found 0 Playlist items
+-ChannelList was empty when searching for username LostKingsvevo
+-ChannelList was empty when searching for username LostKingsmusic
+-ChannelList was empty when searching for username LostKingsofficial
+--No recent videos found.
+--Found Related YouTube video to add/import: :Lost Kings - First Love (Official Video) ft. Sabrina Carpenter:
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Lost Kings - Phone Down (TRINIX Remix):
+---It is an existing video - updating
+--Found Related YouTube video to add/import: :Lost Kings - Quit You (Lyric) ft. Tinashe:
+---It is an existing video - updating
+--Found Related YouTube video to add/import: :Lost Kings - You ft. Katelyn Tarver (Unlike Pluto Remix):
+---It is an existing video - updating
+--Found Related YouTube video to add/import: :Lost Kings - Look At Us Now (Lyric Video) ft. Ally Brooke, A$AP Ferg:
+---It is a new youtube video. Calling CreateEvent() for youtube import
+-Invoking YT-Upload Import for Great Good Fine Ok
+-Found Playlist ID for uploads: UUjgQE9z7JaAeJRS6EYji2sA
+-Found 13 Playlist items
+-Found Playlist ID for uploads for username GreatGoodFineOk: UUjgQE9z7JaAeJRS6EYji2sA
+-Found 13 Playlist items
+-Found Playlist ID for uploads for username GreatGoodFineOkvevo: UUN_J-MK7TBzLYLeGFvhJbnQ
+-Found 0 Playlist items
+-ChannelList was empty when searching for username GreatGoodFineOkmusic
+-ChannelList was empty when searching for username GreatGoodFineOkofficial
+-Found Playlist ID for uploads for username GreatGoodFineOk: UUjgQE9z7JaAeJRS6EYji2sA
+-Found 13 Playlist items
+-Found Playlist ID for uploads for username GreatGoodFineOkvevo: UUN_J-MK7TBzLYLeGFvhJbnQ
+-Found 0 Playlist items
+-ChannelList was empty when searching for username GreatGoodFineOkmusic
+-ChannelList was empty when searching for username GreatGoodFineOkofficial
+--No recent videos found.
+--Found Related YouTube video to add/import: :Great Good Fine Ok - Too Much To Handle (XYconstant Remix):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :LA Riots feat. Great Good Fine OK - Real Love (Official Lyric Video):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Great Good Fine Ok & Before You Exit ‒ Find Yourself (Kende Remix) 🌊:
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Before You Exit, Great Good Fine Ok - Find Yourself (Official Audio):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Before You Exit, Great Good Fine Ok - Find Yourself (Official Video):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+CrowdLuv Diagnostics...<br>1520814255
+PHPSEESID cookie doesnt exist
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+CrowdLuv Diagnostics...<br>1520814261
+COOKIE['PHPSESSID'] = j91l9vbunt7qq7lna56nm35935
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+CrowdLuv Diagnostics...<br>1520814284
+COOKIE['PHPSESSID'] = 6otnlfcgs3oav0520gv4rb9la4
+<b>Checking for Facebook Session</b>
+-Found fb_token in session
+-Active Facebook session with token<br>EAAWTUJFrWZAwBAETtzErf2G0359hlIvbcZAPUFSlOCUxvhGLlZCxZAuxrha8XJZAZCk03163E2QZCxQTaPObVLf0H2mts9Iy0f5Pk4w9RWNvLZCLGUA1eIB7Oc0SnGmkuY9nHxSeQyRoxNlRdizudDZCgoybBgFc9BogZD
+<b>User Update/Import Job: Facebook-likes</b>
+-Less than x minutes since last facebook-like import:- aborting
+<b>Checking for Spotify Session..</b>
+-Checking for stored spotify token..
+-Found stored spotify_token.  Validating ....
+-- stored spotify token expired on 03/11/2018
+-Refreshed spotify token with new expiration of 03/11/2018
+updating user's stored spotify AccessToken
+<b>User Update/Import Job - Spotify-Follow</b>
+-Spotify import time internval has not lapsed -- aborting
+Youtube token is expired. Attempting to refresh...
+<b>User Update/Import Job: YouTube-Subscriptions</b>
+-YouTube-Subscription-Import time interval has not lapsed -- aborting
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+-Time interval for FB-Event Import has not lapsed.
+<b>Import Job: BIT Events</b>
+-Invoking BIT Event Import for Skylar Spence
+-Invoking BIT Event Import for Ryos
+<b>Import Job: Spotify Albums</b>
+<b>Retrieving album releases from spotify for </b>Marvin Gaye
+--Found spotify album to add/import: 1L5IFq2w2ZtwvzOp3fXe9V:Motown Unreleased 1965: Marvin Gaye:2015-12-18
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 1ElxwIYimDtN6xQ1W3sS7F:Live At The Copa:2005-01-01
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 6oWve17aH3k9i9ITcL1cU5:Vulnerable:1997-04-22
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 1aGm5Z9HtjM0v0ldtDJVVB:Lost & Found: Love Starved Heart - Expanded Edition:1994
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 3hcSdgOQ6ZsqnwRfsBGuUi:Romantically Yours:1985-11-01
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 3R77KUZFEdUDsPcOCTRkPf:Dream Of A Lifetime:1985-05-21
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 3gPlX9Zs3tXZZKNCyoOkSm:Midnight Love:1982-10-01
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 3oBFGJ34Nel7NOG2cmW4S3:Midnight Love & The Sexual Healing Sessions:1982-10-01
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 20DTTrVpPJwujuSmQJjU9E:In Our Lifetime:1981-01-15
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 2inNwSLauhkASzQ9RFrH5E:In Our Lifetime? Expanded Love Man Edition:1981-01-15
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 1iVf41qWHZsAk9DwY43WnV:Here, My Dear:1978-12-15
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 7wkzcu3G3L35OownBenoas:Here My Dear Deluxe Edition:1978-12-15
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 5PY79lSefhMwfRU4v2fIjU:Live At The London Palladium:1977-03-15
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 28nUWsyczStUhYKXTY1IoW:I Want You (Deluxe Edition):1976-03-16
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 0EM4Q0JUVZ8FNqmT5CI2E7:I Want You:1976-03-16
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 74xkV5FTdShNKEf2VNtA08:Live:1974
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 7bHI1G9Q6V1M7YNT69QeNC:Diana & Marvin:1973-10-26
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 3rDn7vWteVTxTbuLQXb6eC:Let's Get It On (Deluxe Edition):1973-08-28
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 6AmnVWOxXYucWxgidEgwhy:Let's Get It On:1973-08-28
+---It is a new spotify album. Calling CreateEvent() for spotify import
+--Found spotify album to add/import: 1oIICL75sMuInkEhX8jj3b:Let's Get It On (Reissue):1973-08-28
+---It is an existing spotify album - updating
+<b>Retrieving album releases from spotify for </b>The Chainsmokers
+--Found spotify album to add/import: 4JPguzRps3kuWDD5GS6oXr:Memories...Do Not Open:2017-04-07
+---It is an existing spotify album - updating
+<b>Retrieving album releases from spotify for </b>Lauv
+<b>Import Job: YouTube-Uploads Events</b>
+-Invoking YT-Upload Import for Divided By Friday
+-Found Playlist ID for uploads: UUYWH9kFegsAetiT1rHXPQlw
+-Found 35 Playlist items
+-Found Playlist ID for uploads for username dividedbyfriday: UUYWH9kFegsAetiT1rHXPQlw
+-Found 35 Playlist items
+-Found Playlist ID for uploads for username dividedbyfridayvevo: UUs8Tx94ULiH9TLJfTw20ROw
+-Found 0 Playlist items
+-ChannelList was empty when searching for username dividedbyfridaymusic
+-ChannelList was empty when searching for username dividedbyfridayofficial
+-Found Playlist ID for uploads for username DividedByFriday: UUYWH9kFegsAetiT1rHXPQlw
+-Found 35 Playlist items
+-Found Playlist ID for uploads for username DividedByFridayvevo: UUs8Tx94ULiH9TLJfTw20ROw
+-Found 0 Playlist items
+-ChannelList was empty when searching for username DividedByFridaymusic
+-ChannelList was empty when searching for username DividedByFridayofficial
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for Dagny
+-Found Playlist ID for uploads: UUlCWw8wqQgH80i3UgR4GRiA
+-Found 9 Playlist items
+-Found Playlist ID for uploads for username dagnymusic: UU9lkXtfM2AHZqtskM210ycQ
+-Found 4 Playlist items
+-ChannelList was empty when searching for username dagnymusicvevo
+-ChannelList was empty when searching for username dagnymusicmusic
+-ChannelList was empty when searching for username dagnymusicofficial
+-Found Playlist ID for uploads for username Dagny: UUcIMxZiVYqkUPFcLHcH2Ygg
+-Found 0 Playlist items
+-Found Playlist ID for uploads for username Dagnyvevo: UUlCWw8wqQgH80i3UgR4GRiA
+-Found 9 Playlist items
+-Found Playlist ID for uploads for username Dagnymusic: UU9lkXtfM2AHZqtskM210ycQ
+-Found 4 Playlist items
+-ChannelList was empty when searching for username Dagnyofficial
+--No recent videos found.
+--Found Related YouTube video to add/import: :Dagny - Wearing Nothing:
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Dagny - Backbeat (Official Video):
+---It is an existing video - updating
+--Found Related YouTube video to add/import: :Dagny - Love You Like That (Lyric Video):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :LCAW - Man In The Moon feat. Dagny (Official Video):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Dagny - Fool's Gold (Live) – dscvr ONES TO WATCH 2017:
+---It is an existing video - updating
+-Invoking YT-Upload Import for Marvin Gaye
+-Found Playlist ID for uploads: UUq1KEhv1y-z6QEFIaMccLxg
+-Found 50 Playlist items
+-Found Playlist ID for uploads for username MarvinGaye: UUQAUhyiS7OeiVuRVzu_Pk-w
+-Found 0 Playlist items
+-Found Playlist ID for uploads for username MarvinGayevevo: UUXgEXcZIxXtQCZfXEDo1yHQ
+-Found 5 Playlist items
+-ChannelList was empty when searching for username MarvinGayemusic
+-Found Playlist ID for uploads for username MarvinGayeofficial: UUq1KEhv1y-z6QEFIaMccLxg
+-Found 50 Playlist items
+-Found Playlist ID for uploads for username MarvinGaye: UUQAUhyiS7OeiVuRVzu_Pk-w
+-Found 0 Playlist items
+-Found Playlist ID for uploads for username MarvinGayevevo: UUXgEXcZIxXtQCZfXEDo1yHQ
+-Found 5 Playlist items
+-ChannelList was empty when searching for username MarvinGayemusic
+-Found Playlist ID for uploads for username MarvinGayeofficial: UUq1KEhv1y-z6QEFIaMccLxg
+-Found 50 Playlist items
+--No recent videos found.
+--Found Related YouTube video to add/import: :Marvin Gaye (Cover) by Kristel Fulgar and CJ Navato:
+---It is an existing video - updating
+--Found Related YouTube video to add/import: :OLD SCHOOL SLOW JAMS VOL 4 (3HRS.):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Marvin Gaye - If This World Were Mine (Claes Rosen Remix ):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Marvin Gaye - I Want You (Marvin's mood):
+---It is a new youtube video. Calling CreateEvent() for youtube import
+--Found Related YouTube video to add/import: :Migz and Maya cover 'Marvin Gaye' (Charlie Puth ft. Meghan Trainor) live on Wish 107.5 Bus:
+---It is an existing video - updating
+CrowdLuv Diagnostics...<br>1520814714
+PHPSEESID cookie doesnt exist
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+CrowdLuv Diagnostics...<br>1520814754
+PHPSEESID cookie doesnt exist
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+CrowdLuv Diagnostics...<br>1520817368
+COOKIE['PHPSESSID'] = uvfecqvraj4gn5agtnscvtejb7
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+CrowdLuv Diagnostics...<br>1520817455
+COOKIE['PHPSESSID'] = uvfecqvraj4gn5agtnscvtejb7
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+CrowdLuv Diagnostics...<br>1520817541
+COOKIE['PHPSESSID'] = uvfecqvraj4gn5agtnscvtejb7
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+<b>Invoking FB Event Import for</b> Dave Matthews Band
+--Found facebook event to add/update: 2140001376242873:Dave Matthews Band:2018-09-10T20:00:00-0700
+--Found facebook event to add/update: 145566639443132:Dave Matthews Band:2018-09-08T20:00:00-0700
+--Found facebook event to add/update: 217574342149037:Dave Matthews Band:2018-09-08T19:00:00-0700
+--Found facebook event to add/update: 1650018435064193:Dave Matthews Band at Lake Tahoe Outdoor Arena at Harveys:2018-09-07T19:30:00-0700
+--Found facebook event to add/update: 1582113155200849:Dave Matthews Band:2018-09-02T17:00:00-0700
+--Found facebook event to add/update: 143164426303810:Dave Matthews Band:2018-09-01T17:00:00-0700
+--Found facebook event to add/update: 185804665341648:Dave Matthews Band:2018-08-31T17:00:00-0700
+--Found facebook event to add/update: 1889940847685781:Dave Matthews Band 3 Day Lawn Pass:2018-08-31T00:00:00-0700
+--Found facebook event to add/update: 181606202573016:Dave Matthews Band:2018-08-28T19:00:00-0700
+--Found facebook event to add/update: 2020125454907496:Dave Matthews Band:2018-08-25T20:00:00-0600
+--Found facebook event to add/update: 308042669705174:Dave Matthews Band:2018-08-24T20:00:00-0600
+--Found facebook event to add/update: 340248509807163:Dave Matthews Band:2018-07-28T20:00:00-0400
+--Found facebook event to add/update: 2120521258181104:Dave Matthews Band:2018-07-28T19:00:00-0400
+--Found facebook event to add/update: 1579621772093280:Dave Matthews Band at Coral Sky Amphitheatre:2018-07-28T03:30:00-0400
+--Found facebook event to add/update: 186252725458714:Dave Matthews Band:2018-07-27T20:00:00-0400
+--Found facebook event to add/update: 323644198148161:Dave Matthews Band:2018-07-27T19:00:00-0400
+--Found facebook event to add/update: 149168135803264:Dave Matthews Band at Coral Sky Amphitheatre:2018-07-27T03:30:00-0400
+--Found facebook event to add/update: 354927691582905:Dave Matthews Band:2018-07-25T20:00:00-0400
+--Found facebook event to add/update: 142717659772990:Dave Matthews Band:2018-07-24T20:00:00-0400
+--Found facebook event to add/update: 1361738530594205:Dave Matthews Band:2018-07-21T19:00:00-0400
+--Found facebook event to add/update: 532662193757642:Dave Matthews Band:2018-07-21T19:00:00-0400
+--Found facebook event to add/update: 177357276330227:Dave Matthews Band at Veterans United Home Loans Amphitheater:2018-07-21T03:30:00-0400
+--Found facebook event to add/update: 1539784469391656:Dave Matthews Band:2018-07-20T20:00:00-0400
+--Found facebook event to add/update: 358331104577330:Dave Matthews Band:2018-07-20T19:00:00-0400
+--Found facebook event to add/update: 430226634062278:Dave Matthews Band:2018-07-18T20:00:00-0400
+--Found facebook event to add/update: 193098921431530:Dave Matthews Band:2018-07-17T20:00:00-0400
+--Found facebook event to add/update: 387491558345964:Dave Matthews Band:2018-07-14T20:00:00-0400
+--Found facebook event to add/update: 162579287708857:Dave Matthews Band:2018-07-13T20:00:00-0400
+--Found facebook event to add/update: 161339557839642:Dave Matthews Band at Plaines Le Breton:2018-07-11T21:00:00-0400
+--Found facebook event to add/update: 145215982844625:Dave Matthews Band:2018-07-10T20:00:00-0400
+--Found facebook event to add/update: 204024720152410:Dave Matthews Band:2018-07-07T20:00:00-0400
+--Found facebook event to add/update: 1973658499551091:Dave Matthews Band:2018-07-07T19:00:00-0400
+--Found facebook event to add/update: 356559018144510:Dave Matthews Band:2018-07-06T20:00:00-0400
+--Found facebook event to add/update: 558203341239059:Dave Matthews Band:2018-07-06T19:00:00-0400
+--Found facebook event to add/update: 2044617189154113:Dave Matthews Band:2018-07-01T20:00:00-0500
+--Found facebook event to add/update: 756860257842123:Dave Matthews Band:2018-06-30T20:00:00-0500
+--Found facebook event to add/update: 1823583774350732:Dave Matthews Band:2018-06-29T20:00:00-0500
+--Found facebook event to add/update: 1528881500542988:Dave Matthews Band:2018-06-27T20:00:00-0400
+--Found facebook event to add/update: 172969303431946:Dave Matthews Band:2018-06-27T20:00:00-0400
+--Found facebook event to add/update: 1785834028117170:Dave Matthews Band:2018-06-23T20:00:00-0400
+--Found facebook event to add/update: 179994869268056:Dave Matthews Band:2018-06-22T20:00:00-0400
+--Found facebook event to add/update: 783976448472504:Dave Matthews Band:2018-06-22T19:00:00-0400
+--Found facebook event to add/update: 144598569580462:Dave Matthews Band:2018-06-16T20:00:00-0400
+--Found facebook event to add/update: 541945429519812:Dave Matthews Band:2018-06-15T20:00:00-0400
+--Found facebook event to add/update: 542323742827235:Dave Matthews Band:2018-06-13T19:00:00-0400
+--Found facebook event to add/update: 795633180630128:Dave Matthews Band:2018-06-13T18:00:00-0400
+--Found facebook event to add/update: 399168203839262:Dave Matthews Band at Bank of New Hampshire Pavilion at Meadowbrook:2018-06-13T03:30:00-0400
+--Found facebook event to add/update: 846423712231223:Dave Matthews Band:2018-06-12T19:00:00-0400
+--Found facebook event to add/update: 885778054930316:Dave Matthews Band:2018-06-12T18:00:00-0400
+--Found facebook event to add/update: 236718550203662:Dave Matthews Band:2018-06-09T20:00:00-0400
+--Found facebook event to add/update: 391609357945675:Dave Matthews Band:2018-06-07T20:00:00-0400
+--Found facebook event to add/update: 140142803327370:Dave Matthews Band:2018-06-06T20:00:00-0400
+--Found facebook event to add/update: 165351097524656:Dave Matthews Band:2018-06-05T20:00:00-0400
+--Found facebook event to add/update: 1968963760093188:Dave Matthews Band:2018-06-02T20:00:00-0400
+--Found facebook event to add/update: 209029762995298:Dave Matthews Band:2018-06-01T20:00:00-0400
+--Found facebook event to add/update: 1331615806943483:Dave Matthews Band:2018-05-30T20:00:00-0500
+--Found facebook event to add/update: 1499521636835941:Dave Matthews Band:2018-05-29T19:00:00-0500
+--Found facebook event to add/update: 1980952188586377:Dave Matthews Band:2018-05-27T20:00:00-0500
+--Found facebook event to add/update: 993927520760164:Dave Matthews Band:2018-05-26T20:00:00-0400
+--Found facebook event to add/update: 209028516311664:Dave Matthews Band:2018-05-22T20:00:00-0500
+--Found facebook event to add/update: 2039515782741931:Dave Matthews Band:2018-05-19T20:00:00-0500
+--Found facebook event to add/update: 429711467459298:Dave Matthews Band:2018-05-18T20:00:00-0500
+--Found facebook event to add/update: 873851586116599:The Night Before with Dave Matthews Band:2018-02-03T19:30:00-0600
+--Found facebook event to add/update: 145845706132999:Citi Sound Vault Presents Dave Matthews & Tim Reynolds:2018-01-28T20:00:00-0500
+--Found facebook event to add/update: 474232586303056:Dave Matthews and Tim Reynolds Riviera Maya 2018:2018-01-12T08:00:00-0500
+<b>Invoking FB Event Import for</b> John Ratey
+<b>Invoking FB Event Import for</b> Peter Rollins
+--Found facebook event to add/update: 186282578597691:Rob Bell: The Holy Shift Tour at The Vic Theatre:2018-04-05T20:00:00-0500
+--Found facebook event to add/update: 163419167728240:Rob Bell at World Cafe Live Philadelphia:2018-03-28T20:00:00-0400
+--Found facebook event to add/update: 1471135326254835:Rob Bell with Peter Rollins:2018-03-27T19:30:00-0400
+--Found facebook event to add/update: 1713735322010255:Rob Bell:2018-03-26T19:30:00-0400
+<b>Invoking FB Event Import for</b> Pvris
+--Found facebook event to add/update: 510620425987807:Sloss Festival:2018-07-15T19:00:00-0500
+--Found facebook event to add/update: 2031293880427720:Forecastle Festival:2018-07-13T13:00:00-0400
+--Found facebook event to add/update: 130208814456548:Mainsquare Festival:2018-07-06T12:00:00+0200
+--Found facebook event to add/update: 1754630008166904:Four Year Strong at NEC:2018-05-28T12:00:00+0100
+--Found facebook event to add/update: 451354541928037:Slam Dunk Festival: Midlands 2018:2018-05-28T12:00:00+0100
+--Found facebook event to add/update: 1202606586507775:Slam Dunk Festival: South 2018:2018-05-27T12:00:00+0100
+--Found facebook event to add/update: 1993585130864494:Slam Dunk Festival: North 2018:2018-05-26T12:00:00+0100
+--Found facebook event to add/update: 1953914644924512:PVRIS w/ Slenderbodies:2018-05-04T20:00:00-0400
+--Found facebook event to add/update: 1816167255061999:PVRIS NORTH AMERICAN TOUR 2018:2018-05-03T19:30:00-0400
+--Found facebook event to add/update: 2031188530472364:PVRIS w/ Slenderbodies & Cherry Pools - May 2nd:2018-05-02T19:00:00-0400
+--Found facebook event to add/update: 187254511860615:PVRIS - April 29 - The Garrick:2018-04-29T19:00:00-0500
+--Found facebook event to add/update: 1815142705165135:PVRIS - April 28 - Louis':2018-04-28T18:30:00-0600
+--Found facebook event to add/update: 2187539444822393:PVRIS - April 27 - Starlite Room:2018-04-27T18:30:00-0600
+--Found facebook event to add/update: 1173069006159593:PVRIS NORTH AMERICAN TOUR 2018:2018-04-26T19:30:00-0600
+--Found facebook event to add/update: 206431153240303:PVRIS NORTH AMERICAN TOUR 2018:2018-04-24T19:30:00-0700
+--Found facebook event to add/update: 335815330269551:PVRIS NORTH AMERICAN TOUR 2018:2018-04-23T19:30:00-0600
+--Found facebook event to add/update: 384700281975680:PVRIS, Slenderbodies:2018-04-21T19:30:00-0700
+--Found facebook event to add/update: 164605244154912:Coachella Festival:2018-04-20T13:00:00-0700
+--Found facebook event to add/update: 1930715453923603:PVRIS at The Catalyst Atrium:2018-04-14T19:00:00-0700
+--Found facebook event to add/update: 157445921556000:Coachella Festival:2018-04-13T13:00:00-0700
+--Found facebook event to add/update: 198689377545627:SOLD OUT PVRIS:2018-04-12T19:00:00-0700
+--Found facebook event to add/update: 1765092660199472:PVRIS NORTH AMERICAN TOUR 2018:2018-03-15T18:30:00-0500
+--Found facebook event to add/update: 2081549998798094:PVRIS live 3/13/18 in Albuquerque, NM at Sunshine Theater:2018-03-13T19:00:00-0600
+--Found facebook event to add/update: 694620140736583:PVRIS - NORTH AMERICAN TOUR 2018 at The Rialto Theatre:2018-03-11T19:30:00-0700
+--Found facebook event to add/update: 144701276285943:PVRIS at Rialto Theatre:2018-03-11T19:30:00-0700
+--Found facebook event to add/update: 452406728489689:PVRIS North America 2018 Las Vegas:2018-03-10T18:00:00-0800
+--Found facebook event to add/update: 144190176206275:PVRIS NORTH AMERICAN TOUR 2018:2018-03-10T18:00:00-0800
+--Found facebook event to add/update: 848903451950440:PVRIS NORTH AMERICAN TOUR 2018:2018-03-09T20:00:00-0800
+--Found facebook event to add/update: 151707528923344:PVRIS North American Tour 2018:2018-03-07T19:00:00-0800
+--Found facebook event to add/update: 812187915620378:PVRIS w/ guests Flint Eastwood and Birthday:2018-03-06T19:30:00-0800
+--Found facebook event to add/update: 126829994652063:PVRIS:2018-03-05T20:00:00-0800
+--Found facebook event to add/update: 769747013233521:PVRIS in Seattle:2018-03-05T19:30:00-0800
+--Found facebook event to add/update: 529198520764597:PVRIS Concert at The Showbox in Seattle, WA:2018-03-05T19:30:00-0800
+--Found facebook event to add/update: 1944535372472068:PVRIS:2018-03-03T19:00:00-0700
+--Found facebook event to add/update: 176859632894378:PVRIS:2018-03-02T19:30:00-0700
+--Found facebook event to add/update: 1967350753539061:PVRIS at The Granada:2018-02-28T18:30:00-0600
+--Found facebook event to add/update: 1767451083557123:PVRIS at The Rave:2018-02-27T19:30:00-0600
+--Found facebook event to add/update: 1997165877234750:PVRIS NORTH AMERICAN TOUR 2018:2018-02-26T19:30:00-0600
+--Found facebook event to add/update: 157748738295865:PVRIS at Delmar Hall:2018-02-26T19:30:00-0600
+--Found facebook event to add/update: 2032526180300302:PVRIS North American Tour 2018:2018-02-24T19:00:00-0500
+--Found facebook event to add/update: 1992123971065102:Pvris North American Tour 2018:2018-02-23T19:00:00-0500
+--Found facebook event to add/update: 724934327698515:PVRIS North American Tour at Stage AE!:2018-02-22T18:30:00-0500
+--Found facebook event to add/update: 158745844624585:Tonight - PVRIS at Town Ballroom:2018-02-21T18:30:00-0500
+--Found facebook event to add/update: 133116427454133:PVRIS at Starland Ballroom:2018-02-17T19:00:00-0500
+--Found facebook event to add/update: 1944129169137717:PVRIS:2018-02-16T20:00:00-0500
+--Found facebook event to add/update: 1985637761725572:PVRIS Concert at Buckhead Theatre in Atlanta, GA:2018-02-15T19:30:00-0500
+--Found facebook event to add/update: 920668838110588:PVRIS NORTH AMERICAN TOUR 2018:2018-02-15T19:30:00-0500
+<b>Invoking FB Event Import for</b> June Divided
+--Found facebook event to add/update: 158895638081916:12th Annual Homey Awards Ceremony & Concert:2018-03-04T19:00:00-0500
+<b>Invoking FB Event Import for</b> Dev
+--Found facebook event to add/update: 168469587090344:Dev with Fire at Velvet Jones:2018-03-24T22:00:00-0700
+<b>Invoking FB Event Import for</b> The Birthday Massacre
+<b>Invoking FB Event Import for</b> Sleep For Sleepers
+<b>Invoking FB Event Import for</b> InnerPartySystem
+<b>Invoking FB Event Import for</b> Darling Parade
+<b>Import Job: BIT Events</b>
+-Invoking BIT Event Import for Jay Cosmic
+-Invoking BIT Event Import for HALIENE
+--Found bandsintown event to add/import: 16737265:HALIENE @ Bill Graham Civic Auditorium  in San Francisco, CA:2018-03-17T20:00:00
+--Found existing place for BIT venue:Bill Graham Civic Auditorium 
+---Didnt find existing place for venue, create new:Bill Graham Civic Auditorium 
+---Calling CreateEvent() for bit import
+<b>Import Job: Spotify Albums</b>
+<b>Checking for Spotify Session..</b>
+-Checking for stored spotify token..
+-Did not find stored spotify token..
+-Checking for new Spotify session from redirect
+-Did not find Spotify redirect code.
+-No spotify session/api - abortnig album import
+-No spotify session/api - abortnig album import
+-No spotify session/api - abortnig album import
+<b>Import Job: YouTube-Uploads Events</b>
+YouTubeAPI Session ull - aborting
+-Invoking YT-Upload Import for The Chainsmokers
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for Lauv
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for Katy Perry
+--No recent videos found.
+--No related videos found.
+CrowdLuv Diagnostics...<br>1520818118
+PHPSEESID cookie doesnt exist
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+-Time interval for FB-Event Import has not lapsed.
+<b>Import Job: BIT Events</b>
+-Invoking BIT Event Import for CROSSNADERS
+--Found bandsintown event to add/import: 15384224:Placeholder  @ The Anvil in Bournemouth, United Kingdom:2018-08-04T16:30:00
+--Found existing place for BIT venue:The Anvil
+-Invoking BIT Event Import for Karmin
+<b>Import Job: Spotify Albums</b>
+<b>Checking for Spotify Session..</b>
+-Checking for stored spotify token..
+-Did not find stored spotify token..
+-Checking for new Spotify session from redirect
+-Did not find Spotify redirect code.
+-No spotify session/api - abortnig album import
+-No spotify session/api - abortnig album import
+-No spotify session/api - abortnig album import
+<b>Import Job: YouTube-Uploads Events</b>
+YouTubeAPI Session ull - aborting
+-Invoking YT-Upload Import for Solange
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for Late Night Alumni
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for Britney Spears
+--No recent videos found.
+--No related videos found.
+CrowdLuv Diagnostics...<br>1520819316
+COOKIE['PHPSESSID'] = uvfecqvraj4gn5agtnscvtejb7
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+-Time interval for FB-Event Import has not lapsed.
+<b>Import Job: BIT Events</b>
+-Time interval for BandsInTown-Event Import has not lapsed.
+<b>Import Job: Spotify Albums</b>
+-Time interval for Spotify-Album Import has not lapsed.
+<b>Import Job: YouTube-Uploads Events</b>
+YouTubeAPI Session ull - aborting
+-Invoking YT-Upload Import for Tanner Patrick
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for Alex Goot
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for My Crazy Girlfriend
+--No recent videos found.
+--No related videos found.
+CrowdLuv Diagnostics...<br>1520819374
+COOKIE['PHPSESSID'] = uvfecqvraj4gn5agtnscvtejb7
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+-Time interval for FB-Event Import has not lapsed.
+<b>Import Job: BIT Events</b>
+-Invoking BIT Event Import for Tinashe
+-Invoking BIT Event Import for Farius
+--Found bandsintown event to add/import: 15384224:Placeholder  @ The Anvil in Bournemouth, United Kingdom:2018-08-04T16:30:00
+--Found existing place for BIT venue:The Anvil
+<b>Import Job: Spotify Albums</b>
+-Time interval for Spotify-Album Import has not lapsed.
+<b>Import Job: YouTube-Uploads Events</b>
+YouTubeAPI Session ull - aborting
+-Invoking YT-Upload Import for Betty Who
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for Chase Atlantic
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for Miguel
+--No recent videos found.
+--No related videos found.
+CrowdLuv Diagnostics...<br>1520819412
+COOKIE['PHPSESSID'] = uvfecqvraj4gn5agtnscvtejb7
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Checking for Facebook Session</b>
+-Checking for new facebook session from redirect
+-checking for new facebook session from javascript SDK
+<b>Import Job: MetaData Retrieval </b>
+-Time interval has not lapsed - aborting
+<b>Import Job: FB Events</b>
+-Time interval for FB-Event Import has not lapsed.
+<b>Import Job: BIT Events</b>
+-Time interval for BandsInTown-Event Import has not lapsed.
+<b>Import Job: Spotify Albums</b>
+<b>Retrieving album releases from spotify for </b>Late Night Alumni
+--Found spotify album to add/import: 44ubdofJwGWNKkRUMLRmtE:Eclipse:2015-06-05
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 6EjkwLsY1r6BIgS5b8vDOX:The Beat Becomes a Sound:2013-08-09
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 0lf2CZS2Bsri05hiiaMB76:Haunted:2010
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 4i4F0jlJteFJlDMWXa2IeE:Of Birds, Bees, Butterflies, Etc...:2009
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 5aS0gkSU6NuYVrMarikhke:Empty Streets:2005
+---It is an existing spotify album - updating
+<b>Retrieving album releases from spotify for </b>Britney Spears
+--Found spotify album to add/import: 0eXGrEtsH0WVJnqp5imXAs:Glory (Deluxe Version):2016-11-15
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 7gALIuQHKvpZR8EtbNZ7qK:Glory (Deluxe Version):2016-08-26
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 5rlB2HPoNHg2m1wmmh0TRv:Britney Jean (Deluxe Version):2013-11-30
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 0oFBaXLFsUVa2gEmJf4FcJ:Femme Fatale (Deluxe Version):2011-03-25
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 2tve5DGwub1TtbX1khPX5j:Circus (Deluxe Version):2009-01-06
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 1ePkYcH5ZQCb1b4tQeiEDj:Blackout:2007-10-25
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 0z7pVBGOD7HCIB7S8eLkLI:In The Zone:2003-11-17
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 5ax3GTsfX5uCUaNgnJsSG5:Britney (Digital Deluxe Version):2001
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 5PmgtkodFl2Om3hMXONDll:Oops!... I Did It Again:2000-05-15
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 3WNxdumkSMGMJRhEgK80qx:...Baby One More Time (Digital Deluxe Version):1999
+---It is an existing spotify album - updating
+<b>Retrieving album releases from spotify for </b>Tanner Patrick
+--Found spotify album to add/import: 4tkGZ9ElwGrj3httCvaHGQ:The Waiting Home:2014-04-22
+---It is an existing spotify album - updating
+<b>Retrieving album releases from spotify for </b>Alex Goot
+--Found spotify album to add/import: 5n0qNWPYxRmZXplN2IPIrd:Alex Goot & Friends, Vol. 5:2017-03-24
+---It is a new spotify album. Calling CreateEvent() for spotify import
+--Found spotify album to add/import: 4sdJDxJu61GhzBBzNcwuNe:Alex Goot & Friends, Vol. 4:2015-12-13
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 5MLnWIyl66ZBLWuKCeMQLD:Songs I Wish I Wrote: Unplugged (Acoustic):2015-01-24
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 02M6RQi43c1EMopyhkNZbB:Songs I Wish I Wrote, Vol. 4:2014-08-10
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 0GhppB5IFroTmdP5HxQKE0:Alex Goot & Friends, Vol. 3:2014-01-25
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 3B5Aw2K032lXrMmVlCFtue:In Your Atmosphere (Deluxe Edition):2013-03-16
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 1yD2NUVJf1WZ9J26VSgoDw:Alex Goot & Friends, Vol. 1:2012-11-23
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 438AFMs8tB78Ozhgl271oE:Alex Goot & Friends, Vol. 2:2012-11-23
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 4j3fJaL0JbnryTbRBatQF4:In Your Atmosphere:2012-06-12
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 67BS2C0fKpEg2FTzEfwWIP:Songs I Wish I Wrote, Vol. 3:2012-01-18
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 6acRTaY6PitUuftWOadAqY:Songs I Wish I Wrote: Volume 2:2011-05-19
+---It is an existing spotify album - updating
+--Found spotify album to add/import: 5l2XWKJ3xumOUnWXsWZMwr:Songs I Wish I Wrote:2010-08-16
+---It is an existing spotify album - updating
+<b>Retrieving album releases from spotify for </b>My Crazy Girlfriend
+<b>Import Job: YouTube-Uploads Events</b>
+YouTubeAPI Session ull - aborting
+-Invoking YT-Upload Import for Empire of the Sun
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for MercyMe Music
+--No recent videos found.
+--No related videos found.
+-Invoking YT-Upload Import for Uffie
+--No recent videos found.
+--No related videos found.

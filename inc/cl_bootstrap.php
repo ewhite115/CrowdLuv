@@ -7,8 +7,6 @@
  * 
  */
 
-
-
 //TODO:  refactor this to be part of CLResponseInformation   ?
  function cldbgmsg($debugmessage){
 

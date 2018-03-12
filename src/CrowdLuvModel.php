@@ -803,7 +803,7 @@ class CrowdLuvModel {
      */
     public function runMetaDataRetrievalJob(){
                 
-        //Artist Metadata (Music-Story) Import Job
+        //Brand Metadata Import Job
         cldbgmsg("<b>Import Job: MetaData Retrieval </b>");
         
         //Determine whether the last MetaData-Retrieval job was run within the last X minutes. 
@@ -2395,11 +2395,11 @@ class CrowdLuvModel {
      *                        It will be invoked by CL on every page load - but it will immediately return if it has been less than 2 minutes since the last run]
      * @return [null] [no return value]
      */
-    public function runEventImportJob($sinceTimestamp = 1470009600) {
+    public function runEventImportJob($sinceTimestamp = 1515542400) {
 
         //If the fb session is not active,return
         $fbs = $this->clFacebookHelper->getFacebookSession();
-        if(  ! isset( $fbs  ))     { return null; } 
+        if( ! isset( $fbs ))  { return null; } 
 
 
         // Facebook Event Import Job   ***************
@@ -2502,7 +2502,7 @@ class CrowdLuvModel {
         //Determine whether the last Spotify event import job was run within the last X minutes. 
         try {                    
             $sql =  "SELECT * FROM talent where disabled = 0 and fb_is_verified and timestamp_last_spotify_album_import > 
-                        (NOW() - INTERVAL 7 minute)";
+                        (NOW() - INTERVAL 2 minute)";
             $results = $this->cldb->prepare($sql);
             $results->execute();
 
@@ -2518,7 +2518,7 @@ class CrowdLuvModel {
             //Determine the X number of brands with the most 'stale' event import
             try {                    
                 $sql =  "SELECT * FROM talent WHERE disabled = 0 and fb_is_verified and spotify_artist_id IS NOT NULL ORDER BY timestamp_last_spotify_album_import ASC 
-                    LIMIT 3";
+                    LIMIT 5";
 
                 $results = $this->cldb->prepare($sql);
                 $results->execute();

@@ -35,7 +35,7 @@ class CrowdLuvFacebookHelper {
 	   'user_likes',
 	   'user_location',
 	   'user_birthday',
-	   'user_relationships',
+	   //'user_relationships',
 	   'manage_pages'
 	    );
 

@@ -217,3 +217,5 @@ pip-log.txt
 #deprecated directory
 deprecated/
 src/CrowdLuvBrandMetaDataHelper.class
+crowdluvdata/log/
+crowdluvdata/log/eventimportjoblog_11.3.2018.txt

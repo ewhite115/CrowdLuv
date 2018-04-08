@@ -52,20 +52,20 @@ if(isset($_COOKIE["PHPSESSID"])) { cldbgmsg("COOKIE['PHPSESSID'] = " . $_COOKIE[
 //Create a CrowdLuvFacebookHelper 
 $clFacebookHelper = new CrowdLuvFacebookHelper();
 //Create CrowdLuvMusicStoryHelper
-$clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
+//$clMusicStoryHelper = new CrowdLuvMusicStoryHelper();
 
 
 //Create CL_model with it's dependencies
 $CL_model = new CrowdLuvModel();
 $CL_model->setDB((new CrowdLuvDBFactory())->getCrowdLuvDB());
 $CL_model->setFacebookHelper($clFacebookHelper);
-$CL_model->setMusicStoryHelper($clMusicStoryHelper);
+//$CL_model->setMusicStoryHelper($clMusicStoryHelper);
 
 //create a CrowdLuvRequest   object
 $clRequestInformation = new CrowdLuvRequestInformation();
 $clRequestInformation->clFacebookHelper = $clFacebookHelper;
 $clRequestInformation->clModel = $CL_model;
-$clRequestInformation->clMusicStoryHelper = $clMusicStoryHelper;
+//$clRequestInformation->clMusicStoryHelper = $clMusicStoryHelper;
 
 //Create CrowdLuvYouTubeHelper
 $clYouTubeHelper = new CrowdLuvYouTubeHelper($clRequestInformation->getLoggedInUserObj());

@@ -267,7 +267,7 @@
                 <?php echo $clRequestInformation->getTargetBrand()['fb_page_name'];?>
             </h1>               
 
-            <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $clRequestInformation->getTargetBrand()["fb_pid"];?>/picture?type=large<?php if($clRequestInformation->getLoggedInUserId()){ ?>&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken(); }?>">             
+            <img class="img-responsive center-block" src="https://graph.facebook.com/<?php echo $clRequestInformation->getTargetBrand()["fb_pid"];?>/picture?type=large<?php if($clRequestInformation->getLoggedInUserId()){ ?>&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken(); }?>">             
             </a>
 
             <!-- **** Buttons or call-to-action -->
@@ -592,7 +592,7 @@
 
                             <div class='cl-ticker-item-block' onClick="javascript:window.location.href = window.location.href + '&p=questions&questionid=<?= $talentQuestion['postid']; ?>'">
                                 <div class='cl-ticker-question-score inline-block'>
-                                    <img style="width:2em" src="https://graph.facebook.com/<?= $talentQuestion['submitterInfo']['fb_uid'];?>/picture?type=square<?php if($clRequestInformation->getLoggedInUserId()) { ?>&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();}?>"> 
+                                    <img style="width:2em" src="https://graph.facebook.com/<?= $talentQuestion['submitterInfo']['fb_uid'];?>/picture?type=square<?php if($clRequestInformation->getLoggedInUserId()) { ?>&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();}?>"> 
                                     
                                 </div>
                                 <div class='cl-ticker-event-title inline-block'>
@@ -635,7 +635,7 @@
                         <p class="text-center">Learn how to <a href="shareluv.php">Show your Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuvers as $rankedLuver) { ?>
                             <p>
-                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square<?php if($clRequestInformation->getLoggedInUserId()) { ?>&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();}?>"> 
+                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square<?php if($clRequestInformation->getLoggedInUserId()) { ?>&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();}?>"> 
                                 <?php echo $rankedLuver['firstname']; ?> --- 
                                 <?php echo $rankedLuver['score']; ?> Luvs
 
@@ -675,7 +675,7 @@
                         <p class="text-center">Learn how to <a href="shareluv.php">Show your Luv</a> to increase your LuvScore. VIP's can earn perks</p>
                         <?php $i=0; foreach($rankedLuversMyCity as $rankedLuver) { ?>
                             <p>
-                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
+                                <img src="https://graph.facebook.com/<?php echo $rankedLuver['fb_uid'];?>/picture?type=square&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>"> 
                                 <?php echo $rankedLuver['firstname']; ?> --- 
                                 <?php echo $rankedLuver['score']; ?> Luvs
 

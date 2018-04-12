@@ -67,9 +67,9 @@
 
   <div id="cl-newluvwizard-screen-1" class="text-center crowdluvsection cl-newluvwizard-screen">
     
-    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">
+    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">
     <img src='/res/top-heart.png'/>
-    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getTargetBrand()["fb_pid"];?>/picture?type=normal&<?php if(($clRequestInformation->getLoggedInUserId())){ ?>&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken(); }?>">
+    <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getTargetBrand()["fb_pid"];?>/picture?type=normal&<?php if(($clRequestInformation->getLoggedInUserId())){ ?>&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken(); }?>">
 
     <br><br> 
     <div class="clwhitebg">
@@ -100,9 +100,9 @@
 
   <!-- New-Luv Wizard screen 2- gather contact preferences for the talent the first time user Luvs a talent -->
   <div id="cl-newluvwizard-screen-2" class="text-center crowdluvsection cl-newluvwizard-screen">
-      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">
+      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">
       <img src='res/top-heart.png'/>
-      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getTargetBrand()["fb_pid"];?>/picture?type=normal&<?php if(($clRequestInformation->getLoggedInUserId())){ ?>&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken(); }?>">
+      <img style="width:7em;" src="https://graph.facebook.com/<?php echo $clRequestInformation->getTargetBrand()["fb_pid"];?>/picture?type=normal&<?php if(($clRequestInformation->getLoggedInUserId())){ ?>&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken(); }?>">
       <br>
       <h1>Your Preferences - <?= $clRequestInformation->getTargetBrand()['fb_page_name'];?> </h1>
       <div class="clwhitebg">

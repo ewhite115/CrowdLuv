@@ -428,7 +428,7 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
 
  
     <div class="crowdluvsection"> 
-        <h1>Message Followers - <?php echo $clRequestInformation->getActiveManagedBrand()['fb_page_name'];?><img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $clRequestInformation->getActiveManagedBrand()['fb_pid']; ?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>'></h1>
+        <h1>Message Followers - <?php echo $clRequestInformation->getActiveManagedBrand()['fb_page_name'];?><img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $clRequestInformation->getActiveManagedBrand()['fb_pid']; ?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>'></h1>
         <br> 
     </div>
     

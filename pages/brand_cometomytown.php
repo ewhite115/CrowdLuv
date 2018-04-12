@@ -34,7 +34,7 @@
 	
 
 	<div class="talent_landingpage_hero"  
-		style="background-image: url('<?php echo $tlpimg; if($tlpgsettings['image'] == "facebookprofile" && $clRequestInformation->getLoggedInUserId()) echo "&access_token=" . $clFacebookHelper->getFacebookSession()->getToken();?>');"> 	</div> 
+		style="background-image: url('<?php echo $tlpimg; if($tlpgsettings['image'] == "facebookprofile" && $clRequestInformation->getLoggedInUserId()) echo "&access_token=" . $clFacebookHelper->getFacebookAccessToken();?>');"> 	</div> 
 	
 	<div class="row crowdluvsection text-center">
 		<div class="col-xs-12">

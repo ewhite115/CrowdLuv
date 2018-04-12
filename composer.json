@@ -1,7 +1,7 @@
 {
   
   "require" : {
-    "facebook/php-sdk-v4" : "4.0.*",
+    "facebook/php-sdk-v4" : "^5.0",
     "klein/klein": "^2.1",
     "jwilsson/spotify-web-api-php": "^1.0.0",
     "google/apiclient": "1.0.*@beta"

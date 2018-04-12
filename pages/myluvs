@@ -61,7 +61,7 @@
                     <div class="brand-avatar"> 
                         <!-- <a href="talent/<?php echo $cltalentobj['crowdluv_vurl'];?>"> -->
                         <a href="brand.php?crowdluv_tid=<?php echo $cltalentobj['crowdluv_tid'];?>">
-                            <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
+                            <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>"> 
                         </a>
                         
                     </div>

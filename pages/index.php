@@ -107,7 +107,7 @@ if ($clRequestInformation->getLoggedInUserObj()){
           <h1 class="cl-landing-page-panel-heading cl-textcolor-standout ">Who Do You Luv?</h1>
 
           <div class="cl-card-vertical cl_graybackground cl_grayborder">
-            <img class="card-header-image" src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?type=large&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">
+            <img class="card-header-image" src="https://graph.facebook.com/<?php echo $clRequestInformation->getLoggedInUserObj()['fb_uid'];?>/picture?type=large&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">
             <h1><?php echo $clRequestInformation->getLoggedInUserObj()['firstname'] . " " . $clRequestInformation->getLoggedInUserObj()['lastname'];?></h1>
             <p class= "cl-textcolor-default" >Manage Your CrowdLuv Profile and who you follow</p>                            
             <?php if($clRequestInformation->getLoggedInUserObj()['deactivated']){ ?>
@@ -142,12 +142,12 @@ if ($clRequestInformation->getLoggedInUserObj()){
                               
                               <a target="_new"  href="<?php echo $event['more_info_url'];?>">
                                   <div style="background-color: darkgray; ">
-                                  <img class="card-header-image" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=large&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">                             
+                                  <img class="card-header-image" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=large&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">                             
                                   </div>
                                   <h1 class="cl-event-title"> <?php echo  $event['title'];?> </h1>
                               </a> 
                               
-                              <!-- <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">   -->
+                              <!-- <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">   -->
                               <span class="brand-name"><?php  echo $event['fb_page_name'];?> </span>
                               <span class="elapsed-time"><?php  echo ($event['is_new_today'] ? " -New today!" : ($event['is_new_this_week'] ? " -New this week!" : " -Not new" )); ?> </span>
                              
@@ -187,10 +187,10 @@ if ($clRequestInformation->getLoggedInUserObj()){
                      <div class="cl-card-vertical text-left cl_graybackground cl_grayborder " >               
                           <p> <b>Recent Release:</b> <?php echo $event['fb_page_name'] ?> 
                           <a target="_new"  href="<?php echo $event['more_info_url'];?>">
-                                <img class="card-header-image" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">                             
+                                <img class="card-header-image" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">                             
                               <h1><?php echo  $event['title']; ?></h1>
                           </a>
-                          <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">  
+                          <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">  
                           <p class="brand-name">  <?php echo $event['fb_page_name'];?> </p>  
                           <p class="elapsed-time"> <?php echo   $CL_model->timeElapsedString( $event['start_time']); ?>   </p>                             
                       </div> 
@@ -205,7 +205,7 @@ if ($clRequestInformation->getLoggedInUserObj()){
                               <img class="card-header-image" src="https://img.youtube.com/vi/<?php echo $event['youtube_video_id'];?>/mqdefault.jpg">                             
                               <h1><?php  echo $event['title']; ?></h1>
                           </a>
-                          <!-- <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">   -->
+                          <!-- <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">   -->
                           <p class="brand-name"><?php echo  $event['fb_page_name'];?> - <?php echo   $CL_model->timeElapsedString( $event['start_time']); ?>   </p> 
                           <p class="brand-name"><?php echo  ($event['is_new_today'] ? " - New today!" : ($event['is_new_this_week'] ? " -New this week!" : " -Not new" )); ?>  </p> 
  
@@ -320,7 +320,7 @@ if ($clRequestInformation->getLoggedInUserObj()){
               <div class=" cl-card-horizontal text-left cl_graybackground cl_grayborder ">
                   
                 <div class="brand-avatar">
-                  <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> 
+                  <img src="https://graph.facebook.com/<?php echo $cltalentobj['fb_pid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>"> 
                 </div>
                 <div class="brand-info">
                   <p class="brand-name">  <?php echo $cltalentobj['fb_page_name'];?></p>  <?php if($cltalentobj['waitlisted']) { ?> <p>(Wait-listed)</p> <?php } ?></span>

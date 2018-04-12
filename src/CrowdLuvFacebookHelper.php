@@ -13,11 +13,14 @@ class CrowdLuvFacebookHelper {
 
     public $isNewSession = false;
  
-    private $facebookSession = null;
+    private $fb = null;  //Facebook SDK Object
+    //private $facebookSession = null;   //Used for sdk v4
+    private $facebookAccessToken = null;
     private $facebookLoginHelper = null;
-    private $facebookJavascriptLoginHelper = null;
+    private $facebookJavascriptLoginHelper = null; 
     private $talentLoginURL = null;
     public static $pageFieldsToImport = "id,name,category,best_page,bio,description,is_community_page,is_unclaimed,is_verified,name_with_location_descriptor,username,website,link"; //verification_status,
+
 
 
 	//TODO:  figure out how we intially ask user//followers for only perms 
@@ -59,48 +62,70 @@ class CrowdLuvFacebookHelper {
    		//Check for fb_user session variable and print result to CL debugger log
   		//if(isset($_SESSION['fb_user'])) { cldbgmsg("CL_SESSION['fb_user'] = " . $_SESSION['fb_user']);} else { cldbgmsg("CL_SESSION['fb_user'] not set");}
 
+    	/*  FB PHP SDK v4
     	FacebookSession::setDefaultApplication( CL_FB_APP_ID, CL_FB_APP_SECRET);
  		$this->facebookSession= null;
 		$this->facebookLoginHelper = new FacebookRedirectLoginHelper(CLADDR);
 		$this->facebookJavascriptLoginHelper = new FacebookJavaScriptLoginHelper();
+		*/
+
+		//FB PHP SDK v5
+		$this->fb = new \Facebook\Facebook([
+  										'app_id' => CL_FB_APP_ID,
+  										'app_secret' => CL_FB_APP_SECRET,
+  										'default_graph_version' => 'v2.12',
+  										//'default_access_token' => '{access-token}', // optional
+									]);
+
+
+		// Use one of the helper classes to get a Facebook\Authentication\AccessToken entity.
+		$this->facebookLoginHelper = $this->fb->getRedirectLoginHelper();
+		$this->facebookJavascriptLoginHelper = $this->fb->getJavaScriptHelper();
+		//   $helper = $fb->getCanvasHelper();
+		//   $helper = $fb->getPageTabHelper();
+
 
 
    	}
 
    	/**
-   	 * [makeAppSession Makes this instance use an App Session (when there is no logged in user)]
+   	 * [makeAppSession Makes this instance use an App Session (when there is no logged in user).  
+   	 * 					This is used for example by the event-import cron job]
    	 * @return [type] [description]
    	 */
    	public function setAsAppSession(){
-   		$this->facebookSession = FacebookSession::newAppSession();
+ 		//Set the access token to app_id|app_secret.   
+   		$this->facebookAccessToken = new Facebook\Authentication\AccessToken(CL_FB_APP_ID . "|" . CL_FB_APP_SECRET);
 
-		try {
-		  $this->facebookSession->validate();
-		} catch (FacebookRequestException $ex) {
-		  // Session not valid, Graph API returned an exception with the reason.
-		  echo $ex->getMessage();
-		} catch (\Exception $ex) {
-		  // Graph API returned info, but it may mismatch the current app or have expired.
-		  echo $ex->getMessage();
-		}
    	}
 
    	/**
-   	 * [getFacebookSession description]
-   	 * @return [FacebookSession] [looks for a Facebook Session and returns a FacebookSession object if found,  null if not]
+   	 * [getFacebookSession provides backward compatibility for calling objects.  
+   	 * 						The updaate to php SDK v5 replaced the session concept with dealing directly with accessTokens.
+   	 * 						This function now just calls/returns the getFaceBookAccessToken() method to maintain backward compatibility ]
+   	 * @return [type] [description]
    	 */
    	public function getFacebookSession(){
-
+   		return $this->getFacebookAccessToken();
+   	}
+   	/**
+   	 * [getFacebookAccessToken  
+   	 * 		looks for a Facebook Access token either previously retrieved, in session variable, or in a new redirect
+   	 *   	If found, stores it into session and returns it. ]
+   	 * @return [FacebookSession] AccessToken object if found; null if not
+   	 */
+   	public function getFacebookAccessToken(){
+   		
    		//If a previous call to this method found a facebook session, just return that existing member object.
-   		if (isset($this->facebookSession)) {
-   		 return $this->facebookSession;
+   		if (isset($this->facebookAccessToken)) {
+   		 return $this->facebookAccessToken;
    		}
 	    cldbgmsg("<b>Checking for Facebook Session</b>");
 
 		//Otherwise .....
 		
 		/** Check for Facebook Permissions Denied & Redirect
-		   * TODO:  is this still relvant in api 4.0?
+		   * TODO:  is this still relvant in sdk 4.0?
 		   * 
 		   * If this was the first time the user tried to login, but they denied
 		   * the facebook permission dialog, the query string will include the following
@@ -118,57 +143,60 @@ class CrowdLuvFacebookHelper {
 		/** look for previously saved a facebook token in this session
 		   * 
 		   */   
+		$accessToken = null;
 		if ( isset( $_SESSION ) && isset( $_SESSION['fb_token'] ) ) {
-		    // create new fb session object from saved access_token
-		    cldbgmsg("-Found fb_token in session");
-		    $facebookSession = new FacebookSession( $_SESSION['fb_token'] );
+		    // create new fb token object from saved access_token
+		    cldbgmsg("-Found fb_token in session"); 
+		    //var_dump( $_SESSION['fb_token_expires_at']);die;
+		    $accessToken = new Facebook\Authentication\AccessToken($_SESSION['fb_token'] , $_SESSION['fb_token_expires_at']->getTimeStamp());
+
 		    // validate the access_token to make sure it's still valid
 		    try {
-		      if ( !$facebookSession->validate() ) {
-		        cldbgmsg("-fb_token in session no longer valid");
-		        $facebookSession = null;
+		      if ( $accessToken->isExpired() ) {
+		        cldbgmsg("-fb_token in session has expired");
+		        $accessToken = null;
 		      }
 		    } catch ( Exception $e ) {
 		      // catch any exceptions, nullify the session variable if encountered
 		      cldbgmsg("-Exception validating fb_token found in session" . $e);
-		      $facebookSession = null;
+		      $accessToken = null;
 		    }
+
 		}  
 
 		 
-		//We didnt find a previously saved session token, so check to see if this is a new 
+		//If we didnt find a previously saved session token, check to see if this is a new 
 		//facebook login from a redirect
 		$this->isNewSession = false;  // This flag will be used later to conditionally execute code only if it's a 'new' session
-		if ( !isset( $facebookSession ) || $facebookSession === null ) {
+		if ( !isset( $accessToken ) || $accessToken === null ) {
 		    try {
 		      //Check for a new sessions coming from a redirect
 		      cldbgmsg("-Checking for new facebook session from redirect");
-		      $facebookSession = $this->facebookLoginHelper->getSessionFromRedirect();
-		      //echo "facebooksession from redirect:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
-		      if($facebookSession)  cldbgmsg("Found new facebook session from redirect"); 
-		      //If no new session from redirect, see if there is a new session set on the client side 
+		      //This is a hack to cheat around fb sdk's cross-site forgery vaalidation
+			  if (isset($_GET['state'])) {
+    				$this->facebookLoginHelper->getPersistentDataHandler()->set('state', $_GET['state']);
+				}
+
+		      
+		      $accessToken = $this->facebookLoginHelper->getAccessToken();
+		      echo "accesstoken= " . $accessToken . "<br>";
+		      //echo "accesstoken from redirect:"; echo "<pre>"; var_dump($accessToken); echo "</pre>";
+		      if($accessToken)  cldbgmsg("Found new facebook $accessToken from redirect"); 
+		      //If no new $accessToken from redirect, see if there is a new session set on the client side 
 		      //  facebook javascript SDK
-		      if($facebookSession === null) {
+		      if($accessToken === null) {
 		          cldbgmsg("-checking for new facebook session from javascript SDK");
-		          $this->facebookJavascriptLoginHelper->getSession();
-		          if($facebookSession) cldbgmsg("-Found new facebook session from Javascript SDK");
+		          $this->facebookJavascriptLoginHelper->getAccessToken();
+		          if($accessToken) cldbgmsg("-Found new facebook $accessToken from Javascript SDK");
 		      }
-		      //echo "facebooksession from javascript:"; echo "<pre>"; var_dump($facebookSession); echo "</pre>";
-		      //If this was in fact a newly-logged-in session, get facebook Permissions, check for minimums
-		      if($facebookSession){
-		        if(! $this->checkFacebookPermissions($facebookSession, CrowdLuvFacebookHelper::$talentFacebookPermissionScope)){
-		          //If the user declined any required permissions, redirect to home page and set a flag
-		          header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
-		          die(); 
-		        }
-		        $this->isNewSession = true;
-		      }
-		    } catch( Facebook\FacebookAuthorizationException $ex ) {
+		      //echo "$accessToken from javascript:"; echo "<pre>"; var_dump($accessToken); echo "</pre>";
+		      
+		    } catch( Facebook\Exceptions\FacebookAuthorizationException $ex ) {
 		      
 		      //Auth Code expired, so nullify the facebooksession and delete the stored token
-		      echo "FacebookAuthorizationException getting session in CrowdLuvFacebookHelper->getFacebookSession() ";
+		      echo "FacebookAuthorizationException getting session in CrowdLuvFacebookHelper->getFacebookAccessToken() ";
 		      echo "<pre>"; var_dump($ex); echo "</pre>";
-		      $facebookSession = null;
+		      $accessToken = null;
 		      $_SESSION['fb_token'] = null;
 		      //die;
 		    } catch( FacebookRequestException $ex ) {
@@ -176,32 +204,40 @@ class CrowdLuvFacebookHelper {
 		      echo "<pre>"; var_dump($ex); echo "</pre>";
 		      die;
 		    } 
-		    catch( Facebook\FacebookSDKException $ex ) {
-		      echo "FacebookSDKException getting session in CrowdLuvFacebookHelper->getFacebookSession()";
+		    catch( Facebook\Exceptions\FacebookSDKException $ex ) {
+		      echo "FacebookSDKException getting $accessToken in CrowdLuvFacebookHelper->getFacebookAccessToken()";
 		      echo "<pre>"; var_dump($ex); echo "</pre>";
 		      die;
 		    } catch( Exception $ex ) {
 		      // When validation fails or other local issues
-		      echo "Exception getting session in CrowdLuvFacebookHelper->getFacebookSession()";
+		      echo "Exception getting session in CrowdLuvFacebookHelper->getFacebookAccessToken()";
 		      echo "<pre>"; var_dump($ex); echo "</pre>";
 		      die;
 			}
  		}  
  		
-	  	if ($facebookSession) {  
-	      cldbgmsg("-Active Facebook session with token<br>" . $facebookSession->getToken());
-	      //cldbgmsg("Active Facebook session <br>" . $facebookSession);
+	  	if ($accessToken) {  
+	      	cldbgmsg("-Active Facebook session with token<br>" . $accessToken);
+	      	
+	      	// save the facebook session token to persistent session storage 
+		    $_SESSION['fb_token'] = (string) $accessToken;
+		    $_SESSION['fb_token_expires_at'] = $accessToken->getExpiresAt();
+			$this->facebookAccessToken = $accessToken;
 
-	      // save the facebook session token to persistent session storage 
-	      $_SESSION['fb_token'] = $facebookSession->getToken();
-
-	      // create a session using saved token or the new one we generated at login
-	      $facebookSession = new FacebookSession( $facebookSession->getToken() );
+		  	//Check for minimum facebook Permissions
+			if(! $this->checkFacebookPermissions($accessToken, CrowdLuvFacebookHelper::$talentFacebookPermissionScope)){
+			        //If the user declined any required permissions, redirect to home page and set a flag
+			        header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
+			        die(); 
+			}
+			$this->isNewSession = true;
 
 	  	}
 
+
 	  	//store the facebook session object into the member variable and return it.
- 		return $this->facebookSession = $facebookSession; 
+ 		
+ 		return $this->facebookAccessToken; 
 
    	}  //getFacebookSession
 
@@ -215,16 +251,15 @@ class CrowdLuvFacebookHelper {
 
 		try { 
             // graph api request for user data
-            $request = new FacebookRequest( $this->facebookSession, 'GET', '/me' );
-            $response = $request->execute();
-            //echo "<pre> Response to facebook graph cal /me :"; var_dump($fb_user_profile); echo "</pre>"; die;
+            $response = $this->fb->get('/me', $this->getFacebookAccessToken());
+            //echo "<pre> Response to facebook graph call /me :"; var_dump($response->getDecodedBody()); echo "</pre>"; die;
 
-            return $response->getGraphObject()->asArray();
+            return $response->getDecodedBody();
           
         }
-		catch (FacebookApiException $e) {
+		catch (FacebookSDKException $e) {
             //error_log($e);
-            cldbgmsg("-FacebookAPIException in cl_init.php requesting new user info:  " . $e);// var_dump($e);
+            cldbgmsg("-FacebookSDKException requesting new user info:  " . $e);// var_dump($e);
             $fb_user = null;
         }
         return null;                   
@@ -245,11 +280,11 @@ class CrowdLuvFacebookHelper {
 		if(isset($this->talentLoginURL)) return $this->talentLoginURL;
 
 		//Otherwise.. generate one.
-		$talentLoginURL = $this->facebookLoginHelper->getLoginUrl(CrowdLuvFacebookHelper::$talentFacebookPermissionScope);
+		$talentLoginURL = $this->facebookLoginHelper->getLoginUrl(CLADDR, CrowdLuvFacebookHelper::$talentFacebookPermissionScope);
 	    //if user previously declined, set rerequest flag to true
 	    if( isset( $_GET['fb_user_denied_permissions'] ) && $_GET['fb_user_denied_permissions'] == '1'){
 	      //echo "getting rerequest url"; 
-	      $talentLoginURL = $talentLoginURL . "&auth_type=rerequest";
+	      $talentLoginURL = $this->facebookLoginHelper->getReRequestUrl(CLADDR, CrowdLuvFacebookHelper::$talentFacebookPermissionScope, '&amp;');
 	    }   
 	    
 	    //Save the login URL to a member variable  (facebook sdk doesnt seem to "like" generating this more than once - caused issues in the past)
@@ -269,20 +304,19 @@ class CrowdLuvFacebookHelper {
 
 	     try{
 	        // graph api request for pages the user manages
-	        $request = new FacebookRequest( $this->facebookSession, 'GET', '/me/accounts' );
-	        $response = $request->execute();
-	        return $response->getGraphObject()->asArray();
-	        //echo "<pre>"; var_dump($fb_user_pages); echo "</pre>";	        
+	        $response = $this->fb->get('/me/accounts', $this->getFacebookAccessToken());
+	        //echo "<pre>"; var_dump($response->getDecodedBody()); echo "</pre>";	        
+	        return $response->getDecodedBody();
+	        
 	   
-	      } catch (FacebookApiException $e) {        
-	        cldbgmsg("FacebookAPIException in CrowdLuvFacebookHelper->getManagedPages requesting page info:-------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+	      } catch (FacebookSDKException $e) {        
+	        cldbgmsg("FacebookSDKException in CrowdLuvFacebookHelper->getManagedPages requesting page info:-------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
 	        return null;
 	      }       
 
 	      return null;
 
    	}
-
 
 
 
@@ -315,38 +349,34 @@ class CrowdLuvFacebookHelper {
 	function checkFacebookPermissions($fbSession, $required_perms) {
 	    try { 
 	        // graph api request for user permissions
-	        $request = new FacebookRequest( $fbSession, 'GET', '/me/permissions' );
-	        $response = $request->execute();
+	        $response = $this->fb->get('/me/permissions', $this->getFacebookAccessToken());
 	        // get response
-	        $fb_user_permissions = $response->getGraphObject()->asArray();
+	        $fb_user_permissions = $response->getDecodedBody()['data'];
 	        //echo "<pre> Response to facebook graph call /me/permissions :"; var_dump($fb_user_permissions); echo "</pre>"; die;
 
 	        foreach($fb_user_permissions as $perm){
 	          //echo "<pre> perm :"; var_dump($perm); echo "</pre>"; die();
-	          if($perm->permission == "installed"  && $perm->status != "granted" ) return false;
-	          if($perm->permission == "public_profile"  && $perm->status != "granted" ) return false;
-	          if(in_array($perm->permission, $required_perms) && $perm->status != "granted" ) return false;
+	          if($perm['permission'] == "installed"  && $perm['status'] != "granted" ) return false;
+	          if($perm['permission'] == "public_profile"  && $perm['status'] != "granted" ) return false;
+	          if(in_array($perm['permission'], $required_perms) && $perm['status'] != "granted" ) return false;
 
 	        }
-
-	    } catch (FacebookApiException $e) {
+	        
+	    } catch (FacebookSDKException $e) {
 	        //error_log($e);
-	        cldbgmsg("FacebookAPIException in cl_init.php requesting user permissions:  " . $e);// var_dump($e);
+	        cldbgmsg("FacebookSDKException requesting user permissions in CLFacebookHelper->checkFacebookPermissions:  " . $e);// var_dump($e);
 	    }     
 	    return true;
 	}//ChekFacebookPermissions
 
 
 
-
 	public function getFacebookGraphObjectById($fbId, $fields){
 
 		//echo "gfbo " . $fbId;
-		$request = new FacebookRequest( $this->getFacebookSession(), 'GET', '/' . $fbId . '?fields=' . $fields );
-
-    	$response = $request->execute();
+    	$response = $this->fb->get( '/' . $fbId . '?fields=' . $fields, $this->getFacebookAccessToken() );
 	    // get response
-	    $fbObject = $response->getGraphObject()->asArray();
+	    $fbObject = $response->getDecodedBody()['data'];
 	    //echo "<pre>"; var_dump($fbObject); echo "</pre>"; die;
 
 	    return $fbObject;
@@ -358,11 +388,10 @@ class CrowdLuvFacebookHelper {
 
 		$reqString = "/search?type=page&q=" . $name . "&fields=" . CrowdLuvFacebookHelper::$pageFieldsToImport;
 				//id,name,best_page,bio,description,is_community_page,is_unclaimed,is_verified,name_with_location_descriptor,username,verification_status,website";
-		$request = new FacebookRequest( $this->getFacebookSession(), 'GET', $reqString );
-
-    	$response = $request->execute();
+		
+    	$response = $this->fb->get( $reqString, $this->getFacebookAccessToken() );
 	    // get response
-	    $fbObject = $response->getGraphObject()->asArray();
+	    $fbObject = $response->getDecodedBody();
 	    //echo "<pre>"; var_dump($fbObject); echo "</pre>"; die;
 
 	    if( ! isset($fbObject['data'])  || sizeof($fbObject['data']) ==0 ) return null;

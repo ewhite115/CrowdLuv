@@ -93,10 +93,10 @@
                     <div class="cl-card-vertical cl-event text-left cl_graybackground cl_grayborder " >     
                         <h1 class="cl-event-date"><?php echo   date('D, F d', strtotime($event['start_time'])); ?> </h1>              
                         <a target="_new"  href="<?php echo $event['more_info_url'];?>">
-                            <img class="card-header-image" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">                             
+                            <img class="card-header-image" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">                             
                             <h1 class="cl-event-title"> <?php echo  $event['title'];?> </h1>
                         </a>                            
-                        <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">  
+                        <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">  
                         <span class="brand-name">    <?php echo $event['fb_page_name'];?>    </span>                                                                                                                                      
                     </div> 
 
@@ -125,7 +125,7 @@
                         <img class="card-header-image" src="https://img.youtube.com/vi/<?php echo $event['youtube_video_id'];?>/mqdefault.jpg">                             
                         <h1><?php echo  $event['title']; ?></h1>
                     </a>
-                    <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>">  
+                    <img class="brand-avatar" src="https://graph.facebook.com/<?php echo $event['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>">  
                     <span class="brand-name">    <?php echo $event['fb_page_name'];?> - <?php echo   $CL_model->timeElapsedString( $event['start_time']); ?>   </span>                             
                 </div> 
 
@@ -138,7 +138,7 @@
             <?php foreach($youTubeExtendedList as $newContent){ ?>                
                 <p>        
                     <?php if ($newContent['type'] == "youtube_video") { ?>
-                        <img style="display:inline;width:2.5em" src="https://graph.facebook.com/<?php echo $newContent['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> </span> 
+                        <img style="display:inline;width:2.5em" src="https://graph.facebook.com/<?php echo $newContent['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>"> </span> 
                         <?php echo $newContent['fb_page_name']?> - <a target="_new"  href="<?php echo $newContent['more_info_url'];?>"> <?php echo  $newContent['title']; ?></a> - <?php echo $CL_model->timeElapsedString( $newContent['start_time']); ?> 
                     <?php } ?>
                 </p>
@@ -162,7 +162,7 @@
             <?php foreach($newReleases as $newContent){ ?>
                 <p>                
                     <?php if ($newContent['type'] == "significant_release") { ?>
-                        <img style="display:inline;width:2.5em" src="https://graph.facebook.com/<?php echo $newContent['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>"> </span>
+                        <img style="display:inline;width:2.5em" src="https://graph.facebook.com/<?php echo $newContent['fb_pageid'];?>/picture?type=normal&access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>"> </span>
                          <b><?php echo $newContent['fb_page_name'] ?></b>  - <a target="_new"  href="<?php echo $newContent['more_info_url'];?>"> <?php echo $newContent['title']; ?> </a>
                     <?php } ?>
                </p>

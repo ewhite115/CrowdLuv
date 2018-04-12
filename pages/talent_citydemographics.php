@@ -427,7 +427,7 @@ include(ROOT_PATH . 'views/partial_cl_html_leader.php');
 
     <div class="fluid-row">
         <div class="col-xs-12 crowdluvsection"> 
-            <h1>Follower Demographics in <?php echo $city;?> for <?php echo $clRequestInformation->getActiveManagedBrand()['fb_page_name'];?> &nbsp; <img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $clRequestInformation->getActiveManagedBrand()['fb_pid']; ?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookSession()->getToken();?>'></h1>
+            <h1>Follower Demographics in <?php echo $city;?> for <?php echo $clRequestInformation->getActiveManagedBrand()['fb_page_name'];?> &nbsp; <img style="display:inline-block;width:2%;" src='https://graph.facebook.com/<?php echo $clRequestInformation->getActiveManagedBrand()['fb_pid']; ?>/picture?access_token=<?php echo $clFacebookHelper->getFacebookAccessToken();?>'></h1>
              
         </div>
     </div>

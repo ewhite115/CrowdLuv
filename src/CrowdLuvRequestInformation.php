@@ -35,7 +35,7 @@ class CrowdLuvRequestInformation {
 		   * If we have a logged-in facebook user - Look up their crowdluv profile,
 		   *     or,  create a new one if they are new to crowdluv
 		   */
-		  if ($this->clFacebookHelper->getFacebookSession()) {  // Proceed thinking you have a logged in user who's authenticated.  
+		  if ($this->clFacebookHelper->getFacebookAccessToken()) {  // Proceed thinking you have a logged in user who's authenticated.  
 		      
 		      	//Get this user's info based on their facebook profile.  (New entry will be created if needed.)
 		      	//    Set a global variable containing the crowdluv_uid
@@ -125,7 +125,7 @@ class CrowdLuvRequestInformation {
 		   * Now check for facebook pages the user is an administrator of,
 		   * add them to CL db if new 
 		   */
-		  if($this->clFacebookHelper->getFacebookSession()){
+		  if($this->clFacebookHelper->getFacebookAccessToken()){
 
 		        //$_SESSION['CL_LOGGEDIN_TALENTS_ARR'] = $CL_LOGGEDIN_TALENTS_ARR = "";
 		        //Get a list of any facebook pages this user manages.

@@ -317,6 +317,7 @@ class CrowdLuvModel {
 
     public function updateUserFacebookLikes($clUid){
 
+        return;
         cldbgmsg("<b>User Update/Import Job: Facebook-likes</b>");
 
         //This should only be run no more than once every X minutes.
@@ -640,8 +641,13 @@ class CrowdLuvModel {
     public function getCrowdLuvTIDByFacebookPageProfile($talent_fbpp){
         //pass in json object of the page
         //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
-        if(!$talent_fbpp) return 0;
-           
+        if(!$talent_fbpp) return 0;   
+        //var_dump($talent_fbpp);die;
+        
+        //After upgrade to facebook php sdk v5, talent_fbpp is being obtained as array instead of object
+        //Case to object for backward compatibility
+        $talent_fbpp = (object) $talent_fbpp;
+
         //Check for an existing Brand for this facebook page.  If so, return it's ID.
         if( $existingTID = $this->get_crowdluv_tid_by_fb_pid($talent_fbpp->id)) return $existingTID;
 

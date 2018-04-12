@@ -140,7 +140,7 @@ $(document).ready(function() {
 
     FB.init({
       appId      : '<?php echo CL_FB_APP_ID;?>',              // App ID from the app dashboard
-      version    : 'v2.0',
+      version    : 'v2.12',
       //channelUrl : '//67.82.130.92:7999/crowdluv/channel.php', // Channel file for x-domain comms
       status     : true,                                 // Check Facebook Login status
       cookie     : true,

@@ -317,7 +317,6 @@ class CrowdLuvModel {
 
     public function updateUserFacebookLikes($clUid){
 
-        return;
         cldbgmsg("<b>User Update/Import Job: Facebook-likes</b>");
 
         //This should only be run no more than once every X minutes.
@@ -325,33 +324,16 @@ class CrowdLuvModel {
         $lastRun = $this->selectTableValue("timestamp_last_facebook_like_import", "follower",  "crowdluv_uid = '" . $clUid . "' and timestamp_last_facebook_like_import > (NOW() - INTERVAL 120 minute)" );
         if(sizeof($lastRun) > 0){ cldbgmsg("-Less than x minutes since last facebook-like import:- aborting");return;}
 
-        //We may need to make multiple requests to get all the likes.
-        // Loop making api call ..  
-        $done=false;
-        //Create the initial request object for retrieving user's likes
-        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/me/likes?fields=id,name,category,is_verified,link&limit=200' );
-        do{  
-          try{          
-              $response = $request->execute();
-              // get response
-              $fb_user_likes = $response->getGraphObject()->asArray();
-              //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
-              if(isset($fb_user_likes['data']) && sizeof($fb_user_likes['data']) > 0) {  
-                    foreach ($fb_user_likes['data'] as $fbupg) {
-                        $cltid = $this->getCrowdLuvBrandIdByFacebookId($fbupg->id);
-                        if($cltid) $this->setFollower_FacebookLikes_Talent($clUid, $cltid, 1); 
 
-                  }//foreach
-              } //if we got data back fro api call
+        $fbLikes = $this->clFacebookHelper->getUserFacebookLikes();
+        if(isset($fbLikes) && sizeof($fbLikes) > 0) {  
+            foreach ($fbLikes as $fbupg) {
+                $cltid = $this->getCrowdLuvBrandIdByFacebookId($fbupg['id']);
+                if($cltid) $this->setFollower_FacebookLikes_Talent($clUid, $cltid, 1); 
 
-          }catch (FacebookApiException $e) {
-            cldbgmsg("FacebookAPIException requesting /me/likes -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
-            $fb_user_likes = null;
-            //we should still be able to proceed, since the rest of the pages do not rely on 
-            //  fb_user_likes, and should continue to use the talent array in the session var
-          } 
-          //Create a new request object and start over if there are more likes
-        } while (($response) && $request = $response->getRequestForNextPage());
+            }//foreach
+        } //if we got data back
+
 
         $this->updateTableValue("follower", "timestamp_last_facebook_like_import", "now()", "crowdluv_uid = '" . $clUid . "'" );
 
@@ -491,7 +473,7 @@ class CrowdLuvModel {
      */
     public function createNewBrandFromFacebookPageGraphObject($talent_fbpp){
         //pass in json object of the page
-        //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; 
+        //echo "<pre>"; var_dump($talent_fbpp);  echo "</pre>"; die;
         if(!$talent_fbpp) return 0;
                 
         $new_cl_tid = "";
@@ -506,6 +488,7 @@ class CrowdLuvModel {
             $results = $this->cldb->prepare($sql);
             $results->bindParam(1, $talent_fbpp['name']);
             $results->execute();            
+
             $new_cl_tid= $this->get_crowdluv_tid_by_fb_pid($talent_fbpp['id']);
 
             $this->setDefautValuesForNewTalent($new_cl_tid);

@@ -294,6 +294,51 @@ class CrowdLuvFacebookHelper {
 
    	}
 
+
+
+	/**
+	 * [getUserFacebookLikes Returns the list of pages that the user 'Likes' on Facebook]
+	 * @return [type] [description]
+	 */
+   	public function getUserFacebookLikes(){
+
+    	$response=null;
+    	$likeList = Array();
+    	$after="";  
+ 
+        do{  
+          try{          
+              $response = $this->fb->get('/me/likes?fields=id,name,category,is_verified,link&limit=200&after=' . $after, $this->getFacebookAccessToken());
+              // get response
+              $responseBody = $response->getDecodedBody();
+              
+              //echo "<pre>"; var_dump($fb_user_likes); echo "</pre>"; die;
+              if(isset($responseBody['data']) && sizeof($responseBody['data']) > 0) {  
+                    
+                    foreach ($responseBody['data'] as $fbupg) {
+        				$likeList[] = $fbupg;
+
+                  	}//foreach
+
+              } //if we got data back fro api call
+
+          }catch (FacebookSDKException $e) {
+            cldbgmsg("FacebookAPIException requesting /me/likes -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+            $likeList = null;
+            
+          } 
+         
+          $after = (isset($responseBody['paging'])) ? $responseBody['paging']['cursors']['after'] : null;
+          //echo "<br>after=" . $after . "<br>";
+        } while ( ($response) && $after );
+
+
+        //var_dump($likeList);die;
+        return $likeList;
+
+   	}
+
+
    	/**
    	 * [getManagedFacebookPages Queires facebook for pages managed by the logged in user]
    	 * @return [Array] [set of pages as returned by facebook api]

@@ -15,6 +15,9 @@
 
   }
 
+//Extend php script-timeout to accommodate imports
+ini_set('max_execution_time', 300); //300 seconds = 5 minutes
+
 //The following is for compatibility with writing session files on AWS
 //TODO: (?) sessions won't work if we have to scale up to using multiple EC2 instances, so
 //  figure out how to handle session management without using actual php sessions  (?)

@@ -375,8 +375,7 @@ class CrowdLuvFacebookHelper {
 
 		//echo "gfbo " . $fbId;
     	$response = $this->fb->get( '/' . $fbId . '?fields=' . $fields, $this->getFacebookAccessToken() );
-	    // get response
-	    $fbObject = $response->getDecodedBody()['data'];
+	    $fbObject = $response->getDecodedBody();
 	    //echo "<pre>"; var_dump($fbObject); echo "</pre>"; die;
 
 	    return $fbObject;

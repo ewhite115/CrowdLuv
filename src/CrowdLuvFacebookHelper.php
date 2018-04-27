@@ -148,7 +148,9 @@ class CrowdLuvFacebookHelper {
 		    // create new fb token object from saved access_token
 		    cldbgmsg("-Found fb_token in session"); 
 		    //var_dump( $_SESSION['fb_token_expires_at']);die;
-		    $accessToken = new Facebook\Authentication\AccessToken($_SESSION['fb_token'] , $_SESSION['fb_token_expires_at']->getTimeStamp());
+		    //$accessToken = new Facebook\Authentication\AccessToken($_SESSION['fb_token'] , $_SESSION['fb_token_expires_at']->getTimeStamp());
+			$fbTokenExpirationTimestamp = isset($_SESSION['fb_token_expires_at']) ? $_SESSION['fb_token_expires_at']->getTimeStamp() : "";
+			$accessToken = new Facebook\Authentication\AccessToken($_SESSION['fb_token'], $fbTokenExpirationTimestamp );
 
 		    // validate the access_token to make sure it's still valid
 		    try {

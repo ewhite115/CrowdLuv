@@ -367,6 +367,49 @@ class CrowdLuvFacebookHelper {
 
 
 
+   	public function getEventsForPage($fb_pid, $sinceTimestamp){
+   		echo "fbp=".$fb_pid . " - sts=".$sinceTimestamp . "<br>";
+ 	  	$response=null;
+       	$eventList= Array();
+       	$after="";
+
+        //We may need to make multiple FB API requests to retrieve all the events.       
+        do{  
+            try{          
+	            //$response = $this->fb->get('/' . $fb_pid . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,start_time,end_time,place', $this->getFacebookAccessToken());
+            	$response = $this->fb->get('/' . $fb_pid . '/events', $this->getFacebookAccessToken());
+	            $responseBody = $response->getDecodedBody();
+              
+	            echo "<pre>"; var_dump($responseBody); echo "</pre>";// die;
+    	        if(isset($responseBody['data']) && sizeof($responseBody['data']) > 0) {  
+                    foreach ($responseBody['data'] as $fbupg) { $eventList[] = $fbupg; }
+
+              } //if we got data back fro api call
+
+          	}
+          	catch (FacebookAuthenticationException $e) {
+            	cldbgmsg("FacebookAuthenticationException requesting events-------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+            	return null;
+          	}          
+			catch (FacebookSDKException $e) {
+            	cldbgmsg("FacebookSDKException requesting events-------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+            	return null;
+            
+          }          
+
+          $after = (isset($responseBody['paging'])) ? $responseBody['paging']['cursors']['after'] : null;
+          echo "<br>after=" . $after . "<br>";
+        } while ( ($response) && $after );
+
+        var_dump($eventList);//die;
+
+        return $eventList;
+
+
+   	}
+
+
+
    	public function isRequestInsideFacebookTab(){
 
 		return (isset($_REQUEST["signed_request"]));

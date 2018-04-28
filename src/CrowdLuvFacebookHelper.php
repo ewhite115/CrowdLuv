@@ -253,7 +253,7 @@ class CrowdLuvFacebookHelper {
 
 		try { 
             // graph api request for user data
-            $response = $this->fb->get('/me', $this->getFacebookAccessToken());
+            $response = $this->fb->get('/me?fields=id,name,first_name,last_name,location,email,gender', $this->getFacebookAccessToken());
             //echo "<pre> Response to facebook graph call /me :"; var_dump($response->getDecodedBody()); echo "</pre>"; die;
 
             return $response->getDecodedBody();

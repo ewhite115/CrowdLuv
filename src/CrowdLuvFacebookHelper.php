@@ -183,7 +183,7 @@ class CrowdLuvFacebookHelper {
 		      $accessToken = $this->facebookLoginHelper->getAccessToken();
 		      echo "accesstoken= " . $accessToken . "<br>";
 		      //echo "accesstoken from redirect:"; echo "<pre>"; var_dump($accessToken); echo "</pre>";
-		      if($accessToken)  cldbgmsg("Found new facebook $accessToken from redirect"); 
+		      if($accessToken)  { $this->isNewSession = true; cldbgmsg("Found new facebook $accessToken from redirect"); }
 		      //If no new $accessToken from redirect, see if there is a new session set on the client side 
 		      //  facebook javascript SDK
 		      if($accessToken === null) {
@@ -232,7 +232,7 @@ class CrowdLuvFacebookHelper {
 			        header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
 			        die(); 
 			}
-			$this->isNewSession = true;
+			
 
 	  	}
 

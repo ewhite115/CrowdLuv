@@ -1,4 +1,5 @@
 <?php 
+//phpinfo();die;
 require_once "../inc/cl_bootstrap.php";
 
 error_reporting(E_ALL);

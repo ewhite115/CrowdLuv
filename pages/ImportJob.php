@@ -2,7 +2,6 @@
 
 
 
-
 $clRequestInformation->clFacebookHelper->setAsAppSession();
 $clRequestInformation->clSpotifyHelper->setAsClientCredentialSession();
 
@@ -23,8 +22,8 @@ $clRequestInformation->clSpotifyHelper->setAsClientCredentialSession();
  *   Invoked on every page load - runs once every N minutes to import events from
  *     FB, BIT, Spotify
  */
-$clRequestInformation->clModel->runEventImportJob(1515542400);
-
+$clRequestInformation->clModel->runEventImportJob( 1356998400  );
+//1515542400
 
 
 

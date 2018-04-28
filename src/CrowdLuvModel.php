@@ -177,6 +177,7 @@ class CrowdLuvModel {
      * @return null                     if exceptions
      */
     public function getCrowdLuvUIDByFacebookProfileObject($follower_fbup) {
+        //var_dump($follower_fbup);die;
         //pass in the array /  JSON object returned by FB API
         if(!$follower_fbup) return 0;
         $f = $follower_fbup;
@@ -2433,7 +2434,7 @@ class CrowdLuvModel {
             //For those X brands, import their events
             foreach($staleBrands as $staleBrand){
                 //  Import Facebook Events
-                $this->importFacebookEventsForTalent($staleBrand['crowdluv_tid'], $staleBrand['fb_pid'], $this->facebookSession, $sinceTimestamp);
+                $this->importFacebookEventsForTalent($staleBrand['crowdluv_tid'], $staleBrand['fb_pid'], $sinceTimestamp);
                 
             }
         }//Facebook imports
@@ -2588,7 +2589,7 @@ class CrowdLuvModel {
     public function importEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp = 1356998400){
 
         //  Import Facebook Events
-        $this->importFacebookEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp);
+        $this->importFacebookEventsForTalent($cl_tidt, $fb_pidt, $sinceTimestamp);
         // Import Events from BandsInTown 
         $this->importBandsInTownEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp);
         // Import Album releases from Spotify 
@@ -2607,7 +2608,7 @@ class CrowdLuvModel {
      * @param  [type] $sinceTimestamp  [description]
      * @return [type]                  [description]
      */
-    private function importFacebookEventsForTalent($cl_tidt, $fb_pidt, $facebookSession, $sinceTimestamp){
+    private function importFacebookEventsForTalent($cl_tidt, $fb_pid, $sinceTimestamp){
         
         
         //Write timestamp into DB for this retrieval
@@ -2616,44 +2617,59 @@ class CrowdLuvModel {
         $clt = $this->get_talent_object_by_tid($cl_tidt);
         cldbgmsg("<b>Invoking FB Event Import for</b> " . $clt['fb_page_name']);
 
-        //We may need to make multiple FB API requests to retrieve all the events.
-        //  Loop making api call ..  
-        $done=false;
-        //Create the initial request object for retrieving the events
-        $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,start_time,end_time,place' );
-        $response = null;
-        do{  
-            try{          
-              $response = $request->execute();
-              // get response
-              $fb_events = $response->getGraphObject()->asArray();
-              //echo "<pre>"; var_dump($fb_events); echo "</pre>"; die;
+        $eventList = $this->clFacebookHelper->getEventsForPage($fb_pid, $sinceTimestamp);
+        //If we got any events back..
+        if(isset($eventList) && sizeof($eventList) > 0) {  
+            foreach ($eventList as $fbupg) {
+                cldbgmsg("--Found facebook event to add/update: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->start_time); 
+                $this->importFacebookEvent($cl_tidt, $fbupg);
+            }//foreach
+
+        } //if we got data back from api call
+
+
+
+        // //We may need to make multiple FB API requests to retrieve all the events.
+        // //  Loop making api call ..  
+        // $done=false;
+        // //Create the initial request object for retrieving the events
+        // $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fb_pidt . '/events?since=' . $sinceTimestamp . '&fields=name,description,id,start_time,end_time,place' );
+        // $response = null;
+        // do{  
+        //     try{          
+        //       $response = $request->execute();
+        //       // get response
+        //       $fb_events = $response->getGraphObject()->asArray();
+        //       //echo "<pre>"; var_dump($fb_events); echo "</pre>"; die;
               
-              //If we got any events back..
-              if(isset($fb_events['data']) && sizeof($fb_events['data']) > 0) {  
+        //       //If we got any events back..
+        //       if(isset($fb_events['data']) && sizeof($fb_events['data']) > 0) {  
                   
-                    foreach ($fb_events['data'] as $fbupg) {
+        //             foreach ($fb_events['data'] as $fbupg) {
 
-                      cldbgmsg("--Found facebook event to add/update: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->start_time); 
-                      $this->importFacebookEvent($cl_tidt, $fbupg);
+        //               cldbgmsg("--Found facebook event to add/update: " . $fbupg->id . ":" . $fbupg->name . ":" . $fbupg->start_time); 
+        //               $this->importFacebookEvent($cl_tidt, $fbupg);
                       
-                    }//foreach
+        //             }//foreach
 
-                } //if we got data back from api call
+        //         } //if we got data back from api call
 
-            }catch (Facebook\FacebookAuthorizationException $e){
-                cldbgmsg("FacebookAuthorizationException requesting events for " . $cl_tidt . " -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+        //     }
+        //     catch (Facebook\FacebookAuthorizationException $e){
+        //         cldbgmsg("FacebookAuthorizationException requesting events for " . $cl_tidt . " -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
 
-            }catch (FacebookApiException $e) {
-                cldbgmsg("FacebookAPIException requesting events -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
-                $fb_events = null;
-            } 
-            catch (Exception $e) {
-                cldbgmsg("Exception requesting events -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
-                $fb_events = null;
-            } 
-          //Create a new request object and start over if there are more likes
-        } while (($response) && $request = $response->getRequestForNextPage());
+        //     }catch (FacebookApiException $e) {
+        //         cldbgmsg("FacebookAPIException requesting events -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+        //         $fb_events = null;
+        //     } 
+        //     catch (Exception $e) {
+        //         cldbgmsg("Exception requesting events -------<br>" . $e->getMessage() . "<br>" . $e->getTraceAsString() . "<br>-----------"); 
+        //         $fb_events = null;
+        //     } 
+        //   //Create a new request object and start over if there are more likes
+        // } while (($response) && $request = $response->getRequestForNextPage());
+
+
 
     }
 
@@ -3621,7 +3637,8 @@ class CrowdLuvModel {
             // graph api request for place data
             //$request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fbPid . '?fields=id,name,location' );
             //$response = $request->execute();
-            $response = $this->clFacebookHelper->fb->get('/' . $fbPid . '?fields=id,name,location', $this->clFacebookHelper->getFacebookAccessToken());
+            //$response = $this->clFacebookHelper->fb->get('/' . $fbPid . '?fields=id,name,location', $this->clFacebookHelper->getFacebookAccessToken());
+            $response = $this->clFacebookHelper->getFacebookGraphObjectById($fbPid, 'id,name,location');            
             // get response
             $fbPlace = $response->getDecodedBody();
             //echo "<pre> Response to facebook graph call /<placeid> :"; var_dump($fbPlace); echo "</pre>"; die;

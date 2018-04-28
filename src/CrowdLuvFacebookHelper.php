@@ -94,7 +94,8 @@ class CrowdLuvFacebookHelper {
    	 * @return [type] [description]
    	 */
    	public function setAsAppSession(){
- 		//Set the access token to app_id|app_secret.   
+ 		//Set the access token to app_id|app_secret.  
+ 		//echo  "ats= " . CL_FB_APP_ID . "|" . CL_FB_APP_SECRET;
    		$this->facebookAccessToken = new Facebook\Authentication\AccessToken(CL_FB_APP_ID . "|" . CL_FB_APP_SECRET);
 
    	}

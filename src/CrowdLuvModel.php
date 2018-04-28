@@ -193,8 +193,8 @@ class CrowdLuvModel {
             
             $fblocid="0"; $fblocname="Unspecified"; $clPlaceID= 0;
             if(isset($f['location'])) {
-                $fblocid=$f['location']->id; 
-                $fblocname=$f['location']->name;
+                $fblocid=$f['location']['id']; 
+                $fblocname=$f['location']['name'];
                 //Create this place in CL db if not already
                 $clPlaceID = $this->createPlaceFromFacebookPlaceID($fblocid);
 
@@ -3619,10 +3619,11 @@ class CrowdLuvModel {
 
         try { 
             // graph api request for place data
-            $request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fbPid . '?fields=id,name,location' );
-            $response = $request->execute();
+            //$request = new FacebookRequest( $this->clFacebookHelper->getFacebookSession(), 'GET', '/' . $fbPid . '?fields=id,name,location' );
+            //$response = $request->execute();
+            $response = $this->clFacebookHelper->fb->get('/' . $fbPid . '?fields=id,name,location', $this->clFacebookHelper->getFacebookAccessToken());
             // get response
-            $fbPlace = $response->getGraphObject()->asArray();
+            $fbPlace = $response->getDecodedBody();
             //echo "<pre> Response to facebook graph call /<placeid> :"; var_dump($fbPlace); echo "</pre>"; die;
             
            if(! isset($fbPlace['location']->street)) $fbPlace['location']->street = "";

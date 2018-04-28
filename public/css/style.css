@@ -332,7 +332,7 @@ h1.cl-major-heading{
 
 
 /* At under 2000px,   */
-@media screen and (max-width: 2000px){
+@media screen and (max-width: 3000px){
 
             /*change to the dark "mobile" header */
             .cl_site_section_header {

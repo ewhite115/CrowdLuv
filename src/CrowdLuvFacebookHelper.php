@@ -228,11 +228,13 @@ class CrowdLuvFacebookHelper {
 			$this->facebookAccessToken = $accessToken;
 
 		  	//Check for minimum facebook Permissions
+			/*
 			if(! $this->checkFacebookPermissions($accessToken, CrowdLuvFacebookHelper::$talentFacebookPermissionScope)){
 			        //If the user declined any required permissions, redirect to home page and set a flag
 			        header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
 			        die(); 
 			}
+			}*/
 			
 
 	  	}

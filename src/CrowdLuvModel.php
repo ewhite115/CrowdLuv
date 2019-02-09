@@ -2401,7 +2401,7 @@ class CrowdLuvModel {
                      FROM talent 
                      where disabled = 0 
                         and fb_is_verified 
-                        and timestamp_last_facebook_event_import > (NOW() - INTERVAL 11 minute)";
+                        and timestamp_last_facebook_event_import > (NOW() - INTERVAL 61 minute)";
 
             $results = $this->cldb->prepare($sql);
             $results->execute();

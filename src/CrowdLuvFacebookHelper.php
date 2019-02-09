@@ -233,7 +233,6 @@ class CrowdLuvFacebookHelper {
 			        //If the user declined any required permissions, redirect to home page and set a flag
 			        header('Location: ' . CLADDR . "?fb_user_denied_permissions=1" );
 			        die(); 
-			}
 			}*/
 			
 
@@ -466,12 +465,19 @@ class CrowdLuvFacebookHelper {
 
 	public function getFacebookGraphObjectById($fbId, $fields){
 
-		//echo "gfbo " . $fbId;
-    	$response = $this->fb->get( '/' . $fbId . '?fields=' . $fields, $this->getFacebookAccessToken() );
-	    $fbObject = $response->getDecodedBody();
-	    //echo "<pre>"; var_dump($fbObject); echo "</pre>"; die;
+		try{
+			//echo "gfbo " . $fbId;
+	    	$response = $this->fb->get( '/' . $fbId . '?fields=' . $fields, $this->getFacebookAccessToken() );
+		    $fbObject = $response->getDecodedBody();
+		    //echo "<pre>"; var_dump($fbObject); echo "</pre>"; die;
 
-	    return $fbObject;
+		    return $fbObject;
+
+		} catch (Exception $e){
+
+			cldbgmsg("Received FacebookAuthenticationException when searching for GraphObject by ID " . $fbId . " - no match");
+			return null;
+		}
 
 	}
 
@@ -491,6 +497,7 @@ class CrowdLuvFacebookHelper {
 
 	}
 
+	
 
 
 }

@@ -700,12 +700,13 @@ class CrowdLuvModel {
         //If we didnt find a CL Brand based on the spotify ID, 
             //  search for an FB page by the artist's name    
         cldbgmsg("-Found a spotify artist not tied to a CL brand: " . $spArtist->name . ":" . $spArtist->id . " - will query fb for a corresponding page..");
-        $fbObj = $this->clFacebookHelper->getFacebookPageObjectByNameSearch($spArtist->name);
+        //$fbObj = $this->clFacebookHelper->getFacebookPageObjectByNameSearch($spArtist->name);
+        $fbObj = $this->clFacebookHelper->getFacebookGraphObjectById(  preg_replace("/[^A-Za-z0-9]/", "", $spArtist->name), 'name,id');
         //echo "<pre>"; var_dump($fbObj); echo "</pre>"; die;
         //Get the CL Brand ID foir that FB id (importing as a new brand in the process if it doesnt already exist)          
         if($fbObj){
-            cldbgmsg("-Found an FB page corresponding to spotify artist. FBID=" . $fbObj->id);
-            $cltid = $this->getCrowdLuvBrandIdByFacebookId($fbObj->id);
+            cldbgmsg("-Found an FB page corresponding to spotify artist. FBID=" . $fbObj['id']);
+            $cltid = $this->getCrowdLuvBrandIdByFacebookId($fbObj['id']);
         }
     
         //update Brand to reflect spotify id if needed
